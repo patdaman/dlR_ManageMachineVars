@@ -14,6 +14,7 @@ namespace ManageConfigVariables
         public string AppName { get; set; }
         public string LogFilePath { get; set; }
         public string EmailAddress { get; set; }
+        public string KeyType { get; set; }
 
         static void Main(string[] args)
         {
@@ -41,6 +42,7 @@ namespace ManageConfigVariables
 
                 //Populate AdminArgs from Command line args 
                 SetupFromCommandArgs(args, adminArgs);
+                SetConfigType(adminArgs);
 
                 //Run!                
                 //Logger.Info($"Configuration is {configuration}");
@@ -63,71 +65,30 @@ namespace ManageConfigVariables
             }
         }
 
-        protected void InitializeOptions(OptionSet additionalOptions)
-        {
-            //Default options provided to all derived applications 
-            Options = new OptionSet()
-            {
-                {"l|log=", "log file path",   v => LogFilePath = v },
-                {"h|?|help", "show usage", v => ShowHelp = true },
-                {"e|email=", "email address for errors (optional), set to null to disable", v=> EmailAddress = v }
-            };
-            //Combined all options 
-            if (additionalOptions != null)
-                foreach (Option opt in additionalOptions.ToArray())
-                {
-                    Options.Add(opt);
-                }
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="adminArgs"></param>
         private void SetupFromCommandArgs(string[] args, AdminArgs adminArgs)
         {
             string text = "Action to perform. |{add-allenvars|remove-allenvars|get-allenvars |add-envar|remove-envar|get-envalue |add-allappconfig|remove-allappconfig|get-allappconfig |add-appconfig|remove-appconfig|get-appconfigvalue}";
-            //text = text.Replace(",", System.Environment.NewLine);
-            var additionalOpts = new OptionSet()
+            var Options = new OptionSet()
                 {
-                    { "interactive|i", "Switch that puts app in interactive mode.", v =>
-                        {
-                            IsInteractive = true;
-                        }
-                    },
-
-                    {
-                        "action|a=", "Action to perform. {add-allenvars|remove-allenvars|get-allenvars add-envar|remove-envar|get-envalue add-allappconfig|remove-allappconfig|get-allappconfig add-appconfig|remove-appconfig|get-appconfigvalue}",
-                        v =>
-                        //"action|a=", text, v =>
-                        {
-                            adminArgs.Action = v.ToLower();
-                        }
-                    },
-
-                    {
-                        "name|n=", "Target name (user, role, etc. dependingon action) to operate on.", v =>
-                        {
-                            adminArgs.UserName = v;
-                        }
-                    },
-
-                    {
-                        "password|pass=", "The password", v =>
-                        {
-                            adminArgs.Password = v;
-                        }
-                    },
-                    {
-                        "configfilepath|path=", "Path to XML config file.", v =>
-                        {
-                            adminArgs.Path = v;
-                        }
-                    },
-                    {
-                        "machinename|machine=", "Machine Name to target.", v =>
-                        {
-                            adminArgs.MachineName = v;
-                        }
-                    },
+                    { "l|log=", "log file path",   v => LogFilePath = v },
+                    { "h|?|help", "show usage", v => ShowHelp = true },
+                    { "e|email=", "email address for errors (optional), set to null to disable", v=> EmailAddress = v },
+                    { "interactive|i", "Switch that puts app in interactive mode.", v => { IsInteractive = true; }},
+                    { "action|a=", text, v => { adminArgs.Action = v.ToLower(); }},
+                    { "keytype|kt=", "Type --> {connstring|appsetting}", v => {adminArgs.KeyType = v; }},
+                    { "key|k=", "Key name", v => {adminArgs.Key = v; }},
+                    { "value|v=", "Key value", v => {adminArgs.Value = v; }},
+                    //{ "name|n=", "User name (user, role, etc. dependingon action) to operate with.", v => { adminArgs.UserName = v; }},
+                    //{ "password|pass=", "The password", v => { adminArgs.Password = v; }},
+                    { "configfilepath|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
+                    //{ "machinename|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
                 };
-            this.Initialize(typeof(ManageConfigVariables), "ManageConfigVariables", additionalOpts); 
+            this.Initialize(typeof(ManageConfigVariables), "ManageConfigVariables"); 
             ParseArgs(args); //Parse arguments                                           
         }
 
@@ -146,7 +107,6 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public void Initialize(Type applicationType,
                                 string appName,
-                                OptionSet additionalOptions = null,
                                 string defaultEmailAddress = null,
                                 string logConfigFileName = null,
                                 string emailSubject = null
@@ -156,7 +116,6 @@ namespace ManageConfigVariables
             AppName = appName;
             Console.WriteLine(AppName + " v " + AssemblyVersionString);
             //InitializeLogging(applicationType, defaultEmailAddress, logConfigFileName, emailSubject, configFacility);
-            InitializeOptions(additionalOptions);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -169,12 +128,10 @@ namespace ManageConfigVariables
         public void ParseArgs(string[] args)
         {
             Options.Parse(args);
-
             if (!args.Any())
             {
                 ShowHelp = true;
             }
-
             if (ShowHelp)
             {
                 ShowUsage(Options);
@@ -292,6 +249,22 @@ namespace ManageConfigVariables
                     break;
                 default:
                     throw new Exception($"Action {adminArgs.Action} is unknown");
+                    break;
+            }
+        }
+
+        private void SetConfigType(AdminArgs adminArgs)
+        {
+            switch (adminArgs.KeyType)
+            {
+                case KeyTypes.AppSetting:
+                    Actions.AddAppConfigVariable(adminArgs);
+                    break;
+                case KeyTypes.ConnectionString:
+                    Actions.RemoveAppConfigVariable(adminArgs);
+                    break;
+                default:
+                    //throw new Exception($"Key Type {adminArgs.KeyType} is unknown");
                     break;
             }
         }

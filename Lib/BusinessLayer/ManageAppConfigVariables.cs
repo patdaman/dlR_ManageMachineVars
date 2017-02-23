@@ -129,14 +129,14 @@ namespace ManageConfigVariables
         ///
         /// <returns>   A ConfigModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        protected ConfigModifyResult RemoveAppConfigVariable(string attribute, string key)
+        public ConfigModifyResult RemoveAppConfigVariable(string attribute, string key)
         {
             var result = new ConfigModifyResult()
             {
                 key = key,
                 result = appConfigVars.RemoveKeyValue(attribute, key)
             };
-            configFile.Save(path);
+            //configFile.Save(path);
             return result;
         }
 
@@ -147,10 +147,11 @@ namespace ManageConfigVariables
         ///
         /// <param name="key">      The key. </param>
         /// <param name="value">    The value. </param>
+        /// <param name="keyType">    The value. </param>
         ///
         /// <returns>   A ConfigModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ConfigModifyResult AddAppConfigVariable(string key, string value)
+        public ConfigModifyResult AddAppConfigVariable(string key, string value, string keyType)
         {
             var result = new ConfigModifyResult()
             {

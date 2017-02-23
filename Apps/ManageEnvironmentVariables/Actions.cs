@@ -26,12 +26,24 @@ namespace ManageConfigVariables
 
         public static void RemoveAppConfigVariable(AdminArgs adminArgs)
         {
-            throw new NotImplementedException();
+            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            var configVars = appConfigProcessor.RemoveAppConfigVariable(adminArgs.Key, adminArgs.KeyType);
+            appConfigProcessor.configFile.Save(adminArgs.Path);
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("key = {0}", configVars.key);
+            Console.WriteLine("result = {0}", configVars.result);
+            Console.WriteLine("-------------------------------------------");
         }
 
         public static void AddAppConfigVariable(AdminArgs adminArgs)
         {
-            throw new NotImplementedException();
+            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            var configVars = appConfigProcessor.AddAppConfigVariable(adminArgs.Key, adminArgs.Value, adminArgs.KeyType);
+            appConfigProcessor.configFile.Save(adminArgs.Path);
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("key = {0}", configVars.key);
+            Console.WriteLine("result = {0}", configVars.result);
+            Console.WriteLine("-------------------------------------------");
         }
 
         public static void ListAllAppConfigVariables(AdminArgs adminArgs)

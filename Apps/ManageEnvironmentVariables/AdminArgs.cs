@@ -22,13 +22,21 @@ namespace ManageConfigVariables
         public const string GetAppConfigValue = "get-appconfigvalue";
     }
 
+    public class KeyTypes
+    {
+        public const string ConnectionString = "connstring";
+        public const string AppSetting = "appsetting";
+    }
+
     public class AdminArgs
     {
-
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Action { get; set; }
         public string MachineName { get; set; }
         public string Path { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public string KeyType { get; set; }
     }
 }
