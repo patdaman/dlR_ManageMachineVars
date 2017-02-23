@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="706362231e904919acc7bbcf46b856e1" Name="Diagram1">
+        <EntityTypeShape EntityType="DevOpsModel.Application" Width="1.5" PointX="0.75" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.ConfigVariable" Width="1.5" PointX="3" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.Enum_EnvironmentVariableType" Width="1.5" PointX="0.75" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.Enum_Locations" Width="1.5" PointX="3" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.Enum_MachineUsageType" Width="1.5" PointX="3" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.EnvironmentVariable" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.MachineGroup" Width="1.5" PointX="3" PointY="15.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.Machine" Width="1.5" PointX="5.25" PointY="5.5" IsExpanded="true" />
+        <AssociationConnector Association="DevOpsModel.FK_EnvironmentVariables_Enum_EnvironmentVariableType" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.FK_Machines_Enum_Locations" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.FK_Machines_Enum_MachineUsageType" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.ApplicationConfigVariables" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.ApplicationEnvironmentVariables" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.ApplicationsConfigVariables" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.MachineApplications" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.MachineConfigVars" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.MachineGroupMapping" ManuallyRouted="false" />
+        <AssociationConnector Association="DevOpsModel.MachineVariables" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

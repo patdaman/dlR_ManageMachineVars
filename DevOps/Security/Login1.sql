@@ -1,0 +1,1 @@
+﻿CREATE LOGIN [DevOps] WITH PASSWORD = 'apples3'

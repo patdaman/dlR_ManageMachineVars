@@ -1,0 +1,2 @@
+﻿CREATE USER [DevOps] FOR LOGIN [DevOps];
+

@@ -1,0 +1,200 @@
+<!DOCTYPE html>  
+<html ng-app="app">  
+  
+<head>  
+    <meta charset="utf-8" />  
+    <title>Working With UI-Grid </title>  
+  
+    <style type="text/css">  
+        .gridStyle  
+        {  
+            border: 1px solid rgb(212, 212, 212);  
+            width: 800px;  
+            height: 370px;  
+            margin-left: 50px;  
+            color: coral;  
+        }  
+        .red {  
+    background-color: green;  
+    color: red;  
+}  
+    </style>  
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>  
+    <link rel="stylesheet" type="text/css" href="ui-grid.css" />  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>  
+    <script  src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>  
+    <script type="text/javascript" src="ui-grid.js"></script> 
+    <script type="text/javascript" src="app.js"></script> 	
+    <script>  
+        var app = angular.module('app', ['ngTouch', 'ui.grid']);  
+        app.controller(  
+                        'MyCtrl',  ['$scope',
+                        function ($scope) {  
+                            var Company;  
+                            var Model;  
+                            var Price;  
+                            var Stocks;  
+                            var x;  
+                            $scope.submit = function () {  
+                                Company = $scope.Company;  
+                                Model = $scope.Model;  
+                                Price = $scope.Price;  
+                                Stocks = $scope.Stocks;  
+                                $scope.myData.push({  
+                                    Company: Company,  
+                                    Model: Model,  
+                                    Price: Price,  
+                                    Stocks: Stocks  
+                                });  
+                            };  
+  
+                            $scope.myData = [{ "Company": "Samsung", "Model": "Samsung Galaxy Grand 2", "Price": 5000, "Stocks": 4 },  
+                                             { "Company": "Samsung", "Model": "Samsung Galaxy S3 Neo", "Price": 9000, "Stocks": 41 },  
+                                           { "Company": "Samsung", "Model": "Samsung Galaxy Grand Max", "Price": 11000, "Stocks": 4 },  
+                                            { "Company": "MicroMax", "Model": "Micromax Canvas Blaze", "Price": 6300, "Stocks": 0 },  
+                                           { "Company": "MicroMax", "Model": "Micromax Canvas Duddle", "Price": 11000, "Stocks": 3 },  
+                                             { "Company": "MicroMax", "Model": "Micromax Canvas Duddle- SPL", "Price": 11000, "Stocks": 3 },  
+                                             { "Company": "Blackberry", "Model": "Blackberry Z30", "Price": 19000, "Stocks": 10 },  
+                                           { "Company": "Blackberry", "Model": "Micromax bold  9780", "Price": 12900, "Stocks": 20 },  
+  
+                            ],  
+  
+  
+                            $scope.gridOptions = {  
+  
+                                data: 'myData',  
+                                pagingOptions: $scope.pagingOptions,  
+                                enablePinning: true,  
+                                enablePaging: true,  
+                                showFooter: true,  
+                                enableColumnResize: true,  
+                                enableCellSelection: true,  
+                                columnDefs: [  
+                                        {  
+                                            field: "Company",  
+                                            width: 180,  
+                                            pinned: true,  
+                                            enableCellEdit: true  
+                                        },  
+                                        {  
+                                            field: "Model",  
+                                            width: 200,  
+                                            enableCellEdit: true  
+                                        },  
+                                        {  
+                                            field: "Price",  
+                                            width: 100,  
+                                            enableCellEdit: true  
+                                        },  
+                                        {  
+                                            field: "Stocks",  
+                                            width: 120,  
+                                            enableCellEdit: true,  
+                                            cellTemplate: basicCellTemplate  
+                                        },  
+                                        {  
+                                            field: "Action",  
+                                            width: 200,  
+                                            enableCellEdit: false,  
+                                            cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Click a Cell for Edit </button>'  
+                                        }]  
+  
+                            };  
+  
+                            $scope.selectedCell;  
+                            $scope.selectedRow;  
+                            $scope.selectedColumn;  
+  
+                            $scope.editCell = function (row, cell, column) {  
+                                $scope.selectedCell = cell;  
+                                $scope.selectedRow = row;  
+                                $scope.selectedColumn = column;  
+                            };  
+  
+                            $scope.updateCell = function () {  
+  
+                                //   alert("checking");  
+                                $scope.selectedRow[$scope.selectedColumn] = $scope.selectedCell;  
+                            };  
+  
+                            var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ng-click="editCell(row.entity, row.getProperty(col.field), col.field)"><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';  
+  
+                            $scope.filterOptions = {  
+                                filterText: "",  
+                                useExternalFilter: true  
+                            };  
+  
+                            $scope.gridOptions.sortInfo = {  
+                                fields: ['Company', 'Price'],  
+                                directions: ['asc'],  
+                                columns: [0, 1]  
+                            };  
+  
+                            $scope.totalServerItems = 0;  
+  
+                            $scope.pagingOptions = {  
+                                pageSizes: [5, 10, 20],  
+                                pageSize: 5,  
+                                currentPage: 1  
+                            };  
+  
+                            $scope.changeGroupBy = function (group1, group2) {  
+                                $scope.gridOptions.$gridScope.configGroups = [];  
+                                $scope.gridOptions.$gridScope.configGroups.push(group1);  
+                                $scope.gridOptions.$gridScope.configGroups.push(group2);  
+                                $scope.gridOptions.groupBy();  
+                            }  
+                            $scope.clearGroupBy = function () {  
+                                $scope.gridOptions.$gridScope.configGroups = [];  
+                                $scope.gridOptions.groupBy();  
+                            }  
+  
+                        });  
+    </script>  
+</head>  
+<body>  
+    <div class="panel panel-danger">  
+        <div class="panel-heading"></div>  
+        <div class="panel-body">  
+            <form class="input" ng-submit="submit()" role="form">  
+                <div style="border: 2px solid gray;width:600px;" >  
+                    <labl> <b> Add a New Model:  UI GRID DEMO </b></labl>  
+                    <div class="form-group">  
+                        <label"><b>Company:</b></label>   
+                <input id="inputs" class="form-control" type="text" ng-model="Company">  
+                    </div>  
+                    <div class="form-group">  
+                        <label><b>Model :</b></label>  
+                        <input id="Number1" class="form-control" type="text" ng-model="Model">  
+                    </div>  
+                    <div class="form-group">  
+                        <label>Price</label>  
+                        <input id="Date1" class="form-control" type="number" ng-model="Price">  
+                    </div>  
+                    <div class="form-group">  
+                        <label>Stocks</label>  
+                        <input id="Number2" class="form-control" type="number" ng-model="Stocks">  
+                    </div>  
+  
+                    <div class="form-group">  
+                        <input  
+                            type="submit" value="submit" id="but" class="btn btn-success">  
+                        <button type="button" ng-click="changeGroupBy('Company','Price')">Company By Name and Price</button>  
+                        <button type="button" ng-click="clearGroupBy()">Clear Group</button>  
+                    </div>  
+                </div>  
+            </form>  
+        </div>  
+    </div>  
+    <div class="panel panel-danger">  
+        <div class="panel-heading"><b><p style="padding-left:50px;">Model and Stocks Information</p></b></div>  
+        <div style="width: 500px;">  
+ <div ng-controller="MyCtrl">
+		<div id="grid1" ui-grid="{ data: exampleData }" class="gridstyle"></div>
+            <!-- <div class="gridstyle" ui-grid="gridoptions"></div> -->
+			</div>
+        </div>  
+    </div>  
+</body>  
+  
+</html>  

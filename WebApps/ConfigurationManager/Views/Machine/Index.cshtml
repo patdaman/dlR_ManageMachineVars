@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Application Machines";
+}
+<style>
+    .mygrid {
+      width: 900px;
+      height: 600px;
+    }
+    /*.myGrid {
+        width: 700px;
+        height: 400px;
+    }*/
+</style>
+<div class="container">
+    <div ng-app="app" ng-controller="machinecontroller">
+        <h3>{{title}}</h3>
+        <!--grid display element-->
+        <div ui-grid="gridOptions" ui-grid-edit ui-grid-pagination class="myGrid"></div>
+    </div>
+</div>
