@@ -43,5 +43,6 @@ namespace ManageConfigVariables
         public string Key { get; set; }
         public string Value { get; set; }
         public string KeyType { get; set; }
+        public string CustomSuffix { get; set; }
     }
 }

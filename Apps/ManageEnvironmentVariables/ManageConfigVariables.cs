@@ -94,6 +94,7 @@ namespace ManageConfigVariables
                 { "v|value=", "Key value", v => {adminArgs.Value = v; }},
                 //{ "name|n=", "User name (user, role, etc. dependingon action) to operate with.", v => { adminArgs.UserName = v; }},
                 //{ "password|pass=", "The password", v => { adminArgs.Password = v; }},
+                { "s|suffix=", "Environment Variable Suffix", v => {adminArgs.CustomSuffix = v; }},
                 { "p|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
                 { "m|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
             };
