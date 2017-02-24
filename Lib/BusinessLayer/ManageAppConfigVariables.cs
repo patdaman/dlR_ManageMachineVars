@@ -7,7 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using static ViewModel.ConfigModels;
 
-namespace ManageConfigVariables
+namespace BusinessLayer
 {
     public class ManageAppConfigVariables
     {

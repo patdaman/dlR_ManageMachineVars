@@ -9,7 +9,7 @@ namespace AppConfigurationWebApp.Controllers
 {
     public class ConfigApiController : ApiController
     {
-        BusinessLayer.ManageConfig configProcessor = new BusinessLayer.ManageConfig();
+        BusinessLayer.ManageComplexConfigVariables configProcessor = new BusinessLayer.ManageComplexConfigVariables();
 
         // GET: api/Machine
         public HttpResponseMessage Get()
