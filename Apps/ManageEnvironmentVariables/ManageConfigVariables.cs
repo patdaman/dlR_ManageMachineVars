@@ -22,6 +22,13 @@ namespace ManageConfigVariables
             app.Start(args);
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Starts the given arguments. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <param name="args"> The arguments. </param>
+        ///-------------------------------------------------------------------------------------------------
         private void Start(string[] args)
         {
             try
@@ -65,29 +72,31 @@ namespace ManageConfigVariables
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="adminArgs"></param>
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Sets up from command arguments. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <param name="args">         The arguments. </param>
+        /// <param name="adminArgs">    The admin arguments. </param>
+        ///-------------------------------------------------------------------------------------------------
         private void SetupFromCommandArgs(string[] args, AdminArgs adminArgs)
         {
-            string text = "Action to perform. |{add-allenvars|remove-allenvars|get-allenvars |add-envar|remove-envar|get-envalue |add-allappconfig|remove-allappconfig|get-allappconfig |add-appconfig|remove-appconfig|get-appconfigvalue}";
-            var Options = new OptionSet()
-                {
-                    { "l|log=", "log file path",   v => LogFilePath = v },
-                    { "h|?|help", "show usage", v => ShowHelp = true },
-                    { "e|email=", "email address for errors (optional), set to null to disable", v=> EmailAddress = v },
-                    { "interactive|i", "Switch that puts app in interactive mode.", v => { IsInteractive = true; }},
-                    { "action|a=", text, v => { adminArgs.Action = v.ToLower(); }},
-                    { "keytype|kt=", "Type --> {connstring|appsetting}", v => {adminArgs.KeyType = v; }},
-                    { "key|k=", "Key name", v => {adminArgs.Key = v; }},
-                    { "value|v=", "Key value", v => {adminArgs.Value = v; }},
-                    //{ "name|n=", "User name (user, role, etc. dependingon action) to operate with.", v => { adminArgs.UserName = v; }},
-                    //{ "password|pass=", "The password", v => { adminArgs.Password = v; }},
-                    { "configfilepath|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
-                    //{ "machinename|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
-                };
+            Options = new OptionSet()
+            {
+                { "h|?|help", "show usage", v => ShowHelp = true },
+                { "i|interactive", "Switch that puts app in interactive mode.", v => { IsInteractive = true; }},
+                { "l|log=", "log file path",   v => LogFilePath = v },
+                { "e|email=", "email address for errors", v=> EmailAddress = v },
+                { "a|action=", "Action to perform (required)", v => { adminArgs.Action = v.ToLower(); }},
+                { "t|keytype=", "Values: connstring|appsetting|user|machine|session", v => {adminArgs.KeyType = v; }},
+                { "k|key=", "Key name", v => {adminArgs.Key = v; }},
+                { "v|value=", "Key value", v => {adminArgs.Value = v; }},
+                //{ "name|n=", "User name (user, role, etc. dependingon action) to operate with.", v => { adminArgs.UserName = v; }},
+                //{ "password|pass=", "The password", v => { adminArgs.Password = v; }},
+                { "p|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
+                { "m|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
+            };
             this.Initialize(typeof(ManageConfigVariables), "ManageConfigVariables"); 
             ParseArgs(args); //Parse arguments                                           
         }
@@ -220,6 +229,12 @@ namespace ManageConfigVariables
                 case AdminActions.ListAllEnvVariables:
                     Actions.ListAllEnvVariables(adminArgs);
                     break;
+                case AdminActions.ListAllAppConfigVariablesFromDb:
+                    Actions.ListAllDbConfigVariables(adminArgs);
+                    break;
+                case AdminActions.ListAllDiffAppConfigVariables:
+                    Actions.ListAllDiffConfigVariables(adminArgs);
+                    break;
                 case AdminActions.AddEnvVariable:
                     Actions.AddEnvVariable(adminArgs);
                     break;
@@ -253,18 +268,34 @@ namespace ManageConfigVariables
             }
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Sets configuration type. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <param name="adminArgs">    The admin arguments. </param>
+        ///-------------------------------------------------------------------------------------------------
         private void SetConfigType(AdminArgs adminArgs)
         {
             switch (adminArgs.KeyType)
             {
                 case KeyTypes.AppSetting:
-                    Actions.AddAppConfigVariable(adminArgs);
+                    adminArgs.KeyType = "appSettings";
                     break;
                 case KeyTypes.ConnectionString:
-                    Actions.RemoveAppConfigVariable(adminArgs);
+                    adminArgs.KeyType = "connectionStrings";
+                    break;
+                case KeyTypes.User:
+                    adminArgs.KeyType = "User";
+                    break;
+                case KeyTypes.Machine:
+                    adminArgs.KeyType = "Machine";
+                    break;
+                case KeyTypes.Session:
+                    adminArgs.KeyType = "Session";
                     break;
                 default:
-                    //throw new Exception($"Key Type {adminArgs.KeyType} is unknown");
+                    adminArgs.KeyType = "appSettings";
                     break;
             }
         }
@@ -287,6 +318,17 @@ namespace ManageConfigVariables
             if (badcmd)
                 Console.WriteLine("\n\nIncorrect commandline ... task complete\n\nPress any Key to Exit.");
             opts.WriteOptionDescriptions(Console.Out);
+            string text = ",\tEnvironment Variable Actions:," +
+                "\t\tget-allvars|get-allenvars|get-envalue," +
+                "\t\tadd-allenvars|remove-allenvars," +
+                "\t\tadd-envar|remove-envar,," +
+                "\tApp Config Actions:," +
+                "\t\tget-allappconfig|get-appconfigvalue|get-dbappconfig|get-diffappconfig," +
+                "\t\tadd-allappconfig|remove-allappconfig," +
+                "\t\tadd-appconfig|remove-appconfig";
+            text = text.Replace(",", Environment.NewLine);
+            Console.WriteLine(text);
+
 #if DEBUG
             Console.Read();
 #endif

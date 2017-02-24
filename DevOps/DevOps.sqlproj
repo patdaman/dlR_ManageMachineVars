@@ -86,7 +86,7 @@
     <Build Include="Security\config.sql" />
     <Build Include="Security\Login1.sql" />
     <Build Include="Tables\MachineConfigVars.sql" />
-    <Build Include="Tables\ApplicationsConfigVariables.sql" />
+    <Build Include="Tables\Enum_ParentElement.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

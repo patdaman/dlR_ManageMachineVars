@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using CommonUtils.EnvironmentVariables;
-using static ViewModel.Enums;
+using System.Linq;
 using EFDataModel.DevOps;
-using static ViewModel.ConfigModels;
+using ViewModel;
 
-namespace ManageConfigVariables
+namespace BusinessLayer
 {
     public class ManageEnvironmentVariables
     {
         public EnvironmentVariableFunctions enVars { get; private set; }
         public string machineName { get; private set; }
         DevOpsEntities DevOpsContext;
+        ConvertObjects EfToVmConverter = new ConvertObjects();
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Default constructor. </summary>
@@ -20,8 +21,10 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public ManageEnvironmentVariables()
         {
-            enVars = new EnvironmentVariableFunctions();
-            machineName = Environment.MachineName.ToString();
+            if (enVars == null)
+                enVars = new EnvironmentVariableFunctions();
+            if (string.IsNullOrEmpty(machineName))
+                machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
         }
 
@@ -48,9 +51,9 @@ namespace ManageConfigVariables
         ///
         /// <returns>   A ConfigVariableResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ModifyResult RemoveEnvVariable(string key)
+        public Enums.ModifyResult RemoveEnvVariable(string key, string enVarType = null)
         {
-            return enVars.RemoveEnvironmentVariable(key);
+            return enVars.RemoveEnvironmentVariable(key, enVarType);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -63,9 +66,9 @@ namespace ManageConfigVariables
         ///
         /// <returns>   A ConfigVariableResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ModifyResult AddEnvVariable(string key, string value)
+        public Enums.ModifyResult AddEnvVariable(string key, string value, string keyType = null)
         {
-            return enVars.SetEnvironmentVariable(key, value);
+            return enVars.SetEnvironmentVariable(key, value, keyType);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -75,9 +78,160 @@ namespace ManageConfigVariables
         ///
         /// <returns>   all environment variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<EnvVariable> GetAllEnvVariables()
+        public List<EnvVariable> GetAllDbEnvVariables()
         {
+            List<EnvVariable> enVariables = new List<EnvVariable>();
+            List<EnvironmentVariable> dbEnVars = (from en in DevOpsContext.EnvironmentVariables
+                          where en.Machines.Contains(
+                              (from mac in DevOpsContext.Machines
+                              where mac.machine_name == machineName
+                              select mac).FirstOrDefault()
+                              )
+                          select en).ToList();
+            foreach (var x in dbEnVars)
+            {
+                var type = (EnvironmentVariableTarget)Enum.Parse(typeof(EnvironmentVariableTarget), x.type);
+
+                enVariables.Add(new EnvVariable()
+                {
+                    key = x.key,
+                    value = x.value,
+                    varType = type
+                });
+            }
+            return enVariables;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all en variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <returns>   all en variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.EnvironmentDtoVariable> GetAllEnVariables(int? appId = null)
+        {
+            var enVars = new List<ViewModel.EnvironmentDtoVariable>();
+            var allEnVars = new List<EnvironmentVariable>();
+            if (appId != null)
+            {
+                allEnVars = (from vars in DevOpsContext.EnvironmentVariables
+                             where vars.Applications.Contains(
+                                (from app in DevOpsContext.Applications
+                                 where app.id == appId
+                                 select app).FirstOrDefault()
+                                )
+                             select vars).ToList();
+            }
+            else
+            {
+                allEnVars = (from vars in DevOpsContext.EnvironmentVariables
+                             where vars.Machines.Contains(
+                                (from mac in DevOpsContext.Machines
+                                 where mac.machine_name == machineName
+                                 select mac).FirstOrDefault()
+                                )
+                             select vars).ToList();
+            }
+            foreach (var env in allEnVars)
+            {
+                enVars.Add(new ViewModel.EnvironmentDtoVariable()
+                {
+                    id = env.id,
+                    active = env.active,
+                    create_date = env.create_date,
+                    key = env.key,
+                    modify_date = env.modify_date,
+                    path = env.path,
+                    type = env.type,
+                    value = env.value,
+                    Applications = EfToVmConverter.EfAppListToVm(env.Applications),
+                    Machines = EfToVmConverter.EfMachineListToVm(env.Machines)
+                });
+            }
+            return enVars;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all environment variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <returns>   all environment variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<EnvVariable> GetAllEnvVariables(string suffix = null)
+        {
+            if (string.IsNullOrEmpty(suffix))
+            {
+                EnvironmentVariableFunctions enVarProc = new EnvironmentVariableFunctions()
+                {
+                    myVarSuffix = "marcom"
+                };
+                return enVarProc.GetAllEnvironmentVariables();
+            }
             return enVars.GetAllEnvironmentVariables();
+        }
+
+        public List<EnvVariable> GetAllDiffEnvVariables(string suffix = null)
+        {
+            List<EnvVariable> localEnVars = new List<EnvVariable>();
+            if (string.IsNullOrEmpty(suffix))
+            {
+                EnvironmentVariableFunctions enVarProc = new EnvironmentVariableFunctions()
+                {
+                    myVarSuffix = "marcom"
+                };
+                localEnVars = enVarProc.GetAllEnvironmentVariables();
+            }
+            else
+            {
+                localEnVars = enVars.GetAllEnvironmentVariables();
+            }
+            List<EnvVariable> dbVars = GetAllDbEnvVariables();
+
+            List<EnvVariable> combinedDiff = new List<EnvVariable>();
+
+            combinedDiff.AddRange(
+                        (from keys in localEnVars
+                         join db in dbVars
+                             on new
+                             {
+                                 JoinProperty1 = keys.key,
+                                 JoinProperty2 = keys.value,
+                                 JoinProperty3 = keys.varType
+                             }
+                             equals
+                             new
+                             {
+                                 JoinProperty1 = db.key,
+                                 JoinProperty2 = db.value,
+                                 JoinProperty3 = db.varType
+                             }
+                             into combined
+                         from both in combined.DefaultIfEmpty()
+                         where both == null
+                         select keys).ToList());
+
+            combinedDiff.AddRange(
+                        (from db in dbVars
+                         join keys in localEnVars
+                             on new
+                             {
+                                 JoinProperty1 = db.key,
+                                 JoinProperty2 = db.value,
+                                 JoinProperty3 = db.varType
+                             }
+                             equals new
+                             {
+                                 JoinProperty1 = keys.key,
+                                 JoinProperty2 = keys.value,
+                                 JoinProperty3 = keys.varType
+                             }
+                             into combined
+                         from both in combined.DefaultIfEmpty()
+                         where both == null
+                         select db).ToList());
+            return combinedDiff;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -87,13 +241,18 @@ namespace ManageConfigVariables
         ///
         /// <returns>   A List&lt;ConfigVariableResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ModifyResult> RemoveAllEnvVariables()
+        public List<ConfigModels.ConfigModifyResult> RemoveAllEnvVariables()
         {
             var keyList = new List<string>();
-            var resultList = new List<ModifyResult>();
+
+            var resultList = new List<ConfigModels.ConfigModifyResult>();
             foreach (var key in keyList)
-            { 
-                resultList.Add(enVars.RemoveEnvironmentVariable(key));
+            {
+                resultList.Add(new ConfigModels.ConfigModifyResult()
+                {
+                    key = key,
+                    result = enVars.RemoveEnvironmentVariable(key)
+                });
             }
             return resultList;
         }
@@ -105,15 +264,55 @@ namespace ManageConfigVariables
         ///
         /// <returns>   A List&lt;ConfigVariableResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ModifyResult> AddAllEnvVariables()
+        public List<ConfigModels.ConfigModifyResult> AddAllEnvVariables()
         {
-            var keyValueList = new List<AttributeKeyValuePair>();
-            var resultList = new List<ModifyResult>();
+            var keyValueList = new List<ConfigModels.AttributeKeyValuePair>();
+            var resultList = new List<ConfigModels.ConfigModifyResult>();
             foreach (var keyValue in keyValueList)
             {
-                resultList.Add(enVars.SetEnvironmentVariable(keyValue.key, keyValue.value));
+                resultList.Add(new ConfigModels.ConfigModifyResult()
+                {
+                    key = keyValue.key,
+                    result = enVars.SetEnvironmentVariable(keyValue.key, keyValue.value)
+                });
             }
             return resultList;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets a variable. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <param name="machineId">    Identifier for the machine. </param>
+        /// <param name="varId">        Identifier for the variable. </param>
+        /// <param name="varType">      Type of the variable. </param>
+        ///
+        /// <returns>   The variable. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public MachineAppVars GetVariable(int machineId, int varId, string varType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MachineAppVars AddVariable(MachineAppVars value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MachineAppVars DeleteVariable(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<MachineAppVars> GetMachineVariables(int machineId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MachineAppVars GetGlobalVariable(int varId, string varType)
+        {
+            throw new NotImplementedException();
         }
     }
 }

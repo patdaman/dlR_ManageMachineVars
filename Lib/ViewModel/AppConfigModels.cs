@@ -15,7 +15,7 @@ namespace ViewModel
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool active { get; set; }
         public List<Application> Applications { get; set; }
-        public List<EnvironmentVariable> EnVars { get; set; }
+        public List<EnvironmentDtoVariable> EnVars { get; set; }
         public List<ConfigVariable> ConfigVars { get; set; }
     }
 
@@ -38,12 +38,13 @@ namespace ViewModel
         public bool active { get; set; }
         public List<Machine> Machines { get; set; }
         public List<ConfigVariable> ConfigVars { get; set; }
-        public List<EnvironmentVariable> EnVars { get; set; }
+        public List<EnvironmentDtoVariable> EnVars { get; set; }
     }
 
     public class ConfigVariable
     {
         public int id { get; set; }
+        public string parent_element { get; set; }
         public string element { get; set; }
         public string attribute { get; set; }
         public string key { get; set; }
@@ -57,7 +58,7 @@ namespace ViewModel
         public List<Machine> Machines { get; set; }
     }
 
-    public class EnvironmentVariable
+    public class EnvironmentDtoVariable
     {
         public int id { get; set; }
         public string key { get; set; }

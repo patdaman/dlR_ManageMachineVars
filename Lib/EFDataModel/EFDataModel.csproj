@@ -81,6 +81,9 @@
     <Compile Include="DevOps\Enum_MachineUsageType.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Enum_ParentElement.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\EnvironmentVariable.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>

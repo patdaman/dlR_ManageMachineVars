@@ -113,20 +113,26 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   The key value. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public AttributeKeyValuePair GetKeyValue(string attribute, string appKey)
+        public AttributeKeyValuePair GetKeyValue(string appKey, string parent_element = "appSettings")
         {
-            var list = from appNode in configFile.Elements()
-                   where appNode.Attribute(attribute).Value == appKey
-                   select appNode;
-
-            var e = list.FirstOrDefault();
-
-            XElement element = configFile.Descendants(appKey).FirstOrDefault();
+            foreach (XElement y in configFile.Descendants(parent_element))
+            {
+                foreach (var x in y.Elements())
+                {
+                    if (x.FirstAttribute.Value.ToString() == appKey)
+                        return new AttributeKeyValuePair()
+                        {
+                            attribute = x.FirstAttribute.Name.ToString(),
+                            key = x.FirstAttribute.Value.ToString(),
+                            value = x.FirstAttribute.NextAttribute.Value.ToString()
+                        };
+                }
+            }
             return new AttributeKeyValuePair()
             {
-                attribute = attribute,
+                attribute = "",
                 key = appKey,
-                value = element.Value
+                value = "KEY NOT FOUND"
             };
         }
 
@@ -178,7 +184,7 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public Enums.ModifyResult AddKeyValue(string appKey, string value)
         {
-            return UpdateOrCreateAppSetting(appKey, "value", value, "key", "appSettings");
+            return UpdateOrCreateAppSetting(appKey, "value", value, "key", "appSettings", "add");
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -193,7 +199,7 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public Enums.ModifyResult AddConnectionString(string appKey, string value)
         {
-            return UpdateOrCreateAppSetting(appKey, "connectionString", value, "name", "connectionStrings");
+            return UpdateOrCreateAppSetting(appKey, "connectionString", value, "name", "connectionStrings", "add");
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -209,24 +215,27 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult UpdateOrCreateAppSetting(string attribute, string appKey, string valueName, string value, string element = null)
+        public Enums.ModifyResult UpdateOrCreateAppSetting(string attribute, string appKey, string valueName, string value, string parent_element = null, string element = null)
         {
-            string parent = string.Empty;
             string providerName = string.Empty;
 
             if (String.IsNullOrEmpty(element))
             {
                 element = "add";
             }
-            if (appKey == "key")
-                parent = "appSettings";
-            if (valueName == "connectionString")
+
+            if (string.IsNullOrEmpty(parent_element))
             {
-                parent = "connectionStrings";
-                providerName = "System.Data.EntityClient";
+                if (appKey == "key")
+                    parent_element = "appSettings";
+                if (valueName == "connectionString")
+                    parent_element = "connectionStrings";
             }
 
-            var list = (from appNode in configFile.Descendants(parent)
+            if (parent_element == "connectionStrings")
+                providerName = "System.Data.EntityClient";
+
+            var list = (from appNode in configFile.Descendants(parent_element)
                        select appNode)
                         .ToList();
 
@@ -234,7 +243,7 @@ namespace CommonUtils.AppConfiguration
             {
                 try
                 {
-                    configFile.Root.Add(new XElement(parent));
+                    configFile.Root.Add(new XElement(parent_element));
                 }
                 catch (Exception ex)
                 {
@@ -243,7 +252,7 @@ namespace CommonUtils.AppConfiguration
                 }
             }
 
-            foreach (XElement y in configFile.Descendants(parent))
+            foreach (XElement y in configFile.Descendants(parent_element))
             {
                 foreach (var x in y.Elements())
                 {
@@ -267,7 +276,7 @@ namespace CommonUtils.AppConfiguration
                 }
                 try
                 {
-                    if (parent == "connectionStrings")
+                    if (!String.IsNullOrEmpty(providerName))
                     {
                         y.Add(new XElement("add"
                                 , new XAttribute(attribute, appKey)

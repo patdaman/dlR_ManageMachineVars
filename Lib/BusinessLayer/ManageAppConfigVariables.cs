@@ -1,15 +1,11 @@
 ﻿using CommonUtils.AppConfiguration;
 using EFDataModel.DevOps;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using static ViewModel.ConfigModels;
-using static ViewModel.Enums;
 
 namespace ManageConfigVariables
 {
@@ -79,14 +75,6 @@ namespace ManageConfigVariables
             DevOpsContext = new DevOpsEntities();
         }
 
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Constructor. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
-        ///
-        /// <param name="entities"> The entities. </param>
-        /// <param name="xDoc">     The document. </param>
-        ///-------------------------------------------------------------------------------------------------
         public ManageAppConfigVariables(DevOpsEntities entities, XDocument xDoc)
         {
             configFile = xDoc;
@@ -114,9 +102,13 @@ namespace ManageConfigVariables
         ///
         /// <returns>   The application configuration value. </returns>
         ///-------------------------------------------------------------------------------------------------
-        protected AttributeKeyValuePair GetAppConfigValue(string attribute, string key)
+        public AttributeKeyValuePair GetAppConfigValue(string key, string keyType)
         {
-            return appConfigVars.GetKeyValue(attribute, key);
+            if (keyType == "connectionStrings" || keyType == "connstring" || keyType == "name")
+                return appConfigVars.GetKeyValue(key, "connectionStrings");
+            if (keyType == "appsetting" || keyType == "key" )
+                return appConfigVars.GetKeyValue(key, "appSettings");
+            return appConfigVars.GetKeyValue(key, keyType);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -165,7 +157,9 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   List all application configuration variables from database. </summary>
         ///
-        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <param name="appId">    (Optional) Identifier for the application. </param>
         ///
         /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
@@ -173,16 +167,26 @@ namespace ManageConfigVariables
         {
             var keyValues = new List<AttributeKeyValuePair>();
             ICollection<Application> applications;
+            ICollection<ConfigVariable> configVars;
 
             if (appId == null)
             {
-                applications = (from app in DevOpsContext.Applications
-                                   where app.Machines.Contains(
-                                        (from mac in DevOpsContext.Machines
-                                            where mac.machine_name == machineName
-                                            select mac).FirstOrDefault()
-                                        )
-                                   select app).ToList();
+                configVars = (from app in DevOpsContext.ConfigVariables
+                              where app.Machines.Contains(
+                                   (from mac in DevOpsContext.Machines
+                                    where mac.machine_name == machineName
+                                    select mac).FirstOrDefault()
+                                   )
+                              select app).ToList();
+                foreach (var cvar in configVars)
+                {
+                    keyValues.Add(new AttributeKeyValuePair()
+                    {
+                        attribute = cvar.parent_element,
+                        key = cvar.key,
+                        value = cvar.value
+                    });
+                }
             }
             else
             {
@@ -194,17 +198,105 @@ namespace ManageConfigVariables
                                      )
                                 where app.id == appId
                                 select app).ToList();
-            }
-            foreach (var app in applications)
-            {
-                foreach (var dbKey in app.ConfigVariables)
+                foreach (var app in applications)
                 {
-                    var keyValue = appConfigVars.GetKeyValue(dbKey.attribute, dbKey.key);
-                    keyValues.Add(keyValue);
+                    foreach (var dbKey in app.ConfigVariables)
+                    {
+                        keyValues.Add(new AttributeKeyValuePair()
+                        {
+                            attribute = dbKey.parent_element,
+                            key = dbKey.key,
+                            value = dbKey.value
+                        });
+                    }
                 }
             }
-
             return keyValues;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   List all application configuration variables from database that exist in config file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
+        ///
+        /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<AttributeKeyValuePair> ListAllMatchingAppConfigVariables(int? appId = null)
+        {
+            var keyValues = new List<AttributeKeyValuePair>();
+            var dbKeyValues = ListAllAppConfigVariablesFromDb(appId);
+
+            foreach (var dbKey in dbKeyValues)
+            {
+                var keyValue = appConfigVars.GetKeyValue(dbKey.key, dbKey.attribute);
+                if (keyValue == dbKey)
+                    keyValues.Add(keyValue);
+            }
+            return keyValues;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   List all application configuration variables from database. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
+        ///
+        /// <param name="appId">    (Optional) Identifier for the application. </param>
+        ///
+        /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<AttributeKeyValuePair> ListAllAppConfigVariablesDifferentFromDb(int? appId = null)
+        {
+            List<AttributeKeyValuePair> keyValues = ListAllAppConfigVariables();
+            foreach (var config in keyValues)
+                config.attribute = "Config File: " + config.attribute;
+
+            List<AttributeKeyValuePair> dbKeyValues = ListAllAppConfigVariablesFromDb(appId);
+            foreach (var db in dbKeyValues)
+                db.attribute = "DB: " + db.attribute;
+
+            List<AttributeKeyValuePair> combinedDiff = new List<AttributeKeyValuePair>();
+
+            combinedDiff.AddRange( 
+                        (from keys in keyValues
+                        join db in dbKeyValues
+                             on new
+                             {
+                                 JoinProperty1 = keys.key,
+                                 JoinProperty2 = keys.value,
+                                 JoinProperty3 = keys.attribute
+                             }
+                             equals
+                             new
+                             {
+                                 JoinProperty1 = db.key,
+                                 JoinProperty2 = db.value,
+                                 JoinProperty3 = db.attribute
+                             }
+                            into combined
+                        from both in combined.DefaultIfEmpty()
+                        where both == null
+                        select keys).ToList());
+
+            combinedDiff.AddRange(
+                        (from db in dbKeyValues
+                         join keys in keyValues
+                             on new
+                             {
+                                 JoinProperty1 = db.key,
+                                 JoinProperty2 = db.value,
+                                 JoinProperty3 = db.attribute
+                             }
+                             equals new
+                             {
+                                 JoinProperty1 = keys.key,
+                                 JoinProperty2 = keys.value,
+                                 JoinProperty3 = keys.attribute
+                             }
+                             into combined
+                         from both in combined.DefaultIfEmpty()
+                         where both == null
+                         select db).ToList());
+            return combinedDiff;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -245,7 +337,7 @@ namespace ManageConfigVariables
                 foreach (var x in configVars)
                 {
                     // May not be necessary since inactive keys can be removed anyways
-                    // if (dbKey.active == true)
+                    // if (dbKey.active)
                     {
                         resultList.Add(new ConfigModifyResult() { key = x.key, result = appConfigVars.RemoveKeyValue(x.attribute, x.key, x.element) });
                     }
@@ -266,7 +358,7 @@ namespace ManageConfigVariables
                     foreach (var dbKey in app.ConfigVariables)
                     {
                         // May not be necessary since inactive keys can be removed anyways
-                        // if (dbKey.active == true)
+                        // if (dbKey.active)
                         {
                             resultList.Add(new ConfigModifyResult() { key = dbKey.key, result = appConfigVars.RemoveKeyValue(dbKey.attribute, dbKey.key) });
                         }
@@ -301,10 +393,9 @@ namespace ManageConfigVariables
                               select app).ToList();
                 foreach (var x in configVars)
                 {
-                    // May not be necessary since inactive keys can be removed anyways
-                    // if (dbKey.active == true)
+                    if (x.active)
                     {
-                        resultList.Add(new ConfigModifyResult() { key = x.key, result = appConfigVars.UpdateOrCreateAppSetting(x.attribute, x.key, x.value_name, x.value, x.element) });
+                        resultList.Add(new ConfigModifyResult() { key = x.key, result = appConfigVars.UpdateOrCreateAppSetting(x.attribute, x.key, x.value_name, x.value, x.parent_element, x.element) });
                     }
                 }
             }
@@ -322,10 +413,9 @@ namespace ManageConfigVariables
                 {
                     foreach (var dbKey in app.ConfigVariables)
                     {
-                        // May not be necessary since inactive keys can be removed anyways
-                        // if (dbKey.active == true)
+                        if (dbKey.active)
                         {
-                            resultList.Add(new ConfigModifyResult() { key = dbKey.key, result = appConfigVars.UpdateOrCreateAppSetting(dbKey.attribute, dbKey.key, dbKey.value_name, dbKey.value, dbKey.element) });
+                            resultList.Add(new ConfigModifyResult() { key = dbKey.key, result = appConfigVars.UpdateOrCreateAppSetting(dbKey.attribute, dbKey.key, dbKey.value_name, dbKey.value, dbKey.parent_element, dbKey.element) });
                         }
                     }
                 }

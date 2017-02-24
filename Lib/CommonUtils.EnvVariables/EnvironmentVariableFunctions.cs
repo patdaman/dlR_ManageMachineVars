@@ -122,8 +122,12 @@ namespace CommonUtils.EnvironmentVariables
         ///
         /// <returns>   A SetConfigVariableResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ModifyResult SetEnvironmentVariable(string key, string value)
+        public ModifyResult SetEnvironmentVariable(string key, string value, string keyType = null)
         {
+            if (!string.IsNullOrEmpty(keyType) && keyType.ToLower() == "machine")
+                return SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Machine);
+            if (!string.IsNullOrEmpty(keyType) && keyType.ToLower() == "process")
+                return SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Process);
             return SetEnvironmentVariable(key, value, EnvironmentVariableTarget.User);
         }
 
@@ -146,17 +150,25 @@ namespace CommonUtils.EnvironmentVariables
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Removes the environment variable described by key. </summary>
         ///
-        /// <remarks>   Pdelosreyes, 2/8/2017. </remarks>
+        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
         ///
-        /// <param name="key">  The key. </param>
+        /// <param name="key">      The key. </param>
+        /// <param name="varType">  (Optional) Type of the variable. </param>
         ///
         /// <returns>   An ConfigVariableResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ModifyResult RemoveEnvironmentVariable(string key)
+        public ModifyResult RemoveEnvironmentVariable(string key, string varType = null)
         {
-            var machineResult = RemoveEnvironmentVariable(key, EnvironmentVariableTarget.Machine);
-            var userResult = RemoveEnvironmentVariable(key, EnvironmentVariableTarget.User);
-            var processResult = RemoveEnvironmentVariable(key, EnvironmentVariableTarget.Process);
+            ModifyResult machineResult = new ModifyResult();
+            ModifyResult userResult = new ModifyResult();
+            ModifyResult processResult = new ModifyResult();
+
+            if (varType == null || varType.ToLower() == "machine")
+                machineResult = RemoveEnvironmentVariable(key, EnvironmentVariableTarget.Machine);
+            if (varType == null || varType.ToLower() == "user")
+                userResult = RemoveEnvironmentVariable(key, EnvironmentVariableTarget.User);
+            if (varType == null || varType.ToLower() == "process")
+                processResult = RemoveEnvironmentVariable(key, EnvironmentVariableTarget.Process);
 
             if (ModifyResult.Removed.In(machineResult, userResult, processResult))
             {

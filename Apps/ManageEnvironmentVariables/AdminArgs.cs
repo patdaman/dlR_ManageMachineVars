@@ -14,9 +14,11 @@ namespace ManageConfigVariables
         public const string AddEnvVariable = "add-envar";
         public const string RemoveEnvVariable = "remove-envar";
         public const string GetEnvValue = "get-envalue";
+        public const string ListAllAppConfigVariables = "get-allappconfig";
+        public const string ListAllAppConfigVariablesFromDb = "get-dbappconfig";
+        public const string ListAllDiffAppConfigVariables = "get-diffappconfig";
         public const string AddAllAppConfigVariables = "add-allappconfig";
         public const string RemoveAllAppConfigVariables = "remove-allappconfig";
-        public const string ListAllAppConfigVariables = "get-allappconfig";
         public const string AddAppConfigVariable = "add-appconfig";
         public const string RemoveAppConfigVariable = "remove-appconfig";
         public const string GetAppConfigValue = "get-appconfigvalue";
@@ -26,6 +28,9 @@ namespace ManageConfigVariables
     {
         public const string ConnectionString = "connstring";
         public const string AppSetting = "appsetting";
+        public const string User = "user";
+        public const string Machine = "machine";
+        public const string Session = "session";
     }
 
     public class AdminArgs

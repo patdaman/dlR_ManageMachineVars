@@ -56,9 +56,9 @@ namespace BusinessLayer
             return CommonUtils.Reflection.ReflectionUtils.CreateNewObjectAndCopyProperties<ViewModel.ConfigVariable>(EF);
         }
 
-        public List<ViewModel.EnvironmentVariable> EfEnVarListToVm(ICollection<EFDataModel.DevOps.EnvironmentVariable> EF)
+        public List<ViewModel.EnvironmentDtoVariable> EfEnVarListToVm(ICollection<EFDataModel.DevOps.EnvironmentVariable> EF)
         {
-            var vm = new List<ViewModel.EnvironmentVariable>();
+            var vm = new List<ViewModel.EnvironmentDtoVariable>();
             foreach (var x in EF)
             {
                 vm.Add(EnVarEfToVm(x));
@@ -66,9 +66,9 @@ namespace BusinessLayer
             return vm;
         }
 
-        private ViewModel.EnvironmentVariable EnVarEfToVm(EFDataModel.DevOps.EnvironmentVariable EF)
+        private ViewModel.EnvironmentDtoVariable EnVarEfToVm(EFDataModel.DevOps.EnvironmentVariable EF)
         {
-            return CommonUtils.Reflection.ReflectionUtils.CreateNewObjectAndCopyProperties<ViewModel.EnvironmentVariable>(EF);
+            return CommonUtils.Reflection.ReflectionUtils.CreateNewObjectAndCopyProperties<ViewModel.EnvironmentDtoVariable>(EF);
         }
     }
 }

@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="ConvertObjects.cs" />
     <Compile Include="ManageAppConfigVariables.cs" />
-    <Compile Include="ManageConfig.cs" />
     <Compile Include="ManageEnvironmentVariables.cs" />
     <Compile Include="ManageMachines.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

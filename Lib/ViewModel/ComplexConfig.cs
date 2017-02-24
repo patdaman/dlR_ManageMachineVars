@@ -113,7 +113,7 @@ namespace ViewModel
 
         }
 
-        public MachineAppVars(EnvironmentVariable x)
+        public MachineAppVars(EnvironmentDtoVariable x)
         {
 
         }

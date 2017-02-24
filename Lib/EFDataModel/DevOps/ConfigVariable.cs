@@ -18,11 +18,11 @@ namespace EFDataModel.DevOps
         public ConfigVariable()
         {
             this.Applications = new HashSet<Application>();
-            this.Applications1 = new HashSet<Application>();
             this.Machines = new HashSet<Machine>();
         }
     
         public int id { get; set; }
+        public string parent_element { get; set; }
         public string element { get; set; }
         public string attribute { get; set; }
         public string key { get; set; }
@@ -33,10 +33,9 @@ namespace EFDataModel.DevOps
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool active { get; set; }
     
+        public virtual Enum_ParentElement Enum_ParentElement { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Application> Applications { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Application> Applications1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Machine> Machines { get; set; }
     }
