@@ -186,6 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularJS\app.js" />
+    <Content Include="AngularJS\Models\Machine.js" />
+    <Content Include="AngularJS\Models\MachineJs.js" />
+    <Content Include="AngularJS\Services\MachineService.js" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
