@@ -57,6 +57,9 @@
     <Compile Include="DevOps\ConfigVariable.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Device.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\DevOps.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -87,6 +90,12 @@
     <Compile Include="DevOps\EnvironmentVariable.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Event.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\ExecutionHistory.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Machine.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
@@ -94,6 +103,9 @@
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Partials\DevOpsEntities.cs" />
+    <Compile Include="DevOps\Script.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -87,10 +87,17 @@
     <Build Include="Security\Login1.sql" />
     <Build Include="Tables\MachineConfigVars.sql" />
     <Build Include="Tables\Enum_ParentElement.sql" />
+    <Build Include="Tables\Scripts.sql" />
+    <Build Include="Tables\ExecutionHistory.sql" />
+    <Build Include="Tables\Events.sql" />
+    <Build Include="Tables\Devices.sql" />
+    <Build Include="Security\shell.sql" />
+    <Build Include="Security\logging.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />
     <None Include="DevOps.localhost.publish.xml" />
+    <None Include="SqlSchemaCompare_HQDEV04.scmp" />
     <None Include="SqlSchemaCompare_Localhost.scmp" />
   </ItemGroup>
 </Project>
