@@ -54,7 +54,6 @@
     <Compile Include="ManageComplexConfigVariables.cs" />
     <Compile Include="ManageEnvironmentVariables.cs" />
     <Compile Include="ManageMachines.cs" />
-    <Compile Include="ManagePowershellScripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,10 +68,6 @@
     <ProjectReference Include="..\CommonUtils.EnvVariables\CommonUtils.EnvVariables.csproj">
       <Project>{684bc424-e89c-44d1-8194-7c9754957e28}</Project>
       <Name>CommonUtils.EnvVariables</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CommonUtils.Powershell\CommonUtils.Powershell.csproj">
-      <Project>{c583a486-da8c-49d4-a1ee-1353ba094315}</Project>
-      <Name>CommonUtils.Powershell</Name>
     </ProjectReference>
     <ProjectReference Include="..\CommonUtils.Reflection\CommonUtils.Reflection.csproj">
       <Project>{a91ff807-0524-481b-888f-e323076c340e}</Project>

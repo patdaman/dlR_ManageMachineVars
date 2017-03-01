@@ -146,52 +146,6 @@
           <Property Name="environmentVariable_id" Type="int" Nullable="false" />
           <Property Name="machine_id" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="Devices">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="device_name" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="ip_address" Type="varchar" MaxLength="256" />
-          <Property Name="create_date" Type="datetime" Nullable="false" />
-          <Property Name="modify_date" Type="datetime" />
-          <Property Name="active" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Events">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="device_id" Type="int" />
-          <Property Name="Hostname" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="Date" Type="date" Nullable="false" />
-          <Property Name="Time" Type="time" Precision="7" Nullable="false" />
-          <Property Name="Priority" Type="varchar" MaxLength="128" />
-          <Property Name="Message" Type="nvarchar" MaxLength="1024" />
-        </EntityType>
-        <EntityType Name="ExecutionHistory">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="script_id" Type="int" Nullable="false" />
-          <Property Name="script_name" Type="varchar" MaxLength="256" />
-          <Property Name="user_name" Type="varchar" MaxLength="256" />
-          <Property Name="execution_dt" Type="datetime" Nullable="false" />
-          <Property Name="contains_errors" Type="bit" Nullable="false" />
-          <Property Name="output" Type="nvarchar" MaxLength="4000" />
-        </EntityType>
-        <EntityType Name="Scripts">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="script_name" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="script_text" Type="nvarchar" MaxLength="4000" Nullable="false" />
-          <Property Name="create_date" Type="datetime" Nullable="false" />
-          <Property Name="modify_date" Type="datetime" />
-          <Property Name="is_active" Type="bit" Nullable="false" />
-        </EntityType>
         <Association Name="FK_ApplicationConfigVariables_Applications">
           <End Role="Applications" Type="Self.Applications" Multiplicity="1" />
           <End Role="ApplicationConfigVariables" Type="Self.ApplicationConfigVariables" Multiplicity="*" />
@@ -261,30 +215,6 @@
             </Principal>
             <Dependent Role="EnvironmentVariables">
               <PropertyRef Name="type" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Events_Devices">
-          <End Role="Devices" Type="Self.Devices" Multiplicity="0..1" />
-          <End Role="Events" Type="Self.Events" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Devices">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="Events">
-              <PropertyRef Name="device_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ExecutionHistory_Scripts">
-          <End Role="Scripts" Type="Self.Scripts" Multiplicity="1" />
-          <End Role="ExecutionHistory" Type="Self.ExecutionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Scripts">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ExecutionHistory">
-              <PropertyRef Name="script_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -440,10 +370,6 @@
           <EntitySet Name="MachineGroupMapping" EntityType="Self.MachineGroupMapping" Schema="config" store:Type="Tables" />
           <EntitySet Name="Machines" EntityType="Self.Machines" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineVariables" EntityType="Self.MachineVariables" Schema="config" store:Type="Tables" />
-          <EntitySet Name="Devices" EntityType="Self.Devices" Schema="logging" store:Type="Tables" />
-          <EntitySet Name="Events" EntityType="Self.Events" Schema="logging" store:Type="Tables" />
-          <EntitySet Name="ExecutionHistory" EntityType="Self.ExecutionHistory" Schema="shell" store:Type="Tables" />
-          <EntitySet Name="Scripts" EntityType="Self.Scripts" Schema="shell" store:Type="Tables" />
           <AssociationSet Name="FK_ApplicationConfigVariables_Applications" Association="Self.FK_ApplicationConfigVariables_Applications">
             <End Role="Applications" EntitySet="Applications" />
             <End Role="ApplicationConfigVariables" EntitySet="ApplicationConfigVariables" />
@@ -467,14 +393,6 @@
           <AssociationSet Name="FK_EnvironmentVariables_Enum_EnvironmentVariableType" Association="Self.FK_EnvironmentVariables_Enum_EnvironmentVariableType">
             <End Role="Enum_EnvironmentVariableType" EntitySet="Enum_EnvironmentVariableType" />
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Events_Devices" Association="Self.FK_Events_Devices">
-            <End Role="Devices" EntitySet="Devices" />
-            <End Role="Events" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExecutionHistory_Scripts" Association="Self.FK_ExecutionHistory_Scripts">
-            <End Role="Scripts" EntitySet="Scripts" />
-            <End Role="ExecutionHistory" EntitySet="ExecutionHistory" />
           </AssociationSet>
           <AssociationSet Name="FK_MachineApplications_Applications" Association="Self.FK_MachineApplications_Applications">
             <End Role="Applications" EntitySet="Applications" />
@@ -702,18 +620,6 @@
             <End Role="ConfigVariable" EntitySet="ConfigVariables" />
             <End Role="Machine" EntitySet="Machines" />
           </AssociationSet>
-          <EntitySet Name="Devices" EntityType="DevOpsModel.Device" />
-          <EntitySet Name="Events" EntityType="DevOpsModel.Event" />
-          <EntitySet Name="ExecutionHistories" EntityType="DevOpsModel.ExecutionHistory" />
-          <EntitySet Name="Scripts" EntityType="DevOpsModel.Script" />
-          <AssociationSet Name="FK_Events_Devices" Association="DevOpsModel.FK_Events_Devices">
-            <End Role="Device" EntitySet="Devices" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExecutionHistory_Scripts" Association="DevOpsModel.FK_ExecutionHistory_Scripts">
-            <End Role="Script" EntitySet="Scripts" />
-            <End Role="ExecutionHistory" EntitySet="ExecutionHistories" />
-          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Enum_ParentElement">
           <Key>
@@ -784,80 +690,6 @@
         <Association Name="MachineConfigVars">
           <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="*" />
           <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
-        </Association>
-        <EntityType Name="Device">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="device_name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="ip_address" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Events" Relationship="DevOpsModel.FK_Events_Devices" FromRole="Device" ToRole="Event" />
-        </EntityType>
-        <EntityType Name="Event">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="device_id" Type="Int32" />
-          <Property Name="Hostname" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Time" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="Priority" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="Message" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Device" Relationship="DevOpsModel.FK_Events_Devices" FromRole="Event" ToRole="Device" />
-        </EntityType>
-        <EntityType Name="ExecutionHistory">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="script_id" Type="Int32" Nullable="false" />
-          <Property Name="script_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="user_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="execution_dt" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="contains_errors" Type="Boolean" Nullable="false" />
-          <Property Name="output" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Script" Relationship="DevOpsModel.FK_ExecutionHistory_Scripts" FromRole="ExecutionHistory" ToRole="Script" />
-        </EntityType>
-        <EntityType Name="Script">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="script_name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="script_text" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="is_active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ExecutionHistories" Relationship="DevOpsModel.FK_ExecutionHistory_Scripts" FromRole="Script" ToRole="ExecutionHistory" />
-        </EntityType>
-        <Association Name="FK_Events_Devices">
-          <End Type="DevOpsModel.Device" Role="Device" Multiplicity="0..1" />
-          <End Type="DevOpsModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Device">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="device_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ExecutionHistory_Scripts">
-          <End Type="DevOpsModel.Script" Role="Script" Multiplicity="1" />
-          <End Type="DevOpsModel.ExecutionHistory" Role="ExecutionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Script">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ExecutionHistory">
-              <PropertyRef Name="script_id" />
-            </Dependent>
-          </ReferentialConstraint>
         </Association>
       </Schema>
     </edmx:ConceptualModels>
@@ -1017,56 +849,6 @@
               <ScalarProperty Name="id" ColumnName="appConfigVariable_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="Devices">
-            <EntityTypeMapping TypeName="DevOpsModel.Device">
-              <MappingFragment StoreEntitySet="Devices">
-                <ScalarProperty Name="active" ColumnName="active" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="ip_address" ColumnName="ip_address" />
-                <ScalarProperty Name="device_name" ColumnName="device_name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Events">
-            <EntityTypeMapping TypeName="DevOpsModel.Event">
-              <MappingFragment StoreEntitySet="Events">
-                <ScalarProperty Name="Message" ColumnName="Message" />
-                <ScalarProperty Name="Priority" ColumnName="Priority" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Hostname" ColumnName="Hostname" />
-                <ScalarProperty Name="device_id" ColumnName="device_id" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExecutionHistories">
-            <EntityTypeMapping TypeName="DevOpsModel.ExecutionHistory">
-              <MappingFragment StoreEntitySet="ExecutionHistory">
-                <ScalarProperty Name="output" ColumnName="output" />
-                <ScalarProperty Name="contains_errors" ColumnName="contains_errors" />
-                <ScalarProperty Name="execution_dt" ColumnName="execution_dt" />
-                <ScalarProperty Name="user_name" ColumnName="user_name" />
-                <ScalarProperty Name="script_name" ColumnName="script_name" />
-                <ScalarProperty Name="script_id" ColumnName="script_id" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Scripts">
-            <EntityTypeMapping TypeName="DevOpsModel.Script">
-              <MappingFragment StoreEntitySet="Scripts">
-                <ScalarProperty Name="is_active" ColumnName="is_active" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="script_text" ColumnName="script_text" />
-                <ScalarProperty Name="script_name" ColumnName="script_name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
