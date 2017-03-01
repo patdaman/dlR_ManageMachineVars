@@ -44,6 +44,7 @@
     <Compile Include="ComplexConfig.cs" />
     <Compile Include="ConfigModels.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="PowershellModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

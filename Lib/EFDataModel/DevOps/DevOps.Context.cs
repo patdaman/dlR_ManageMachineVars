@@ -36,6 +36,10 @@ namespace EFDataModel.DevOps
         public virtual DbSet<Enum_ParentElement> Enum_ParentElement { get; set; }
         public virtual DbSet<Application> Applications { get; set; }
         public virtual DbSet<ConfigVariable> ConfigVariables { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<ExecutionHistory> ExecutionHistories { get; set; }
+        public virtual DbSet<Script> Scripts { get; set; }
     
         public virtual int usp_SearchAuditTablesForInvalidUser(string validUserPrefix, string validCommaSeparatedList, string invalidCommaSeparatedList, string validSchemaCommaSeparatedList, string invalidSchemaCommaSeparatedList, string validTableCommaSeparatedList, string invalidTableCommaSeparatedList, Nullable<bool> printQuery, Nullable<bool> deleteRows)
         {

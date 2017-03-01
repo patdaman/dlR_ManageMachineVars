@@ -8,6 +8,48 @@ namespace CommonUtils.Powershell
 {
     public class PowershellTools
     {
+        public string machine { get; set; }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Default constructor. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
+        ///-------------------------------------------------------------------------------------------------
+        public PowershellTools()
+        {
+            if (!string.IsNullOrEmpty(machine))
+            {
+                Initialize();
+            }
+        }
+
+        public PowershellTools(string machineName)
+        {
+            machine = machineName;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Executes the powershell script operation. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
+        ///
+        /// <param name="script">       The script. </param>
+        /// <param name="parameters">   (Optional) Options for controlling the operation. </param>
+        ///
+        /// <returns>   A List&lt;string&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<string> ExecuteScript(string script, List<KeyValuePair<string, string>> parameters = null)
+        {
+            Collection<PSObject> runScript = ExecuteScriptReturnObjects(script, parameters);
+            return FormatPSOutput(runScript);
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Executes the powershell script operation. </summary>
         ///
@@ -18,7 +60,7 @@ namespace CommonUtils.Powershell
         ///
         /// <returns>   A Collection&lt;PSObject&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Collection<PSObject> RunPowershellScript(string script, List<KeyValuePair<string, string>> parameters = null)
+        public Collection<PSObject> ExecuteScriptReturnObjects(string script, List<KeyValuePair<string, string>> parameters = null)
         {
             RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
 
@@ -55,7 +97,7 @@ namespace CommonUtils.Powershell
         /// <param name="scriptFile">       The script file. </param>
         /// <param name="scriptParameters"> Options for controlling the script. </param>
         ///-------------------------------------------------------------------------------------------------
-        public static void RunPowershellScript(string scriptFile, string scriptParameters)
+        public static void ExecuteScript(string scriptFile, string scriptParameters)
         {
             RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
             Runspace runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
@@ -84,7 +126,7 @@ namespace CommonUtils.Powershell
         ///
         /// <returns>   The formatted ps output. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public static List<string> FormatPSOutput(List<PSObject> psout)
+        private static List<string> FormatPSOutput(Collection<PSObject> psout)
         {
             List<string> psoutList = new List<string>();
             foreach (var result in psout)
@@ -103,7 +145,7 @@ namespace CommonUtils.Powershell
         ///
         /// <returns>   The formatted output object. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public static string FormatOutputObject(PSObject psoutLine)
+        private static string FormatOutputObject(PSObject psoutLine)
         {
             var baseObj = psoutLine.BaseObject;
             if (baseObj is System.Diagnostics.Process)

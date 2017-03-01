@@ -24,6 +24,12 @@
         <AssociationConnector Association="DevOpsModel.ApplicationEnvironmentVariables" />
         <AssociationConnector Association="DevOpsModel.MachineApplications" />
         <AssociationConnector Association="DevOpsModel.MachineConfigVars" />
+        <EntityTypeShape EntityType="DevOpsModel.Device" Width="1.5" PointX="10.375" PointY="1" />
+        <EntityTypeShape EntityType="DevOpsModel.Event" Width="1.5" PointX="12.625" PointY="1" />
+        <EntityTypeShape EntityType="DevOpsModel.ExecutionHistory" Width="1.5" PointX="9.625" PointY="7" />
+        <EntityTypeShape EntityType="DevOpsModel.Script" Width="1.5" PointX="7.375" PointY="7" />
+        <AssociationConnector Association="DevOpsModel.FK_Events_Devices" />
+        <AssociationConnector Association="DevOpsModel.FK_ExecutionHistory_Scripts" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

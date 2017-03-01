@@ -10,9 +10,37 @@ namespace BusinessLayer
 {
     public class ManageComplexConfigVariables
     {
-        DevOpsEntities DevOpsContext = new DevOpsEntities();
+        DevOpsEntities DevOpsContext;
         ConvertObjects EfToVmConverter = new ConvertObjects();
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Default constructor. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
+        ///-------------------------------------------------------------------------------------------------
+        public ManageComplexConfigVariables()
+        {
+            DevOpsContext = new DevOpsEntities();
+            // EfToVmConverter = new ConvertObjects();
+        }
+
+        public ManageComplexConfigVariables(DevOpsEntities entities)
+        {
+            DevOpsContext = entities;
+        }
+
+        public ManageComplexConfigVariables(string conn)
+        {
+            DevOpsContext = new DevOpsEntities(conn);
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
+        ///
+        /// <returns>   all variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<ViewModel.MachineAppVars> GetAllVariables()
         {
             List<ViewModel.MachineAppVars_Complete> allVars_Complete = new List<MachineAppVars_Complete>();
@@ -26,6 +54,13 @@ namespace BusinessLayer
             return allVars;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all configuration variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
+        ///
+        /// <returns>   all configuration variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<ViewModel.ConfigVariable> GetAllConfigVariables()
         {
             var configVars = new List<ViewModel.ConfigVariable>();
@@ -53,6 +88,13 @@ namespace BusinessLayer
             return configVars;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all en variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
+        ///
+        /// <returns>   all en variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<ViewModel.EnvironmentDtoVariable> GetAllEnVariables()
         {
             var enVars = new List<ViewModel.EnvironmentDtoVariable>();
