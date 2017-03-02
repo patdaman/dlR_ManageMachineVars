@@ -51,10 +51,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DevOps\AddConfigVarToMachineApp_Result.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Application.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\ConfigVariable.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\ConfigVariableValue.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Device.cs">
@@ -75,16 +81,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DevOps.edmx</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Enum_EnvironmentType.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Enum_EnvironmentVariableType.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Enum_Locations.cs">
-      <DependentUpon>DevOps.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DevOps\Enum_MachineUsageType.cs">
-      <DependentUpon>DevOps.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DevOps\Enum_ParentElement.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\EnvironmentVariable.cs">
@@ -96,10 +99,13 @@
     <Compile Include="DevOps\ExecutionHistory.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\GetConfigVariables_Result.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Machine.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
-    <Compile Include="DevOps\MachineGroup.cs">
+    <Compile Include="DevOps\MachineAppPath.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Partials\DevOpsEntities.cs" />

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="PowershellTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemotePowerShell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

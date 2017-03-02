@@ -27,19 +27,83 @@ namespace EFDataModel.DevOps
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Enum_EnvironmentVariableType> Enum_EnvironmentVariableType { get; set; }
-        public virtual DbSet<Enum_Locations> Enum_Locations { get; set; }
-        public virtual DbSet<Enum_MachineUsageType> Enum_MachineUsageType { get; set; }
-        public virtual DbSet<EnvironmentVariable> EnvironmentVariables { get; set; }
-        public virtual DbSet<MachineGroup> MachineGroups { get; set; }
-        public virtual DbSet<Machine> Machines { get; set; }
-        public virtual DbSet<Enum_ParentElement> Enum_ParentElement { get; set; }
         public virtual DbSet<Application> Applications { get; set; }
         public virtual DbSet<ConfigVariable> ConfigVariables { get; set; }
+        public virtual DbSet<Enum_EnvironmentType> Enum_EnvironmentType { get; set; }
+        public virtual DbSet<Enum_EnvironmentVariableType> Enum_EnvironmentVariableType { get; set; }
+        public virtual DbSet<Enum_Locations> Enum_Locations { get; set; }
+        public virtual DbSet<EnvironmentVariable> EnvironmentVariables { get; set; }
+        public virtual DbSet<MachineAppPath> MachineAppPaths { get; set; }
+        public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<ExecutionHistory> ExecutionHistories { get; set; }
         public virtual DbSet<Script> Scripts { get; set; }
+        public virtual DbSet<ConfigVariableValue> ConfigVariableValues { get; set; }
+    
+        public virtual ObjectResult<AddConfigVarToMachineApp_Result> AddConfigVarToMachineApp(Nullable<int> configVarId, Nullable<int> machineId, Nullable<int> appId, string configPath)
+        {
+            var configVarIdParameter = configVarId.HasValue ?
+                new ObjectParameter("ConfigVarId", configVarId) :
+                new ObjectParameter("ConfigVarId", typeof(int));
+    
+            var machineIdParameter = machineId.HasValue ?
+                new ObjectParameter("MachineId", machineId) :
+                new ObjectParameter("MachineId", typeof(int));
+    
+            var appIdParameter = appId.HasValue ?
+                new ObjectParameter("AppId", appId) :
+                new ObjectParameter("AppId", typeof(int));
+    
+            var configPathParameter = configPath != null ?
+                new ObjectParameter("ConfigPath", configPath) :
+                new ObjectParameter("ConfigPath", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<AddConfigVarToMachineApp_Result>("AddConfigVarToMachineApp", configVarIdParameter, machineIdParameter, appIdParameter, configPathParameter);
+        }
+    
+        public virtual ObjectResult<GetConfigVariables_Result> GetConfigVariables(Nullable<int> machineId, Nullable<int> applicationId, string environment, Nullable<bool> displayInactive)
+        {
+            var machineIdParameter = machineId.HasValue ?
+                new ObjectParameter("MachineId", machineId) :
+                new ObjectParameter("MachineId", typeof(int));
+    
+            var applicationIdParameter = applicationId.HasValue ?
+                new ObjectParameter("ApplicationId", applicationId) :
+                new ObjectParameter("ApplicationId", typeof(int));
+    
+            var environmentParameter = environment != null ?
+                new ObjectParameter("Environment", environment) :
+                new ObjectParameter("Environment", typeof(string));
+    
+            var displayInactiveParameter = displayInactive.HasValue ?
+                new ObjectParameter("DisplayInactive", displayInactive) :
+                new ObjectParameter("DisplayInactive", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetConfigVariables_Result>("GetConfigVariables", machineIdParameter, applicationIdParameter, environmentParameter, displayInactiveParameter);
+        }
+    
+        public virtual int usp_GenerateAuditTables(string tableName, string auditNameExtention, Nullable<bool> dropAuditTable)
+        {
+            var tableNameParameter = tableName != null ?
+                new ObjectParameter("TableName", tableName) :
+                new ObjectParameter("TableName", typeof(string));
+    
+            var auditNameExtentionParameter = auditNameExtention != null ?
+                new ObjectParameter("AuditNameExtention", auditNameExtention) :
+                new ObjectParameter("AuditNameExtention", typeof(string));
+    
+            var dropAuditTableParameter = dropAuditTable.HasValue ?
+                new ObjectParameter("DropAuditTable", dropAuditTable) :
+                new ObjectParameter("DropAuditTable", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GenerateAuditTables", tableNameParameter, auditNameExtentionParameter, dropAuditTableParameter);
+        }
+    
+        public virtual int usp_InsertErrorDetails()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_InsertErrorDetails");
+        }
     
         public virtual int usp_SearchAuditTablesForInvalidUser(string validUserPrefix, string validCommaSeparatedList, string invalidCommaSeparatedList, string validSchemaCommaSeparatedList, string invalidSchemaCommaSeparatedList, string validTableCommaSeparatedList, string invalidTableCommaSeparatedList, Nullable<bool> printQuery, Nullable<bool> deleteRows)
         {

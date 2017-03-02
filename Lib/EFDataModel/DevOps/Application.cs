@@ -17,6 +17,7 @@ namespace EFDataModel.DevOps
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Application()
         {
+            this.MachineAppPaths = new HashSet<MachineAppPath>();
             this.ConfigVariables = new HashSet<ConfigVariable>();
             this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
             this.Machines = new HashSet<Machine>();
@@ -29,6 +30,8 @@ namespace EFDataModel.DevOps
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool active { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MachineAppPath> MachineAppPaths { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariable> ConfigVariables { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -37,15 +37,31 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="parent_element" Type="varchar" MaxLength="256" />
-          <Property Name="element" Type="varchar" MaxLength="256" />
+          <Property Name="parent_element" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="element" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="attribute" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="key" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="value_name" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="value" Type="varchar" MaxLength="4000" Nullable="false" />
           <Property Name="config_path" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" />
+          <Property Name="active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ConfigVariableValue">
+          <Key>
+            <PropertyRef Name="ConfigVarId" />
+            <PropertyRef Name="EnvironmentType" />
+          </Key>
+          <Property Name="ConfigVarId" Type="int" Nullable="false" />
+          <Property Name="EnvironmentType" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="value" Type="nvarchar" MaxLength="4000" />
+        </EntityType>
+        <EntityType Name="Enum_EnvironmentType">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="value" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Enum_EnvironmentVariableType">
@@ -62,22 +78,6 @@
           </Key>
           <Property Name="name" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="value" Type="varchar" MaxLength="128" Nullable="false" />
-          <Property Name="active" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Enum_MachineUsageType">
-          <Key>
-            <PropertyRef Name="name" />
-          </Key>
-          <Property Name="name" Type="varchar" MaxLength="128" Nullable="false" />
-          <Property Name="value" Type="varchar" MaxLength="128" Nullable="false" />
-          <Property Name="active" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Enum_ParentElement">
-          <Key>
-            <PropertyRef Name="name" />
-          </Key>
-          <Property Name="name" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="value" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="EnvironmentVariables">
@@ -101,29 +101,21 @@
           <Property Name="application_id" Type="int" Nullable="false" />
           <Property Name="machine_id" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="MachineAppPath">
+          <Key>
+            <PropertyRef Name="machine_id" />
+            <PropertyRef Name="application_id" />
+          </Key>
+          <Property Name="machine_id" Type="int" Nullable="false" />
+          <Property Name="application_id" Type="int" Nullable="false" />
+          <Property Name="path" Type="varchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="MachineConfigVars">
           <Key>
             <PropertyRef Name="appConfigVariable_id" />
             <PropertyRef Name="machine_id" />
           </Key>
           <Property Name="appConfigVariable_id" Type="int" Nullable="false" />
-          <Property Name="machine_id" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="MachineGroup">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="group_name" Type="varchar" MaxLength="128" Nullable="false" />
-          <Property Name="create_date" Type="datetime" Nullable="false" />
-          <Property Name="modify_date" Type="datetime" />
-        </EntityType>
-        <EntityType Name="MachineGroupMapping">
-          <Key>
-            <PropertyRef Name="group_id" />
-            <PropertyRef Name="machine_id" />
-          </Key>
-          <Property Name="group_id" Type="int" Nullable="false" />
           <Property Name="machine_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Machines">
@@ -240,15 +232,27 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ConfigVariables_Enum_ParentElement">
-          <End Role="Enum_ParentElement" Type="Self.Enum_ParentElement" Multiplicity="0..1" />
-          <End Role="ConfigVariables" Type="Self.ConfigVariables" Multiplicity="*" />
+        <Association Name="FK_ConfigVariableValue_ConfigVariables">
+          <End Role="ConfigVariables" Type="Self.ConfigVariables" Multiplicity="1" />
+          <End Role="ConfigVariableValue" Type="Self.ConfigVariableValue" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Enum_ParentElement">
+            <Principal Role="ConfigVariables">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ConfigVariableValue">
+              <PropertyRef Name="ConfigVarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigVariableValue_Enum_EnvironmentType">
+          <End Role="Enum_EnvironmentType" Type="Self.Enum_EnvironmentType" Multiplicity="1" />
+          <End Role="ConfigVariableValue" Type="Self.ConfigVariableValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Enum_EnvironmentType">
               <PropertyRef Name="name" />
             </Principal>
-            <Dependent Role="ConfigVariables">
-              <PropertyRef Name="parent_element" />
+            <Dependent Role="ConfigVariableValue">
+              <PropertyRef Name="EnvironmentType" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -300,6 +304,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MachineAppPath_Applications">
+          <End Role="Applications" Type="Self.Applications" Multiplicity="1" />
+          <End Role="MachineAppPath" Type="Self.MachineAppPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Applications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachineAppPath">
+              <PropertyRef Name="application_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MachineAppPath_Machines">
+          <End Role="Machines" Type="Self.Machines" Multiplicity="1" />
+          <End Role="MachineAppPath" Type="Self.MachineAppPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machines">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachineAppPath">
+              <PropertyRef Name="machine_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MachineConfigVariables_Machines">
           <End Role="Machines" Type="Self.Machines" Multiplicity="1" />
           <End Role="MachineApplications" Type="Self.MachineApplications" Multiplicity="*" />
@@ -336,30 +364,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_MachineGroupMapping_MachineGroup">
-          <End Role="MachineGroup" Type="Self.MachineGroup" Multiplicity="1" />
-          <End Role="MachineGroupMapping" Type="Self.MachineGroupMapping" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MachineGroup">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="MachineGroupMapping">
-              <PropertyRef Name="group_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_MachineGroupMapping_Machines">
-          <End Role="Machines" Type="Self.Machines" Multiplicity="1" />
-          <End Role="MachineGroupMapping" Type="Self.MachineGroupMapping" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Machines">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="MachineGroupMapping">
-              <PropertyRef Name="machine_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Machines_Enum_Locations">
           <End Role="Enum_Locations" Type="Self.Enum_Locations" Multiplicity="1" />
           <End Role="Machines" Type="Self.Machines" Multiplicity="*" />
@@ -369,18 +373,6 @@
             </Principal>
             <Dependent Role="Machines">
               <PropertyRef Name="location" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Machines_Enum_MachineUsageType">
-          <End Role="Enum_MachineUsageType" Type="Self.Enum_MachineUsageType" Multiplicity="1" />
-          <End Role="Machines" Type="Self.Machines" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Enum_MachineUsageType">
-              <PropertyRef Name="name" />
-            </Principal>
-            <Dependent Role="Machines">
-              <PropertyRef Name="usage" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -408,6 +400,24 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="AddConfigVarToMachineApp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="config">
+          <Parameter Name="ConfigVarId" Type="int" Mode="In" />
+          <Parameter Name="MachineId" Type="int" Mode="In" />
+          <Parameter Name="AppId" Type="int" Mode="In" />
+          <Parameter Name="ConfigPath" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="GetConfigVariables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="config">
+          <Parameter Name="MachineId" Type="int" Mode="In" />
+          <Parameter Name="ApplicationId" Type="int" Mode="In" />
+          <Parameter Name="Environment" Type="varchar" Mode="In" />
+          <Parameter Name="DisplayInactive" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="usp_GenerateAuditTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="config">
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="AuditNameExtention" Type="varchar" Mode="In" />
+          <Parameter Name="DropAuditTable" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="usp_InsertErrorDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="config" />
         <Function Name="usp_SearchAuditTablesForInvalidUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="config">
           <Parameter Name="ValidUserPrefix" Type="varchar" Mode="In" />
           <Parameter Name="ValidCommaSeparatedList" Type="varchar(max)" Mode="In" />
@@ -429,15 +439,14 @@
           <EntitySet Name="ApplicationEnvironmentVariables" EntityType="Self.ApplicationEnvironmentVariables" Schema="config" store:Type="Tables" />
           <EntitySet Name="Applications" EntityType="Self.Applications" Schema="config" store:Type="Tables" />
           <EntitySet Name="ConfigVariables" EntityType="Self.ConfigVariables" Schema="config" store:Type="Tables" />
+          <EntitySet Name="ConfigVariableValue" EntityType="Self.ConfigVariableValue" Schema="config" store:Type="Tables" />
+          <EntitySet Name="Enum_EnvironmentType" EntityType="Self.Enum_EnvironmentType" Schema="config" store:Type="Tables" />
           <EntitySet Name="Enum_EnvironmentVariableType" EntityType="Self.Enum_EnvironmentVariableType" Schema="config" store:Type="Tables" />
           <EntitySet Name="Enum_Locations" EntityType="Self.Enum_Locations" Schema="config" store:Type="Tables" />
-          <EntitySet Name="Enum_MachineUsageType" EntityType="Self.Enum_MachineUsageType" Schema="config" store:Type="Tables" />
-          <EntitySet Name="Enum_ParentElement" EntityType="Self.Enum_ParentElement" Schema="config" store:Type="Tables" />
           <EntitySet Name="EnvironmentVariables" EntityType="Self.EnvironmentVariables" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineApplications" EntityType="Self.MachineApplications" Schema="config" store:Type="Tables" />
+          <EntitySet Name="MachineAppPath" EntityType="Self.MachineAppPath" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineConfigVars" EntityType="Self.MachineConfigVars" Schema="config" store:Type="Tables" />
-          <EntitySet Name="MachineGroup" EntityType="Self.MachineGroup" Schema="config" store:Type="Tables" />
-          <EntitySet Name="MachineGroupMapping" EntityType="Self.MachineGroupMapping" Schema="config" store:Type="Tables" />
           <EntitySet Name="Machines" EntityType="Self.Machines" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineVariables" EntityType="Self.MachineVariables" Schema="config" store:Type="Tables" />
           <EntitySet Name="Devices" EntityType="Self.Devices" Schema="logging" store:Type="Tables" />
@@ -460,9 +469,13 @@
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
             <End Role="ApplicationEnvironmentVariables" EntitySet="ApplicationEnvironmentVariables" />
           </AssociationSet>
-          <AssociationSet Name="FK_ConfigVariables_Enum_ParentElement" Association="Self.FK_ConfigVariables_Enum_ParentElement">
-            <End Role="Enum_ParentElement" EntitySet="Enum_ParentElement" />
+          <AssociationSet Name="FK_ConfigVariableValue_ConfigVariables" Association="Self.FK_ConfigVariableValue_ConfigVariables">
             <End Role="ConfigVariables" EntitySet="ConfigVariables" />
+            <End Role="ConfigVariableValue" EntitySet="ConfigVariableValue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigVariableValue_Enum_EnvironmentType" Association="Self.FK_ConfigVariableValue_Enum_EnvironmentType">
+            <End Role="Enum_EnvironmentType" EntitySet="Enum_EnvironmentType" />
+            <End Role="ConfigVariableValue" EntitySet="ConfigVariableValue" />
           </AssociationSet>
           <AssociationSet Name="FK_EnvironmentVariables_Enum_EnvironmentVariableType" Association="Self.FK_EnvironmentVariables_Enum_EnvironmentVariableType">
             <End Role="Enum_EnvironmentVariableType" EntitySet="Enum_EnvironmentVariableType" />
@@ -480,6 +493,14 @@
             <End Role="Applications" EntitySet="Applications" />
             <End Role="MachineApplications" EntitySet="MachineApplications" />
           </AssociationSet>
+          <AssociationSet Name="FK_MachineAppPath_Applications" Association="Self.FK_MachineAppPath_Applications">
+            <End Role="Applications" EntitySet="Applications" />
+            <End Role="MachineAppPath" EntitySet="MachineAppPath" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MachineAppPath_Machines" Association="Self.FK_MachineAppPath_Machines">
+            <End Role="Machines" EntitySet="Machines" />
+            <End Role="MachineAppPath" EntitySet="MachineAppPath" />
+          </AssociationSet>
           <AssociationSet Name="FK_MachineConfigVariables_Machines" Association="Self.FK_MachineConfigVariables_Machines">
             <End Role="Machines" EntitySet="Machines" />
             <End Role="MachineApplications" EntitySet="MachineApplications" />
@@ -492,20 +513,8 @@
             <End Role="Machines" EntitySet="Machines" />
             <End Role="MachineConfigVars" EntitySet="MachineConfigVars" />
           </AssociationSet>
-          <AssociationSet Name="FK_MachineGroupMapping_MachineGroup" Association="Self.FK_MachineGroupMapping_MachineGroup">
-            <End Role="MachineGroup" EntitySet="MachineGroup" />
-            <End Role="MachineGroupMapping" EntitySet="MachineGroupMapping" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MachineGroupMapping_Machines" Association="Self.FK_MachineGroupMapping_Machines">
-            <End Role="Machines" EntitySet="Machines" />
-            <End Role="MachineGroupMapping" EntitySet="MachineGroupMapping" />
-          </AssociationSet>
           <AssociationSet Name="FK_Machines_Enum_Locations" Association="Self.FK_Machines_Enum_Locations">
             <End Role="Enum_Locations" EntitySet="Enum_Locations" />
-            <End Role="Machines" EntitySet="Machines" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Machines_Enum_MachineUsageType" Association="Self.FK_Machines_Enum_MachineUsageType">
-            <End Role="Enum_MachineUsageType" EntitySet="Enum_MachineUsageType" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
           <AssociationSet Name="FK_MachineVariables_EnvironmentVariables" Association="Self.FK_MachineVariables_EnvironmentVariables">
@@ -521,6 +530,48 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DevOpsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Application">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="release" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="MachineAppPaths" Relationship="Self.FK_MachineAppPath_Applications" FromRole="Applications" ToRole="MachineAppPath" />
+          <NavigationProperty Name="ConfigVariables" Relationship="Self.ApplicationConfigVariables" FromRole="Applications" ToRole="ConfigVariables" />
+          <NavigationProperty Name="EnvironmentVariables" Relationship="Self.ApplicationEnvironmentVariables" FromRole="Applications" ToRole="EnvironmentVariables" />
+          <NavigationProperty Name="Machines" Relationship="Self.MachineApplications" FromRole="Applications" ToRole="Machines" />
+        </EntityType>
+        <EntityType Name="ConfigVariable">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="parent_element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="attribute" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="value_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="config_path" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ConfigVariableValues" Relationship="Self.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariables" ToRole="ConfigVariableValue" />
+          <NavigationProperty Name="Applications" Relationship="Self.ApplicationConfigVariables" FromRole="ConfigVariables" ToRole="Applications" />
+          <NavigationProperty Name="Machines" Relationship="Self.MachineConfigVars" FromRole="ConfigVariables" ToRole="Machines" />
+        </EntityType>
+        <EntityType Name="Enum_EnvironmentType">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="value" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ConfigVariableValues" Relationship="Self.FK_ConfigVariableValue_Enum_EnvironmentType" FromRole="Enum_EnvironmentType" ToRole="ConfigVariableValue" />
+        </EntityType>
         <EntityType Name="Enum_EnvironmentVariableType">
           <Key>
             <PropertyRef Name="name" />
@@ -539,15 +590,6 @@
           <Property Name="active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Machines" Relationship="Self.FK_Machines_Enum_Locations" FromRole="Enum_Locations" ToRole="Machines" />
         </EntityType>
-        <EntityType Name="Enum_MachineUsageType">
-          <Key>
-            <PropertyRef Name="name" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="value" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Machines" Relationship="Self.FK_Machines_Enum_MachineUsageType" FromRole="Enum_MachineUsageType" ToRole="Machines" />
-        </EntityType>
         <EntityType Name="EnvironmentVariable">
           <Key>
             <PropertyRef Name="id" />
@@ -561,18 +603,19 @@
           <Property Name="modify_date" Type="DateTime" Precision="3" />
           <Property Name="active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Enum_EnvironmentVariableType" Relationship="Self.FK_EnvironmentVariables_Enum_EnvironmentVariableType" FromRole="EnvironmentVariables" ToRole="Enum_EnvironmentVariableType" />
+          <NavigationProperty Name="Applications" Relationship="Self.ApplicationEnvironmentVariables" FromRole="EnvironmentVariables" ToRole="Applications" />
           <NavigationProperty Name="Machines" Relationship="Self.MachineVariables" FromRole="EnvironmentVariables" ToRole="Machines" />
-          <NavigationProperty Name="Applications" Relationship="DevOpsModel.ApplicationEnvironmentVariables" FromRole="EnvironmentVariable" ToRole="Application" />
         </EntityType>
-        <EntityType Name="MachineGroup">
+        <EntityType Name="MachineAppPath">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="machine_id" />
+            <PropertyRef Name="application_id" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="group_name" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Machines" Relationship="Self.MachineGroupMapping" FromRole="MachineGroup" ToRole="Machines" />
+          <Property Name="machine_id" Type="Int32" Nullable="false" />
+          <Property Name="application_id" Type="Int32" Nullable="false" />
+          <Property Name="path" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Application" Relationship="Self.FK_MachineAppPath_Applications" FromRole="MachineAppPath" ToRole="Applications" />
+          <NavigationProperty Name="Machine" Relationship="Self.FK_MachineAppPath_Machines" FromRole="MachineAppPath" ToRole="Machines" />
         </EntityType>
         <EntityType Name="Machine">
           <Key>
@@ -586,12 +629,108 @@
           <Property Name="modify_date" Type="DateTime" Precision="3" />
           <Property Name="active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Enum_Locations" Relationship="Self.FK_Machines_Enum_Locations" FromRole="Machines" ToRole="Enum_Locations" />
-          <NavigationProperty Name="Enum_MachineUsageType" Relationship="Self.FK_Machines_Enum_MachineUsageType" FromRole="Machines" ToRole="Enum_MachineUsageType" />
-          <NavigationProperty Name="MachineGroups" Relationship="Self.MachineGroupMapping" FromRole="Machines" ToRole="MachineGroup" />
+          <NavigationProperty Name="MachineAppPaths" Relationship="Self.FK_MachineAppPath_Machines" FromRole="Machines" ToRole="MachineAppPath" />
+          <NavigationProperty Name="Applications" Relationship="Self.MachineApplications" FromRole="Machines" ToRole="Applications" />
+          <NavigationProperty Name="ConfigVariables" Relationship="Self.MachineConfigVars" FromRole="Machines" ToRole="ConfigVariables" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="Self.MachineVariables" FromRole="Machines" ToRole="EnvironmentVariables" />
-          <NavigationProperty Name="Applications" Relationship="DevOpsModel.MachineApplications" FromRole="Machine" ToRole="Application" />
-          <NavigationProperty Name="ConfigVariables" Relationship="DevOpsModel.MachineConfigVars" FromRole="Machine" ToRole="ConfigVariable" />
         </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="device_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ip_address" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Events" Relationship="Self.FK_Events_Devices" FromRole="Devices" ToRole="Events" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="device_id" Type="Int32" />
+          <Property Name="Hostname" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Time" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="Priority" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Message" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Device" Relationship="Self.FK_Events_Devices" FromRole="Events" ToRole="Devices" />
+        </EntityType>
+        <EntityType Name="ExecutionHistory">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="script_id" Type="Int32" Nullable="false" />
+          <Property Name="script_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="user_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="execution_dt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="contains_errors" Type="Boolean" Nullable="false" />
+          <Property Name="output" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Script" Relationship="Self.FK_ExecutionHistory_Scripts" FromRole="ExecutionHistory" ToRole="Scripts" />
+        </EntityType>
+        <EntityType Name="Script">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="script_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="script_text" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="is_active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ExecutionHistories" Relationship="Self.FK_ExecutionHistory_Scripts" FromRole="Scripts" ToRole="ExecutionHistory" />
+        </EntityType>
+        <EntityType Name="ConfigVariableValue">
+          <Key>
+            <PropertyRef Name="ConfigVarId" />
+            <PropertyRef Name="EnvironmentType" />
+          </Key>
+          <Property Name="ConfigVarId" Type="Int32" Nullable="false" />
+          <Property Name="EnvironmentType" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="value" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ConfigVariable" Relationship="Self.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariableValue" ToRole="ConfigVariables" />
+          <NavigationProperty Name="Enum_EnvironmentType" Relationship="Self.FK_ConfigVariableValue_Enum_EnvironmentType" FromRole="ConfigVariableValue" ToRole="Enum_EnvironmentType" />
+        </EntityType>
+        <Association Name="FK_MachineAppPath_Applications">
+          <End Role="Applications" Type="Self.Application" Multiplicity="1" />
+          <End Role="MachineAppPath" Type="Self.MachineAppPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Applications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachineAppPath">
+              <PropertyRef Name="application_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigVariableValue_ConfigVariables">
+          <End Role="ConfigVariables" Type="Self.ConfigVariable" Multiplicity="1" />
+          <End Role="ConfigVariableValue" Type="Self.ConfigVariableValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConfigVariables">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ConfigVariableValue">
+              <PropertyRef Name="ConfigVarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigVariableValue_Enum_EnvironmentType">
+          <End Role="Enum_EnvironmentType" Type="Self.Enum_EnvironmentType" Multiplicity="1" />
+          <End Role="ConfigVariableValue" Type="Self.ConfigVariableValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Enum_EnvironmentType">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="ConfigVariableValue">
+              <PropertyRef Name="EnvironmentType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_EnvironmentVariables_Enum_EnvironmentVariableType">
           <End Role="Enum_EnvironmentVariableType" Type="Self.Enum_EnvironmentVariableType" Multiplicity="1" />
           <End Role="EnvironmentVariables" Type="Self.EnvironmentVariable" Multiplicity="*" />
@@ -616,20 +755,56 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Machines_Enum_MachineUsageType">
-          <End Role="Enum_MachineUsageType" Type="Self.Enum_MachineUsageType" Multiplicity="1" />
-          <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
+        <Association Name="FK_MachineAppPath_Machines">
+          <End Role="Machines" Type="Self.Machine" Multiplicity="1" />
+          <End Role="MachineAppPath" Type="Self.MachineAppPath" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Enum_MachineUsageType">
-              <PropertyRef Name="name" />
+            <Principal Role="Machines">
+              <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="Machines">
-              <PropertyRef Name="usage" />
+            <Dependent Role="MachineAppPath">
+              <PropertyRef Name="machine_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="MachineGroupMapping">
-          <End Role="MachineGroup" Type="Self.MachineGroup" Multiplicity="*" />
+        <Association Name="FK_Events_Devices">
+          <End Role="Devices" Type="Self.Device" Multiplicity="0..1" />
+          <End Role="Events" Type="Self.Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Devices">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="device_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ExecutionHistory_Scripts">
+          <End Role="Scripts" Type="Self.Script" Multiplicity="1" />
+          <End Role="ExecutionHistory" Type="Self.ExecutionHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Scripts">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ExecutionHistory">
+              <PropertyRef Name="script_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ApplicationConfigVariables">
+          <End Role="Applications" Type="Self.Application" Multiplicity="*" />
+          <End Role="ConfigVariables" Type="Self.ConfigVariable" Multiplicity="*" />
+        </Association>
+        <Association Name="ApplicationEnvironmentVariables">
+          <End Role="Applications" Type="Self.Application" Multiplicity="*" />
+          <End Role="EnvironmentVariables" Type="Self.EnvironmentVariable" Multiplicity="*" />
+        </Association>
+        <Association Name="MachineApplications">
+          <End Role="Applications" Type="Self.Application" Multiplicity="*" />
+          <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
+        </Association>
+        <Association Name="MachineConfigVars">
+          <End Role="ConfigVariables" Type="Self.ConfigVariable" Multiplicity="*" />
           <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
         </Association>
         <Association Name="MachineVariables">
@@ -637,12 +812,31 @@
           <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
         </Association>
         <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Applications" EntityType="Self.Application" />
+          <EntitySet Name="ConfigVariables" EntityType="Self.ConfigVariable" />
+          <EntitySet Name="Enum_EnvironmentType" EntityType="Self.Enum_EnvironmentType" />
           <EntitySet Name="Enum_EnvironmentVariableType" EntityType="Self.Enum_EnvironmentVariableType" />
           <EntitySet Name="Enum_Locations" EntityType="Self.Enum_Locations" />
-          <EntitySet Name="Enum_MachineUsageType" EntityType="Self.Enum_MachineUsageType" />
           <EntitySet Name="EnvironmentVariables" EntityType="Self.EnvironmentVariable" />
-          <EntitySet Name="MachineGroups" EntityType="Self.MachineGroup" />
+          <EntitySet Name="MachineAppPaths" EntityType="Self.MachineAppPath" />
           <EntitySet Name="Machines" EntityType="Self.Machine" />
+          <EntitySet Name="Devices" EntityType="Self.Device" />
+          <EntitySet Name="Events" EntityType="Self.Event" />
+          <EntitySet Name="ExecutionHistories" EntityType="Self.ExecutionHistory" />
+          <EntitySet Name="Scripts" EntityType="Self.Script" />
+          <EntitySet Name="ConfigVariableValues" EntityType="Self.ConfigVariableValue" />
+          <AssociationSet Name="FK_MachineAppPath_Applications" Association="Self.FK_MachineAppPath_Applications">
+            <End Role="Applications" EntitySet="Applications" />
+            <End Role="MachineAppPath" EntitySet="MachineAppPaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigVariableValue_ConfigVariables" Association="Self.FK_ConfigVariableValue_ConfigVariables">
+            <End Role="ConfigVariables" EntitySet="ConfigVariables" />
+            <End Role="ConfigVariableValue" EntitySet="ConfigVariableValues" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigVariableValue_Enum_EnvironmentType" Association="Self.FK_ConfigVariableValue_Enum_EnvironmentType">
+            <End Role="Enum_EnvironmentType" EntitySet="Enum_EnvironmentType" />
+            <End Role="ConfigVariableValue" EntitySet="ConfigVariableValues" />
+          </AssociationSet>
           <AssociationSet Name="FK_EnvironmentVariables_Enum_EnvironmentVariableType" Association="Self.FK_EnvironmentVariables_Enum_EnvironmentVariableType">
             <End Role="Enum_EnvironmentVariableType" EntitySet="Enum_EnvironmentVariableType" />
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
@@ -651,18 +845,56 @@
             <End Role="Enum_Locations" EntitySet="Enum_Locations" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
-          <AssociationSet Name="FK_Machines_Enum_MachineUsageType" Association="Self.FK_Machines_Enum_MachineUsageType">
-            <End Role="Enum_MachineUsageType" EntitySet="Enum_MachineUsageType" />
+          <AssociationSet Name="FK_MachineAppPath_Machines" Association="Self.FK_MachineAppPath_Machines">
+            <End Role="Machines" EntitySet="Machines" />
+            <End Role="MachineAppPath" EntitySet="MachineAppPaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_Devices" Association="Self.FK_Events_Devices">
+            <End Role="Devices" EntitySet="Devices" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExecutionHistory_Scripts" Association="Self.FK_ExecutionHistory_Scripts">
+            <End Role="Scripts" EntitySet="Scripts" />
+            <End Role="ExecutionHistory" EntitySet="ExecutionHistories" />
+          </AssociationSet>
+          <AssociationSet Name="ApplicationConfigVariables" Association="Self.ApplicationConfigVariables">
+            <End Role="Applications" EntitySet="Applications" />
+            <End Role="ConfigVariables" EntitySet="ConfigVariables" />
+          </AssociationSet>
+          <AssociationSet Name="ApplicationEnvironmentVariables" Association="Self.ApplicationEnvironmentVariables">
+            <End Role="Applications" EntitySet="Applications" />
+            <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
+          </AssociationSet>
+          <AssociationSet Name="MachineApplications" Association="Self.MachineApplications">
+            <End Role="Applications" EntitySet="Applications" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
-          <AssociationSet Name="MachineGroupMapping" Association="Self.MachineGroupMapping">
-            <End Role="MachineGroup" EntitySet="MachineGroups" />
+          <AssociationSet Name="MachineConfigVars" Association="Self.MachineConfigVars">
+            <End Role="ConfigVariables" EntitySet="ConfigVariables" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
           <AssociationSet Name="MachineVariables" Association="Self.MachineVariables">
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
+          <FunctionImport Name="AddConfigVarToMachineApp" ReturnType="Collection(DevOpsModel.AddConfigVarToMachineApp_Result)">
+            <Parameter Name="ConfigVarId" Mode="In" Type="Int32" />
+            <Parameter Name="MachineId" Mode="In" Type="Int32" />
+            <Parameter Name="AppId" Mode="In" Type="Int32" />
+            <Parameter Name="ConfigPath" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetConfigVariables" ReturnType="Collection(DevOpsModel.GetConfigVariables_Result)">
+            <Parameter Name="MachineId" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationId" Mode="In" Type="Int32" />
+            <Parameter Name="Environment" Mode="In" Type="String" />
+            <Parameter Name="DisplayInactive" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="usp_GenerateAuditTables">
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="AuditNameExtention" Mode="In" Type="String" />
+            <Parameter Name="DropAuditTable" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="usp_InsertErrorDetails" />
           <FunctionImport Name="usp_SearchAuditTablesForInvalidUser">
             <Parameter Name="ValidUserPrefix" Mode="In" Type="String" />
             <Parameter Name="ValidCommaSeparatedList" Mode="In" Type="String" />
@@ -679,192 +911,68 @@
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
             <Parameter Name="Rows" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="Enum_ParentElement" EntityType="DevOpsModel.Enum_ParentElement" />
-          <EntitySet Name="Applications" EntityType="DevOpsModel.Application" />
-          <EntitySet Name="ConfigVariables" EntityType="DevOpsModel.ConfigVariable" />
-          <AssociationSet Name="FK_ConfigVariables_Enum_ParentElement" Association="DevOpsModel.FK_ConfigVariables_Enum_ParentElement">
-            <End Role="Enum_ParentElement" EntitySet="Enum_ParentElement" />
-            <End Role="ConfigVariable" EntitySet="ConfigVariables" />
-          </AssociationSet>
-          <AssociationSet Name="ApplicationConfigVariables" Association="DevOpsModel.ApplicationConfigVariables">
-            <End Role="Application" EntitySet="Applications" />
-            <End Role="ConfigVariable" EntitySet="ConfigVariables" />
-          </AssociationSet>
-          <AssociationSet Name="ApplicationEnvironmentVariables" Association="DevOpsModel.ApplicationEnvironmentVariables">
-            <End Role="Application" EntitySet="Applications" />
-            <End Role="EnvironmentVariable" EntitySet="EnvironmentVariables" />
-          </AssociationSet>
-          <AssociationSet Name="MachineApplications" Association="DevOpsModel.MachineApplications">
-            <End Role="Application" EntitySet="Applications" />
-            <End Role="Machine" EntitySet="Machines" />
-          </AssociationSet>
-          <AssociationSet Name="MachineConfigVars" Association="DevOpsModel.MachineConfigVars">
-            <End Role="ConfigVariable" EntitySet="ConfigVariables" />
-            <End Role="Machine" EntitySet="Machines" />
-          </AssociationSet>
-          <EntitySet Name="Devices" EntityType="DevOpsModel.Device" />
-          <EntitySet Name="Events" EntityType="DevOpsModel.Event" />
-          <EntitySet Name="ExecutionHistories" EntityType="DevOpsModel.ExecutionHistory" />
-          <EntitySet Name="Scripts" EntityType="DevOpsModel.Script" />
-          <AssociationSet Name="FK_Events_Devices" Association="DevOpsModel.FK_Events_Devices">
-            <End Role="Device" EntitySet="Devices" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExecutionHistory_Scripts" Association="DevOpsModel.FK_ExecutionHistory_Scripts">
-            <End Role="Script" EntitySet="Scripts" />
-            <End Role="ExecutionHistory" EntitySet="ExecutionHistories" />
-          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Enum_ParentElement">
-          <Key>
-            <PropertyRef Name="name" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="value" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ConfigVariables" Relationship="DevOpsModel.FK_ConfigVariables_Enum_ParentElement" FromRole="Enum_ParentElement" ToRole="ConfigVariable" />
-        </EntityType>
-        <EntityType Name="Application">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="release" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ConfigVariables" Relationship="DevOpsModel.ApplicationConfigVariables" FromRole="Application" ToRole="ConfigVariable" />
-          <NavigationProperty Name="EnvironmentVariables" Relationship="DevOpsModel.ApplicationEnvironmentVariables" FromRole="Application" ToRole="EnvironmentVariable" />
-          <NavigationProperty Name="Machines" Relationship="DevOpsModel.MachineApplications" FromRole="Application" ToRole="Machine" />
-        </EntityType>
-        <EntityType Name="ConfigVariable">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="parent_element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="attribute" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="key" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="value_name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="value" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="false" />
-          <Property Name="config_path" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Enum_ParentElement" Relationship="DevOpsModel.FK_ConfigVariables_Enum_ParentElement" FromRole="ConfigVariable" ToRole="Enum_ParentElement" />
-          <NavigationProperty Name="Applications" Relationship="DevOpsModel.ApplicationConfigVariables" FromRole="ConfigVariable" ToRole="Application" />
-          <NavigationProperty Name="Machines" Relationship="DevOpsModel.MachineConfigVars" FromRole="ConfigVariable" ToRole="Machine" />
-        </EntityType>
-        <Association Name="FK_ConfigVariables_Enum_ParentElement">
-          <End Type="DevOpsModel.Enum_ParentElement" Role="Enum_ParentElement" Multiplicity="0..1" />
-          <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Enum_ParentElement">
-              <PropertyRef Name="name" />
-            </Principal>
-            <Dependent Role="ConfigVariable">
-              <PropertyRef Name="parent_element" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ApplicationConfigVariables">
-          <End Type="DevOpsModel.Application" Role="Application" Multiplicity="*" />
-          <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="*" />
-        </Association>
-        <Association Name="ApplicationEnvironmentVariables">
-          <End Type="DevOpsModel.Application" Role="Application" Multiplicity="*" />
-          <End Type="DevOpsModel.EnvironmentVariable" Role="EnvironmentVariable" Multiplicity="*" />
-        </Association>
-        <Association Name="MachineApplications">
-          <End Type="DevOpsModel.Application" Role="Application" Multiplicity="*" />
-          <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
-        </Association>
-        <Association Name="MachineConfigVars">
-          <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="*" />
-          <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
-        </Association>
-        <EntityType Name="Device">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="device_name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="ip_address" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Events" Relationship="DevOpsModel.FK_Events_Devices" FromRole="Device" ToRole="Event" />
-        </EntityType>
-        <EntityType Name="Event">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="device_id" Type="Int32" />
-          <Property Name="Hostname" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Time" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="Priority" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="Message" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Device" Relationship="DevOpsModel.FK_Events_Devices" FromRole="Event" ToRole="Device" />
-        </EntityType>
-        <EntityType Name="ExecutionHistory">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="script_id" Type="Int32" Nullable="false" />
-          <Property Name="script_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="user_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="execution_dt" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="contains_errors" Type="Boolean" Nullable="false" />
-          <Property Name="output" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Script" Relationship="DevOpsModel.FK_ExecutionHistory_Scripts" FromRole="ExecutionHistory" ToRole="Script" />
-        </EntityType>
-        <EntityType Name="Script">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="script_name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="script_text" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="is_active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ExecutionHistories" Relationship="DevOpsModel.FK_ExecutionHistory_Scripts" FromRole="Script" ToRole="ExecutionHistory" />
-        </EntityType>
-        <Association Name="FK_Events_Devices">
-          <End Type="DevOpsModel.Device" Role="Device" Multiplicity="0..1" />
-          <End Type="DevOpsModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Device">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="device_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ExecutionHistory_Scripts">
-          <End Type="DevOpsModel.Script" Role="Script" Multiplicity="1" />
-          <End Type="DevOpsModel.ExecutionHistory" Role="ExecutionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Script">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ExecutionHistory">
-              <PropertyRef Name="script_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <ComplexType Name="AddConfigVarToMachineApp_Result">
+          <Property Type="Boolean" Name="Column1" Nullable="true" />
+          <Property Type="Boolean" Name="Column2" Nullable="true" />
+          <Property Type="Boolean" Name="Column3" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetConfigVariables_Result">
+          <Property Type="Int32" Name="id" Nullable="false" />
+          <Property Type="String" Name="parent_element" Nullable="false" MaxLength="256" />
+          <Property Type="String" Name="element" Nullable="false" MaxLength="256" />
+          <Property Type="String" Name="attribute" Nullable="false" MaxLength="256" />
+          <Property Type="String" Name="key" Nullable="false" MaxLength="256" />
+          <Property Type="String" Name="value_name" Nullable="false" MaxLength="256" />
+          <Property Type="String" Name="config_path" Nullable="false" MaxLength="256" />
+          <Property Type="DateTime" Name="create_date" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="modify_date" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="active" Nullable="false" />
+          <Property Type="String" Name="value" Nullable="true" MaxLength="4000" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="DevOpsModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="Applications">
+            <EntityTypeMapping TypeName="DevOpsModel.Application">
+              <MappingFragment StoreEntitySet="Applications">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="release" ColumnName="release" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="active" ColumnName="active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConfigVariables">
+            <EntityTypeMapping TypeName="DevOpsModel.ConfigVariable">
+              <MappingFragment StoreEntitySet="ConfigVariables">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
+                <ScalarProperty Name="element" ColumnName="element" />
+                <ScalarProperty Name="attribute" ColumnName="attribute" />
+                <ScalarProperty Name="key" ColumnName="key" />
+                <ScalarProperty Name="value_name" ColumnName="value_name" />
+                <ScalarProperty Name="config_path" ColumnName="config_path" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="active" ColumnName="active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Enum_EnvironmentType">
+            <EntityTypeMapping TypeName="DevOpsModel.Enum_EnvironmentType">
+              <MappingFragment StoreEntitySet="Enum_EnvironmentType">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="active" ColumnName="active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Enum_EnvironmentVariableType">
             <EntityTypeMapping TypeName="DevOpsModel.Enum_EnvironmentVariableType">
               <MappingFragment StoreEntitySet="Enum_EnvironmentVariableType">
@@ -877,15 +985,6 @@
           <EntitySetMapping Name="Enum_Locations">
             <EntityTypeMapping TypeName="DevOpsModel.Enum_Locations">
               <MappingFragment StoreEntitySet="Enum_Locations">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="value" ColumnName="value" />
-                <ScalarProperty Name="active" ColumnName="active" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Enum_MachineUsageType">
-            <EntityTypeMapping TypeName="DevOpsModel.Enum_MachineUsageType">
-              <MappingFragment StoreEntitySet="Enum_MachineUsageType">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="value" ColumnName="value" />
                 <ScalarProperty Name="active" ColumnName="active" />
@@ -906,13 +1005,12 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="MachineGroups">
-            <EntityTypeMapping TypeName="DevOpsModel.MachineGroup">
-              <MappingFragment StoreEntitySet="MachineGroup">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="group_name" ColumnName="group_name" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+          <EntitySetMapping Name="MachineAppPaths">
+            <EntityTypeMapping TypeName="DevOpsModel.MachineAppPath">
+              <MappingFragment StoreEntitySet="MachineAppPath">
+                <ScalarProperty Name="machine_id" ColumnName="machine_id" />
+                <ScalarProperty Name="application_id" ColumnName="application_id" />
+                <ScalarProperty Name="path" ColumnName="path" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -929,9 +1027,92 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="MachineGroupMapping" TypeName="DevOpsModel.MachineGroupMapping" StoreEntitySet="MachineGroupMapping">
-            <EndProperty Name="MachineGroup">
-              <ScalarProperty Name="id" ColumnName="group_id" />
+          <EntitySetMapping Name="Devices">
+            <EntityTypeMapping TypeName="DevOpsModel.Device">
+              <MappingFragment StoreEntitySet="Devices">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="device_name" ColumnName="device_name" />
+                <ScalarProperty Name="ip_address" ColumnName="ip_address" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="active" ColumnName="active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="DevOpsModel.Event">
+              <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="device_id" ColumnName="device_id" />
+                <ScalarProperty Name="Hostname" ColumnName="Hostname" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Priority" ColumnName="Priority" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExecutionHistories">
+            <EntityTypeMapping TypeName="DevOpsModel.ExecutionHistory">
+              <MappingFragment StoreEntitySet="ExecutionHistory">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="script_id" ColumnName="script_id" />
+                <ScalarProperty Name="script_name" ColumnName="script_name" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="execution_dt" ColumnName="execution_dt" />
+                <ScalarProperty Name="contains_errors" ColumnName="contains_errors" />
+                <ScalarProperty Name="output" ColumnName="output" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Scripts">
+            <EntityTypeMapping TypeName="DevOpsModel.Script">
+              <MappingFragment StoreEntitySet="Scripts">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="script_name" ColumnName="script_name" />
+                <ScalarProperty Name="script_text" ColumnName="script_text" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConfigVariableValues">
+            <EntityTypeMapping TypeName="DevOpsModel.ConfigVariableValue">
+              <MappingFragment StoreEntitySet="ConfigVariableValue">
+                <ScalarProperty Name="ConfigVarId" ColumnName="ConfigVarId" />
+                <ScalarProperty Name="EnvironmentType" ColumnName="EnvironmentType" />
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="ApplicationConfigVariables" TypeName="DevOpsModel.ApplicationConfigVariables" StoreEntitySet="ApplicationConfigVariables">
+            <EndProperty Name="Applications">
+              <ScalarProperty Name="id" ColumnName="application_id" />
+            </EndProperty>
+            <EndProperty Name="ConfigVariables">
+              <ScalarProperty Name="id" ColumnName="configvariable_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="ApplicationEnvironmentVariables" TypeName="DevOpsModel.ApplicationEnvironmentVariables" StoreEntitySet="ApplicationEnvironmentVariables">
+            <EndProperty Name="Applications">
+              <ScalarProperty Name="id" ColumnName="application_id" />
+            </EndProperty>
+            <EndProperty Name="EnvironmentVariables">
+              <ScalarProperty Name="id" ColumnName="environmentvariable_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="MachineApplications" TypeName="DevOpsModel.MachineApplications" StoreEntitySet="MachineApplications">
+            <EndProperty Name="Applications">
+              <ScalarProperty Name="id" ColumnName="application_id" />
+            </EndProperty>
+            <EndProperty Name="Machines">
+              <ScalarProperty Name="id" ColumnName="machine_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="MachineConfigVars" TypeName="DevOpsModel.MachineConfigVars" StoreEntitySet="MachineConfigVars">
+            <EndProperty Name="ConfigVariables">
+              <ScalarProperty Name="id" ColumnName="appConfigVariable_id" />
             </EndProperty>
             <EndProperty Name="Machines">
               <ScalarProperty Name="id" ColumnName="machine_id" />
@@ -945,128 +1126,36 @@
               <ScalarProperty Name="id" ColumnName="machine_id" />
             </EndProperty>
           </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="AddConfigVarToMachineApp" FunctionName="DevOpsModel.Store.AddConfigVarToMachineApp">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DevOpsModel.AddConfigVarToMachineApp_Result">
+                <ScalarProperty Name="Column1" ColumnName="Column1" />
+                <ScalarProperty Name="Column2" ColumnName="Column2" />
+                <ScalarProperty Name="Column3" ColumnName="Column3" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetConfigVariables" FunctionName="DevOpsModel.Store.GetConfigVariables">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DevOpsModel.GetConfigVariables_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
+                <ScalarProperty Name="element" ColumnName="element" />
+                <ScalarProperty Name="attribute" ColumnName="attribute" />
+                <ScalarProperty Name="key" ColumnName="key" />
+                <ScalarProperty Name="value_name" ColumnName="value_name" />
+                <ScalarProperty Name="config_path" ColumnName="config_path" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="value" ColumnName="value" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="usp_GenerateAuditTables" FunctionName="DevOpsModel.Store.usp_GenerateAuditTables" />
+          <FunctionImportMapping FunctionImportName="usp_InsertErrorDetails" FunctionName="DevOpsModel.Store.usp_InsertErrorDetails" />
           <FunctionImportMapping FunctionImportName="usp_SearchAuditTablesForInvalidUser" FunctionName="DevOpsModel.Store.usp_SearchAuditTablesForInvalidUser" />
           <FunctionImportMapping FunctionImportName="usp_ViewErrorTables" FunctionName="DevOpsModel.Store.usp_ViewErrorTables" />
-          <EntitySetMapping Name="Enum_ParentElement">
-            <EntityTypeMapping TypeName="DevOpsModel.Enum_ParentElement">
-              <MappingFragment StoreEntitySet="Enum_ParentElement">
-                <ScalarProperty Name="active" ColumnName="active" />
-                <ScalarProperty Name="value" ColumnName="value" />
-                <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Applications">
-            <EntityTypeMapping TypeName="DevOpsModel.Application">
-              <MappingFragment StoreEntitySet="Applications">
-                <ScalarProperty Name="active" ColumnName="active" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="release" ColumnName="release" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ConfigVariables">
-            <EntityTypeMapping TypeName="DevOpsModel.ConfigVariable">
-              <MappingFragment StoreEntitySet="ConfigVariables">
-                <ScalarProperty Name="active" ColumnName="active" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="config_path" ColumnName="config_path" />
-                <ScalarProperty Name="value" ColumnName="value" />
-                <ScalarProperty Name="value_name" ColumnName="value_name" />
-                <ScalarProperty Name="key" ColumnName="key" />
-                <ScalarProperty Name="attribute" ColumnName="attribute" />
-                <ScalarProperty Name="element" ColumnName="element" />
-                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="ApplicationConfigVariables" TypeName="DevOpsModel.ApplicationConfigVariables" StoreEntitySet="ApplicationConfigVariables">
-            <EndProperty Name="ConfigVariable">
-              <ScalarProperty Name="id" ColumnName="configvariable_id" />
-            </EndProperty>
-            <EndProperty Name="Application">
-              <ScalarProperty Name="id" ColumnName="application_id" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="ApplicationEnvironmentVariables" TypeName="DevOpsModel.ApplicationEnvironmentVariables" StoreEntitySet="ApplicationEnvironmentVariables">
-            <EndProperty Name="EnvironmentVariable">
-              <ScalarProperty Name="id" ColumnName="environmentvariable_id" />
-            </EndProperty>
-            <EndProperty Name="Application">
-              <ScalarProperty Name="id" ColumnName="application_id" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="MachineApplications" TypeName="DevOpsModel.MachineApplications" StoreEntitySet="MachineApplications">
-            <EndProperty Name="Machine">
-              <ScalarProperty Name="id" ColumnName="machine_id" />
-            </EndProperty>
-            <EndProperty Name="Application">
-              <ScalarProperty Name="id" ColumnName="application_id" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="MachineConfigVars" TypeName="DevOpsModel.MachineConfigVars" StoreEntitySet="MachineConfigVars">
-            <EndProperty Name="Machine">
-              <ScalarProperty Name="id" ColumnName="machine_id" />
-            </EndProperty>
-            <EndProperty Name="ConfigVariable">
-              <ScalarProperty Name="id" ColumnName="appConfigVariable_id" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <EntitySetMapping Name="Devices">
-            <EntityTypeMapping TypeName="DevOpsModel.Device">
-              <MappingFragment StoreEntitySet="Devices">
-                <ScalarProperty Name="active" ColumnName="active" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="ip_address" ColumnName="ip_address" />
-                <ScalarProperty Name="device_name" ColumnName="device_name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Events">
-            <EntityTypeMapping TypeName="DevOpsModel.Event">
-              <MappingFragment StoreEntitySet="Events">
-                <ScalarProperty Name="Message" ColumnName="Message" />
-                <ScalarProperty Name="Priority" ColumnName="Priority" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Hostname" ColumnName="Hostname" />
-                <ScalarProperty Name="device_id" ColumnName="device_id" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExecutionHistories">
-            <EntityTypeMapping TypeName="DevOpsModel.ExecutionHistory">
-              <MappingFragment StoreEntitySet="ExecutionHistory">
-                <ScalarProperty Name="output" ColumnName="output" />
-                <ScalarProperty Name="contains_errors" ColumnName="contains_errors" />
-                <ScalarProperty Name="execution_dt" ColumnName="execution_dt" />
-                <ScalarProperty Name="user_name" ColumnName="user_name" />
-                <ScalarProperty Name="script_name" ColumnName="script_name" />
-                <ScalarProperty Name="script_id" ColumnName="script_id" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Scripts">
-            <EntityTypeMapping TypeName="DevOpsModel.Script">
-              <MappingFragment StoreEntitySet="Scripts">
-                <ScalarProperty Name="is_active" ColumnName="is_active" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="script_text" ColumnName="script_text" />
-                <ScalarProperty Name="script_name" ColumnName="script_name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

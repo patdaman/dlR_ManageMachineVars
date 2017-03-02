@@ -8,7 +8,8 @@
     [active]       BIT           CONSTRAINT [DF_Machines_active] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_Machines] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_Machines_Enum_Locations] FOREIGN KEY ([location]) REFERENCES [config].[Enum_Locations] ([name]),
-    CONSTRAINT [FK_Machines_Enum_MachineUsageType] FOREIGN KEY ([usage]) REFERENCES [config].[Enum_MachineUsageType] ([name]),
     CONSTRAINT [IX_Machines_MachineName] UNIQUE NONCLUSTERED ([machine_name] ASC)
 );
+
+
 

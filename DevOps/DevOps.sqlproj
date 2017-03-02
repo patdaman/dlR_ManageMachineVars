@@ -65,13 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\ConfigVariables.sql" />
-    <Build Include="Tables\MachineGroupMapping.sql" />
     <Build Include="Tables\Applications.sql" />
     <Build Include="Tables\EnvironmentVariables.sql" />
     <Build Include="Tables\Enum_Locations.sql" />
     <Build Include="Tables\Machines.sql" />
-    <Build Include="Tables\Enum_MachineUsageType.sql" />
-    <Build Include="Tables\MachineGroup.sql" />
     <Build Include="Tables\MachineVariables.sql" />
     <Build Include="Tables\ApplicationConfigVariables.sql" />
     <Build Include="Tables\ApplicationEnvironmentVariables.sql" />
@@ -86,13 +83,17 @@
     <Build Include="Security\config.sql" />
     <Build Include="Security\Login1.sql" />
     <Build Include="Tables\MachineConfigVars.sql" />
-    <Build Include="Tables\Enum_ParentElement.sql" />
     <Build Include="Tables\Scripts.sql" />
     <Build Include="Tables\ExecutionHistory.sql" />
     <Build Include="Tables\Events.sql" />
     <Build Include="Tables\Devices.sql" />
     <Build Include="Security\shell.sql" />
     <Build Include="Security\logging.sql" />
+    <Build Include="Tables\MachineAppPath.sql" />
+    <Build Include="Tables\Enum_EnvironmentType.sql" />
+    <Build Include="Tables\ConfigVariableValue.sql" />
+    <Build Include="Stored Procedures\GetConfigVariables.sql" />
+    <Build Include="Stored Procedures\AddConfigVarToMachineApp.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

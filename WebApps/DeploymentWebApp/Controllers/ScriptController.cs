@@ -13,5 +13,17 @@ namespace DeploymentWebApp.Controllers
         {
             return View();
         }
+
+        public ActionResult Index(ViewModel.PowershellScriptExecution execScript)
+        {
+            BusinessLayer.ManagePowershellScripts scriptProcessor = new BusinessLayer.ManagePowershellScripts();
+            execScript.Output = String.Join(Environment.NewLine, scriptProcessor.ExecuteScript(execScript.ScriptText, execScript.MachineName));
+            return Results(execScript);
+        }
+
+        public ActionResult Results(ViewModel.PowershellScriptExecution execScript)
+        {
+            return View();
+        }
     }
 }
