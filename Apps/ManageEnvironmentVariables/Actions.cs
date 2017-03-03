@@ -21,9 +21,13 @@ namespace ManageConfigVariables
         public static void GetAppConfigValue(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.GetAppConfigValue(adminArgs.Key, adminArgs.KeyType);
+            ViewModel.ConfigModels.AttributeKeyValuePair configVars = appConfigProcessor.GetAppConfigValue(adminArgs.Key, adminArgs.KeyType);
             Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("Parent Attribute = {0}", configVars.parentAttribute);
+            Console.WriteLine("Attribute = {0}", configVars.attribute);
+            Console.WriteLine("key name = {0}", configVars.keyName);
             Console.WriteLine("key = {0}", configVars.key);
+            Console.WriteLine("value name = {0}", configVars.valueName);
             Console.WriteLine("value = {0}", configVars.value);
             Console.WriteLine("-------------------------------------------");
         }
@@ -38,7 +42,7 @@ namespace ManageConfigVariables
         public static void RemoveAppConfigVariable(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.RemoveAppConfigVariable(adminArgs.Key, adminArgs.KeyType);
+            var configVars = appConfigProcessor.RemoveAppConfigVariable(adminArgs.Key, adminArgs.Parent);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("key = {0}", configVars.key);
@@ -56,7 +60,7 @@ namespace ManageConfigVariables
         public static void AddAppConfigVariable(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.AddAppConfigVariable(adminArgs.Key, adminArgs.Value, adminArgs.KeyType);
+            var configVars = appConfigProcessor.AddAppConfigVariable(adminArgs.Key, adminArgs.Value, adminArgs.Parent);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("key = {0}", configVars.key);
@@ -78,8 +82,11 @@ namespace ManageConfigVariables
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
+                Console.WriteLine("Parent Attribute = {0}", x.parentAttribute);
                 Console.WriteLine("Attribute = {0}", x.attribute);
+                Console.WriteLine("key name = {0}", x.keyName);
                 Console.WriteLine("Key = {0}", x.key);
+                Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
             }
             Console.WriteLine("-------------------------------------------");
@@ -99,8 +106,11 @@ namespace ManageConfigVariables
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
+                Console.WriteLine("Parent Attribute = {0}", x.parentAttribute);
                 Console.WriteLine("Attribute = {0}", x.attribute);
+                Console.WriteLine("key name = {0}", x.keyName);
                 Console.WriteLine("Key = {0}", x.key);
+                Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
             }
             Console.WriteLine("-------------------------------------------");
@@ -120,8 +130,11 @@ namespace ManageConfigVariables
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
+                Console.WriteLine("Parent Attribute = {0}", x.parentAttribute);
                 Console.WriteLine("Attribute = {0}", x.attribute);
+                Console.WriteLine("key name = {0}", x.keyName);
                 Console.WriteLine("Key = {0}", x.key);
+                Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
             }
             Console.WriteLine("-------------------------------------------");
@@ -246,10 +259,10 @@ namespace ManageConfigVariables
         {
             ViewModel.Enums.ModifyResult result;
             ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
-            result = envProcessor.RemoveEnvVariable(adminArgs.Key, adminArgs.KeyType);
+            result = envProcessor.RemoveEnvVariable(adminArgs.Key, adminArgs.Parent);
 
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("environment variable type: ", adminArgs.KeyType);
+            Console.WriteLine("Parent Element: ", adminArgs.Parent ?? "NA");
             Console.WriteLine("key = {0}", adminArgs.Key);
             Console.WriteLine("result = {0}", result.ToString());
             Console.WriteLine("-------------------------------------------");

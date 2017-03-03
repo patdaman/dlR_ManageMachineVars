@@ -103,13 +103,13 @@ namespace BusinessLayer
         ///
         /// <returns>   The application configuration value. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public AttributeKeyValuePair GetAppConfigValue(string key, string keyType)
+        public AttributeKeyValuePair GetAppConfigValue(string key, string keyName = null)
         {
-            if (keyType == "connectionStrings" || keyType == "connstring" || keyType == "name")
+            if (keyName == "connectionStrings" || keyName == "connstring" || keyName == "name")
                 return appConfigVars.GetKeyValue(key, "connectionStrings");
-            if (keyType == "appsetting" || keyType == "key" )
+            if (keyName == "appsetting" || keyName == "key" )
                 return appConfigVars.GetKeyValue(key, "appSettings");
-            return appConfigVars.GetKeyValue(key, keyType);
+            return appConfigVars.GetKeyValue(key, keyName);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -140,16 +140,16 @@ namespace BusinessLayer
         ///
         /// <param name="key">      The key. </param>
         /// <param name="value">    The value. </param>
-        /// <param name="keyType">    The value. </param>
+        /// <param name="parent_element">    The value. </param>
         ///
         /// <returns>   A ConfigModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ConfigModifyResult AddAppConfigVariable(string key, string value, string keyType)
+        public ConfigModifyResult AddAppConfigVariable(string key, string value, string parent_element = null)
         {
             var result = new ConfigModifyResult()
             {
                 key = key,
-                result = appConfigVars.AddKeyValue(key, value)
+                result = appConfigVars.AddKeyValue(key, value, parent_element)
             };
             configFile.Save(path);
             return result;

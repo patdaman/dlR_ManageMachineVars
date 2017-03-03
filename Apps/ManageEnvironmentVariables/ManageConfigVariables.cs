@@ -14,7 +14,6 @@ namespace ManageConfigVariables
         public string AppName { get; set; }
         public string LogFilePath { get; set; }
         public string EmailAddress { get; set; }
-        public string KeyType { get; set; }
 
         static void Main(string[] args)
         {
@@ -49,7 +48,6 @@ namespace ManageConfigVariables
 
                 //Populate AdminArgs from Command line args 
                 SetupFromCommandArgs(args, adminArgs);
-                SetConfigType(adminArgs);
 
                 //Run!                
                 //Logger.Info($"Configuration is {configuration}");
@@ -86,17 +84,22 @@ namespace ManageConfigVariables
             {
                 { "h|?|help", "show usage", v => ShowHelp = true },
                 { "i|interactive", "Switch that puts app in interactive mode.", v => { IsInteractive = true; }},
-                { "l|log=", "log file path",   v => LogFilePath = v },
-                { "e|email=", "email address for errors", v=> EmailAddress = v },
-                { "a|action=", "Action to perform (required)", v => { adminArgs.Action = v.ToLower(); }},
-                { "t|keytype=", "Values: connstring|appsetting|user|machine|session", v => {adminArgs.KeyType = v; }},
-                { "k|key=", "Key name", v => {adminArgs.Key = v; }},
-                { "v|value=", "Key value", v => {adminArgs.Value = v; }},
+                //{ "l|log=", "log file path",   v => LogFilePath = v },
+                //{ "e|email=", "email address for errors", v=> EmailAddress = v },
+                
+                { "pe|parent=", "Parent Attribute (eg: databases|appSettings|connectionStrings", v => {adminArgs.Parent = v; }},
+                { "at|attribute=", "Attribute (eg: add|db|", v => {adminArgs.Attribute = v; }},
+                { "kt|keytype=", "Key Type (Environment Variable) values: Machine|User|Session", v => {adminArgs.KeyType = v; }},
+                { "kn|keyname=", "Key name", v => {adminArgs.KeyName = v; }},
+                { "k|key=", "Key", v => {adminArgs.Key = v; }},
+                { "vn|valuename=", "Value Name", v => {adminArgs.ValueName = v; }},
+                { "v|value=", "Value", v => {adminArgs.Value = v; }},
                 //{ "name|n=", "User name (user, role, etc. dependingon action) to operate with.", v => { adminArgs.UserName = v; }},
                 //{ "password|pass=", "The password", v => { adminArgs.Password = v; }},
                 { "s|suffix=", "Environment Variable Suffix", v => {adminArgs.CustomSuffix = v; }},
                 { "p|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
                 { "m|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
+                { "a|action=", "Action to perform (required)", v => { adminArgs.Action = v.ToLower(); }},
             };
             this.Initialize(typeof(ManageConfigVariables), "ManageConfigVariables"); 
             ParseArgs(args); //Parse arguments                                           
@@ -265,38 +268,6 @@ namespace ManageConfigVariables
                     break;
                 default:
                     throw new Exception($"Action {adminArgs.Action} is unknown");
-                    break;
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Sets configuration type. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 2/23/2017. </remarks>
-        ///
-        /// <param name="adminArgs">    The admin arguments. </param>
-        ///-------------------------------------------------------------------------------------------------
-        private void SetConfigType(AdminArgs adminArgs)
-        {
-            switch (adminArgs.KeyType)
-            {
-                case KeyTypes.AppSetting:
-                    adminArgs.KeyType = "appSettings";
-                    break;
-                case KeyTypes.ConnectionString:
-                    adminArgs.KeyType = "connectionStrings";
-                    break;
-                case KeyTypes.User:
-                    adminArgs.KeyType = "User";
-                    break;
-                case KeyTypes.Machine:
-                    adminArgs.KeyType = "Machine";
-                    break;
-                case KeyTypes.Session:
-                    adminArgs.KeyType = "Session";
-                    break;
-                default:
-                    adminArgs.KeyType = "appSettings";
                     break;
             }
         }

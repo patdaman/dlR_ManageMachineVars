@@ -78,37 +78,19 @@ namespace CommonUtils.AppConfiguration
             var keyValues = new List<AttributeKeyValuePair>();
             foreach (var element in configFile.Descendants())
             {
-                if (!String.IsNullOrEmpty(element.Value))
+                if (element.FirstAttribute != null
+                    && element.LastAttribute != null)
                 {
                     keyValues.Add(new AttributeKeyValuePair()
                     {
+                        parentAttribute = element.Parent.Name.ToString() ?? "",
                         attribute = element.Name.ToString(),
+                        keyName = element.FirstAttribute.Name.ToString(),
                         key = element.FirstAttribute.Value.ToString(),
+                        valueName = element.LastAttribute.Name.ToString(),
                         value = element.LastAttribute.Value.ToString()
                     });
                 }
-
-                //if (element.Name == "add")
-                //{
-                //    if (element.FirstAttribute.Name == "key")
-                //    {
-                //        keyValues.Add(new AttributeKeyValuePair()
-                //        {
-                //            attribute = element.Name.ToString(),
-                //            key = element.FirstAttribute.Value.ToString(),
-                //            value = element.LastAttribute.Value.ToString()
-                //        });
-                //    }
-                //    if (element.Parent.Name.ToString().Contains("connectionString"))
-                //    {
-                //        keyValues.Add(new AttributeKeyValuePair()
-                //        {
-                //            attribute = "connectionString",
-                //            key = element.FirstAttribute.Value.ToString(),
-                //            value = element.LastAttribute.PreviousAttribute.Value.ToString()
-                //        });
-                //    }
-                //}
             }
             return keyValues;
         }
@@ -123,19 +105,42 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   The key value. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public AttributeKeyValuePair GetKeyValue(string appKey, string parent_element = "appSettings")
+        public AttributeKeyValuePair GetKeyValue(string appKey, string parent_element = null)
         {
-            foreach (XElement y in configFile.Descendants(parent_element))
-            {
-                foreach (var x in y.Elements())
+            if (!string.IsNullOrWhiteSpace(parent_element))
+                foreach (XElement y in configFile.Descendants(parent_element))
                 {
-                    if (x.FirstAttribute.Value.ToString() == appKey)
-                        return new AttributeKeyValuePair()
-                        {
-                            attribute = x.FirstAttribute.Name.ToString(),
-                            key = x.FirstAttribute.Value.ToString(),
-                            value = x.FirstAttribute.NextAttribute.Value.ToString()
-                        };
+                    foreach (var x in y.Elements())
+                    {
+                        if (x.FirstAttribute.Value.ToString() == appKey)
+                            return new AttributeKeyValuePair()
+                            {
+                                parentAttribute = x.Parent.Name.ToString(),
+                                attribute = x.FirstAttribute.Name.ToString(),
+                                keyName = x.FirstAttribute.Name.ToString(),
+                                key = x.FirstAttribute.Value.ToString(),
+                                valueName = x.FirstAttribute.NextAttribute.Value.ToString(),
+                                value = x.FirstAttribute.NextAttribute.Value.ToString()
+                            };
+                    }
+                }
+            else
+            {
+                foreach (XElement y in configFile.Descendants())
+                {
+                    foreach (var x in y.Elements())
+                    {
+                        if (x.FirstAttribute.Value.ToString() == appKey)
+                            return new AttributeKeyValuePair()
+                            {
+                                parentAttribute = x.Parent.Name.ToString(),
+                                attribute = x.FirstAttribute.Name.ToString(),
+                                keyName = x.FirstAttribute.Name.ToString(),
+                                key = x.FirstAttribute.Value.ToString(),
+                                valueName = x.FirstAttribute.NextAttribute.Value.ToString(),
+                                value = x.FirstAttribute.NextAttribute.Value.ToString()
+                            };
+                    }
                 }
             }
             return new AttributeKeyValuePair()
@@ -151,19 +156,19 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
         ///
-        /// <param name="attribute">    The attribute. </param>
+        /// <param name="keyName">    The attribute. </param>
         /// <param name="appKey">       The application key. </param>
         /// <param name="element">      (Optional) The element. </param>
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult RemoveKeyValue(string attribute, string appKey, string element = null)
+        public Enums.ModifyResult RemoveKeyValue(string keyName, string appKey, string element = null)
         {
             foreach (XElement x in configFile.Descendants())
             {
                 if (string.IsNullOrEmpty(element) || x.Name == element)
                 {
-                    if (x.FirstAttribute.Name.ToString() == attribute &&
+                    if (x.FirstAttribute.Name.ToString() == keyName &&
                         x.FirstAttribute.Value.ToString() == appKey)
                     {
                         try
@@ -187,21 +192,18 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
         ///
-        /// <param name="appKey">   The application key. </param>
-        /// <param name="value">    The value. </param>
+        /// <param name="appKey">           The application key. </param>
+        /// <param name="value">            The value. </param>
+        /// <param name="parent_element">   (Optional) The parent element. </param>
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult AddKeyValue(string appKey, string value)
+        public Enums.ModifyResult AddKeyValue(string appKey, string value, string parent_element = null)
         {
-            //return UpdateOrCreateAppSetting(appKey, "value", value, "key", "appSettings", "add");
-            return UpdateOrCreateAppSetting("add", appKey, "value", value, "key", "appSettings");
-        }
-
-
-        public Enums.ModifyResult AddKeyValue(string appKey, string value, string parent_element)
-        {
-            //return UpdateOrCreateAppSetting(appKey, "value", value, "key", parent_element, "add");
+            if (string.IsNullOrWhiteSpace(parent_element))
+            {
+                parent_element = "appSettings";
+            }
             return UpdateOrCreateAppSetting("add", appKey, "value", value, "key", parent_element);
         }
 
@@ -229,21 +231,22 @@ namespace CommonUtils.AppConfiguration
         /// <param name="appKey">       The application key. </param>
         /// <param name="valueName">    Name of the value. </param>
         /// <param name="value">        The value. </param>
-        /// <param name="attribute">    The attribute. </param>
-        /// <param name="element">      (Optional) The element. </param>
+        /// <param name="keyName">    The attribute. </param>
+        /// <param name="attribute">      (Optional) The element. </param>
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult UpdateOrCreateAppSetting(string attribute, string appKey, string valueName, string value, string parent_element = null, string element = null)
+        public Enums.ModifyResult UpdateOrCreateAppSetting(string keyName, string appKey, string valueName, string value, string parent_element = null, string attribute = null)
         {
             string providerName = string.Empty;
+            List<XElement> list;
 
-            if (String.IsNullOrEmpty(element))
+            if (string.IsNullOrWhiteSpace(attribute))
             {
-                element = "add";
+                attribute = "add";
             }
 
-            if (string.IsNullOrEmpty(parent_element))
+            if (string.IsNullOrWhiteSpace(parent_element))
             {
                 if (appKey == "key")
                     parent_element = "appSettings";
@@ -254,9 +257,18 @@ namespace CommonUtils.AppConfiguration
             if (parent_element == "connectionStrings")
                 providerName = "System.Data.EntityClient";
 
-            var list = (from appNode in configFile.Descendants(parent_element)
-                       select appNode)
-                        .ToList();
+            if (string.IsNullOrWhiteSpace(parent_element))
+            {
+                list = (from appNode in configFile.Descendants()
+                            select appNode)
+                            .ToList();
+            }
+            else
+            {
+                list = (from appNode in configFile.Descendants(parent_element)
+                            select appNode)
+                            .ToList();
+            }
 
             if (list == null)
             {
@@ -275,9 +287,9 @@ namespace CommonUtils.AppConfiguration
             {
                 foreach (var x in y.Elements())
                 {
-                    if (x.Name == element)
+                    if (x.Name == attribute)
                     {
-                        if (x.FirstAttribute.Name.ToString() == attribute &&
+                        if (x.FirstAttribute.Name.ToString() == keyName &&
                             x.FirstAttribute.Value.ToString() == appKey)
                         {
                             try
@@ -297,15 +309,15 @@ namespace CommonUtils.AppConfiguration
                 {
                     if (!String.IsNullOrEmpty(providerName))
                     {
-                        y.Add(new XElement("add"
-                                , new XAttribute(attribute, appKey)
+                        y.Add(new XElement(attribute
+                                , new XAttribute(keyName, appKey)
                                 , new XAttribute(valueName, value)
                                 , new XAttribute("providerName", providerName)));
                     }
                     else
                     {
-                        y.Add(new XElement("add"
-                                , new XAttribute(attribute, appKey)
+                        y.Add(new XElement(attribute
+                                , new XAttribute(keyName, appKey)
                                 , new XAttribute(valueName, value)));
                     }
                     return Enums.ModifyResult.Created;

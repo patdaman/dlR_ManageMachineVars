@@ -12,8 +12,11 @@ namespace ViewModel
         ///-------------------------------------------------------------------------------------------------
         public class AttributeKeyValuePair
         {
+            public string parentAttribute;
             public string attribute;
+            public string keyName;
             public string key;
+            public string valueName;
             public string value;
         }
 
