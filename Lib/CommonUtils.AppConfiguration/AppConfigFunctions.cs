@@ -78,27 +78,37 @@ namespace CommonUtils.AppConfiguration
             var keyValues = new List<AttributeKeyValuePair>();
             foreach (var element in configFile.Descendants())
             {
-                if (element.Name == "add")
+                if (!String.IsNullOrEmpty(element.Value))
                 {
-                    if (element.FirstAttribute.Name == "key")
+                    keyValues.Add(new AttributeKeyValuePair()
                     {
-                        keyValues.Add(new AttributeKeyValuePair()
-                        {
-                            attribute = element.Name.ToString(),
-                            key = element.FirstAttribute.Value.ToString(),
-                            value = element.LastAttribute.Value.ToString()
-                        });
-                    }
-                    if (element.Parent.Name.ToString().Contains("connectionString"))
-                    {
-                        keyValues.Add(new AttributeKeyValuePair()
-                        {
-                            attribute = "connectionString",
-                            key = element.FirstAttribute.Value.ToString(),
-                            value = element.LastAttribute.PreviousAttribute.Value.ToString()
-                        });
-                    }
+                        attribute = element.Name.ToString(),
+                        key = element.FirstAttribute.Value.ToString(),
+                        value = element.LastAttribute.Value.ToString()
+                    });
                 }
+
+                //if (element.Name == "add")
+                //{
+                //    if (element.FirstAttribute.Name == "key")
+                //    {
+                //        keyValues.Add(new AttributeKeyValuePair()
+                //        {
+                //            attribute = element.Name.ToString(),
+                //            key = element.FirstAttribute.Value.ToString(),
+                //            value = element.LastAttribute.Value.ToString()
+                //        });
+                //    }
+                //    if (element.Parent.Name.ToString().Contains("connectionString"))
+                //    {
+                //        keyValues.Add(new AttributeKeyValuePair()
+                //        {
+                //            attribute = "connectionString",
+                //            key = element.FirstAttribute.Value.ToString(),
+                //            value = element.LastAttribute.PreviousAttribute.Value.ToString()
+                //        });
+                //    }
+                //}
             }
             return keyValues;
         }
@@ -184,7 +194,15 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public Enums.ModifyResult AddKeyValue(string appKey, string value)
         {
-            return UpdateOrCreateAppSetting(appKey, "value", value, "key", "appSettings", "add");
+            //return UpdateOrCreateAppSetting(appKey, "value", value, "key", "appSettings", "add");
+            return UpdateOrCreateAppSetting("add", appKey, "value", value, "key", "appSettings");
+        }
+
+
+        public Enums.ModifyResult AddKeyValue(string appKey, string value, string parent_element)
+        {
+            //return UpdateOrCreateAppSetting(appKey, "value", value, "key", parent_element, "add");
+            return UpdateOrCreateAppSetting("add", appKey, "value", value, "key", parent_element);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -199,7 +217,8 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public Enums.ModifyResult AddConnectionString(string appKey, string value)
         {
-            return UpdateOrCreateAppSetting(appKey, "connectionString", value, "name", "connectionStrings", "add");
+            //return UpdateOrCreateAppSetting(appKey, "connectionString", value, "name", "connectionStrings", "add");
+            return UpdateOrCreateAppSetting("add", appKey, "connectionString", value, "name", "connectionStrings");
         }
 
         ///-------------------------------------------------------------------------------------------------

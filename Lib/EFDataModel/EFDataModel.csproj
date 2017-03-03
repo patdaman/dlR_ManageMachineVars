@@ -51,10 +51,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DevOps\AddConfigVarToMachineApp_Result.cs">
+    <Compile Include="DevOps\Application.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
-    <Compile Include="DevOps\Application.cs">
+    <Compile Include="DevOps\Component.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\ConfigVariable.cs">
@@ -99,17 +99,23 @@
     <Compile Include="DevOps\ExecutionHistory.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
-    <Compile Include="DevOps\GetConfigVariables_Result.cs">
-      <DependentUpon>DevOps.tt</DependentUpon>
-    </Compile>
     <Compile Include="DevOps\Machine.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
-    <Compile Include="DevOps\MachineAppPath.cs">
+    <Compile Include="DevOps\MachineComponentPath.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Partials\DevOpsEntities.cs" />
     <Compile Include="DevOps\Script.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\usp_AddComponentsToMachine_Result.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\usp_GetConfigVariables_Result.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\vi_ConfigVariables.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -18,8 +18,7 @@ namespace EFDataModel.DevOps
         public ConfigVariable()
         {
             this.ConfigVariableValues = new HashSet<ConfigVariableValue>();
-            this.Applications = new HashSet<Application>();
-            this.Machines = new HashSet<Machine>();
+            this.Components = new HashSet<Component>();
         }
     
         public int id { get; set; }
@@ -28,7 +27,6 @@ namespace EFDataModel.DevOps
         public string attribute { get; set; }
         public string key { get; set; }
         public string value_name { get; set; }
-        public string config_path { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool active { get; set; }
@@ -36,8 +34,6 @@ namespace EFDataModel.DevOps
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Application> Applications { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Machine> Machines { get; set; }
+        public virtual ICollection<Component> Components { get; set; }
     }
 }

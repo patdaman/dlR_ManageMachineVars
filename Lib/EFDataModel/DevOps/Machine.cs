@@ -17,9 +17,7 @@ namespace EFDataModel.DevOps
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Machine()
         {
-            this.MachineAppPaths = new HashSet<MachineAppPath>();
-            this.Applications = new HashSet<Application>();
-            this.ConfigVariables = new HashSet<ConfigVariable>();
+            this.MachineComponentPaths = new HashSet<MachineComponentPath>();
             this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
         }
     
@@ -33,11 +31,7 @@ namespace EFDataModel.DevOps
     
         public virtual Enum_Locations Enum_Locations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MachineAppPath> MachineAppPaths { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Application> Applications { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ConfigVariable> ConfigVariables { get; set; }
+        public virtual ICollection<MachineComponentPath> MachineComponentPaths { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
     }

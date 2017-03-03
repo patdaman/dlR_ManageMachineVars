@@ -62,6 +62,7 @@
     <Folder Include="Tables\" />
     <Folder Include="Security\" />
     <Folder Include="Stored Procedures\" />
+    <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\ConfigVariables.sql" />
@@ -70,9 +71,7 @@
     <Build Include="Tables\Enum_Locations.sql" />
     <Build Include="Tables\Machines.sql" />
     <Build Include="Tables\MachineVariables.sql" />
-    <Build Include="Tables\ApplicationConfigVariables.sql" />
     <Build Include="Tables\ApplicationEnvironmentVariables.sql" />
-    <Build Include="Tables\MachineApplications.sql" />
     <Build Include="Tables\Enum_EnvironmentVariableType.sql" />
     <Build Include="Security\DevOps.sql" />
     <Build Include="Security\RoleMemberships.sql" />
@@ -82,18 +81,21 @@
     <Build Include="Stored Procedures\usp_ViewErrorTables.sql" />
     <Build Include="Security\config.sql" />
     <Build Include="Security\Login1.sql" />
-    <Build Include="Tables\MachineConfigVars.sql" />
     <Build Include="Tables\Scripts.sql" />
     <Build Include="Tables\ExecutionHistory.sql" />
     <Build Include="Tables\Events.sql" />
     <Build Include="Tables\Devices.sql" />
     <Build Include="Security\shell.sql" />
     <Build Include="Security\logging.sql" />
-    <Build Include="Tables\MachineAppPath.sql" />
     <Build Include="Tables\Enum_EnvironmentType.sql" />
     <Build Include="Tables\ConfigVariableValue.sql" />
-    <Build Include="Stored Procedures\GetConfigVariables.sql" />
-    <Build Include="Stored Procedures\AddConfigVarToMachineApp.sql" />
+    <Build Include="Tables\MachineComponentPath.sql" />
+    <Build Include="Tables\Components.sql" />
+    <Build Include="Tables\ComponentConfigVariables.sql" />
+    <Build Include="Tables\AppComponents.sql" />
+    <Build Include="Views\vi_ConfigVariables.sql" />
+    <Build Include="Stored Procedures\usp_GetConfigVariables.sql" />
+    <Build Include="Stored Procedures\usp_AddComponentsToMachine.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

@@ -15,6 +15,7 @@ namespace BusinessLayer
         public string machineName { get; private set; }
         public string appName { get; set; }
         public string path { get; set; }
+        public string environment { get; set; }
         public XDocument configFile { get; private set; }
         private string defaultPath { get; set; }
 
@@ -166,49 +167,17 @@ namespace BusinessLayer
         public List<AttributeKeyValuePair> ListAllAppConfigVariablesFromDb(int? appId = null)
         {
             var keyValues = new List<AttributeKeyValuePair>();
-            ICollection<Application> applications;
-            ICollection<ConfigVariable> configVars;
-
-            if (appId == null)
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId);
+            foreach (var cvar in configVars)
             {
-                configVars = (from app in DevOpsContext.ConfigVariables
-                              where app.Machines.Contains(
-                                   (from mac in DevOpsContext.Machines
-                                    where mac.machine_name == machineName
-                                    select mac).FirstOrDefault()
-                                   )
-                              select app).ToList();
-                foreach (var cvar in configVars)
+                foreach (var val in cvar.ConfigVariableValues)
                 {
                     keyValues.Add(new AttributeKeyValuePair()
                     {
                         attribute = cvar.parent_element,
                         key = cvar.key,
-                        value = cvar.value
+                        value = val.value
                     });
-                }
-            }
-            else
-            {
-                applications = (from app in DevOpsContext.Applications
-                                where app.Machines.Contains(
-                                     (from mac in DevOpsContext.Machines
-                                      where mac.machine_name == machineName
-                                      select mac).FirstOrDefault()
-                                     )
-                                where app.id == appId
-                                select app).ToList();
-                foreach (var app in applications)
-                {
-                    foreach (var dbKey in app.ConfigVariables)
-                    {
-                        keyValues.Add(new AttributeKeyValuePair()
-                        {
-                            attribute = dbKey.parent_element,
-                            key = dbKey.key,
-                            value = dbKey.value
-                        });
-                    }
                 }
             }
             return keyValues;
@@ -321,48 +290,13 @@ namespace BusinessLayer
         public List<ConfigModifyResult> RemoveAllAppConfigVariables(int? appId = null)
         {
             var resultList = new List<ConfigModifyResult>();
-
-            ICollection<ConfigVariable> configVars;
-            ICollection<Application> applications;
-
-            if (appId == null)
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId);
+            foreach (var cvar in configVars)
             {
-                configVars = (from app in DevOpsContext.ConfigVariables
-                                where app.Machines.Contains(
-                                     (from mac in DevOpsContext.Machines
-                                      where mac.machine_name == machineName
-                                      select mac).FirstOrDefault()
-                                     )
-                                select app).ToList();
-                foreach (var x in configVars)
+                // May not be necessary since inactive keys can be removed anyways
+                // if (dbKey.active)
                 {
-                    // May not be necessary since inactive keys can be removed anyways
-                    // if (dbKey.active)
-                    {
-                        resultList.Add(new ConfigModifyResult() { key = x.key, result = appConfigVars.RemoveKeyValue(x.attribute, x.key, x.element) });
-                    }
-                }
-            }
-            else
-            {
-                applications = (from app in DevOpsContext.Applications
-                                where app.Machines.Contains(
-                                     (from mac in DevOpsContext.Machines
-                                      where mac.machine_name == machineName
-                                      select mac).FirstOrDefault()
-                                     )
-                                where app.id == appId
-                                select app).ToList();
-                foreach (var app in applications)
-                {
-                    foreach (var dbKey in app.ConfigVariables)
-                    {
-                        // May not be necessary since inactive keys can be removed anyways
-                        // if (dbKey.active)
-                        {
-                            resultList.Add(new ConfigModifyResult() { key = dbKey.key, result = appConfigVars.RemoveKeyValue(dbKey.attribute, dbKey.key) });
-                        }
-                    }
+                    resultList.Add(new ConfigModifyResult() { key = cvar.key, result = appConfigVars.RemoveKeyValue(cvar.attribute, cvar.key) });
                 }
             }
             return resultList;
@@ -379,48 +313,66 @@ namespace BusinessLayer
         {
             var resultList = new List<ConfigModifyResult>();
 
-            ICollection<ConfigVariable> configVars;
-            ICollection<Application> applications;
-
-            if (appId == null)
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId);
+            foreach (var x in configVars)
             {
-                configVars = (from app in DevOpsContext.ConfigVariables
-                              where app.Machines.Contains(
-                                   (from mac in DevOpsContext.Machines
-                                    where mac.machine_name == machineName
-                                    select mac).FirstOrDefault()
-                                   )
-                              select app).ToList();
-                foreach (var x in configVars)
+                if (x.active)
                 {
-                    if (x.active)
-                    {
-                        resultList.Add(new ConfigModifyResult() { key = x.key, result = appConfigVars.UpdateOrCreateAppSetting(x.attribute, x.key, x.value_name, x.value, x.parent_element, x.element) });
-                    }
-                }
-            }
-            else
-            {
-                applications = (from app in DevOpsContext.Applications
-                                where app.Machines.Contains(
-                                     (from mac in DevOpsContext.Machines
-                                      where mac.machine_name == machineName
-                                      select mac).FirstOrDefault()
-                                     )
-                                where app.id == appId
-                                select app).ToList();
-                foreach (var app in applications)
-                {
-                    foreach (var dbKey in app.ConfigVariables)
-                    {
-                        if (dbKey.active)
-                        {
-                            resultList.Add(new ConfigModifyResult() { key = dbKey.key, result = appConfigVars.UpdateOrCreateAppSetting(dbKey.attribute, dbKey.key, dbKey.value_name, dbKey.value, dbKey.parent_element, dbKey.element) });
-                        }
-                    }
+                    var val = (from y in x.ConfigVariableValues
+                               where y.environment_type == environment
+                               select y.value).FirstOrDefault();
+                    resultList.Add(new ConfigModifyResult() { key = x.key, result = appConfigVars.UpdateOrCreateAppSetting(x.attribute, x.key, x.value_name, val, x.parent_element, x.element) });
                 }
             }
             return resultList;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Queries configuration variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/2/2017. </remarks>
+        ///
+        /// <param name="appId">    (Optional) Identifier for the application. </param>
+        ///
+        /// <returns>   The configuration variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private ICollection<ConfigVariable> QueryConfigVariables(int? appId)
+        {
+            IQueryable<Machine> machineObject = (from mac in DevOpsContext.Machines
+                                                 where mac.machine_name == machineName
+                                                 select mac);
+            IQueryable<Application> appObject = (from app in DevOpsContext.Applications
+                                                 where app.id == appId
+                                                 select app);
+            IQueryable<MachineComponentPath> varPaths = (from cfvar in DevOpsContext.MachineComponentPaths
+                                                         where cfvar.machine_id == machineObject.FirstOrDefault().id
+                                                         select cfvar);
+            IQueryable<Component> components;
+            ICollection<ConfigVariable> configVars;
+
+            if (appId == null)
+            {
+                components = (from comp in DevOpsContext.Components
+                              where comp.MachineComponentPaths.Contains(
+                                  varPaths.FirstOrDefault())
+                              select comp);
+                configVars = (from cvar in DevOpsContext.ConfigVariables
+                              where cvar.Components == components
+                              select cvar).ToList();
+            }
+            else
+            {
+                components = (from comp in DevOpsContext.Components
+                              where comp.Applications.Contains(
+                                  appObject.FirstOrDefault())
+                              where comp.MachineComponentPaths.Contains(
+                                  varPaths.FirstOrDefault())
+                              select comp);
+                configVars = (from cvar in DevOpsContext.ConfigVariables
+                              where cvar.Components == components
+                              select cvar).ToList();
+            }
+            return configVars;
         }
     }
 }
