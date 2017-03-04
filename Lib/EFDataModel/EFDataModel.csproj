@@ -57,6 +57,9 @@
     <Compile Include="DevOps\Component.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\ComponentConfigVariable.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\ConfigVariable.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>

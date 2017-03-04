@@ -94,11 +94,17 @@ namespace ManageConfigVariables
                 { "k|key=", "Key", v => {adminArgs.Key = v; }},
                 { "vn|valuename=", "Value Name", v => {adminArgs.ValueName = v; }},
                 { "v|value=", "Value", v => {adminArgs.Value = v; }},
+
                 //{ "name|n=", "User name (user, role, etc. dependingon action) to operate with.", v => { adminArgs.UserName = v; }},
                 //{ "password|pass=", "The password", v => { adminArgs.Password = v; }},
+
                 { "s|suffix=", "Environment Variable Suffix", v => {adminArgs.CustomSuffix = v; }},
                 { "p|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
                 { "m|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
+                { "en|environment=", "Environment (Environment Variable OR App Config Type)", v => { adminArgs.ConfigEnvironment = v; }},
+
+                { "app|application=", "Application Name", v=> {adminArgs.ApplicationName = v; }},
+                { "c|component=", "Component Name", v=> {adminArgs.ComponentName = v; }},
                 { "a|action=", "Action to perform (required)", v => { adminArgs.Action = v.ToLower(); }},
             };
             this.Initialize(typeof(ManageConfigVariables), "ManageConfigVariables"); 
@@ -266,6 +272,9 @@ namespace ManageConfigVariables
                 case AdminActions.GetAppConfigValue:
                     Actions.GetAppConfigValue(adminArgs);
                     break;
+                case AdminActions.ImportAppConfig:
+                    Actions.ImportAllAppConfigVariables(adminArgs);
+                    break;
                 default:
                     throw new Exception($"Action {adminArgs.Action} is unknown");
                     break;
@@ -301,9 +310,12 @@ namespace ManageConfigVariables
             text = text.Replace(",", Environment.NewLine);
             Console.WriteLine(text);
 
-#if DEBUG
+            text = ",\tEnvironment Variable Types:," +
+                "\t\tuser|machine|session" +
+                "\tApp Config Actions:," +
+                "\t\tdevelopment|qa|dr|production";
+            text = text.Replace(",", Environment.NewLine);
             Console.Read();
-#endif
         }
     }
 }

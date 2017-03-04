@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>-i -m=lvmgr01 -a=get-allappconfig -p=C:\Users\pdelosreyes\Desktop\printableConfig\DAL\DAL.config</StartArguments>
+    <StartArguments>-i -m=lvmgr01 -a=import-appconfig -m=hqdev01  -p=C:\Users\pdelosreyes\Desktop\printableConfig\ManagerI18N\log4net.config -en=development -app=Admin -c=ManagerI18N</StartArguments>
   </PropertyGroup>
 </Project>

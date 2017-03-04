@@ -12,12 +12,13 @@ namespace ViewModel
         ///-------------------------------------------------------------------------------------------------
         public class AttributeKeyValuePair
         {
-            public string parentAttribute;
-            public string attribute;
+            public string parentElement;
+            public string element;
             public string keyName;
             public string key;
             public string valueName;
             public string value;
+            public ConfigModifyResult Result;
         }
 
         public class ConfigModifyResult

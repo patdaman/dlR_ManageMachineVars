@@ -19,7 +19,7 @@ AS
 		, ConVal.environment_type
 		, ConfigVar.parent_element
 		, ConfigVar.element
-		, ConfigVar.attribute
+		, ConfigVar.key_name
 		, ConfigVar.[key]
 		, ConfigVar.value_name
 		, ConVal.[value]

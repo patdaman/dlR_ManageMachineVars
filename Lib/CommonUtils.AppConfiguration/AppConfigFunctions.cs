@@ -9,6 +9,7 @@ namespace CommonUtils.AppConfiguration
 {
     public class AppConfigFunctions
     {
+        public string path { get; set; }
         public XDocument configFile { get; set; }
 
         ///-------------------------------------------------------------------------------------------------
@@ -18,12 +19,20 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public AppConfigFunctions()
         {
-            configFile = new XDocument();
+            if (!string.IsNullOrWhiteSpace(path))
+                configFile = XDocument.Load(path);
+            else
+                configFile = new XDocument();
         }
 
         public AppConfigFunctions(XDocument xmlDoc)
         {
             configFile = xmlDoc;
+        }
+
+        public AppConfigFunctions(string configPath)
+        {
+            configFile = XDocument.Load(configPath);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -43,7 +52,7 @@ namespace CommonUtils.AppConfiguration
                 {
                     /// todo:
                     /// Figure out element / key pair that will match!
-                    if (element.Name == keyValue.attribute && element.Name == keyValue.key)
+                    if (element.Name == keyValue.element && element.Name == keyValue.key)
                     {
                         keyValue.value = element.Value;
                     }
@@ -83,16 +92,81 @@ namespace CommonUtils.AppConfiguration
                 {
                     keyValues.Add(new AttributeKeyValuePair()
                     {
-                        parentAttribute = element.Parent.Name.ToString() ?? "",
-                        attribute = element.Name.ToString(),
+                        parentElement = element.Parent.Name.ToString() ?? "",
+                        element = element.Name.ToString(),
                         keyName = element.FirstAttribute.Name.ToString(),
                         key = element.FirstAttribute.Value.ToString(),
                         valueName = element.LastAttribute.Name.ToString(),
                         value = element.LastAttribute.Value.ToString()
                     });
                 }
+                else if (!element.HasElements
+                    && element.FirstNode == element.LastNode
+                    && element.Value != null)
+                {
+                    keyValues.Add(new AttributeKeyValuePair()
+                    {
+                        parentElement = element.Parent.Name.ToString() ?? "",
+                        element = element.Name.ToString(),
+                        keyName = "",
+                        key = "",
+                        valueName = element.Name.ToString(),
+                        value = element.Value.ToString()
+                    });
+                }
             }
             return keyValues;
+        }
+
+        public AttributeKeyValuePair GetAppConfigValue(string key, string parent = null)
+        {
+            if (parent == "connectionStrings" || parent == "connstring" || parent == "name")
+                return GetKeyValue(key, "connectionStrings");
+            if (parent == "appsetting" || parent == "key")
+                return GetKeyValue(key, "appSettings");
+            return GetKeyValue(key, parent);
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds an application configuration variable. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/3/2017. </remarks>
+        ///
+        /// <param name="key">              The key. </param>
+        /// <param name="value">            The value. </param>
+        /// <param name="parent_element">   (Optional) The parent element. </param>
+        ///
+        /// <returns>   A ConfigModifyResult. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ConfigModifyResult AddAppConfigVariable(string key, string value, string parent_element = null)
+        {
+            var result = new ConfigModifyResult()
+            {
+                key = key,
+                result = AddKeyValue(key, value, parent_element)
+            };
+            return result;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Removes the application configuration variable. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/3/2017. </remarks>
+        ///
+        /// <param name="attribute">    (Optional) The element. </param>
+        /// <param name="key">          The key. </param>
+        ///
+        /// <returns>   A ConfigModifyResult. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ConfigModifyResult RemoveAppConfigVariable(string attribute, string key)
+        {
+            var result = new ConfigModifyResult()
+            {
+                key = key,
+                result = RemoveKeyValue(attribute, key)
+            };
+            //configFile.Save(path);
+            return result;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -115,8 +189,8 @@ namespace CommonUtils.AppConfiguration
                         if (x.FirstAttribute.Value.ToString() == appKey)
                             return new AttributeKeyValuePair()
                             {
-                                parentAttribute = x.Parent.Name.ToString(),
-                                attribute = x.FirstAttribute.Name.ToString(),
+                                parentElement = x.Parent.Name.ToString(),
+                                element = x.FirstAttribute.Name.ToString(),
                                 keyName = x.FirstAttribute.Name.ToString(),
                                 key = x.FirstAttribute.Value.ToString(),
                                 valueName = x.FirstAttribute.NextAttribute.Value.ToString(),
@@ -133,8 +207,8 @@ namespace CommonUtils.AppConfiguration
                         if (x.FirstAttribute.Value.ToString() == appKey)
                             return new AttributeKeyValuePair()
                             {
-                                parentAttribute = x.Parent.Name.ToString(),
-                                attribute = x.FirstAttribute.Name.ToString(),
+                                parentElement = x.Parent.Name.ToString(),
+                                element = x.FirstAttribute.Name.ToString(),
                                 keyName = x.FirstAttribute.Name.ToString(),
                                 key = x.FirstAttribute.Value.ToString(),
                                 valueName = x.FirstAttribute.NextAttribute.Value.ToString(),
@@ -145,7 +219,7 @@ namespace CommonUtils.AppConfiguration
             }
             return new AttributeKeyValuePair()
             {
-                attribute = "",
+                element = "",
                 key = appKey,
                 value = "KEY NOT FOUND"
             };

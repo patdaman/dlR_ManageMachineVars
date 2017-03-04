@@ -26,12 +26,26 @@ namespace ManageConfigVariables
         public const string ImportAppConfig = "import-appconfig";
     }
 
+    public class ConfigEnvironment
+    {
+        public const string User = "user";
+        public const string Machine = "machine";
+        public const string Session = "session";
+        public const string Development = "development";
+        public const string QA = "qa";
+        public const string Production = "production";
+        public const string DR = "dr";
+    }
+
     public class AdminArgs
     {
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Action { get; set; }
+        public string ConfigEnvironment { get; set; }
         public string MachineName { get; set; }
+        public string ApplicationName { get; set; }
+        public string ComponentName { get; set; }
         public string Path { get; set; }
         public string Parent { get; set; }
         public string Attribute { get; set; }

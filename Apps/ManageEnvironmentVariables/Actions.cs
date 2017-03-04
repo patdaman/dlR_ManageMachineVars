@@ -1,4 +1,5 @@
 ﻿using BusinessLayer;
+using CommonUtils.AppConfiguration;
 using CommonUtils.EnvironmentVariables;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,11 @@ namespace ManageConfigVariables
         public static void GetAppConfigValue(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            ViewModel.ConfigModels.AttributeKeyValuePair configVars = appConfigProcessor.GetAppConfigValue(adminArgs.Key, adminArgs.KeyType);
+            AppConfigFunctions appConfigVars = new AppConfigFunctions(adminArgs.Path);
+            ViewModel.ConfigModels.AttributeKeyValuePair configVars = appConfigVars.GetAppConfigValue(adminArgs.Key, adminArgs.Parent);
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("Parent Attribute = {0}", configVars.parentAttribute);
-            Console.WriteLine("Attribute = {0}", configVars.attribute);
+            Console.WriteLine("Parent Attribute = {0}", configVars.parentElement);
+            Console.WriteLine("Attribute = {0}", configVars.element);
             Console.WriteLine("key name = {0}", configVars.keyName);
             Console.WriteLine("key = {0}", configVars.key);
             Console.WriteLine("value name = {0}", configVars.valueName);
@@ -41,9 +43,9 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void RemoveAppConfigVariable(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.RemoveAppConfigVariable(adminArgs.Key, adminArgs.Parent);
-            appConfigProcessor.configFile.Save(adminArgs.Path);
+            AppConfigFunctions appConfigVars = new AppConfigFunctions(adminArgs.Path);
+            var configVars = appConfigVars.RemoveAppConfigVariable(adminArgs.Key, adminArgs.Parent);
+            appConfigVars.configFile.Save(adminArgs.Path);
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("key = {0}", configVars.key);
             Console.WriteLine("result = {0}", configVars.result);
@@ -59,9 +61,9 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void AddAppConfigVariable(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.AddAppConfigVariable(adminArgs.Key, adminArgs.Value, adminArgs.Parent);
-            appConfigProcessor.configFile.Save(adminArgs.Path);
+            AppConfigFunctions appConfigVars = new AppConfigFunctions(adminArgs.Path);
+            var configVars = appConfigVars.AddAppConfigVariable(adminArgs.Key, adminArgs.Value, adminArgs.Parent);
+            appConfigVars.configFile.Save(adminArgs.Path);
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("key = {0}", configVars.key);
             Console.WriteLine("result = {0}", configVars.result);
@@ -82,8 +84,8 @@ namespace ManageConfigVariables
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
-                Console.WriteLine("Parent Attribute = {0}", x.parentAttribute);
-                Console.WriteLine("Attribute = {0}", x.attribute);
+                Console.WriteLine("Parent Attribute = {0}", x.parentElement);
+                Console.WriteLine("Attribute = {0}", x.element);
                 Console.WriteLine("key name = {0}", x.keyName);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
@@ -106,8 +108,8 @@ namespace ManageConfigVariables
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
-                Console.WriteLine("Parent Attribute = {0}", x.parentAttribute);
-                Console.WriteLine("Attribute = {0}", x.attribute);
+                Console.WriteLine("Parent Attribute = {0}", x.parentElement);
+                Console.WriteLine("Attribute = {0}", x.element);
                 Console.WriteLine("key name = {0}", x.keyName);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
@@ -130,8 +132,8 @@ namespace ManageConfigVariables
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
-                Console.WriteLine("Parent Attribute = {0}", x.parentAttribute);
-                Console.WriteLine("Attribute = {0}", x.attribute);
+                Console.WriteLine("Parent Attribute = {0}", x.parentElement);
+                Console.WriteLine("Attribute = {0}", x.element);
                 Console.WriteLine("key name = {0}", x.keyName);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
@@ -173,13 +175,35 @@ namespace ManageConfigVariables
         public static void AddAllAppConfigVariables(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.AddAllAppConfigVariables();
+            List<ViewModel.ConfigModels.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables();
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
             {
                 Console.WriteLine("-------------------------------------------");
                 Console.WriteLine("key = {0}", x.key);
                 Console.WriteLine("result = {0}", x.result);
+            }
+            Console.WriteLine("-------------------------------------------");
+        }
+
+        public static void ImportAllAppConfigVariables(AdminArgs adminArgs)
+        {
+            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path, adminArgs.MachineName, 
+                                                                                        adminArgs.ConfigEnvironment, 
+                                                                                        adminArgs.ComponentName, adminArgs.ApplicationName);
+            List<ViewModel.ConfigModels.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
+            Console.WriteLine("-------------------------------------------");
+            foreach (var x in configVars)
+            {
+                Console.WriteLine("-------------------------------------------");
+                Console.WriteLine("-------------------------------------------");
+                Console.WriteLine("Parent Attribute = {0}", x.parentElement);
+                Console.WriteLine("Attribute = {0}", x.element);
+                Console.WriteLine("key name = {0}", x.keyName);
+                Console.WriteLine("Key = {0}", x.key);
+                Console.WriteLine("Value name = {0}", x.valueName);
+                Console.WriteLine("Value = {0}", x.value.ToString());
+                Console.WriteLine("Import Result: {0}", x.Result.result.ToString());
             }
             Console.WriteLine("-------------------------------------------");
         }

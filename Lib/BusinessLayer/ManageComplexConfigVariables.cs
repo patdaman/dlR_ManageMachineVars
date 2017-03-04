@@ -73,7 +73,7 @@ namespace BusinessLayer
                 {
                     id = config.id,
                     active = config.active,
-                    attribute = config.attribute,
+                    attribute = config.element,
                     //config_path = config.config_path,
                     create_date = config.create_date,
                     element = config.element,
