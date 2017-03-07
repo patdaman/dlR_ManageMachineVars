@@ -135,8 +135,9 @@ namespace BusinessLayer
         public List<AttributeKeyValuePair> ListAllAppConfigVariablesFromDb(int? appId = null)
         {
             var keyValues = new List<AttributeKeyValuePair>();
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId);
-            foreach (var cvar in configVars)
+
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId ?? 0);
+            foreach (var cvar in configVars.ToList())
             {
                 foreach (var val in cvar.ConfigVariableValues)
                 {
@@ -221,13 +222,36 @@ namespace BusinessLayer
             List<AttributeKeyValuePair> configVars = appConfigVars.ListConfigVariables(configFile);
             foreach (var x in configVars)
             {
-                ConfigVariable newVar = CreateAppConfigEntity(x);
-                efMac.ComponentConfigVariables.Add(new ComponentConfigVariable()
+                ConfigVariable configVar;
+                configVar = (from n in DevOpsContext.ConfigVariables
+                         where n.element == x.element
+                         where n.key == x.key
+                         where n.key_name == x.keyName
+                         where n.parent_element == x.parentElement
+                         where n.value_name == x.valueName
+                         select n).FirstOrDefault();
+                if (configVar == null)
                 {
-                    component_id = (int)componentId,
-                    machine_id = (int)machineId,
-                    ConfigVariable = newVar
-                });
+                    ConfigVariable newVar = CreateAppConfigEntity(x);
+                    efMac.ComponentConfigVariables.Add(new ComponentConfigVariable()
+                    {
+                        component_id = (int)componentId,
+                        machine_id = (int)machineId,
+                        ConfigVariable = newVar
+                    });
+                }
+                else
+                {
+                    var envValue = configVar.ConfigVariableValues.Where(c => c.value == x.value && c.environment_type == environment).FirstOrDefault();
+                    if (envValue == null)
+                    {
+                        configVar.ConfigVariableValues.Add(new ConfigVariableValue()
+                        {
+                            environment_type = environment.ToLower(),
+                            value = x.value
+                        });
+                    }
+                }
             }
             DevOpsContext.SaveChanges();
             return configVars;
@@ -311,16 +335,22 @@ namespace BusinessLayer
                         join db in dbKeyValues
                              on new
                              {
-                                 JoinProperty1 = keys.key,
-                                 JoinProperty2 = keys.value,
-                                 JoinProperty3 = keys.element
+                                 JoinProperty1 = keys.parentElement,
+                                 JoinProperty2 = keys.element.Replace("Config File: ", ""),
+                                 JoinProperty3 = keys.keyName,
+                                 JoinProperty4 = keys.key,
+                                 JoinProperty5 = keys.valueName,
+                                 JoinProperty6 = keys.value
                              }
                              equals
                              new
                              {
-                                 JoinProperty1 = db.key,
-                                 JoinProperty2 = db.value,
-                                 JoinProperty3 = db.element
+                                 JoinProperty1 = db.parentElement,
+                                 JoinProperty2 = db.element.Replace("DB: ", ""),
+                                 JoinProperty3 = db.keyName,
+                                 JoinProperty4 = db.key,
+                                 JoinProperty5 = db.valueName,
+                                 JoinProperty6 = db.value
                              }
                             into combined
                         from both in combined.DefaultIfEmpty()
@@ -332,15 +362,21 @@ namespace BusinessLayer
                          join keys in keyValues
                              on new
                              {
-                                 JoinProperty1 = db.key,
-                                 JoinProperty2 = db.value,
-                                 JoinProperty3 = db.element
+                                 JoinProperty1 = db.parentElement,
+                                 JoinProperty2 = db.element.Replace("DB: ", ""),
+                                 JoinProperty3 = db.keyName,
+                                 JoinProperty4 = db.key,
+                                 JoinProperty5 = db.valueName,
+                                 JoinProperty6 = db.value
                              }
                              equals new
                              {
-                                 JoinProperty1 = keys.key,
-                                 JoinProperty2 = keys.value,
-                                 JoinProperty3 = keys.element
+                                 JoinProperty1 = keys.parentElement,
+                                 JoinProperty2 = keys.element.Replace("Config File: ", ""),
+                                 JoinProperty3 = keys.keyName,
+                                 JoinProperty4 = keys.key,
+                                 JoinProperty5 = keys.valueName,
+                                 JoinProperty6 = keys.value
                              }
                              into combined
                          from both in combined.DefaultIfEmpty()
@@ -368,10 +404,10 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;ConfigModifyResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ConfigModifyResult> RemoveAllAppConfigVariables(int? appId = null)
+        public List<ConfigModifyResult> RemoveAllAppConfigVariables(string component)
         {
             var resultList = new List<ConfigModifyResult>();
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId);
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(componentName);
             foreach (var cvar in configVars)
             {
                 // May not be necessary since inactive keys can be removed anyways
@@ -386,15 +422,52 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Adds all application configuration variables. </summary>
         ///
-        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
+        /// <remarks>   Pdelosreyes, 3/6/2017. </remarks>
         ///
         /// <returns>   A List&lt;ConfigModifyResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ConfigModifyResult> AddAllAppConfigVariables(int? appId = null)
+        public List<ConfigModifyResult> AddAllAppConfigVariables()
+        {
+            ICollection<ConfigVariable> configVars = QueryConfigVariables();
+            return AddAllAppConfigVariables(configVars);
+        }
+
+        public List<ConfigModifyResult> AddAllAppConfigVariables(int appId)
+        {
+            ICollection<ConfigVariable> configVars;
+            if (appId == 0)
+                configVars = QueryConfigVariables();
+            else
+                configVars = QueryConfigVariables(appId);
+            return AddAllAppConfigVariables(configVars);
+        }
+
+        public List<ConfigModifyResult> AddAllAppConfigVariables(string component)
+        {
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(component);
+            return AddAllAppConfigVariables(configVars);
+        }
+
+        public List<ConfigModifyResult> AddAllAppConfigVariables(int appId, int componentId)
+        {
+            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId, componentId);
+            return AddAllAppConfigVariables(configVars);
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds all application configuration variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
+        ///
+        /// <param name="configVars">   The configuration variables. </param>
+        ///
+        /// <returns>   A List&lt;ConfigModifyResult&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private List<ConfigModifyResult> AddAllAppConfigVariables(ICollection<ConfigVariable> configVars)
         {
             var resultList = new List<ConfigModifyResult>();
 
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId);
+            //ICollection<ConfigVariable> configVars = QueryConfigVariables();
             foreach (var x in configVars)
             {
                 if (x.active)
@@ -411,13 +484,38 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Queries configuration variables. </summary>
         ///
+        /// <remarks>   Pdelosreyes, 3/6/2017. </remarks>
+        ///
+        /// <returns>   The configuration variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private ICollection<ConfigVariable> QueryConfigVariables()
+        {
+            return QueryConfigVariables(0, 0);
+        }
+
+        private ICollection<ConfigVariable> QueryConfigVariables(int appId)
+        {
+            return QueryConfigVariables(appId, 0);
+        }
+
+        private ICollection<ConfigVariable> QueryConfigVariables(string component)
+        {
+            int componentId = (from comp in DevOpsContext.Components
+                                                     where comp.component_name == component
+                                                     select comp).FirstOrDefault().id;
+            return QueryConfigVariables(0, componentId);
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Queries configuration variables. </summary>
+        ///
         /// <remarks>   Pdelosreyes, 3/2/2017. </remarks>
         ///
         /// <param name="appId">    (Optional) Identifier for the application. </param>
         ///
         /// <returns>   The configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ICollection<ConfigVariable> QueryConfigVariables(int? appId)
+        private ICollection<ConfigVariable> QueryConfigVariables(int appId, int componentId)
         {
             IQueryable<Machine> machineObject = (from mac in DevOpsContext.Machines
                                                  where mac.machine_name == machineName
@@ -425,34 +523,25 @@ namespace BusinessLayer
             IQueryable<Application> appObject = (from app in DevOpsContext.Applications
                                                  where app.id == appId
                                                  select app);
-            //IQueryable<Component> components;
             ICollection<ConfigVariable> configVars;
-
-            if (appId == null)
+            if (componentId != 0)
             {
-                //components = (from comp in DevOpsContext.Components
-                //              where comp.MachineComponentPaths.Contains(
-                //                  (from cfvar in DevOpsContext.MachineComponentPaths
-                //                   where cfvar.machine_id == machineObject.FirstOrDefault().id
-                //                   select cfvar).FirstOrDefault())
-                //              select comp);
                 configVars = (from cvar in DevOpsContext.ConfigVariables
-                              where cvar.ComponentConfigVariables.FirstOrDefault().Component == appObject.FirstOrDefault().Components
-                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine == machineObject
+                              where cvar.ComponentConfigVariables.FirstOrDefault().component_id == componentId
+                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine.id == machineObject.FirstOrDefault().id
+                              select cvar).ToList();
+            }
+            else if (appId != 0)
+            {
+                configVars = (from cvar in DevOpsContext.ConfigVariables
+                              where appObject.FirstOrDefault().Components.Contains(cvar.ComponentConfigVariables.FirstOrDefault().Component)
+                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine.id == machineObject.FirstOrDefault().id
                               select cvar).ToList();
             }
             else
             {
-                //components = (from comp in DevOpsContext.Components
-                //              where comp.Applications.Contains(
-                //                  appObject.FirstOrDefault())
-                //              //where comp.MachineComponentPaths.Contains(
-                //              //    (from cfvar in DevOpsContext.MachineComponentPaths
-                //              //     where cfvar.machine_id == machineObject.FirstOrDefault().id
-                //              //     select cfvar).FirstOrDefault())
-                //              select comp);
                 configVars = (from cvar in DevOpsContext.ConfigVariables
-                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine == machineObject
+                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine.id == machineObject.FirstOrDefault().id
                               select cvar).ToList();
             }
             return configVars;

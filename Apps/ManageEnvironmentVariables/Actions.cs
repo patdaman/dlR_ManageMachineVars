@@ -127,7 +127,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void ListAllDiffConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path, adminArgs.MachineName);
             var configVars = appConfigProcessor.ListAllAppConfigVariablesDifferentFromDb();
             foreach (var x in configVars)
             {
@@ -154,7 +154,7 @@ namespace ManageConfigVariables
         public static void RemoveAllAppConfigVariables(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            var configVars = appConfigProcessor.RemoveAllAppConfigVariables();
+            var configVars = appConfigProcessor.RemoveAllAppConfigVariables(string.Empty);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
             {
@@ -175,7 +175,7 @@ namespace ManageConfigVariables
         public static void AddAllAppConfigVariables(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            List<ViewModel.ConfigModels.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables();
+            List<ViewModel.ConfigModels.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables(string.Empty);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
             {

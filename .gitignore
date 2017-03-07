@@ -11,6 +11,6 @@
 .vs/
 *.jfm
 **/*.jfm
-/*.jfm
-/DevOps/DevOps.jfm
+*.VC.opendb
+*.VC.db
 /DevOps/DevOps.dbmdl
