@@ -79,7 +79,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void ListAllDbConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables("", adminArgs.MachineName);
             var configVars = appConfigProcessor.ListAllAppConfigVariablesFromDb();
             foreach (var x in configVars)
             {
@@ -203,7 +203,6 @@ namespace ManageConfigVariables
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
-                Console.WriteLine("Import Result: {0}", x.Result.result.ToString());
             }
             Console.WriteLine("-------------------------------------------");
         }

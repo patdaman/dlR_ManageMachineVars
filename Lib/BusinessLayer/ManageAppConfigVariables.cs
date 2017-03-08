@@ -39,10 +39,11 @@ namespace BusinessLayer
             DevOpsContext = new DevOpsEntities();
             if (String.IsNullOrEmpty(path) && !String.IsNullOrEmpty(appName))
             {
-                defaultPath = String.Format(@"D:\Apps\{0}\Config\AppConfig.xml", appName);
+                defaultPath = String.Format(@"D:\Apps\{0}\Config\App.Config", appName);
                 path = defaultPath;
             }
-            appConfigVars = new AppConfigFunctions(path);
+            if (!string.IsNullOrWhiteSpace(path))
+                appConfigVars = new AppConfigFunctions(path);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -86,7 +87,13 @@ namespace BusinessLayer
         public ManageAppConfigVariables(string path)
         {
             this.path = path;
-            configFile = XDocument.Load(path);
+            Uri uri;
+            if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri))
+            {
+                configFile = XDocument.Load(uri.ToString());
+            }
+            else
+                throw new UriFormatException("Path not a proper URI");
             appConfigVars = new AppConfigFunctions(configFile);
             machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
@@ -95,7 +102,11 @@ namespace BusinessLayer
         public ManageAppConfigVariables(string path, string machineName)
         {
             this.path = path;
-            configFile = XDocument.Load(path);
+            Uri uri;
+            if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri) && !string.IsNullOrWhiteSpace(path))
+            {
+                configFile = XDocument.Load(uri.ToString());
+            }
             appConfigVars = new AppConfigFunctions(configFile);
             this.machineName = machineName;
             DevOpsContext = new DevOpsEntities();
@@ -104,8 +115,14 @@ namespace BusinessLayer
         public ManageAppConfigVariables(string path, string machineName, string configEnvironment)
         {
             this.path = path;
-            configFile = XDocument.Load(path);
-            appConfigVars = new AppConfigFunctions(configFile);
+            Uri uri;
+            if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri) && !string.IsNullOrWhiteSpace(path))
+            {
+                configFile = XDocument.Load(uri.ToString());
+                appConfigVars = new AppConfigFunctions(configFile);
+            }
+            else
+                appConfigVars = new AppConfigFunctions();
             this.machineName = machineName;
             this.environment = configEnvironment;
             DevOpsContext = new DevOpsEntities();
@@ -114,8 +131,14 @@ namespace BusinessLayer
         public ManageAppConfigVariables(string path, string machineName, string configEnvironment, string componentName, string appName)
         {
             this.path = path;
-            configFile = XDocument.Load(path);
-            appConfigVars = new AppConfigFunctions(configFile);
+            Uri uri;
+            if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri) && !string.IsNullOrWhiteSpace(path))
+            {
+                configFile = XDocument.Load(uri.ToString());
+                appConfigVars = new AppConfigFunctions(configFile);
+            }
+            else
+                appConfigVars = new AppConfigFunctions();
             this.machineName = machineName;
             this.environment = configEnvironment;
             this.componentName = componentName;
@@ -223,6 +246,8 @@ namespace BusinessLayer
             foreach (var x in configVars)
             {
                 ConfigVariable configVar;
+                ConfigVariableValue efValue;
+                IEnumerable<ConfigVariableValue> efValueList;
                 configVar = (from n in DevOpsContext.ConfigVariables
                          where n.element == x.element
                          where n.key == x.key
@@ -232,29 +257,59 @@ namespace BusinessLayer
                          select n).FirstOrDefault();
                 if (configVar == null)
                 {
-                    ConfigVariable newVar = CreateAppConfigEntity(x);
-                    efMac.ComponentConfigVariables.Add(new ComponentConfigVariable()
-                    {
-                        component_id = (int)componentId,
-                        machine_id = (int)machineId,
-                        ConfigVariable = newVar
-                    });
+                    configVar = CreateAppConfigEntity(x);
+                    efComp.ConfigVariables.Add(configVar);
                 }
                 else
                 {
-                    var envValue = configVar.ConfigVariableValues.Where(c => c.value == x.value && c.environment_type == environment).FirstOrDefault();
-                    if (envValue == null)
+                    efValueList = configVar.ConfigVariableValues.Where(c => c.environment_type == environment).ToList();
+                    if (efValueList == null)
                     {
-                        configVar.ConfigVariableValues.Add(new ConfigVariableValue()
+                        configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, null));
+                        configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, machineId));
+                    }
+                    else
+                    {
+                        efValue = efValueList.Where(v => v.machine_id == machineId).FirstOrDefault();
+                        if (efValue == null)
+                            configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, machineId));
+                        else
                         {
-                            environment_type = environment.ToLower(),
-                            value = x.value
-                        });
+                            efValue.value = x.value;
+                            efValue.modify_date = DateTime.Now;
+                        }
+                        if (efValueList.Where(v => v.machine_id == null).Count() < 1)
+                            configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, null));
                     }
                 }
             }
             DevOpsContext.SaveChanges();
             return configVars;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Creates a new configuration variable value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/7/2017. </remarks>
+        ///
+        /// <param name="env">      The environment. </param>
+        /// <param name="val">      The value. </param>
+        /// <param name="con_id">   Identifier for the con. </param>
+        /// <param name="mac_id">   Identifier for the MAC. </param>
+        ///
+        /// <returns>   A ConfigVariableValue. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private ConfigVariableValue newConfigVariableValue(string env, string val, int con_id, int? mac_id)
+        {
+            return new ConfigVariableValue()
+            {
+                machine_id = mac_id,
+                environment_type = env,
+                configvar_id = con_id,
+                value = val,
+                create_date = DateTime.Now,
+                modify_date = DateTime.Now
+            };
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -266,13 +321,22 @@ namespace BusinessLayer
         ///
         /// <returns>   The new application configuration entity. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ConfigVariable CreateAppConfigEntity(AttributeKeyValuePair vars)
+        private ConfigVariable CreateAppConfigEntity(AttributeKeyValuePair vars)
         {
             List<ConfigVariableValue> valueList = new List<ConfigVariableValue>();
             valueList.Add(new ConfigVariableValue()
             {
+                machine_id = null,
                 environment_type = environment.ToLower(),
-                value = vars.value
+                value = vars.value,
+                create_date = DateTime.Now,
+            });
+            valueList.Add(new ConfigVariableValue()
+            {
+                machine_id = machineId,
+                environment_type = environment.ToLower(),
+                value = vars.value,
+                create_date = DateTime.Now,
             });
             ConfigVariable efConfigVar = new ConfigVariable()
             {
@@ -467,7 +531,6 @@ namespace BusinessLayer
         {
             var resultList = new List<ConfigModifyResult>();
 
-            //ICollection<ConfigVariable> configVars = QueryConfigVariables();
             foreach (var x in configVars)
             {
                 if (x.active)
@@ -527,22 +590,22 @@ namespace BusinessLayer
             if (componentId != 0)
             {
                 configVars = (from cvar in DevOpsContext.ConfigVariables
-                              where cvar.ComponentConfigVariables.FirstOrDefault().component_id == componentId
-                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine.id == machineObject.FirstOrDefault().id
+                              where cvar.Components.FirstOrDefault().id == componentId
                               select cvar).ToList();
             }
             else if (appId != 0)
             {
                 configVars = (from cvar in DevOpsContext.ConfigVariables
-                              where appObject.FirstOrDefault().Components.Contains(cvar.ComponentConfigVariables.FirstOrDefault().Component)
-                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine.id == machineObject.FirstOrDefault().id
+                              where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
                               select cvar).ToList();
             }
             else
             {
-                configVars = (from cvar in DevOpsContext.ConfigVariables
-                              where cvar.ComponentConfigVariables.FirstOrDefault().Machine.id == machineObject.FirstOrDefault().id
-                              select cvar).ToList();
+                configVars = (from comp in DevOpsContext.ConfigVariables
+                              where comp.Components.Select(x => x.id).Intersect(
+                                  machineObject.FirstOrDefault().MachineComponentPaths.Select(ci => ci.component_id)
+                                  ).Any()
+                              select comp).ToList();
             }
             return configVars;
         }

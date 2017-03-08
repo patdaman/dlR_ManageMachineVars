@@ -14,11 +14,16 @@ namespace EFDataModel.DevOps
     
     public partial class ConfigVariableValue
     {
+        public int id { get; set; }
         public int configvar_id { get; set; }
         public string environment_type { get; set; }
+        public Nullable<int> machine_id { get; set; }
         public string value { get; set; }
+        public System.DateTime create_date { get; set; }
+        public Nullable<System.DateTime> modify_date { get; set; }
     
         public virtual ConfigVariable ConfigVariable { get; set; }
         public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
+        public virtual Machine Machine { get; set; }
     }
 }

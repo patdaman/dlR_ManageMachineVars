@@ -118,6 +118,16 @@ namespace CommonUtils.AppConfiguration
             return keyValues;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets application configuration value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/7/2017. </remarks>
+        ///
+        /// <param name="key">      The key. </param>
+        /// <param name="parent">   (Optional) The parent. </param>
+        ///
+        /// <returns>   The application configuration value. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public AttributeKeyValuePair GetAppConfigValue(string key, string parent = null)
         {
             if (parent == "connectionStrings" || parent == "connstring" || parent == "name")

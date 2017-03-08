@@ -17,9 +17,9 @@ namespace EFDataModel.DevOps
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Machine()
         {
-            this.ComponentConfigVariables = new HashSet<ComponentConfigVariable>();
-            this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
+            this.ConfigVariableValues = new HashSet<ConfigVariableValue>();
             this.MachineComponentPaths = new HashSet<MachineComponentPath>();
+            this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
         }
     
         public int id { get; set; }
@@ -31,11 +31,11 @@ namespace EFDataModel.DevOps
         public bool active { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ComponentConfigVariable> ComponentConfigVariables { get; set; }
+        public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MachineComponentPath> MachineComponentPaths { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
     }
 }

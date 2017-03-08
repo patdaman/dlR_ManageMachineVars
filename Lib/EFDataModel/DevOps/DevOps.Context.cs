@@ -28,7 +28,6 @@ namespace EFDataModel.DevOps
         }
     
         public virtual DbSet<Application> Applications { get; set; }
-        public virtual DbSet<ComponentConfigVariable> ComponentConfigVariables { get; set; }
         public virtual DbSet<Component> Components { get; set; }
         public virtual DbSet<ConfigVariable> ConfigVariables { get; set; }
         public virtual DbSet<ConfigVariableValue> ConfigVariableValues { get; set; }
@@ -36,13 +35,13 @@ namespace EFDataModel.DevOps
         public virtual DbSet<Enum_EnvironmentVariableType> Enum_EnvironmentVariableType { get; set; }
         public virtual DbSet<Enum_Locations> Enum_Locations { get; set; }
         public virtual DbSet<EnvironmentVariable> EnvironmentVariables { get; set; }
+        public virtual DbSet<MachineComponentPath> MachineComponentPaths { get; set; }
         public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<ExecutionHistory> ExecutionHistories { get; set; }
         public virtual DbSet<Script> Scripts { get; set; }
         public virtual DbSet<vi_ConfigVariables> vi_ConfigVariables { get; set; }
-        public virtual DbSet<MachineComponentPath> MachineComponentPaths { get; set; }
     
         public virtual ObjectResult<usp_AddComponentsToMachine_Result> usp_AddComponentsToMachine(Nullable<int> configVarId, Nullable<int> machineId, string machineName, Nullable<int> appId, string appName, string rootConfigPath)
         {
