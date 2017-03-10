@@ -28,14 +28,19 @@ namespace SignalrWebService.Performance
         {
             // http://weblogs.thinktecture.com/ingo/2004/06/getting-the-current-process-your-own-cpu-usage.html
             // Code already written a LONG time ago to do this exact thing.
-            new PerformanceCounter("Processor", "% Processor Time", "_Total"),
+            new PerformanceCounter("Processor Information", "% Processor Time", "_Total"),
             new PerformanceCounter("Memory", "Available MBytes"),
             new PerformanceCounter("Process", "% Processor Time", GetCurrentProcessInstanceName(), true),
             new PerformanceCounter("Process", "Working Set", GetCurrentProcessInstanceName(), true),
-
-            //new PerformanceCounter("Database", "Database", "Database"),
-            //new PerformanceCounter("Network Interface", "Network Interface", "_Total"),
-            //new PerformanceCounter("PhysicalDisk", "PhysicalDisk", "_Total"),
+            new PerformanceCounter("Network Adapter", "Bytes Received/sec", "isatap.corp.printable.com"),
+            new PerformanceCounter("Network Adapter", "Bytes Sent/sec", "isatap.corp.printable.com"),
+            new PerformanceCounter("LogicalDisk", "Disk Read Bytes/sec", "_Total"),
+            new PerformanceCounter("LogicalDisk", "Disk Write Bytes/sec", "_Total"),
+            new PerformanceCounter("LogicalDisk", "Free Megabytes", "C:"),
+            new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage"),
+            new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage"),
+            new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total"),
+            new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total"),
         };
 
         private static PerformanceCounterCategory[] categories;
@@ -52,44 +57,18 @@ namespace SignalrWebService.Performance
             _netOut = new Random();
             _diskRd = new Random();
             _diskWt = new Random();
-            //categories = System.Diagnostics.PerformanceCounterCategory.GetCategories();
-            //List<string> lines = new List<string>();
-            //lines.Add("CategoryName, CategoryType, MachineName, CategoryHelp");
-
-            //List<string> counterLines = new List<string>();
-            //foreach (var x in categories)
-            //{
-            //    if (x.GetInstanceNames().Count() < 2)
-            //    {
-            //        counters = x.GetCounters();
-            //        foreach (var y in counters)
-            //        {
-            //            counterLines.Add(string.Format("{0}, {1}, {2}, {3}, {4}, {5}", y.CategoryName, y.Container, y.CounterName, y.CounterType, y.InstanceName, y.Site));
-            //        }
-            //    }
-            //    lines.Add(string.Format("{0}, {1}, {2}, {3}", x.CategoryName, x.CategoryType, x.MachineName, x.CategoryHelp));
-            //}
-            //System.IO.File.WriteAllLines(@"C:\Users\pdelosreyes\Documents\Categories.csv", lines.ToArray());
-            //System.IO.File.WriteAllLines(@"C:\Users\pdelosreyes\Documents\Counters.csv", counterLines.ToArray());
         }
 
         public async Task OnPerformanceMonitor()
         {
             List<PerformanceModel> pList = new List<PerformanceModel>()
             {
-                new PerformanceModel() { CategoryName="Processor", Value=ServiceCounters.Where(x => x.CategoryName == "Processor").FirstOrDefault().NextValue(), CounterName="% Processor Time", InstanceName=".", MachineName="SitePointService"},
-                new PerformanceModel() { CategoryName="Memory", Value=ServiceCounters.Where(x => x.CategoryName == "Memory").FirstOrDefault().NextValue(), CounterName="Available MBytes", InstanceName=".", MachineName="SitePointService"},
-                //new PerformanceModel() { CategoryName="Network In", Value=ServiceCounters.Where(x => x.CategoryName == "Network In").FirstOrDefault().NextValue(), CounterName="Network In", InstanceName=".", MachineName="SitePointService"},
-                //new PerformanceModel() { CategoryName="Network Out", Value=ServiceCounters.Where(x => x.CategoryName == "Network Out").FirstOrDefault().NextValue(), CounterName="Network Out", InstanceName=".", MachineName="SitePointService"},
-                //new PerformanceModel() { CategoryName="Disk Read Bytes/Sec", Value=ServiceCounters.Where(x => x.CategoryName == "Disk Read Byted/Sec").FirstOrDefault().NextValue(), CounterName="Disk Read Bytes/Sec", InstanceName=".", MachineName="SitePointService"},
-                //new PerformanceModel() { CategoryName="Disk Write Bytes/Sec", Value=ServiceCounters.Where(x => x.CategoryName == "Disk Write Bytes/Sec").FirstOrDefault().NextValue(), CounterName="Disk Write Bytes/Sec", InstanceName=".", MachineName="SitePointService"}
-                
-                //new PerformanceModel() { CategoryName="Processor", Value=_cpuRand.Next(64), CounterName="% Processor Time", InstanceName=".", MachineName="SitePointService"},
-                //new PerformanceModel() { CategoryName="Memory", Value=_memRand.Next(1024,2048), CounterName="Available MBytes", InstanceName=".", MachineName="SitePointService"},
-                new PerformanceModel() { CategoryName="Network In", Value=100*_netIn.NextDouble(), CounterName="Network In", InstanceName=".", MachineName="SitePointService"},
-                new PerformanceModel() { CategoryName="Network Out", Value=90*_netOut.NextDouble(), CounterName="Network Out", InstanceName=".", MachineName="SitePointService"},
-                new PerformanceModel() { CategoryName="Disk Read Bytes/Sec", Value=60*_diskRd.NextDouble(), CounterName="Disk Read Bytes/Sec", InstanceName=".", MachineName="SitePointService"},
-                new PerformanceModel() { CategoryName="Disk Write Bytes/Sec", Value=60*_diskWt.NextDouble(), CounterName="Disk Write Bytes/Sec", InstanceName=".", MachineName="SitePointService"}
+                GetPerformanceModel("Processor Information", "% Processor Time"),
+                GetPerformanceModel("Memory", "Available MBytes"),
+                GetPerformanceModel("Network Adapter", "Bytes Received/sec"),
+                GetPerformanceModel("Network Adapter", "Bytes Sent/sec"),
+                GetPerformanceModel("LogicalDisk", "Disk Read Bytes/Sec"),
+                GetPerformanceModel("LogicalDisk", "Disk Write Bytes/Sec")
 
             };
             //Monitor for infinity!
@@ -103,77 +82,10 @@ namespace SignalrWebService.Performance
                 {
                     try
                     {
-                        switch (performanceCounter.CategoryName)
-                        {
-                            case "Processor":
-                                performanceModels.Add(new PerformanceModel
-                                {
-                                    MachineName = performanceCounter.MachineName,
-                                    CategoryName = performanceCounter.CategoryName,
-                                    CounterName = performanceCounter.CounterName,
-                                    InstanceName = performanceCounter.InstanceName,
-                                    Value = Math.Round(ServiceCounters.Where(x => x.CategoryName == "Processor").FirstOrDefault().NextValue(), 2, MidpointRounding.AwayFromZero)
-                                    //Value = _cpuRand.Next(64)
-                                });
-                                break;
-                            case "Memory":
-                                performanceModels.Add(new PerformanceModel
-                                {
-                                    MachineName = performanceCounter.MachineName,
-                                    CategoryName = performanceCounter.CategoryName,
-                                    CounterName = performanceCounter.CounterName,
-                                    InstanceName = performanceCounter.InstanceName,
-                                    Value = Math.Round(ServiceCounters.Where(x => x.CategoryName == "Memory").FirstOrDefault().NextValue(), 2, MidpointRounding.AwayFromZero)
-                                    //Value = _memRand.Next(1024, 2048)
-                                });
-                                break;
-                            case "Network In":
-                                performanceModels.Add(new PerformanceModel
-                                {
-                                    MachineName = performanceCounter.MachineName,
-                                    CategoryName = performanceCounter.CategoryName,
-                                    CounterName = performanceCounter.CounterName,
-                                    InstanceName = performanceCounter.InstanceName,
-                                    //Value = ServiceCounters.Where(x => x.CategoryName == "Network In").FirstOrDefault().NextValue()
-                                    Value = 100 * _netIn.NextDouble()
-                                });
-                                break;
-                            case "Network Out":
-                                 performanceModels.Add(new PerformanceModel
-                                {
-                                    MachineName = performanceCounter.MachineName,
-                                    CategoryName = performanceCounter.CategoryName,
-                                    CounterName = performanceCounter.CounterName,
-                                    InstanceName = performanceCounter.InstanceName,
-                                    //Value = ServiceCounters.Where(x => x.CategoryName == "Network Out").FirstOrDefault().NextValue()
-                                    Value = 90 * _netOut.NextDouble()
-                                 });
-                                break;
-                            case "Disk Read Bytes/Sec":
-                                performanceModels.Add(new PerformanceModel
-                                {
-                                    MachineName = performanceCounter.MachineName,
-                                    CategoryName = performanceCounter.CategoryName,
-                                    CounterName = performanceCounter.CounterName,
-                                    InstanceName = performanceCounter.InstanceName,
-                                    //Value = ServiceCounters.Where(x => x.CategoryName == "Disk Read Bytes/Sec").FirstOrDefault().NextValue()
-                                    Value = 60 * _diskRd.NextDouble()
-                                });
-                                break;
-                            case "Disk Write Bytes/Sec":
-                                performanceModels.Add(new PerformanceModel
-                                {
-                                    MachineName = performanceCounter.MachineName,
-                                    CategoryName = performanceCounter.CategoryName,
-                                    CounterName = performanceCounter.CounterName,
-                                    InstanceName = performanceCounter.InstanceName,
-                                    //Value = ServiceCounters.Where(x => x.CategoryName == "Disk Write Bytes/Sec").FirstOrDefault().NextValue()
-                                    Value = 60 * _diskWt.NextDouble()
-                                });
-                                break;
-
-                        }
-                    }
+                            performanceModels.Add(GetPerformanceModel(
+                                performanceCounter.CategoryName,
+                                performanceCounter.CounterName));
+                     }
                     catch (InvalidOperationException ex)
                     {
                         Trace.TraceError("Performance with Performance counter {0}.", performanceCounter.MachineName + performanceCounter.CategoryName + performanceCounter.CounterName);
@@ -199,6 +111,37 @@ namespace SignalrWebService.Performance
             Process proc = Process.GetCurrentProcess();
             int pid = proc.Id;
             return GetProcessInstanceName(pid);
+        }
+
+        private PerformanceModel GetPerformanceModel(string categoryName, string counterName)
+        {
+            return GetPerformanceModel(categoryName, counterName, ServiceCounters.Where(x => x.CategoryName == categoryName && x.CounterName == counterName).FirstOrDefault().InstanceName ?? "", Environment.MachineName);
+        }
+
+        private PerformanceModel GetPerformanceModel(string categoryName, string counterName, string instanceName)
+        {
+            return GetPerformanceModel(categoryName, counterName, instanceName, Environment.MachineName);
+        }
+
+        private PerformanceModel GetPerformanceModel(string categoryName, string counterName, string instanceName, string machineName)
+        {
+            if (string.IsNullOrWhiteSpace(instanceName))
+                instanceName = ".";
+            try
+            {
+                return new PerformanceModel()
+                {
+                    CategoryName = categoryName,
+                    CounterName = counterName,
+                    InstanceName = instanceName,
+                    MachineName = machineName,
+                    Value = ServiceCounters.Where(x => x.CategoryName == categoryName && x.CounterName == counterName).FirstOrDefault().NextValue()
+                };
+            }
+            catch
+            {
+                return new PerformanceModel();
+            }
         }
 
         private static string GetProcessInstanceName(int pid)
