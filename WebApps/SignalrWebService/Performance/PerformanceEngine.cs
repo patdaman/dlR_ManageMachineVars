@@ -17,6 +17,7 @@ namespace SignalrWebService.Performance
         private static NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
         private static PerformanceCounterCategory category = new PerformanceCounterCategory("Network Interface");
         private static List<string> networkInstances = category.GetInstanceNames().ToList();
+        private static IEnumerable<PerformanceCounter> counters;
 
         /// <summary>   The service counters. </summary>
         public static IEnumerable<PerformanceCounter> ServiceCounters = new[]
@@ -25,17 +26,17 @@ namespace SignalrWebService.Performance
             new PerformanceCounter("Memory", "Available MBytes"),
             new PerformanceCounter("Process", "% Processor Time", GetCurrentProcessInstanceName(), true),
             new PerformanceCounter("Process", "Working Set", GetCurrentProcessInstanceName(), true),
-            new PerformanceCounter("Network Adapter", "Bytes Sent/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
-            new PerformanceCounter("Network Adapter", "Bytes Received/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
+            //new PerformanceCounter("Network Adapter", "Bytes Sent/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
+            //new PerformanceCounter("Network Adapter", "Bytes Received/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
             new PerformanceCounter("LogicalDisk", "Disk Reads/sec", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
             new PerformanceCounter("LogicalDisk", "Disk Writes/sec", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
             new PerformanceCounter("LogicalDisk", "Free Megabytes", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
             new PerformanceCounter("LogicalDisk", "% Free Space", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
-            new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage"),
-            new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage"),
-            new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total"),
-            new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total"),
-            new PerformanceCounter("Web Service", "Current Connections", "_Total")
+            //new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage"),
+            //new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage"),
+            //new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total"),
+            //new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total"),
+            //new PerformanceCounter("Web Service", "Current Connections", "_Total")
         };
 
         public PerformanceEngine(int pollIntervalMillis)
@@ -43,6 +44,7 @@ namespace SignalrWebService.Performance
             //HostingEnvironment.RegisterObject(this);
             _hubs = GlobalHost.ConnectionManager.GetHubContext<PerformanceHub>();
             _pollIntervalMillis = pollIntervalMillis;
+            counters = GetNetworkCounters();
         }
 
         private IEnumerable<PerformanceCounter> GetNetworkCounters()
@@ -71,17 +73,17 @@ namespace SignalrWebService.Performance
             {
                 GetPerformanceModel("Processor Information", "% Processor Time"),
                 GetPerformanceModel("Memory", "Available MBytes"),
-                GetPerformanceModel("Network Adapter", "Bytes Received/sec"),
-                GetPerformanceModel("Network Adapter", "Bytes Sent/sec"),
+                //GetPerformanceModel("Network Adapter", "Bytes Received/sec"),
+                //GetPerformanceModel("Network Adapter", "Bytes Sent/sec"),
                 GetPerformanceModel("LogicalDisk", "Disk Reads/sec"),
                 GetPerformanceModel("LogicalDisk", "Disk Writes/sec"),
                 GetPerformanceModel("LogicalDisk", "% Free Space"),
                 GetPerformanceModel("LogicalDisk", "Free Megabytes"),
-                GetPerformanceModel("Web Service Cache", "Current File Cache Memory Usage"),
-                GetPerformanceModel("Web Service Cache", "Maximum File Cache Memory Usage"),
-                GetPerformanceModel("Web Service", "Bytes Sent/sec"),
-                GetPerformanceModel("Web Service", "Bytes Received/sec"),
-                GetPerformanceModel("Web Service", "Current Connections")
+                //GetPerformanceModel("Web Service Cache", "Current File Cache Memory Usage"),
+                //GetPerformanceModel("Web Service Cache", "Maximum File Cache Memory Usage"),
+                //GetPerformanceModel("Web Service", "Bytes Sent/sec"),
+                //GetPerformanceModel("Web Service", "Bytes Received/sec"),
+                //GetPerformanceModel("Web Service", "Current Connections")
             };
             //Monitor for infinity!
             while (true)
