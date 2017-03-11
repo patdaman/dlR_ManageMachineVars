@@ -38,7 +38,7 @@ app.controller('PerformanceDataController', ['$scope', 'backendHubProxy',
         $scope.ramGaugeData = [
             { label: 'RAM', value: 0, color: '#1f77b4', suffix: '%' }
         ];
-        $scope.currentRamNumber = 68;
+        $scope.currentRamNumber = 0;
         //$scope.realtimeLineFeed = entry;
 
 

@@ -15,16 +15,18 @@ namespace SignalrWebService.Performance
         private IHubContext _hubs;
         private readonly int _pollIntervalMillis;
         private static NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+        private static PerformanceCounterCategory category = new PerformanceCounterCategory("Network Interface");
+        private static List<string> networkInstances = category.GetInstanceNames().ToList();
 
         /// <summary>   The service counters. </summary>
-        public static readonly IEnumerable<PerformanceCounter> ServiceCounters = new[]
+        public static IEnumerable<PerformanceCounter> ServiceCounters = new[]
         {
             new PerformanceCounter("Processor Information", "% Processor Time", "_Total"),
             new PerformanceCounter("Memory", "Available MBytes"),
             new PerformanceCounter("Process", "% Processor Time", GetCurrentProcessInstanceName(), true),
             new PerformanceCounter("Process", "Working Set", GetCurrentProcessInstanceName(), true),
-            new PerformanceCounter("Network Adapter", "Bytes Received/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
             new PerformanceCounter("Network Adapter", "Bytes Sent/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
+            new PerformanceCounter("Network Adapter", "Bytes Received/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
             new PerformanceCounter("LogicalDisk", "Disk Reads/sec", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
             new PerformanceCounter("LogicalDisk", "Disk Writes/sec", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
             new PerformanceCounter("LogicalDisk", "Free Megabytes", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
@@ -43,14 +45,27 @@ namespace SignalrWebService.Performance
             _pollIntervalMillis = pollIntervalMillis;
         }
 
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Executes the performance monitor action. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/10/2017. </remarks>
-        ///
-        /// <returns>   A Task. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public async Task OnPerformanceMonitor()
+        private IEnumerable<PerformanceCounter> GetNetworkCounters()
+        {
+            List<PerformanceCounter> counters = new List<PerformanceCounter>();
+            foreach (var nic in networkInstances)
+            {
+                counters.Add(new PerformanceCounter("Network Adapter", "Bytes Received/sec", nic));
+                counters.Add(new PerformanceCounter("Network Adapter", "Bytes Sent/sec", nic));
+            }
+            counters.Add(new PerformanceCounter("Network Adapter", "Bytes Sent/sec", "Microsoft Kernel Debug Network Adapter"));
+
+            return counters;
+        }
+
+    ///-------------------------------------------------------------------------------------------------
+    /// <summary>   Executes the performance monitor action. </summary>
+    ///
+    /// <remarks>   Pdelosreyes, 3/10/2017. </remarks>
+    ///
+    /// <returns>   A Task. </returns>
+    ///-------------------------------------------------------------------------------------------------
+    public async Task OnPerformanceMonitor()
         {
             List<PerformanceModel> pList = new List<PerformanceModel>()
             {
