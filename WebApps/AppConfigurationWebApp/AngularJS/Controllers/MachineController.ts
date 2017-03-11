@@ -103,7 +103,7 @@ var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
     'ui.grid.selection', 'ui.grid.pinning']);
 
-app.controller('MachineController', function ($scope, $http) {
+app.controller('MachineController', function ($scope, $http, uiGridConstants) {
     $scope.title = "Machine Configuration ";
 
     var vm = $scope;
@@ -114,7 +114,7 @@ app.controller('MachineController', function ($scope, $http) {
     var create_date;
     var modify_date;
     var active;
-    //var x;
+
     $scope.submit = function () {
         id = $scope.id;
         machine_name = $scope.machine_name;
@@ -158,10 +158,10 @@ app.controller('MachineController', function ($scope, $http) {
 
         //column definitions
         //we can specify sorting mechnism also
-        ColumnDefs: [
-            { field: 'id' },
-            { field: 'machine_name', enableEditing: true },
-            { field: 'location', enableEditing: true },
+        columnDefs: [
+            { field: 'id', visible: false },
+            { field: 'machine_name', enableEditing: true, cellTemplate: basicCellTemplate },
+            { field: 'location', enableEditing: true, cellTemplate: basicCellTemplate },
             { field: 'usage' },
             { field: 'create_date', enableFiltering: false },
             { field: 'modify_date' },
@@ -173,8 +173,24 @@ app.controller('MachineController', function ($scope, $http) {
                 cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Click a Cell for Edit </button>'
             }
         ],
-
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
     };
+
+    function hideIdColumn(columns) {
+        columns.forEach(function (column) {
+            if (column.field === '_id') {
+                column.visible = false;
+            }
+        });
+        return columns;
+    }
+
+    $scope.toggleVisible = function () {
+        $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+    }
 
     $scope.selectedCell;
     $scope.selectedRow;
