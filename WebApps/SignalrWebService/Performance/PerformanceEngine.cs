@@ -7,6 +7,7 @@ using SignalrWebService.Hubs;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.NetworkInformation;
+using System.ServiceProcess;
 
 namespace SignalrWebService.Performance
 {
@@ -14,92 +15,110 @@ namespace SignalrWebService.Performance
     {
         private IHubContext _hubs;
         private readonly int _pollIntervalMillis;
-        private static NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-        private static PerformanceCounterCategory category = new PerformanceCounterCategory("Network Interface");
-        private static List<string> networkInstances = category.GetInstanceNames().ToList();
-        private static IEnumerable<PerformanceCounter> counters;
-
-        /// <summary>   The service counters. </summary>
-        public static IEnumerable<PerformanceCounter> ServiceCounters = new[]
-        {
-            new PerformanceCounter("Processor Information", "% Processor Time", "_Total"),
-            new PerformanceCounter("Memory", "Available MBytes"),
-            new PerformanceCounter("Process", "% Processor Time", GetCurrentProcessInstanceName(), true),
-            new PerformanceCounter("Process", "Working Set", GetCurrentProcessInstanceName(), true),
-            //new PerformanceCounter("Network Adapter", "Bytes Sent/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
-            //new PerformanceCounter("Network Adapter", "Bytes Received/sec", networkInterfaces.Where(x => x.Name.ToLower().Contains("printable.com".ToLower())).FirstOrDefault().Name),
-            new PerformanceCounter("LogicalDisk", "Disk Reads/sec", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
-            new PerformanceCounter("LogicalDisk", "Disk Writes/sec", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
-            new PerformanceCounter("LogicalDisk", "Free Megabytes", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
-            new PerformanceCounter("LogicalDisk", "% Free Space", Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0,2)),
-            //new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage"),
-            //new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage"),
-            //new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total"),
-            //new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total"),
-            //new PerformanceCounter("Web Service", "Current Connections", "_Total")
-        };
+        private static List<PerformanceCounter> serviceCounters;
 
         public PerformanceEngine(int pollIntervalMillis)
         {
             //HostingEnvironment.RegisterObject(this);
             _hubs = GlobalHost.ConnectionManager.GetHubContext<PerformanceHub>();
             _pollIntervalMillis = pollIntervalMillis;
-            counters = GetNetworkCounters();
+
+            //NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            PerformanceCounterCategory category = new PerformanceCounterCategory("Network Interface");
+            List<string> networkInstances = category.GetInstanceNames().ToList();
+
+            serviceCounters.AddRange(GetNetworkCounters(networkInstances));
+            serviceCounters.AddRange(GetSystemCounters());
+            serviceCounters.AddRange(GetDriveCounters());
+            serviceCounters.AddRange(GetWebServiceCounters());
         }
 
-        private IEnumerable<PerformanceCounter> GetNetworkCounters()
+        private List<PerformanceCounter> GetNetworkCounters(List<string> instances)
         {
             List<PerformanceCounter> counters = new List<PerformanceCounter>();
-            foreach (var nic in networkInstances)
+            foreach (var nic in instances)
             {
                 counters.Add(new PerformanceCounter("Network Adapter", "Bytes Received/sec", nic));
                 counters.Add(new PerformanceCounter("Network Adapter", "Bytes Sent/sec", nic));
             }
-            counters.Add(new PerformanceCounter("Network Adapter", "Bytes Sent/sec", "Microsoft Kernel Debug Network Adapter"));
-
             return counters;
         }
 
-    ///-------------------------------------------------------------------------------------------------
-    /// <summary>   Executes the performance monitor action. </summary>
-    ///
-    /// <remarks>   Pdelosreyes, 3/10/2017. </remarks>
-    ///
-    /// <returns>   A Task. </returns>
-    ///-------------------------------------------------------------------------------------------------
-    public async Task OnPerformanceMonitor()
+        private List<PerformanceCounter> GetSystemCounters()
         {
-            List<PerformanceModel> pList = new List<PerformanceModel>()
+            List<PerformanceCounter> counters = new List<PerformanceCounter>();
+            counters.Add(new PerformanceCounter("Processor Information", "% Processor Time", "_Total"));
+            counters.Add(new PerformanceCounter("Memory", "Available MBytes"));
+            return counters;
+        }
+
+        private List<PerformanceCounter> GetDriveCounters()
+        {
+            return GetDriveCounters(Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0, 2));
+        }
+
+        private List<PerformanceCounter> GetDriveCounters(string driveLetter)
+        {
+            List<PerformanceCounter> counters = new List<PerformanceCounter>();
+            if (string.IsNullOrWhiteSpace(driveLetter))
+                driveLetter = Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0, 2);
+
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Disk Reads/sec", driveLetter));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Disk Writes/sec", driveLetter));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Free Megabytes", driveLetter));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "% Free Space", driveLetter));
+            return counters;
+        }
+
+        private List<PerformanceCounter> GetWebServiceCounters()
+        {
+            List<PerformanceCounter> counters = new List<PerformanceCounter>();
+            if (CheckIISRunning())
             {
-                GetPerformanceModel("Processor Information", "% Processor Time"),
-                GetPerformanceModel("Memory", "Available MBytes"),
-                //GetPerformanceModel("Network Adapter", "Bytes Received/sec"),
-                //GetPerformanceModel("Network Adapter", "Bytes Sent/sec"),
-                GetPerformanceModel("LogicalDisk", "Disk Reads/sec"),
-                GetPerformanceModel("LogicalDisk", "Disk Writes/sec"),
-                GetPerformanceModel("LogicalDisk", "% Free Space"),
-                GetPerformanceModel("LogicalDisk", "Free Megabytes"),
-                //GetPerformanceModel("Web Service Cache", "Current File Cache Memory Usage"),
-                //GetPerformanceModel("Web Service Cache", "Maximum File Cache Memory Usage"),
-                //GetPerformanceModel("Web Service", "Bytes Sent/sec"),
-                //GetPerformanceModel("Web Service", "Bytes Received/sec"),
-                //GetPerformanceModel("Web Service", "Current Connections")
-            };
-            //Monitor for infinity!
+                counters.Add(new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage"));
+                counters.Add(new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage"));
+                counters.Add(new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total"));
+                counters.Add(new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total"));
+                counters.Add(new PerformanceCounter("Web Service", "Current Connections", "_Total"));
+            }
+            return counters;
+        }
+
+        private bool CheckIISRunning()
+        {
+            ServiceController controller = new ServiceController("W3SVC");
+            return controller.Status == ServiceControllerStatus.Running;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Executes the performance monitor action. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/10/2017. </remarks>
+        ///
+        /// <returns>   A Task. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public async Task OnPerformanceMonitor()
+        {
             while (true)
             {
                 await Task.Delay(_pollIntervalMillis);
 
                 //List of performance models that is loaded up on every itteration.
                 IList<PerformanceModel> performanceModels = new List<PerformanceModel>();
-                foreach (var performanceCounter in pList)
+                //foreach (var performanceCounter in pList)
+                foreach (PerformanceCounter performanceCounter in serviceCounters)
                 {
                     try
                     {
-                            performanceModels.Add(GetPerformanceModel(
-                                performanceCounter.CategoryName,
-                                performanceCounter.CounterName));
-                     }
+                        new PerformanceModel()
+                        {
+                            CategoryName = performanceCounter.CategoryName,
+                            CounterName = performanceCounter.CounterName,
+                            InstanceName = performanceCounter.InstanceName,
+                            MachineName = performanceCounter.MachineName,
+                            Value = Math.Round(performanceCounter.NextValue(), 2)
+                        };
+                    }
                     catch (InvalidOperationException ex)
                     {
                         Trace.TraceError("Performance with Performance counter {0}.", performanceCounter.MachineName + performanceCounter.CategoryName + performanceCounter.CounterName);
@@ -133,84 +152,6 @@ namespace SignalrWebService.Performance
             Process proc = Process.GetCurrentProcess();
             int pid = proc.Id;
             return GetProcessInstanceName(pid);
-        }
-
-        private PerformanceCounter GetPerformanceCounter(string categoryName, string counterName, string instanceName)
-        {
-            return GetPerformanceCounter(categoryName, counterName, instanceName, Environment.MachineName);
-        }
-
-        private PerformanceCounter GetPerformanceCounter(string categoryName, string counterName, string instanceName, string machineName)
-        {
-            if (string.IsNullOrWhiteSpace(instanceName))
-                instanceName = ".";
-            try
-            {
-                return new PerformanceCounter()
-                {
-                    CategoryName = categoryName,
-                    CounterName = counterName,
-                    InstanceName = instanceName,
-                    MachineName = machineName
-                };
-            }
-            catch
-            {
-                return new PerformanceCounter();
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets performance model. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/10/2017. </remarks>
-        ///
-        /// <param name="categoryName"> Name of the category. </param>
-        /// <param name="counterName">  Name of the counter. </param>
-        ///
-        /// <returns>   The performance model. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        private PerformanceModel GetPerformanceModel(string categoryName, string counterName)
-        {
-            return GetPerformanceModel(categoryName, counterName, ServiceCounters.Where(x => x.CategoryName == categoryName && x.CounterName == counterName).FirstOrDefault().InstanceName ?? ".", Environment.MachineName);
-        }
-
-        private PerformanceModel GetPerformanceModel(string categoryName, string counterName, string instanceName)
-        {
-            return GetPerformanceModel(categoryName, counterName, instanceName, Environment.MachineName);
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets performance model. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/10/2017. </remarks>
-        ///
-        /// <param name="categoryName"> Name of the category. </param>
-        /// <param name="counterName">  Name of the counter. </param>
-        /// <param name="instanceName"> Name of the instance. </param>
-        /// <param name="machineName">  Name of the machine. </param>
-        ///
-        /// <returns>   The performance model. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        private PerformanceModel GetPerformanceModel(string categoryName, string counterName, string instanceName, string machineName)
-        {
-            if (string.IsNullOrWhiteSpace(instanceName))
-                instanceName = ".";
-            try
-            {
-                return new PerformanceModel()
-                {
-                    CategoryName = categoryName,
-                    CounterName = counterName,
-                    InstanceName = instanceName,
-                    MachineName = machineName,
-                    Value = Math.Round(ServiceCounters.Where(x => x.CategoryName == categoryName && x.CounterName == counterName).FirstOrDefault().NextValue(), 2)
-                };
-            }
-            catch
-            {
-                return new PerformanceModel();
-            }
         }
 
         ///-------------------------------------------------------------------------------------------------
