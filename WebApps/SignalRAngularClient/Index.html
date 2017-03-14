@@ -224,12 +224,13 @@
                     </div>
                     <!-- /.panel -->
                     <div class="panel panel-dashboard">
+
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-12 text-center">
                                     <div class="controls left"><i class="ion ion-more"></i></div>
                                     <div class="controls right"><a class="remove"><i class="ion ion-minus-round"></i></a></div>
-                                    <div class="center">NETWORK/MEMORY/CPU </div>
+                                    <div class="center">Syslog Viewer </div>
                                 </div>
                             </div>
                           
@@ -237,32 +238,16 @@
 
                         <div class="panel-body">
                             <div ng-controller="PerformanceDataController">
+
                                 <epoch-live-bar chart-class="category10" chart-height="200" chart-data="realtimeBar" chart-stream="realtimeBarFeed" chart-axes="barAxes"></epoch-live-bar>
                             </div>
+                            <button ng-click="refresh()" class="btn btn-default btn-block">Refresh</button>
                         </div>
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
                     <div class="panel panel-dashboard">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-12 text-center">
-                                    <div class="huge">{{currentRamNumber}}</div>
-                                    <div class="controls left"><i class="ion ion-more"></i></div>
-                                    <div class="controls right"><a class="remove"><i class="ion ion-minus-round"></i></a></div>
-                                    <div class="center">Responsive Timeline</div>
-                                </div>
-                            </div>
-                        </div>
                         <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div ng-controller="PerformanceDataController">
-                                <div>
-                                    <epoch-live-line chart-class="category10" chart-height="200" chart-data="realtimeLine" chart-stream="realtimeLineFeed" chart-axes="areaAxes"></epoch-live-line>
-                                </div>
-                            </div>
-
-                        </div>
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
@@ -304,23 +289,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <div class="list-group" ng-controller="ServerTimeController">
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-comment fa-fw"></i> Server Time
-                                    <span class="pull-right text-muted small">
-                                        <em>{{currentServerTime}}</em>
-                                    </span>
-                                </a>
-                                <a href="#" class="list-group-item">
-                                    <i class="fa fa-warning fa-fw"></i> Server Not Responding
-                                    <span class="pull-right text-muted small">
-                                        <em>10:57 AM  {{currentServerTimeManually}}</em>
-                                    </span>
-                                </a>
 
-                            </div>
-                            <!-- /.list-group -->
-                            <button ng-click="getServerTime()" class="btn btn-default btn-block">Get Manual Time</button>
                         </div>
                         <!-- /.panel-body -->
                     </div>

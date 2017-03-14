@@ -203,11 +203,13 @@
     <Compile Include="Hubs\CommunicationHub.cs" />
     <Compile Include="Hubs\LoggingHub.cs" />
     <Compile Include="Hubs\PerformanceHub.cs" />
-    <Compile Include="Models\LoggingModel.cs" />
+    <Compile Include="Logs\LogEngine.cs" />
+    <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\Event.cs" />
     <Compile Include="Models\PerformanceModel.cs" />
-    <Compile Include="Performance\CPUMeter.cs" />
     <Compile Include="Performance\PerformanceCategoryHelpers.cs" />
     <Compile Include="Performance\PerformanceEngine.cs" />
+    <Compile Include="Performance\ProcessFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="WebRole.cs" />

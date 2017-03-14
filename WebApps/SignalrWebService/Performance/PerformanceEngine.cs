@@ -11,14 +11,17 @@ using System.ServiceProcess;
 
 namespace SignalrWebService.Performance
 {
-    public class PerformanceEngine 
+    public class PerformanceEngine
     {
+        public static string machineName { get; set;}
         private IHubContext _hubs;
         private readonly int _pollIntervalMillis;
-        private static List<PerformanceCounter> serviceCounters;
+        public static List<PerformanceCounter> serviceCounters = new List<PerformanceCounter>();
 
         public PerformanceEngine(int pollIntervalMillis)
         {
+            if (string.IsNullOrWhiteSpace(machineName))
+                machineName = Environment.MachineName;
             //HostingEnvironment.RegisterObject(this);
             _hubs = GlobalHost.ConnectionManager.GetHubContext<PerformanceHub>();
             _pollIntervalMillis = pollIntervalMillis;
@@ -38,8 +41,8 @@ namespace SignalrWebService.Performance
             List<PerformanceCounter> counters = new List<PerformanceCounter>();
             foreach (var nic in instances)
             {
-                counters.Add(new PerformanceCounter("Network Adapter", "Bytes Received/sec", nic));
-                counters.Add(new PerformanceCounter("Network Adapter", "Bytes Sent/sec", nic));
+                counters.Add(new PerformanceCounter("Network Adapter", "Bytes Received/sec", nic, machineName));
+                counters.Add(new PerformanceCounter("Network Adapter", "Bytes Sent/sec", nic, machineName));
             }
             return counters;
         }
@@ -47,8 +50,29 @@ namespace SignalrWebService.Performance
         private List<PerformanceCounter> GetSystemCounters()
         {
             List<PerformanceCounter> counters = new List<PerformanceCounter>();
-            counters.Add(new PerformanceCounter("Processor Information", "% Processor Time", "_Total"));
-            counters.Add(new PerformanceCounter("Memory", "Available MBytes"));
+            counters.Add(new PerformanceCounter("Processor Information", "% Processor Time", "_Total", machineName));
+            counters.Add(new PerformanceCounter("Memory", "Available MBytes", string.Empty, machineName));
+            return counters;
+        }
+
+        private List<PerformanceCounter> GetProcessSystemCounters(int processId)
+        {
+            List<PerformanceCounter> counters = new List<PerformanceCounter>();
+            counters.Add(new PerformanceCounter("Processor Information", "% Processor Time", GetProcessInstanceName(processId), machineName));
+            counters.Add(new PerformanceCounter("Memory", "Available MBytes", GetProcessInstanceName(processId), machineName));
+            return counters;
+        }
+
+        private List<PerformanceCounter> GetProcessSystemCounters(string processName)
+        {
+            Process[] processes = Process.GetProcessesByName(processName);
+            List<PerformanceCounter> counters = new List<PerformanceCounter>();
+
+            foreach (Process proc in processes)
+            {
+                counters.Add(new PerformanceCounter("Processor Information", "% Processor Time", GetProcessInstanceName(proc.Id), machineName));
+                counters.Add(new PerformanceCounter("Memory", "Available MBytes", string.Empty, machineName));
+            }
             return counters;
         }
 
@@ -63,10 +87,10 @@ namespace SignalrWebService.Performance
             if (string.IsNullOrWhiteSpace(driveLetter))
                 driveLetter = Environment.GetFolderPath(Environment.SpecialFolder.System).Substring(0, 2);
 
-            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Disk Reads/sec", driveLetter));
-            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Disk Writes/sec", driveLetter));
-            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Free Megabytes", driveLetter));
-            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "% Free Space", driveLetter));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Disk Reads/sec", driveLetter, machineName));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Disk Writes/sec", driveLetter, machineName));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "Free Megabytes", driveLetter, machineName));
+            serviceCounters.Add(new PerformanceCounter("LogicalDisk", "% Free Space", driveLetter, machineName));
             return counters;
         }
 
@@ -75,18 +99,18 @@ namespace SignalrWebService.Performance
             List<PerformanceCounter> counters = new List<PerformanceCounter>();
             if (CheckIISRunning())
             {
-                counters.Add(new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage"));
-                counters.Add(new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage"));
-                counters.Add(new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total"));
-                counters.Add(new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total"));
-                counters.Add(new PerformanceCounter("Web Service", "Current Connections", "_Total"));
+                counters.Add(new PerformanceCounter("Web Service Cache", "Current File Cache Memory Usage", string.Empty, machineName));
+                counters.Add(new PerformanceCounter("Web Service Cache", "Maximum File Cache Memory Usage", string.Empty, machineName));
+                counters.Add(new PerformanceCounter("Web Service", "Bytes Sent/sec", "_Total", machineName));
+                counters.Add(new PerformanceCounter("Web Service", "Bytes Received/sec", "_Total", machineName));
+                counters.Add(new PerformanceCounter("Web Service", "Current Connections", "_Total", machineName));
             }
             return counters;
         }
 
         private bool CheckIISRunning()
         {
-            ServiceController controller = new ServiceController("W3SVC");
+            ServiceController controller = new ServiceController("W3SVC", machineName);
             return controller.Status == ServiceControllerStatus.Running;
         }
 
@@ -102,31 +126,47 @@ namespace SignalrWebService.Performance
             while (true)
             {
                 await Task.Delay(_pollIntervalMillis);
-
-                //List of performance models that is loaded up on every itteration.
                 IList<PerformanceModel> performanceModels = new List<PerformanceModel>();
-                //foreach (var performanceCounter in pList)
-                foreach (PerformanceCounter performanceCounter in serviceCounters)
+                try
                 {
-                    try
+                    foreach (PerformanceCounter performanceCounter in serviceCounters.Where(x => x.CategoryName != "Network Adapter").ToList())
                     {
-                        new PerformanceModel()
+                        performanceModels.Add(new PerformanceModel()
                         {
                             CategoryName = performanceCounter.CategoryName,
                             CounterName = performanceCounter.CounterName,
                             InstanceName = performanceCounter.InstanceName,
                             MachineName = performanceCounter.MachineName,
                             Value = Math.Round(performanceCounter.NextValue(), 2)
-                        };
+                        });
                     }
-                    catch (InvalidOperationException ex)
-                    {
-                        Trace.TraceError("Performance with Performance counter {0}.", performanceCounter.MachineName + performanceCounter.CategoryName + performanceCounter.CounterName);
-                        Trace.TraceError(ex.Message);
-                        Trace.TraceError(ex.StackTrace);
-                    }
-                }
+                    double networkInboundTraffic = Math.Round(serviceCounters.Where(x => x.CategoryName == "Network Adapter" && x.CounterName == "Bytes Received/sec").Sum(y => y.NextValue()), 2);
 
+                    performanceModels.Add(new PerformanceModel()
+                    {
+                        CategoryName = "Network Adapter",
+                        CounterName = "BytesReceived/sec",
+                        InstanceName = "_Total",
+                        MachineName = machineName,
+                        Value = networkInboundTraffic
+                    });
+
+                    double networkOutboundTraffic = Math.Round(serviceCounters.Where(x => x.CategoryName == "Network Adapter" && x.CounterName == "Bytes Sent/sec").Sum(y => y.NextValue()), 2);
+                    performanceModels.Add(new PerformanceModel()
+                    {
+                        CategoryName = "Network Adapter",
+                        CounterName = "Bytes Sent/sec",
+                        InstanceName = "_Total",
+                        MachineName = machineName,
+                        Value = networkOutboundTraffic
+                    });
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Trace.TraceError("Performance counter read error");
+                    Trace.TraceError(ex.Message);
+                    Trace.TraceError(ex.StackTrace);
+                }
                 _hubs.Clients.All.broadcastPerformance(performanceModels);
                 _hubs.Clients.All.serverTime(DateTime.UtcNow.ToString());
             }
@@ -167,7 +207,7 @@ namespace SignalrWebService.Performance
         ///-------------------------------------------------------------------------------------------------
         private static string GetProcessInstanceName(int pid)
         {
-            PerformanceCounterCategory cat = new PerformanceCounterCategory("Process");
+            PerformanceCounterCategory cat = new PerformanceCounterCategory("Process", machineName);
 
             string[] instances = cat.GetInstanceNames();
             foreach (string instance in instances)

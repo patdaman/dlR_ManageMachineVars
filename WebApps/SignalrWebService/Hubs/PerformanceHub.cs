@@ -34,7 +34,7 @@ namespace SignalrWebService.Hubs
         public dynamic MonitoringFor()
         {
 
-            return PerformanceEngine.ServiceCounters.Select(counter =>
+            return PerformanceEngine.serviceCounters.Select(counter =>
                 new
                 {
                     MachineName = counter.CounterName,
