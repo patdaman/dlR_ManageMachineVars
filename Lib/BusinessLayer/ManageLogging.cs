@@ -72,8 +72,9 @@ namespace BusinessLayer
         { 
             List<ViewModel.Event> events = new List<ViewModel.Event>();
             List<EFDataModel.DevOps.Event> efEvents = devOpsContext.Events
-                                                        .Where(x => x.Date > startDate && x.Date < endDate)
-                                                        .Select(y => y).ToList();
+                                                        //.Where(x => x.Date > startDate && x.Date < endDate)
+                                                        //.Select(y => y)
+                                                        .ToList();
             foreach (EFDataModel.DevOps.Event efEvent in efEvents)
             {
                 events.Add(new ViewModel.Event()

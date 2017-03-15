@@ -178,7 +178,7 @@
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LogController.cs" />
+    <Compile Include="Controllers\LogApiController.cs" />
     <Compile Include="Controllers\MachineApiController.cs" />
     <Compile Include="Controllers\MachineController.cs" />
     <Compile Include="Global.asax.cs">

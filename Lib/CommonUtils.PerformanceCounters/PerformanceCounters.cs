@@ -99,6 +99,23 @@ namespace CommonUtils.PerformanceCounters
             return controller.Status == ServiceControllerStatus.Running;
         }
 
+        public List<ServiceController> SqlServerServices()
+        {
+            ServiceController[] controllers = ServiceController.GetServices();
+            List<ServiceController> sqlControllers = new List<ServiceController>();
+            foreach (ServiceController service in controllers)
+            {
+                if (service == null)
+                    continue;
+                if (service.ServiceName.ToLower().Contains("SQLServer".ToLower()))
+                    {
+                        //serviceoutput = serviceoutput + System.Environment.NewLine + "Service Name = " + service.ServiceName + System.Environment.NewLine + "Display Name = " + service.DisplayName + System.Environment.NewLine + "Status = " + service.Status + System.Environment.NewLine;
+                        sqlControllers.Add(service);
+                    }
+            }
+            return sqlControllers;
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets current process instance name. </summary>
         ///

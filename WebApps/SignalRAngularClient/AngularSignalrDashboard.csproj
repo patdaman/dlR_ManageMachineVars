@@ -58,6 +58,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\ui-grid.css" />
+    <Content Include="Content\ui-grid.min.css" />
+    <Content Include="Content\ui-grid.svg" />
+    <Content Include="Content\ui-grid.woff" />
+    <Content Include="Content\ui-grid.ttf" />
+    <Content Include="Content\ui-grid.eot" />
     <None Include="Properties\PublishProfiles\AngularSignalrDashboardLouieBacaj %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\AngularSignalrDashboardLouieBacaj %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\AngularSignalrDashboardLouieBacaj.pubxml" />
@@ -871,6 +877,8 @@
     <Content Include="Scripts\plugin.js" />
     <Content Include="Scripts\raphael.min.js" />
     <Content Include="Scripts\sb-admin-2.js" />
+    <Content Include="Scripts\ui-grid.js" />
+    <Content Include="Scripts\ui-grid.min.js" />
     <Content Include="Scripts\velocity.js" />
     <Content Include="Web.config" />
     <Content Include="Scripts\version.json" />

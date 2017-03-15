@@ -238,9 +238,11 @@
                         </div>
 
                         <div class="panel-body">
-                            <div ng-controller="PerformanceDataController">
-
-                                <!--<epoch-live-bar chart-class="category10" chart-height="200" chart-data="realtimeBar" chart-stream="realtimeBarFeed" chart-axes="barAxes"></epoch-live-bar>-->
+                            <!--<div ng-app="loggingapp" ng-controller="LogController">-->
+                            <div style="width: 1200px;" ng-controller="LogController">
+                                <div class="gridStyle" ui-grid="gridOptions"></div>
+                                <!--<div ui-grid="gridOptions"></div>-->
+                                <epoch-live-bar chart-class="category10" chart-height="200" chart-data="realtimeBar" chart-stream="realtimeBarFeed" chart-axes="barAxes"></epoch-live-bar>
                             </div>
                             <button ng-click="refresh()" class="btn btn-default btn-block">Refresh</button>
                         </div>
