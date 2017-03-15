@@ -11,9 +11,11 @@ namespace BusinessLayer
 {
     public class ManagePowershellScripts
     {
-        public PowershellTools scriptManager { get; set; }
-        public DevOpsEntities devOpsContext { get; set; }
+        private PowershellTools scriptManager { get; set; }
+        private DevOpsEntities devOpsContext { get; set; }
         public string userName { get; set; }
+        public string password { get; set; }
+        public string machineName { get; set; }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Default constructor. </summary>
@@ -24,18 +26,24 @@ namespace BusinessLayer
         {
             devOpsContext = new DevOpsEntities();
             scriptManager = new PowershellTools();
+            if (string.IsNullOrWhiteSpace(this.machineName))
+                this.machineName = Environment.MachineName;
         }
 
         public ManagePowershellScripts(DevOpsEntities entities)
         {
             devOpsContext = entities;
             scriptManager = new PowershellTools();
+            if (string.IsNullOrWhiteSpace(this.machineName))
+                this.machineName = Environment.MachineName;
         }
 
         public ManagePowershellScripts(string conn)
         {
             devOpsContext = new DevOpsEntities(conn);
             scriptManager = new PowershellTools();
+            if (string.IsNullOrWhiteSpace(this.machineName))
+                this.machineName = Environment.MachineName;
         }
 
         ///-------------------------------------------------------------------------------------------------

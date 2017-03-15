@@ -37,6 +37,7 @@ namespace EFDataModel.DevOps
         public virtual DbSet<EnvironmentVariable> EnvironmentVariables { get; set; }
         public virtual DbSet<MachineComponentPath> MachineComponentPaths { get; set; }
         public virtual DbSet<Machine> Machines { get; set; }
+        public virtual DbSet<ServerGroup> ServerGroups { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<ExecutionHistory> ExecutionHistories { get; set; }

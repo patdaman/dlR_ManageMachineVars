@@ -22,5 +22,17 @@ namespace SignalrWebService.Models
 
         [JsonProperty("value")]
         public double Value { get; set; }
+
+        public PerformanceModel()
+        { }
+
+        public PerformanceModel(PerformanceModel p)
+        {
+            MachineName = p.MachineName;
+            CategoryName = p.CategoryName;
+            CounterName = p.CounterName;
+            InstanceName = p.InstanceName;
+            Value = p.Value;
+        }
     }
 }

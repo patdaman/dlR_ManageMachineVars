@@ -5,6 +5,9 @@
     [create_date] DATETIME      CONSTRAINT [DF_Devices_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date] DATETIME      NULL,
     [active]      BIT           CONSTRAINT [DF_Devices_active] DEFAULT ((1)) NOT NULL,
-    CONSTRAINT [PK_Devices] PRIMARY KEY CLUSTERED ([id] ASC)
+    CONSTRAINT [PK_Devices] PRIMARY KEY CLUSTERED ([id] ASC),
+    CONSTRAINT [IX_Devices] UNIQUE NONCLUSTERED ([device_name] ASC)
 );
+
+
 

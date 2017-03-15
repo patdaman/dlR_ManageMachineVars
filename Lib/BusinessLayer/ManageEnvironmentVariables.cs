@@ -81,7 +81,7 @@ namespace BusinessLayer
         public List<EnvVariable> GetAllDbEnvVariables()
         {
             List<EnvVariable> enVariables = new List<EnvVariable>();
-            List<EnvironmentVariable> dbEnVars = (from en in DevOpsContext.EnvironmentVariables
+            List<EFDataModel.DevOps.EnvironmentVariable> dbEnVars = (from en in DevOpsContext.EnvironmentVariables
                           where en.Machines.Contains(
                               (from mac in DevOpsContext.Machines
                               where mac.machine_name == machineName
@@ -112,26 +112,28 @@ namespace BusinessLayer
         public List<ViewModel.EnvironmentDtoVariable> GetAllEnVariables(int? appId = null)
         {
             var enVars = new List<ViewModel.EnvironmentDtoVariable>();
-            var allEnVars = new List<EnvironmentVariable>();
+            var allEnVars = new List<ViewModel.EnvironmentDtoVariable>();
             if (appId != null)
             {
-                allEnVars = (from vars in DevOpsContext.EnvironmentVariables
-                             where vars.Applications.Contains(
-                                (from app in DevOpsContext.Applications
-                                 where app.id == appId
-                                 select app).FirstOrDefault()
-                                )
-                             select vars).ToList();
+                allEnVars = allEnVars;
+                //allEnVars = (from vars in DevOpsContext.EnvironmentVariables
+                //             where vars.Applications.Contains(
+                //                (from app in DevOpsContext.Applications
+                //                 where app.id == appId
+                //                 select app).FirstOrDefault()
+                //                )
+                //             select vars).ToList();
             }
             else
             {
-                allEnVars = (from vars in DevOpsContext.EnvironmentVariables
-                             where vars.Machines.Contains(
-                                (from mac in DevOpsContext.Machines
-                                 where mac.machine_name == machineName
-                                 select mac).FirstOrDefault()
-                                )
-                             select vars).ToList();
+                allEnVars = allEnVars;
+                //allEnVars = (from vars in DevOpsContext.EnvironmentVariables
+                //             where vars.Machines.Contains(
+                //                (from mac in DevOpsContext.Machines
+                //                 where mac.machine_name == machineName
+                //                 select mac).FirstOrDefault()
+                //                )
+                //             select vars).ToList();
             }
             foreach (var env in allEnVars)
             {
@@ -145,8 +147,8 @@ namespace BusinessLayer
                     path = env.path,
                     type = env.type,
                     value = env.value,
-                    Applications = EfToVmConverter.EfAppListToVm(env.Applications),
-                    Machines = EfToVmConverter.EfMachineListToVm(env.Machines)
+                    //Applications = EfToVmConverter.EfAppListToVm(env.Applications),
+                    //Machines = EfToVmConverter.EfMachineListToVm(env.Machines)
                 });
             }
             return enVars;

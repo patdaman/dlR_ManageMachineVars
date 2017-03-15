@@ -19,12 +19,35 @@ namespace ViewModel
             public string valueName;
             public string value;
             public ConfigModifyResult Result;
+
+            public AttributeKeyValuePair()
+            { }
+
+            public AttributeKeyValuePair(AttributeKeyValuePair a)
+            {
+                parentElement = a.parentElement;
+                element = a.element;
+                keyName = a.keyName;
+                key = a.key;
+                valueName = a.valueName;
+                value = a.value;
+                Result = a.Result;
+            }
         }
 
         public class ConfigModifyResult
         {
             public string key;
             public ModifyResult result;
+
+            public ConfigModifyResult()
+            { }
+
+            public ConfigModifyResult(ConfigModifyResult c)
+            {
+                key = c.key;
+                result = c.result;
+            }
         }
     }
 }

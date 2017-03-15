@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using SignalrWebService.Hubs;
+using ViewModel;
 using SignalrWebService.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace SignalrWebService.Logs
         public static string machineName { get; set; }
         private IHubContext _hubs;
         private readonly int _pollIntervalMillis;
-        public static List<Event> events = new List<Event>();
+        public static List<ViewModel.Event> events = new List<ViewModel.Event>();
 
         public LogEngine(int pollIntervalMillis)
         {

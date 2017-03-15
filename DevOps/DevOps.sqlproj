@@ -96,6 +96,8 @@
     <Build Include="Views\vi_ConfigVariables.sql" />
     <Build Include="Stored Procedures\usp_GetConfigVariables.sql" />
     <Build Include="Stored Procedures\usp_AddComponentsToMachine.sql" />
+    <Build Include="Tables\ServerGroups.sql" />
+    <Build Include="Tables\MachinesServerGroups.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

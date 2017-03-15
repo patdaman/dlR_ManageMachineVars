@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DevOpsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DevOpsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AppComponents">
           <Key>
             <PropertyRef Name="application_id" />
@@ -130,11 +130,20 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="machine_name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="ip_address" Type="varchar" MaxLength="128" />
           <Property Name="location" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="usage" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" />
           <Property Name="active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MachinesServerGroups">
+          <Key>
+            <PropertyRef Name="machine_id" />
+            <PropertyRef Name="servergroup_id" />
+          </Key>
+          <Property Name="machine_id" Type="int" Nullable="false" />
+          <Property Name="servergroup_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="MachineVariables">
           <Key>
@@ -143,6 +152,16 @@
           </Key>
           <Property Name="environmentVariable_id" Type="int" Nullable="false" />
           <Property Name="machine_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServerGroups">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="group_name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="create_date" Type="datetime" Nullable="false" />
+          <Property Name="modify_date" Type="datetime" />
+          <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Devices">
           <Key>
@@ -185,7 +204,7 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="script_name" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="script_text" Type="nvarchar" MaxLength="4000" Nullable="false" />
+          <Property Name="script_text" Type="varchar(max)" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" />
           <Property Name="is_active" Type="bit" Nullable="false" />
@@ -220,7 +239,8 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="key" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="value_name" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="value" Type="nvarchar" MaxLength="4000" />
-          <Property Name="config_path" Type="varchar" MaxLength="512" Nullable="false" />
+          <Property Name="config_path" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="modify_date" Type="datetime" />
         </EntityType>
         <Association Name="FK_AppComponents_Applications">
           <End Role="Applications" Type="Self.Applications" Multiplicity="1" />
@@ -402,6 +422,30 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MachinesServerGroups_Machines">
+          <End Role="Machines" Type="Self.Machines" Multiplicity="1" />
+          <End Role="MachinesServerGroups" Type="Self.MachinesServerGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machines">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachinesServerGroups">
+              <PropertyRef Name="machine_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MachinesServerGroups_ServerGroups">
+          <End Role="ServerGroups" Type="Self.ServerGroups" Multiplicity="1" />
+          <End Role="MachinesServerGroups" Type="Self.MachinesServerGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ServerGroups">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachinesServerGroups">
+              <PropertyRef Name="servergroup_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MachineVariables_EnvironmentVariables">
           <End Role="EnvironmentVariables" Type="Self.EnvironmentVariables" Multiplicity="1" />
           <End Role="MachineVariables" Type="Self.MachineVariables" Multiplicity="*" />
@@ -478,7 +522,9 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="EnvironmentVariables" EntityType="Self.EnvironmentVariables" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineComponentPath" EntityType="Self.MachineComponentPath" Schema="config" store:Type="Tables" />
           <EntitySet Name="Machines" EntityType="Self.Machines" Schema="config" store:Type="Tables" />
+          <EntitySet Name="MachinesServerGroups" EntityType="Self.MachinesServerGroups" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineVariables" EntityType="Self.MachineVariables" Schema="config" store:Type="Tables" />
+          <EntitySet Name="ServerGroups" EntityType="Self.ServerGroups" Schema="config" store:Type="Tables" />
           <EntitySet Name="Devices" EntityType="Self.Devices" Schema="logging" store:Type="Tables" />
           <EntitySet Name="Events" EntityType="Self.Events" Schema="logging" store:Type="Tables" />
           <EntitySet Name="ExecutionHistory" EntityType="Self.ExecutionHistory" Schema="shell" store:Type="Tables" />
@@ -499,7 +545,8 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
     [vi_ConfigVariables].[key] AS [key], 
     [vi_ConfigVariables].[value_name] AS [value_name], 
     [vi_ConfigVariables].[value] AS [value], 
-    [vi_ConfigVariables].[config_path] AS [config_path]
+    [vi_ConfigVariables].[config_path] AS [config_path], 
+    [vi_ConfigVariables].[modify_date] AS [modify_date]
     FROM [config].[vi_ConfigVariables] AS [vi_ConfigVariables]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_AppComponents_Applications" Association="Self.FK_AppComponents_Applications">
@@ -562,6 +609,14 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="Enum_Locations" EntitySet="Enum_Locations" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
+          <AssociationSet Name="FK_MachinesServerGroups_Machines" Association="Self.FK_MachinesServerGroups_Machines">
+            <End Role="Machines" EntitySet="Machines" />
+            <End Role="MachinesServerGroups" EntitySet="MachinesServerGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MachinesServerGroups_ServerGroups" Association="Self.FK_MachinesServerGroups_ServerGroups">
+            <End Role="ServerGroups" EntitySet="ServerGroups" />
+            <End Role="MachinesServerGroups" EntitySet="MachinesServerGroups" />
+          </AssociationSet>
           <AssociationSet Name="FK_MachineVariables_EnvironmentVariables" Association="Self.FK_MachineVariables_EnvironmentVariables">
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
             <End Role="MachineVariables" EntitySet="MachineVariables" />
@@ -571,8 +626,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="MachineVariables" EntitySet="MachineVariables" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DevOpsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -703,7 +757,20 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="ConfigVariableValues" Relationship="Self.FK_ConfigVariableValue_Machines" FromRole="Machines" ToRole="ConfigVariableValue" />
           <NavigationProperty Name="Enum_Locations" Relationship="Self.FK_Machines_Enum_Locations" FromRole="Machines" ToRole="Enum_Locations" />
           <NavigationProperty Name="MachineComponentPaths" Relationship="Self.FK_MachineComponentPath_Machines" FromRole="Machines" ToRole="MachineComponentPath" />
+          <NavigationProperty Name="ServerGroups" Relationship="Self.MachinesServerGroups" FromRole="Machines" ToRole="ServerGroups" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="Self.MachineVariables" FromRole="Machines" ToRole="EnvironmentVariables" />
+          <Property Name="ip_address" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ServerGroup">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="group_name" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Machines" Relationship="Self.MachinesServerGroups" FromRole="ServerGroups" ToRole="Machines" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -749,7 +816,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="script_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="script_text" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="script_text" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="modify_date" Type="DateTime" Precision="3" />
           <Property Name="is_active" Type="Boolean" Nullable="false" />
@@ -783,7 +850,8 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="value_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="value" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <Property Name="config_path" Type="String" MaxLength="512" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="config_path" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_MachineComponentPath_Components">
           <End Role="Components" Type="Self.Component" Multiplicity="1" />
@@ -905,6 +973,10 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <End Role="ConfigVariables" Type="Self.ConfigVariable" Multiplicity="*" />
           <End Role="Components" Type="Self.Component" Multiplicity="*" />
         </Association>
+        <Association Name="MachinesServerGroups">
+          <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
+          <End Role="ServerGroups" Type="Self.ServerGroup" Multiplicity="*" />
+        </Association>
         <Association Name="MachineVariables">
           <End Role="EnvironmentVariables" Type="Self.EnvironmentVariable" Multiplicity="*" />
           <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
@@ -920,6 +992,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="EnvironmentVariables" EntityType="Self.EnvironmentVariable" />
           <EntitySet Name="MachineComponentPaths" EntityType="Self.MachineComponentPath" />
           <EntitySet Name="Machines" EntityType="Self.Machine" />
+          <EntitySet Name="ServerGroups" EntityType="Self.ServerGroup" />
           <EntitySet Name="Devices" EntityType="Self.Device" />
           <EntitySet Name="Events" EntityType="Self.Event" />
           <EntitySet Name="ExecutionHistories" EntityType="Self.ExecutionHistory" />
@@ -972,6 +1045,10 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <AssociationSet Name="ComponentConfigVariables" Association="Self.ComponentConfigVariables">
             <End Role="ConfigVariables" EntitySet="ConfigVariables" />
             <End Role="Components" EntitySet="Components" />
+          </AssociationSet>
+          <AssociationSet Name="MachinesServerGroups" Association="Self.MachinesServerGroups">
+            <End Role="Machines" EntitySet="Machines" />
+            <End Role="ServerGroups" EntitySet="ServerGroups" />
           </AssociationSet>
           <AssociationSet Name="MachineVariables" Association="Self.MachineVariables">
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
@@ -1040,7 +1117,8 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Type="String" Name="key" Nullable="false" MaxLength="256" />
           <Property Type="String" Name="value_name" Nullable="false" MaxLength="256" />
           <Property Type="String" Name="value" Nullable="true" MaxLength="4000" />
-          <Property Type="String" Name="config_path" Nullable="false" MaxLength="512" />
+          <Property Type="String" Name="config_path" Nullable="false" MaxLength="256" />
+          <Property Type="DateTime" Name="modify_date" Nullable="true" Precision="23" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1153,10 +1231,22 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="Machines">
             <EntityTypeMapping TypeName="DevOpsModel.Machine">
               <MappingFragment StoreEntitySet="Machines">
+                <ScalarProperty Name="ip_address" ColumnName="ip_address" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="machine_name" ColumnName="machine_name" />
                 <ScalarProperty Name="location" ColumnName="location" />
                 <ScalarProperty Name="usage" ColumnName="usage" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="active" ColumnName="active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServerGroups">
+            <EntityTypeMapping TypeName="DevOpsModel.ServerGroup">
+              <MappingFragment StoreEntitySet="ServerGroups">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="group_name" ColumnName="group_name" />
                 <ScalarProperty Name="create_date" ColumnName="create_date" />
                 <ScalarProperty Name="modify_date" ColumnName="modify_date" />
                 <ScalarProperty Name="active" ColumnName="active" />
@@ -1231,6 +1321,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
                 <ScalarProperty Name="value_name" ColumnName="value_name" />
                 <ScalarProperty Name="value" ColumnName="value" />
                 <ScalarProperty Name="config_path" ColumnName="config_path" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1256,6 +1347,14 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </EndProperty>
             <EndProperty Name="Components">
               <ScalarProperty Name="id" ColumnName="component_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="MachinesServerGroups" TypeName="DevOpsModel.MachinesServerGroups" StoreEntitySet="MachinesServerGroups">
+            <EndProperty Name="Machines">
+              <ScalarProperty Name="id" ColumnName="machine_id" />
+            </EndProperty>
+            <EndProperty Name="ServerGroups">
+              <ScalarProperty Name="id" ColumnName="servergroup_id" />
             </EndProperty>
           </AssociationSetMapping>
           <AssociationSetMapping Name="MachineVariables" TypeName="DevOpsModel.MachineVariables" StoreEntitySet="MachineVariables">
@@ -1298,6 +1397,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
                 <ScalarProperty Name="value_name" ColumnName="value_name" />
                 <ScalarProperty Name="value" ColumnName="value" />
                 <ScalarProperty Name="config_path" ColumnName="config_path" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

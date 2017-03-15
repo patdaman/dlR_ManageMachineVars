@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using SignalrWebService.Models;
+using ViewModel;
 using SignalrWebService.Logs;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace SignalrWebService.Hubs
             Clients.All.hello();
         }
 
-        public void SendPerformance(IList<Event> eventModels)
+        public void SendPerformance(IList<ViewModel.Event> eventModels)
         {
             Clients.All.broadcastPerformance(eventModels);
         }
@@ -34,7 +35,7 @@ namespace SignalrWebService.Hubs
         public dynamic MonitoringFor()
         {
             return LogEngine.events.Select(e =>
-                new Event(e));
+                new ViewModel.Event(e));
         }
 
         public override Task OnConnected()

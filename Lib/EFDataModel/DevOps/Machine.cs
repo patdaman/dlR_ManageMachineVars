@@ -19,6 +19,7 @@ namespace EFDataModel.DevOps
         {
             this.ConfigVariableValues = new HashSet<ConfigVariableValue>();
             this.MachineComponentPaths = new HashSet<MachineComponentPath>();
+            this.ServerGroups = new HashSet<ServerGroup>();
             this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
         }
     
@@ -29,12 +30,15 @@ namespace EFDataModel.DevOps
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool active { get; set; }
+        public string ip_address { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MachineComponentPath> MachineComponentPaths { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ServerGroup> ServerGroups { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
     }

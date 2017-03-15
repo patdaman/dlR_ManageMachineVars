@@ -27,6 +27,7 @@ namespace BusinessLayer
                 {
                     id = machine.id,
                     machine_name = machine.machine_name,
+                    ip_address = machine.ip_address,
                     location = machine.location,
                     usage = machine.usage,
                     create_date = machine.create_date,
@@ -55,6 +56,7 @@ namespace BusinessLayer
             {
                 id = EFMachine.id,
                 machine_name = EFMachine.machine_name,
+                ip_address = EFMachine.ip_address,
                 location = EFMachine.location,
                 usage = EFMachine.usage,
                 create_date = EFMachine.create_date,

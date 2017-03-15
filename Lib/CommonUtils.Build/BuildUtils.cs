@@ -25,8 +25,8 @@ namespace CommonUtils.Build
                         config = "STAGING";
 #elif BETA
                         config = "BETA";
-#elif BETA2
-                        config = "BETA2";
+#elif QA
+                        config = "QA";
 #elif PRODUCTION_RELEASE
                 config = "PROD";
 #elif DEVAPP

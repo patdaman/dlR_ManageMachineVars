@@ -53,6 +53,7 @@
     <Compile Include="ManageAppConfigVariables.cs" />
     <Compile Include="ManageComplexConfigVariables.cs" />
     <Compile Include="ManageEnvironmentVariables.cs" />
+    <Compile Include="ManageLogging.cs" />
     <Compile Include="ManageMachines.cs" />
     <Compile Include="ManagePowershellScripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -109,6 +109,9 @@
     <Compile Include="DevOps\Script.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\ServerGroup.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\usp_AddComponentsToMachine_Result.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>

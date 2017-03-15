@@ -28,5 +28,6 @@ namespace EFDataModel.DevOps
         public string value_name { get; set; }
         public string value { get; set; }
         public string config_path { get; set; }
+        public Nullable<System.DateTime> modify_date { get; set; }
     }
 }

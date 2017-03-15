@@ -1,4 +1,6 @@
-﻿-- =============================================
+﻿
+
+-- =============================================
 -- Author:		Patrick de los Reyes
 -- Create date: 2017-03-01
 -- Description:	Returns Config variables based on Machine and Application
@@ -25,11 +27,12 @@ BEGIN
 		, ConVal.environment_type
 		, ConfigVar.parent_element
 		, ConfigVar.element
-		, ConfigVar.key_name
+		, ConfigVar.[key_name]
 		, ConfigVar.[key]
 		, ConfigVar.value_name
 		, ConVal.[value]
-		, varPath.[config_path] + Com.relative_path	AS config_path
+		, varPath.[config_path]
+		, ConVal.modify_date
 	FROM [config].[ConfigVariables] AS ConfigVar
 		INNER JOIN [config].[ComponentConfigVariables] AppVar
 			ON ConfigVar.id = AppVar.configvariable_id
