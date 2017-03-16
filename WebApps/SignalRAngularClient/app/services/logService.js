@@ -1,8 +1,8 @@
-﻿'use strict';
+﻿'use strict'
 
-app.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', function ($rootScope, backendServerUrl) {
+logApp.factory('logBackendHubProxy', ['$rootScope', 'logBackendServerUrl', function ($rootScope, logBackendServerUrl) {
     function backendHubProxyFactory(serverUrl, hubName, startOptions) {
-        var connection = $.hubConnection(backendServerUrl);
+        var connection = $.hubConnection(logBackendServerUrl);
         var proxy = connection.createHubProxy(hubName);
         connection.start(startOptions).done(function () { });
 
@@ -41,4 +41,3 @@ app.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', function ($roo
 
     return backendHubProxyFactory;
 }]);
-

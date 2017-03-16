@@ -17,9 +17,9 @@ namespace SignalrWebService.Hubs
             Clients.All.hello();
         }
 
-        public void SendPerformance(IList<ViewModel.Event> eventModels)
+        public void SendLogs(IList<ViewModel.Event> eventModels)
         {
-            Clients.All.broadcastPerformance(eventModels);
+            Clients.All.broadcastEvents(eventModels);
         }
 
         public void Communicate(string messageId, string message)

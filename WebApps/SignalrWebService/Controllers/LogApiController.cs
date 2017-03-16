@@ -19,7 +19,7 @@ namespace SignalrWebService.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Get()
+        public HttpResponseMessage GetAllLogs()
         {
             try
             {
@@ -41,17 +41,17 @@ namespace SignalrWebService.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Get(DateTime startDate, DateTime endDate)
-        //{
-        //    try
-        //    {
-        //        return Request.CreateResponse<List<ViewModel.Event>>(HttpStatusCode.OK, logProcessor.GetAllLogs(startDate, endDate));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
+        public HttpResponseMessage GetLogsByDate(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return Request.CreateResponse<List<ViewModel.Event>>(HttpStatusCode.OK, logProcessor.GetAllLogs(startDate, endDate));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   GET: api/Log/ </summary>
@@ -66,53 +66,23 @@ namespace SignalrWebService.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Get(string machineName, DateTime? startDate = null, DateTime? endDate = null)
-        //{
-        //    try
-        //    {
-        //        if (startDate == null)
-        //            startDate = DateTime.MinValue;
-        //        if (startDate == null)
-        //            endDate = DateTime.MaxValue;
-        //        logProcessor.machineName = machineName;
-        //        logProcessor.machineList = new List<string>();
-        //        logProcessor.machineList.Add(machineName);
-        //        return Request.CreateResponse<List<ViewModel.Event>>(HttpStatusCode.OK, logProcessor.GetAllLogs(startDate.Value, endDate.Value));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/14/2017. </remarks>
-        ///
-        /// <param name="machineNames"> List of names of the machines. </param>
-        /// <param name="startDate">    (Optional)
-        ///                                                      The start date. </param>
-        /// <param name="endDate">      (Optional)
-        ///                                                    The end date. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Get(List<string> machineNames, DateTime? startDate = null, DateTime? endDate = null)
-        //{
-        //    try
-        //    {
-        //        if (startDate == null)
-        //            startDate = DateTime.MinValue;
-        //        if (startDate == null)
-        //            endDate = DateTime.MaxValue;
-        //        logProcessor.machineList = machineNames;
-        //        return Request.CreateResponse<List<ViewModel.Event>>(HttpStatusCode.OK, logProcessor.GetAllLogs(startDate.Value, endDate.Value));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
+        public HttpResponseMessage GetMachineLogs(string machineName, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                if (startDate == null)
+                    startDate = DateTime.MinValue;
+                if (startDate == null)
+                    endDate = DateTime.MaxValue;
+                logProcessor.machineName = machineName;
+                logProcessor.machineList = new List<string>();
+                logProcessor.machineList.Add(machineName);
+                return Request.CreateResponse<List<ViewModel.Event>>(HttpStatusCode.OK, logProcessor.GetAllLogs(startDate.Value, endDate.Value));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
     }
 }

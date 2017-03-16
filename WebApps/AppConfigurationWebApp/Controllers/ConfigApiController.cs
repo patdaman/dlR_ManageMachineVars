@@ -16,7 +16,8 @@ namespace AppConfigurationWebApp.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.MachineAppVars>>(HttpStatusCode.OK, configProcessor.GetAllVariables());
+                return Request.CreateResponse<List<ViewModel.ConfigVariable>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
+                //return Request.CreateResponse<List<ViewModel.MachineAppVars>>(HttpStatusCode.OK, configProcessor.GetAllVariables());
             }
             catch (Exception ex)
             {

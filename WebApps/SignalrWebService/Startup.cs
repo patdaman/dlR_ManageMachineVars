@@ -6,6 +6,7 @@ using Owin;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using SignalrWebService.Performance;
+using SignalrWebService.Logs;
 using Microsoft.Owin.Cors;
 using Microsoft.AspNet.SignalR;
 
@@ -27,6 +28,8 @@ namespace SignalrWebService
 
             PerformanceEngine performanceEngine = new PerformanceEngine(800);
             Task.Factory.StartNew(async () => await performanceEngine.OnPerformanceMonitor());
+            LogEngine logEngine = new LogEngine(5000);
+            Task.Factory.StartNew(async () => await logEngine.OnLogMonitor());
         }
     }
 }

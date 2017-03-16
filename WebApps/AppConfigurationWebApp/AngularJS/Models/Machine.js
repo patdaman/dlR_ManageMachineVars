@@ -1,5 +1,5 @@
-var ManageAppConfig_Typescript;
-(function (ManageAppConfig_Typescript) {
+var AppConfigurationWebApp;
+(function (AppConfigurationWebApp) {
     var Model;
     (function (Model) {
         var Machine = (function () {
@@ -8,6 +8,6 @@ var ManageAppConfig_Typescript;
             return Machine;
         }());
         Model.Machine = Machine;
-    })(Model = ManageAppConfig_Typescript.Model || (ManageAppConfig_Typescript.Model = {}));
-})(ManageAppConfig_Typescript || (ManageAppConfig_Typescript = {}));
+    })(Model = AppConfigurationWebApp.Model || (AppConfigurationWebApp.Model = {}));
+})(AppConfigurationWebApp || (AppConfigurationWebApp = {}));
 //# sourceMappingURL=Machine.js.map

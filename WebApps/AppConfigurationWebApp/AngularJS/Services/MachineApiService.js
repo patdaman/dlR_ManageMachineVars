@@ -1,6 +1,6 @@
 //Service to CRUD data from Machine API.
-var ManageAppConfig_Typescript;
-(function (ManageAppConfig_Typescript) {
+var AppConfigurationWebApp;
+(function (AppConfigurationWebApp) {
     var Service;
     (function (Service) {
         var MachineApiService = (function () {
@@ -73,6 +73,6 @@ var ManageAppConfig_Typescript;
             return MachineApiService;
         }());
         Service.MachineApiService = MachineApiService;
-    })(Service = ManageAppConfig_Typescript.Service || (ManageAppConfig_Typescript.Service = {}));
-})(ManageAppConfig_Typescript || (ManageAppConfig_Typescript = {}));
+    })(Service = AppConfigurationWebApp.Service || (AppConfigurationWebApp.Service = {}));
+})(AppConfigurationWebApp || (AppConfigurationWebApp = {}));
 //# sourceMappingURL=MachineApiService.js.map

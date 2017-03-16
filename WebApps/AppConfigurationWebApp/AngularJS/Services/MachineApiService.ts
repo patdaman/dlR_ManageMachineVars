@@ -1,5 +1,5 @@
 ﻿//Service to CRUD data from Machine API.
-module ManageAppConfig_Typescript.Service {
+module AppConfigurationWebApp.Service {
     export class MachineApiService {
         private httpService: ng.IHttpService;
         private qService: ng.IQService;

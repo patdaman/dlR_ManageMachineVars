@@ -1,16 +1,9 @@
-﻿'use strict';
+﻿'use strict'
 
-var loggingapp = angular.module('app', ['ui.grid',
-    'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
-
-loggingapp.value('backendServerUrl', 'http://localhost:41999/signalr/logging');
-loggingapp.value('apiUrl', 'http://localhost:29452/api/');
-
-loggingapp.controller('LogController', ['$scope', 'backendHubProxy', 
-    function ($scope, $http, uiGridConstants, backendHubProxy) {
+logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
+    function ($scope, $http, uiGridConstants, logBackendHubProxy) {
         $scope.title = "RollingLogs ";
-        var loggingDataHub = backendHubProxy(backendHubProxy.defaultServer, 'loggingHub');
+        var loggingDataHub = logBackendHubProxy(logBackendHubProxy.defaultServer, 'EventHub');
         var entry = [];
 
         var id;
@@ -22,18 +15,18 @@ loggingapp.controller('LogController', ['$scope', 'backendHubProxy',
         var Message;
         var Device;
 
-        loggingDataHub.on('broadcastLogging', function (data) {
-            var logEntry = [];
-            data.forEach(function (dataItem) {
-                $scope.id = dataItem.id;
-                $scope.device_id = dataItem.device_id;
-                $scope.Hostname = dataItem.Hostname;
-                $scope.Date = dataItem.Date;
-                $scope.Time = dataItem.Time;
-                $scope.Priority = dataItem.Priority;
-                $scope.Message = dataItem.Message;
-            });
-        });
+        //loggingDataHub.on('broadcastEvents', function (data) {
+        //    var logEntry = [];
+        //    data.forEach(function (dataItem) {
+        //        $scope.id = dataItem.id;
+        //        $scope.device_id = dataItem.device_id;
+        //        $scope.Hostname = dataItem.Hostname;
+        //        $scope.Date = dataItem.Date;
+        //        $scope.Time = dataItem.Time;
+        //        $scope.Priority = dataItem.Priority;
+        //        $scope.Message = dataItem.Message;
+        //    });
+        //});
 
         $scope.submit = function () {
             id = $scope.id;
@@ -68,6 +61,9 @@ loggingapp.controller('LogController', ['$scope', 'backendHubProxy',
 
             expandableRowTemplate: 'expandableRowTemplate.html',
             expandableRowHeight: 150,
+            expandableRowScope: {
+                subGridVariable: 'subGridScopeVariable'
+            },
 
             //column definitions
             //we can specify sorting mechnism also
@@ -140,20 +136,19 @@ loggingapp.controller('LogController', ['$scope', 'backendHubProxy',
         }
 
         $scope.get = function () {
-            return $http.get("/api/MachineApi");
+            return $http.get("/api/LogApi");
         }
 
-        //Loads all Machine records when page loads
         loadLogs();
         function loadLogs() {
-            var MachineRecords = $http.get("/ConfigApi");
-            MachineRecords.then(function (d) {     //success
+            var EventRecords = $http.get("/api/LogApi");
+            EventRecords.then(function (d) {     //success
                 $scope.gridOptions.data = d.data;
             },
                 function () {
                     //swal("Oops..", "Error occured while loading", "error"); //fail
                 });
         }
-
-        $scope.gridOptions.data = $scope.Machines;
-}]);
+        $scope.gridOptions.data = $scope.Logs;
+    }
+    ]);

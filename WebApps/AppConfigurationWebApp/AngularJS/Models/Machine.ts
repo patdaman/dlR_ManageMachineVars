@@ -1,4 +1,4 @@
-﻿module ManageAppConfig_Typescript.Model {
+﻿module AppConfigurationWebApp.Model {
     export class Machine {
         public id: number;
         public machine_name: string;

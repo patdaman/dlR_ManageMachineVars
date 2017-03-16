@@ -71,6 +71,7 @@
 ////                })
 ////            }
 ////        }
+'use strict';
 var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
     'ui.grid.selection', 'ui.grid.pinning']);
@@ -127,8 +128,8 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
             { field: 'machine_name', enableEditing: true, cellTemplate: basicCellTemplate },
             { field: 'location', enableEditing: true, cellTemplate: basicCellTemplate },
             { field: 'usage' },
-            { field: 'create_date', enableFiltering: false },
-            { field: 'modify_date' },
+            { field: 'create_date', enableEditing: false, enableFiltering: false },
+            { field: 'modify_date', enableEditing: false },
             { field: 'active', enableEditing: true },
             {
                 field: "Action",

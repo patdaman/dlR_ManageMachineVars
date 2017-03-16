@@ -74,15 +74,13 @@ namespace BusinessLayer
                     id = config.id,
                     active = config.active,
                     key_name = config.key_name,
-                    //config_path = config.config_path,
                     create_date = config.create_date,
                     element = config.element,
                     key = config.key,
                     modify_date = config.modify_date,
-                    //value = config.value,
                     value_name = config.value_name,
-                    //Applications = EfToVmConverter.EfAppListToVm(config.Applications),
-                    //Machines = EfToVmConverter.EfMachineListToVm(config.Machines)
+                    ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues),
+                    Components = EfToVmConverter.EfComponentListToVm(config.Components)
                 });
             }
             return configVars;
