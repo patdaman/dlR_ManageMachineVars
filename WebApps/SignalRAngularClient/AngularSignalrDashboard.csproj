@@ -58,8 +58,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\logApp.js" />
-    <Content Include="app\services\logService.js" />
+    <Content Include="app\models\log.js" />
+    <Content Include="app\services\logservice.js" />
     <Content Include="Content\ui-grid.css" />
     <Content Include="Content\ui-grid.min.css" />
     <Content Include="Content\ui-grid.svg" />
@@ -78,10 +78,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\app.js" />
-    <Content Include="app\controllers.js" />
-    <Content Include="app\controllers\LogController.js" />
-    <Content Include="app\directives.js" />
-    <Content Include="app\services.js" />
+    <Content Include="app\controllers\dashboardcontroller.js" />
+    <Content Include="app\controllers\logcontroller.js" />
+    <Content Include="app\directives\directives.js" />
+    <Content Include="app\services\dashboardservice.js" />
     <Content Include="Content\app.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -889,10 +889,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\directives\" />
-    <Folder Include="app\models\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

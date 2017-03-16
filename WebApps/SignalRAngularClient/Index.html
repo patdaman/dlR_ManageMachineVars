@@ -44,18 +44,16 @@
     <script src="Scripts/ui-grid.min.js"></script>
 
     <script src="app/app.js"></script>
-    <script src="app/services.js"></script>
-    <script src="app/directives.js"></script>
-    <script src="app/controllers.js"></script>
-
-    <script src="app/logApp.js"></script>
-    <script src="app/services/logService.js"></script>
-    <script src="app/controllers/LogController.js"></script>
+    <script src="app/services/dashboardservice.js"></script>
+    <script src="app/services/logservice.js"></script>
+    <script src="app/directives/directives.js"></script>
+    <script src="app/controllers/dashboardcontroller.js"></script>
+    <script src="app/controllers/logcontroller.js"></script>
 
     <script src="Scripts/plugin.js"></script>
 
 </head>
-<body ng-app="angularServiceDashboard">
+<body ng-app="app">
 <div class="menu">
     <div class="sidebar-nav ">
         <ul class="nav" id="side-menu">
@@ -368,7 +366,7 @@
         <!-- /.row -->
     <div class="row">
         <div class="col-lg-8">
-                <div class="panel panel-dashboard" ng-app="angularServiceDashboardLogs">
+                <div class="panel panel-dashboard">
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-12 text-center">
@@ -379,14 +377,12 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <!--<div ng-app="loggingapp" ng-controller="LogController">-->
                         <!--<div style="width: 1200px; height: 400px;" ng-controller="LogController">-->
-                        <div style="height: 400px;" ng-controller="LogController">
-                            <div class="gridStyle" ui-grid="gridOptions"></div>
-                            <!--<div ui-grid="gridOptions"></div>-->
-                            <!--<epoch-live-bar chart-class="category10" chart-height="200" chart-data="realtimeBar" chart-stream="realtimeBarFeed" chart-axes="barAxes"></epoch-live-bar>-->
+                        <div style="height: 400px;" ng-controller="LogController as vm">
+                            <!--<div class="gridStyle" ui-grid="gridOptions"></div>-->
+                            <div ui-grid="gridOptions"></div>
                         </div>
-                        <button ng-click="refresh()" class="btn btn-default btn-block">Refresh</button>
+                        <button ng-click="vm.refresh()" class="btn btn-default btn-block">Refresh</button>
                     </div>
                     <!-- /.panel-body -->
                 </div>

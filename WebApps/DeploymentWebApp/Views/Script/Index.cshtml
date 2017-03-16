@@ -1,20 +1,33 @@
-﻿@model ViewModel.PowershellScriptExecution
+﻿@*
+@model List<ViewModel.PowershellScript>
+*@
+
+<script src="~/Scripts/codemirror-2.37/lib/codemirror.js"></script>
+<script src="~/Scripts/codemirror-2.37/mode/powershell.js" type="text/javascript"></script>
+<link href="~/Scripts/codemirror-2.37/lib/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="~/Scripts/codemirror-2.37/theme/default.css" rel="stylesheet" type="text/css" />
+
+@model ViewModel.PowershellScript
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "DevOps Powershell";
 }
 
-<h2>Index</h2>
+<h2>Powershell Scripts</h2>
 
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
-        <h4>ScriptExecution</h4>
+@*
+	<div class="form-horizontal">
+*@
+<div>
+	<h4>ScriptExecution</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+@*
         <div class="form-group">
             @Html.LabelFor(model => model.MachineId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -22,7 +35,15 @@
                 @Html.ValidationMessageFor(model => model.MachineId, "", new { @class = "text-danger" })
             </div>
         </div>
+*@
 
+		<div class="form-group">
+			<div class="col-md-10">
+				@Html.DropDownList("scriptList", String.Empty)
+			</div>
+		</div>
+
+@*
         <div class="form-group">
             @Html.LabelFor(model => model.MachineName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -30,23 +51,29 @@
                 @Html.ValidationMessageFor(model => model.MachineName, "", new { @class = "text-danger" })
             </div>
         </div>
+*@
 
-        <div class="form-group">
+@*
+		<div class="form-group">
             @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
             </div>
         </div>
+*@
+		
+		<div class="form-group">
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ScriptText, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ScriptText, new { htmlAttributes = new { @class = "form-control" } })
+            @*
+			@Html.LabelFor(model => model.ScriptText, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">*@
+                @Html.TextAreaFor(model => model.ScriptText, 50, 80, new { htmlAttributes = new { @id="code", @name="code" } } )
                 @Html.ValidationMessageFor(model => model.ScriptText, "", new { @class = "text-danger" })
-            </div>
+            @*</div>*@
         </div>
 
+@*
         <div class="form-group">
             @Html.LabelFor(model => model.ViewOnly, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -56,19 +83,33 @@
                 </div>
             </div>
         </div>
-
+*@
+		
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Execute" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
 
+
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
 
+    <script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: {name: "powershell",
+               version: 2,
+               singleLineStringErrors: false},
+        lineNumbers: true,
+        indentUnit: 4,
+        tabMode: "shift",
+        matchBrackets: true
+      });
+    </script>
+	
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

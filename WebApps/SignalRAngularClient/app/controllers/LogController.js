@@ -6,6 +6,7 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
         var loggingDataHub = logBackendHubProxy(logBackendHubProxy.defaultServer, 'EventHub');
         var entry = [];
 
+        var vm = $scope;
         var id;
         var device_id;
         var Hostname;
@@ -134,14 +135,11 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
         }
-
-        $scope.get = function () {
-            return $http.get("/api/LogApi");
-        }
-
+        $scope.refresh = loadLogs();
         loadLogs();
         function loadLogs() {
-            var EventRecords = $http.get("/api/LogApi");
+            //var EventRecords = $http.get(apiUrl + "/api/LogApi");
+            var EventRecords = $http.get("http://localhost:4999/api/LogApi");
             EventRecords.then(function (d) {     //success
                 $scope.gridOptions.data = d.data;
             },
@@ -149,6 +147,11 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
                     //swal("Oops..", "Error occured while loading", "error"); //fail
                 });
         }
-        $scope.gridOptions.data = $scope.Logs;
+
+        $scope.get = function () {
+            return $http.get("/api/LogApi");
+        }
+
+        $scope.gridOptions.data = $scope.EventRecords;
     }
     ]);

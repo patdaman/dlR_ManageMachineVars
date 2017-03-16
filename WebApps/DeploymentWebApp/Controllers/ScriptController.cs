@@ -8,17 +8,27 @@ namespace DeploymentWebApp.Controllers
 {
     public class ScriptController : Controller
     {
-        // GET: Script
+        BusinessLayer.ManagePowershellScripts scriptProcessor = new BusinessLayer.ManagePowershellScripts();
         public ActionResult Index()
         {
-            return View();
+            List<ViewModel.PowershellScript> scripts = new List<ViewModel.PowershellScript>();
+            scripts.AddRange(scriptProcessor.GetAllScripts());
+            //PopulateScriptsDropDown(scripts);
+            //ViewBag.scriptList = new SelectList(scripts, "id", "ScriptName", null);
+            //return View(scripts);
+
+            ViewModel.PowershellScript script = new ViewModel.PowershellScript();
+            script = scriptProcessor.GetAllScripts().FirstOrDefault();
+            ViewBag.scriptList = new SelectList(scripts, "ScriptId", "ScriptName", script.ScriptId);
+            return View(script);
         }
 
-        public ActionResult Index(ViewModel.PowershellScriptExecution execScript)
+        public ActionResult Execute(ViewModel.PowershellScript execScript)
         {
-            BusinessLayer.ManagePowershellScripts scriptProcessor = new BusinessLayer.ManagePowershellScripts();
-            execScript.Output = String.Join(Environment.NewLine, scriptProcessor.ExecuteScript(execScript.ScriptText, execScript.MachineName));
-            return Results(execScript);
+            var scriptResult = new ViewModel.PowershellScriptExecution(execScript);
+            scriptResult.Output = String.Join(Environment.NewLine, scriptProcessor.ExecuteScript(execScript.ScriptText, Environment.MachineName));
+
+            return Results(scriptResult);
         }
 
         public ActionResult Results(ViewModel.PowershellScriptExecution execScript)
