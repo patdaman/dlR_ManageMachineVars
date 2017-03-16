@@ -2,12 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ViewModel;
 
 namespace BusinessLayer
 {
     public class ManageMachines
     {
         DevOpsEntities DevOpsContext = new DevOpsEntities();
+
+        public List<SystemInfo> GetAllMachineInfo()
+        {
+            throw new NotImplementedException();
+        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machines. </summary>
@@ -36,6 +42,11 @@ namespace BusinessLayer
                 });
             }
             return machineModels;
+        }
+
+        public List<ViewModel.Event> GetAllMachineInfo(string machineName)
+        {
+            throw new NotImplementedException();
         }
 
         ///-------------------------------------------------------------------------------------------------

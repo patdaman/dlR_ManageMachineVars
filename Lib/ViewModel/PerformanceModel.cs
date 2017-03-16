@@ -35,4 +35,19 @@ namespace ViewModel
             Value = p.Value;
         }
     }
+
+    public class SystemInfo
+    {
+        public string machineName { get; set; }
+        public string cpu { get; set; }
+        public int totalRam { get; set; }
+        public string operatingSystem { get; set; }
+        public string systemDriveLetter { get; set; }
+        public double discSpaceUsed { get; set; }
+        public double discSpaceAvailable { get; set; }
+        public string webServer { get; set; }
+
+        public SystemInfo()
+        { }
+    }
 }
