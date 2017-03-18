@@ -128,4 +128,3 @@ var ManageAppConfig_Typescript;
         Service.EnumListService = EnumListService;
     })(Service = ManageAppConfig_Typescript.Service || (ManageAppConfig_Typescript.Service = {}));
 })(ManageAppConfig_Typescript || (ManageAppConfig_Typescript = {}));
-//# sourceMappingURL=EnumListService.js.map

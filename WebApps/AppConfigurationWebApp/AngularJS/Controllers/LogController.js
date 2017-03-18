@@ -1,11 +1,9 @@
-﻿'use strict'
-
-logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
+'use strict';
+logApp.controller('logController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
     function ($scope, $http, uiGridConstants, logBackendHubProxy) {
         $scope.title = "RollingLogs ";
         var loggingDataHub = logBackendHubProxy(logBackendHubProxy.defaultServer, 'EventHub');
         var entry = [];
-
         var vm = $scope;
         var id;
         var device_id;
@@ -16,7 +14,6 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
         var Message;
         var Device;
         var EventRecords;
-
         //loggingDataHub.on('broadcastEvents', function (data) {
         //    var logEntry = [];
         //    data.forEach(function (dataItem) {
@@ -29,7 +26,6 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
         //        $scope.Message = dataItem.Message;
         //    });
         //});
-
         $scope.submit = function () {
             id = $scope.id;
             device_id = $scope.device_id;
@@ -48,25 +44,20 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
                 Message: Message
             });
         };
-
         $scope.gridOptions = {
             enablePaging: true,
             pagingOptions: $scope.pagingOptions,
-
             enablePinning: true,
             showFooter: true,
             enableSorting: true,
             enableFiltering: true,
-
             enableColumnResize: true,
             enableCellSelection: true,
-
             expandableRowTemplate: 'expandableRowTemplate.html',
             expandableRowHeight: 150,
             expandableRowScope: {
                 subGridVariable: 'subGridScopeVariable'
             },
-
             //column definitions
             //we can specify sorting mechnism also
             columnDefs: [
@@ -82,76 +73,64 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
                 $scope.gridApi = gridApi;
             }
         };
-
         function hideIdColumn(columns) {
-            gridOptions.columns.forEach(function (column) {
+            columns.forEach(function (column) {
                 if (column.field === '_id') {
                     column.visible = false;
                 }
             });
             return columns;
         }
-
         $scope.toggleVisible = function () {
             $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
-        }
-
+        };
         $scope.gridOptions.selectedCell;
         $scope.gridOptions.selectedRow;
         $scope.gridOptions.selectedColumn;
-
         var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';
-
         $scope.filterOptions = {
             filterText: "",
             useExternalFilter: true
         };
-
         $scope.gridOptions.sortInfo = {
             fields: ['Date', 'Time'],
             directions: ['desc'],
             columns: [4, 5]
         };
-
-
         $scope.gridOptions.pagingOptions = {
             pageSizes: [5, 10, 20],
             pageSize: 5,
             currentPage: 1
         };
-
         $scope.changeGroupBy = function (group1, group2) {
             $scope.gridOptions.$gridScope.configGroups = [];
             $scope.gridOptions.$gridScope.configGroups.push(group1);
             $scope.gridOptions.$gridScope.configGroups.push(group2);
             $scope.gridOptions.groupBy();
-        }
+        };
         $scope.clearGroupBy = function () {
             $scope.gridOptions.$gridScope.configGroups = [];
             $scope.gridOptions.groupBy();
-        }
-
+        };
         //api that is called every time
         // when data is modified on grid for sorting
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
-        }
-         function refresh() {
+        };
+        function refresh() {
             loadLogs();
         }
         loadLogs();
         function loadLogs() {
-            //var EventRecords = $http.get($scope.apiUrl + "/api/LogApi");
-            $scope.EventRecords = $http.get("http://localhost:41999/api/LogApi");
-            $scope.EventRecords.then(function (d) {     //success
+            $scope.EventRecords = $http.get($scope.apiUrl + "/api/LogApi");
+            //$scope.EventRecords = $http.get("http://localhost:41999/api/LogApi");
+            $scope.EventRecords.then(function (d) {
                 $scope.gridOptions.data = d.data;
-            },
-                function () {
-                    //swal("Oops..", "Error occured while loading", "error"); //fail
-                });
+            }, function () {
+                //swal("Oops..", "Error occured while loading", "error"); //fail
+            });
         }
-
         $scope.gridOptions.data = $scope.EventRecords;
     }
-    ]);
+]);

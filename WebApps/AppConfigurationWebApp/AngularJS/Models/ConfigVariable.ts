@@ -1,4 +1,4 @@
-﻿module ManageAppConfig_Typescript.Model {
+﻿module AppConfigurationWebApp.Model {
     export class ConfigVariable {
         public id: number;
         public element: string;

@@ -19,10 +19,11 @@ app.controller('ServerTimeController', ['$scope', 'backendHubProxy',
 ]);
 
 
-app.controller('PerformanceDataController', ['$scope', 'backendHubProxy',
-    function ($scope, backendHubProxy) {
+app.controller('PerformanceDataController', ['$scope', '$http', 'backendHubProxy',
+    function ($scope, $http, backendHubProxy) {
         var performanceDataHub = backendHubProxy(backendHubProxy.defaultServer, 'performanceHub');
         var entry = [];
+        var machineName;
 
         $scope.currentRamNumber = 0;
         $scope.realtimeArea = generateLineData();
@@ -97,6 +98,20 @@ app.controller('PerformanceDataController', ['$scope', 'backendHubProxy',
             $scope.realtimeAreaFeed = chartEntry;
        
         });
+
+        $scope.machines = [];
+
+        $http({
+            method: 'GET',
+            url: 'http://localhost:29452/api/MachineApi',
+            //data: { applicationId: 3 }
+        }).success(function (result) {
+            $scope.machines = result;
+        });
+
+        function selectMachine(id) {
+
+        }
 
         function generateLineData() {
             var data1 = [{ label: 'Layer 1', values: [] }];

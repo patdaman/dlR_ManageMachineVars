@@ -115,12 +115,12 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
         enableEditing: true,
         enableColumnResize: true,
         enableCellSelection: true,
-        expandableRowTemplate: 'expandableRowTemplate.html',
-        expandableRowHeight: 150,
-        //subGridVariable will be available in subGrid scope
-        expandableRowScope: {
-            subGridVariable: 'subGridScopeVariable'
-        },
+        //expandableRowTemplate: 'expandableRowTemplate.html',
+        //expandableRowHeight: 150,
+        ////subGridVariable will be available in subGrid scope
+        //expandableRowScope: {
+        //    subGridVariable: 'subGridScopeVariable'
+        //},
         //column definitions
         //we can specify sorting mechnism also
         columnDefs: [
@@ -141,18 +141,6 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
         }
-    };
-    function hideIdColumn(columns) {
-        columns.forEach(function (column) {
-            if (column.field === '_id') {
-                column.visible = false;
-            }
-        });
-        return columns;
-    }
-    $scope.toggleVisible = function () {
-        $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
-        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
     };
     $scope.selectedCell;
     $scope.selectedRow;
@@ -176,7 +164,6 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
         directions: ['asc'],
         columns: [0, 1]
     };
-    //$scope.totalServerItems = 0;
     $scope.pagingOptions = {
         pageSizes: [5, 10, 20],
         pageSize: 5,
@@ -301,4 +288,3 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
     };
     $scope.gridOptions.data = $scope.Machines;
 });
-//# sourceMappingURL=MachineController.js.map

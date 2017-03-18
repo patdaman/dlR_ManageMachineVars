@@ -55,6 +55,60 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all machine configuration variables. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/17/2017. </remarks>
+        ///
+        /// <returns>   all machine configuration variables. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.MachineAppVars> GetAllMachineConfigVariables()
+        {
+            List<ViewModel.MachineAppVars> allVars = new List<ViewModel.MachineAppVars>();
+            var allConfigVars = DevOpsContext.ConfigVariables.ToList();
+            foreach (var appVar in allConfigVars)
+            {
+                var varComponents = appVar.Components.ToList();
+                var varValues = appVar.ConfigVariableValues.ToList();
+
+                foreach (var vc in varComponents)
+                {
+                    foreach (var path in vc.MachineComponentPaths)
+                    {
+                        var machine = DevOpsContext.Machines.Where(x => x.id == path.machine_id).FirstOrDefault();
+                        foreach (var app in vc.Applications)
+                        {
+                            var configVar = ReturnConfigVariable(appVar);
+                            foreach (var val in configVar.ConfigVariableValues)
+                            {
+                                MachineAppVars appVarModel = new MachineAppVars(ReturnConfigVariable(appVar));
+
+                                appVarModel.varModify_date = val.modify_date;
+                                appVarModel.varCreate_date = val.create_date;
+                                appVarModel.value = val.value;
+
+                                appVarModel.machineId = machine.id;
+                                appVarModel.machine_name = machine.machine_name ?? string.Empty;
+                                appVarModel.location = machine.location ?? string.Empty;
+                                appVarModel.usage = machine.usage ?? string.Empty;
+
+                                appVarModel.componentId = vc.id;
+                                appVarModel.componentName = vc.component_name ?? string.Empty;
+
+                                appVarModel.applicationId = app.id;
+                                appVarModel.applicationName = app.application_name ?? string.Empty;
+                                appVarModel.applicationRelease = app.release ?? string.Empty;
+
+                                appVarModel.varPath = path.config_path ?? string.Empty;
+                                allVars.Add(appVarModel);
+                            }
+                        }
+                    }
+                }
+            }
+            return allVars;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all configuration variables. </summary>
         ///
         /// <remarks>   Pdelosreyes, 2/28/2017. </remarks>
@@ -69,21 +123,35 @@ namespace BusinessLayer
 
             foreach (var config in allConfigVars)
             {
-                configVars.Add(new ViewModel.ConfigVariable()
-                {
-                    id = config.id,
-                    active = config.active,
-                    key_name = config.key_name,
-                    create_date = config.create_date,
-                    element = config.element,
-                    key = config.key,
-                    modify_date = config.modify_date,
-                    value_name = config.value_name,
-                    ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues),
-                    Components = EfToVmConverter.EfComponentListToVm(config.Components)
-                });
+                configVars.Add(ReturnConfigVariable(config));
             }
             return configVars;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Returns configuration variable. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/17/2017. </remarks>
+        ///
+        /// <param name="config">   The configuration. </param>
+        ///
+        /// <returns>   The configuration variable. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ViewModel.ConfigVariable ReturnConfigVariable(EFDataModel.DevOps.ConfigVariable config)
+        {
+            return new ViewModel.ConfigVariable()
+            {
+                id = config.id,
+                active = config.active,
+                key_name = config.key_name,
+                create_date = config.create_date,
+                element = config.element,
+                key = config.key,
+                modify_date = config.modify_date,
+                value_name = config.value_name,
+                ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues),
+                Components = EfToVmConverter.EfComponentListToVm(config.Components)
+            };
         }
 
         ///-------------------------------------------------------------------------------------------------

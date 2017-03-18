@@ -18,16 +18,18 @@ namespace ViewModel
         public Nullable<int> applicationId { get; set; }
         public string applicationName { get; set; }
         public string applicationRelease { get; set; }
-        public System.DateTime applicationCreate_date { get; set; }
-        public Nullable<System.DateTime> applicationModify_date { get; set; }
-        public bool applicationActive { get; set; }
+        public Nullable<int> componentId { get; set; }
+        public string componentName { get; set; }
         public Nullable<int> varId { get; set; }
         public string varType { get; set; }
+        public string configParentElement { get; set; }
         public string configElement { get; set; }
         public string configAttribute { get; set; }
-        public string varKey { get; set; }
+        public string keyName { get; set; }
+        public string key { get; set; }
         public string configValue_name { get; set; }
-        public string varValue { get; set; }
+        public string valueName { get; set; }
+        public string value { get; set; }
         public string varPath { get; set; }
         public bool varActive { get; set; }
         public string envType { get; set; }
@@ -48,16 +50,13 @@ namespace ViewModel
             applicationId = x.applicationId;
             applicationName = x.applicationName;
             applicationRelease = x.applicationRelease;
-            applicationCreate_date = x.applicationCreate_date;
-            applicationModify_date = x.applicationModify_date;
-            applicationActive = x.applicationActive;
             varId = x.varId;
             varType = x.varType;
             configElement = x.configElement;
             configAttribute = x.configAttribute;
-            varKey = x.varKey;
+            key = x.key;
+            keyName = x.keyName;
             configValue_name = x.configValue_name;
-            varValue = x.varValue;
             varPath = x.varPath;
             varActive = x.varActive;
             varCreate_date = x.varCreate_date;
@@ -77,18 +76,15 @@ namespace ViewModel
             applicationId = x.applicationId;
             applicationName = x.applicationName;
             applicationRelease = x.applicationRelease;
-            applicationCreate_date = x.applicationCreate_date;
-            applicationModify_date = x.applicationModify_date;
-            applicationActive = x.applicationActive;
             if (x.configId != null)
             {
                 varId = x.configId;
                 varType = "Config";
                 configElement = x.configElement;
                 configAttribute = x.configAttribute;
-                varKey = x.configKey;
+                key = x.configKey;
                 configValue_name = x.configValue_name;
-                varValue = x.configValue;
+                value = x.configValue;
                 varPath = x.config_path;
                 varActive = x.configActive;
                 varCreate_date = x.configCreate_date;
@@ -98,8 +94,8 @@ namespace ViewModel
             {
                 varId = x.configId;
                 varType = "Environment";
-                varKey = x.envKey;
-                varValue = x.envValue;
+                key = x.envKey;
+                value = x.envValue;
                 varPath = x.envPath;
                 envType = x.envType;
                 varActive = x.envActive;
@@ -110,7 +106,17 @@ namespace ViewModel
 
         public MachineAppVars(ConfigVariable x)
         {
-
+            varId = x.id;
+            varType = "AppConfig";
+            configParentElement = x.parent_element;
+            configElement = x.element;
+            keyName = x.key_name;
+            keyName = x.key_name;
+            key = x.key;
+            configValue_name = x.value_name;
+            varActive = x.active;
+            varCreate_date = x.create_date;
+            varModify_date = x.modify_date;
         }
 
         public MachineAppVars(EnvironmentDtoVariable x)

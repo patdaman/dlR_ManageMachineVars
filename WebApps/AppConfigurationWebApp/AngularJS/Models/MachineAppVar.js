@@ -2,11 +2,11 @@ var AppConfigurationWebApp;
 (function (AppConfigurationWebApp) {
     var Model;
     (function (Model) {
-        var ConfigVariable = (function () {
-            function ConfigVariable() {
+        var MachineAppVar = (function () {
+            function MachineAppVar() {
             }
-            return ConfigVariable;
+            return MachineAppVar;
         }());
-        Model.ConfigVariable = ConfigVariable;
+        Model.MachineAppVar = MachineAppVar;
     })(Model = AppConfigurationWebApp.Model || (AppConfigurationWebApp.Model = {}));
 })(AppConfigurationWebApp || (AppConfigurationWebApp = {}));

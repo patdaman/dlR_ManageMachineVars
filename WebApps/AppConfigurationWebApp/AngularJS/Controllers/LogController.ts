@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
+logApp.controller('logController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
     function ($scope, $http, uiGridConstants, logBackendHubProxy) {
         $scope.title = "RollingLogs ";
         var loggingDataHub = logBackendHubProxy(logBackendHubProxy.defaultServer, 'EventHub');
@@ -84,7 +84,7 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
         };
 
         function hideIdColumn(columns) {
-            gridOptions.columns.forEach(function (column) {
+            columns.forEach(function (column) {
                 if (column.field === '_id') {
                     column.visible = false;
                 }
@@ -137,13 +137,13 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
         }
-         function refresh() {
+        function refresh() {
             loadLogs();
         }
         loadLogs();
         function loadLogs() {
-            //var EventRecords = $http.get($scope.apiUrl + "/api/LogApi");
-            $scope.EventRecords = $http.get("http://localhost:41999/api/LogApi");
+            $scope.EventRecords = $http.get($scope.apiUrl + "/api/LogApi");
+            //$scope.EventRecords = $http.get("http://localhost:41999/api/LogApi");
             $scope.EventRecords.then(function (d) {     //success
                 $scope.gridOptions.data = d.data;
             },
@@ -154,4 +154,4 @@ logApp.controller('LogController', ['$scope', '$http', 'uiGridConstants', 'logBa
 
         $scope.gridOptions.data = $scope.EventRecords;
     }
-    ]);
+]);

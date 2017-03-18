@@ -185,9 +185,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Views\Config\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AngularJS\app.js" />
+    <Content Include="AngularJS\configApp.js" />
+    <Content Include="AngularJS\Controllers\ConfigController2.js" />
     <Content Include="AngularJS\Models\Machine.js" />
     <Content Include="AngularJS\Models\MachineJs.js" />
     <Content Include="AngularJS\Services\MachineService.js" />
@@ -285,7 +287,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Config\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -305,7 +306,9 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="AngularJS\app.ts" />
-    <None Include="AngularJS\Controllers\ConfigController.ts" />
+    <TypeScriptCompile Include="AngularJS\configApp.ts" />
+    <TypeScriptCompile Include="AngularJS\Controllers\ConfigController.ts" />
+    <TypeScriptCompile Include="AngularJS\Controllers\LogController.ts" />
     <TypeScriptCompile Include="AngularJS\Controllers\MachineController.ts" />
     <TypeScriptCompile Include="AngularJS\Controllers\MachineController2.ts" />
     <TypeScriptCompile Include="AngularJS\Models\Application.ts" />
@@ -314,7 +317,9 @@
     <TypeScriptCompile Include="AngularJS\Models\EnumListItemModel.ts" />
     <TypeScriptCompile Include="AngularJS\Models\EnvironmentVariable.ts" />
     <TypeScriptCompile Include="AngularJS\Models\Machine.ts" />
+    <TypeScriptCompile Include="AngularJS\Models\MachineAppVar.ts" />
     <TypeScriptCompile Include="AngularJS\Models\MachineGroup.ts" />
+    <TypeScriptCompile Include="AngularJS\Services\ConfigService.ts" />
     <TypeScriptCompile Include="AngularJS\Services\EnumListService.ts" />
     <TypeScriptCompile Include="AngularJS\Services\MachineApiService.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />

@@ -1,15 +1,15 @@
 ﻿//Service to get data from service..
-configApp.service('machinecrudservice', function ($http) {
+configApp.service('configcrudservice', function ($http) {
 
     this.getAllMachines = function () {
-        return $http.get("/api/MachineApi");
+        return $http.get("/api/ConfigApi");
     }
 
     //save
     this.save = function (Machine) {
         var request = $http({
             method: 'post',
-            url: '/api/MachineApi/',
+            url: '/api/ConfigApi/',
             data: Machine
         });
         return request;
@@ -18,7 +18,7 @@ configApp.service('machinecrudservice', function ($http) {
     //get single record by Id
     this.get = function (id) {
         //debugger;
-        return $http.get("/api/MachineApi/" + id);
+        return $http.get("/api/ConfigApi/" + id);
     }
 
     //update Machine records
@@ -26,7 +26,7 @@ configApp.service('machinecrudservice', function ($http) {
         //debugger;
         var updaterequest = $http({
             method: 'put',
-            url: "/api/MachineApi/" + UpdateId,
+            url: "/api/ConfigApi/" + UpdateId,
             data: Machine
         });
         return updaterequest;
@@ -37,7 +37,7 @@ configApp.service('machinecrudservice', function ($http) {
         debugger;
         var deleterecord = $http({
             method: 'delete',
-            url: "/api/MachineApi/" + UpdateId
+            url: "/api/ConfigApi/" + UpdateId
         });
         return deleterecord;
     }

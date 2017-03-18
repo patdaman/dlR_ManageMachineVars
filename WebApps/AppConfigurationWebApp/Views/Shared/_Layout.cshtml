@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Application Configuration Manager</title>
     @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/app")
 </head>
-@*<body ng-app="app">*@
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -21,7 +24,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    @*<li>@Html.ActionLink("About", "About", "Home")</li>*@
+                    <li>@Html.ActionLink("AppConfig", "Index", "Config")</li>
                     <li>@Html.ActionLink("Machine", "Index", "Machine")</li>
                 </ul>
             </div>
@@ -34,10 +37,6 @@
             <p>&copy; @DateTime.Now.Year - Application Configuration Manager</p>
         </footer>
     </div>
-    @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/app")
     @RenderSection("scripts", required: false)
 </body>
 </html="app">
