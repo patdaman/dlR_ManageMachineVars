@@ -134,3 +134,4 @@ logApp.controller('logController', ['$scope', '$http', 'uiGridConstants', 'logBa
         $scope.gridOptions.data = $scope.EventRecords;
     }
 ]);
+//# sourceMappingURL=LogController.js.map

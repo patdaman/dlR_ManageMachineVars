@@ -10,3 +10,4 @@ var AppConfigurationWebApp;
         Model.MachineAppVar = MachineAppVar;
     })(Model = AppConfigurationWebApp.Model || (AppConfigurationWebApp.Model = {}));
 })(AppConfigurationWebApp || (AppConfigurationWebApp = {}));
+//# sourceMappingURL=MachineAppVar.js.map

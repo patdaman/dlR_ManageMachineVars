@@ -185,6 +185,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="AngularJS\Controllers\MachineController2.js" />
+    <Content Include="Content\Templates\editButton.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\editModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\ui-grid.css" />
     <Content Include="Content\ui-grid.min.css" />
     <Content Include="Content\ui-grid.svg" />
@@ -312,7 +319,6 @@
     <TypeScriptCompile Include="AngularJS\Controllers\ConfigController.ts" />
     <TypeScriptCompile Include="AngularJS\Controllers\LogController.ts" />
     <TypeScriptCompile Include="AngularJS\Controllers\MachineController.ts" />
-    <TypeScriptCompile Include="AngularJS\Controllers\MachineController2.ts" />
     <TypeScriptCompile Include="AngularJS\Models\Application.ts" />
     <TypeScriptCompile Include="AngularJS\Models\ConfigVariable.ts" />
     <TypeScriptCompile Include="AngularJS\Models\EnumLinkModel.ts" />

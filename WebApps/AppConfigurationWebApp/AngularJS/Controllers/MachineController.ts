@@ -1,104 +1,4 @@
-﻿////module ManageAppConfig.Controller {
-
-////    export class MachineController {
-
-////        machineEditorGridOptions: uiGrid.IGridOptions = undefined;
-////        httpServ: ng.IHttpService;
-////        qServ: ng.IQService;
-
-////        fromDate: Date;
-////        toDate: Date;
-////        fromDateString: string;
-////        toDateString: string;
-////        dateType: string;
-
-////        identifier: string;
-////        toolbarTemplate: any;
-////        detailTemplate: any;
-////        // dataGridSource: uiGrid.IGridInstance;
-////        filterCaseNumber: string = "";
-
-////        getData: Function;
-
-////        enumService: Service.EnumListService;
-
-////        billingAggregateEnum: any;
-////        billingClassificationEnum: any;
-////        billStatusEnum: any;
-
-////        programGroupSelection: string;
-////        billingAggregateSelection: string;
-////        billingClassificationSelection: string;
-////        billStatusSelection: string;
-
-////        enumListReceived: boolean = false;
-
-////        usageTypeEnum: any;
-////        locationEnum: any;
-
-////        usageTypeList: any;
-////        locationList: any;
-
-////        usageTypeSelection: string;
-////        locationSelection: string;
-
-////        editRowDataModel: uiGrid.IGridRow;
-////        dataModel: any;
-////        exportFlag: boolean = false;
-
-////        updateActionComment: string;
-////        machineListStr: string;
-
-////        ///-------------------------------------------------------------------------------------------------
-////        /// <summary>   Constructor. </summary>
-////        ///
-////        /// <param name="$http">        The $http. </param>
-////        /// <param name="$q">           The $q. </param>
-////        /// <param name="PayorService"> The payor service. </param>
-////        /// <param name="EnumService">  The enum service. </param>
-////        ///-------------------------------------------------------------------------------------------------
-
-////        constructor($rootScope, $http, $q,
-////            {
-
-////            this.gridOptions = undefined;
-
-
-////            this.httpServ = $http;
-////            this.qServ = $q;
-
-////            this.enumService = EnumService;
-////            this.utilService = UtilService;
-
-////            this.identifier = $rootScope.AppBuildStatus + "Machine Editor";
-
-////            this.dateType = "Create Date";
-
-////            this.toDate = new Date();
-////            this.fromDate = new Date();
-////            this.fromDate.setDate(this.toDate.getDate() - 7);
-
-////            this.fromDateString = DateToUSString(this.fromDate);
-////            this.toDateString = DateToUSString(this.toDate);
-
-////            this.payorListReceived = false;
-////            this.enumListReceived = false;
-
-////            this.dataGridSource = this.initDataGridSource($http);
-
-////            if (this.enumService.EnumServiceReady) {
-////                this.enumListRecdProc();
-////            }
-////            else {
-////                var current: CaseEditorController = this;
-////                this.enumService.PopulateEnumListsAsync().then(function (data) {
-////                    current.enumListRecdProc();
-////                }, function (reason) {
-////                    console.log("Error loading enums");
-////                })
-////            }
-////        }
-'use strict'
+﻿'use strict'
 
 var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
@@ -195,20 +95,16 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
             { field: 'usage', width: '15%' },
             { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: '15%' },
             { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: '15%'},
+            { field: 'active', enableEditing: true, type: 'boolean', width: '8%' },
             {
-                field: 'active', enableEditing: true, type: 'boolean', width: '8%'
-                // , editableCellTemplate: 'ui-grid/dropdownEditor', 
-                // editDropdownValueLabel: 'active', editDropdownOptionsArray: [
-                //    { id: 1, active: 'true' },
-                //    { id: 2, active: 'false' } ]
-                },
-            //{
-            //    field: "Action",
-            //    //exporterSuppressExport: true,
-            //    width: 200,
-            //    enableCellEdit: false,
-            //    cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Click a Cell for Edit </button>'
-            //}
+                field: "Action",
+                width: 80,
+                groupable: false,
+                filterable: false,
+                sortable: false,
+                enableCellEdit: false,
+                cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Edit Row </button>'
+            }
         ],
         data: data,
         onRegisterApi: function (gridApi) {

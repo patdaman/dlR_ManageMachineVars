@@ -5,12 +5,14 @@
 
 <h2>App Config Editor</h2>
 
-<div ng-app= "ManagerApp">
-	<div style = "width: 1200px;">
-        <div ng-controller="ConfigController as vm">
-            <div class="gridStyle" ui-grid="gridOptions"></div>
+<div ng-app="ManagerApp">
+    <div ng-controller="ConfigController as vm">
+        <div class="gridStyle" ui-grid="gridOptions"
+             ui-grid-grouping ui-grid-exporter ui-grid-selection
+             ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
+             ui-grid-tree-view ui-grid-pagination ui-grid-cellNav>
         </div>
-	</div>
+    </div>
 </div>
 @*<script src="@Url.Content("~/AngularJS/configApp.ts")"></script>*@
 @*<script src="@Url.Content("~/AngularJS/Services/ConfigService.ts")"></script>*@

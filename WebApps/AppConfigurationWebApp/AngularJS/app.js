@@ -101,3 +101,4 @@
     //    mainApp.controller('ApplicationController', ["$rootScope", "$http", "$q", "EnumListService", "UtilService", ManageAppConfig_Var.Controller.ApplicationController]);
 })();
 console.log('Angular registration complete.');
+//# sourceMappingURL=app.js.map
