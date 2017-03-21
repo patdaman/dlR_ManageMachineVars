@@ -73,11 +73,13 @@
 ////        }
 'use strict';
 var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
-    'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
-app.controller('MachineController', function ($scope, $http, uiGridConstants) {
+    'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
+    'ui.grid.grouping', 'ui.grid.selection', 'ui.grid.rowEdit',
+    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
+app.controller('MachineController', function ($scope, $http, uiGridGroupingConstants) {
     $scope.title = "Machine Configuration ";
     var vm = $scope;
+    var data = [];
     var id;
     var machine_name;
     var location;
@@ -109,12 +111,35 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
         //paginationPageSize: 10,
         pagingOptions: $scope.pagingOptions,
         enablePinning: true,
-        showFooter: true,
+        showGridFooter: true,
         enableSorting: true,
         enableFiltering: true,
+        enableGridMenu: true,
+        exporterMenuCsv: true,
+        exporterMenuPdf: true,
+        exporterCsvFilename: 'Machines.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
+        exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
+        exporterPdfHeader: { text: "Marcom Central Servers", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'LETTER',
+        exporterPdfMaxGridWidth: 500,
+        exporterSuppressColumns: ['Action'],
+        treeRowHeaderAlwaysVisible: false,
+        enableSelectAll: true,
         enableEditing: true,
-        enableColumnResize: true,
-        enableCellSelection: true,
+        enableColumnResize: false,
+        enableCellSelection: false,
+        enableRowSelection: true,
         //expandableRowTemplate: 'expandableRowTemplate.html',
         //expandableRowHeight: 150,
         ////subGridVariable will be available in subGrid scope
@@ -122,22 +147,20 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
         //    subGridVariable: 'subGridScopeVariable'
         //},
         //column definitions
-        //we can specify sorting mechnism also
         columnDefs: [
+            //{ displayName: '#', cellTemplate: '{{rowRenderIndex + 1}}' },
             { field: 'id', visible: false },
-            { field: 'machine_name', enableEditing: true, cellTemplate: basicCellTemplate },
-            { field: 'location', enableEditing: true, cellTemplate: basicCellTemplate },
-            { field: 'usage' },
-            { field: 'create_date', enableEditing: false, enableFiltering: false },
-            { field: 'modify_date', enableEditing: false },
-            { field: 'active', enableEditing: true },
+            { field: 'machine_name', cellTemplate: basicCellTemplate, width: '20%' },
+            { field: 'ip_address', cellTemplate: basicCellTemplate, width: '10%' },
+            { field: 'location', cellTemplate: basicCellTemplate, groupable: true, width: '15%' },
+            { field: 'usage', width: '15%' },
+            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: '15%' },
+            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: '15%' },
             {
-                field: "Action",
-                width: 200,
-                enableCellEdit: false,
-                cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Click a Cell for Edit </button>'
-            }
+                field: 'active', enableEditing: true, type: 'boolean', width: '8%'
+            },
         ],
+        data: data,
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
         }
@@ -189,7 +212,8 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
     function loadMachines() {
         var MachineRecords = $http.get("/api/MachineApi");
         MachineRecords.then(function (d) {
-            $scope.gridOptions.data = d.data;
+            $scope.gridOptions = { data: d.data };
+            //$scope.gridOptions.data = d.data;
         }, function () {
             //swal("Oops..", "Error occured while loading", "error"); //fail
         });
@@ -286,5 +310,5 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants) {
             //swal("Record deleted succussfully");
         });
     };
-    $scope.gridOptions.data = $scope.Machines;
+    //$scope.gridOptions.data = $scope.Machines;
 });

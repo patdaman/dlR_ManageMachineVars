@@ -1,22 +1,22 @@
 'use strict';
-var configApp = angular.module('configApp', ['ui.grid', 'ui.grid.edit',
+var ConfigApp = angular.module('ConfigApp', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
-configApp.value('configUrl', 'http://localhost:41999');
-var machineApp = angular.module('machineApp', ['ui.grid', 'ui.grid.edit',
+    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
+ConfigApp.value('configUrl', 'http://localhost:41999');
+var MachineApp = angular.module('MachineApp', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
-var logApp = angular.module('logApp', ['ui.grid',
+    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
+var LogApp = angular.module('LogApp', ['ui.grid',
     'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
-logApp.value('apiUrl', 'http://localhost:41999');
-var managerApp = angular.module('managerApp', ['configApp', 'logApp', 'machineApp']);
+    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
+LogApp.value('apiUrl', 'http://localhost:41999');
+var ManagerApp = angular.module('ManagerApp', ['ConfigApp', 'LogApp', 'MachineApp']);
 //configApp.controller('ConfigController', ['$scope', '$http', 'configcrudservice', 'uiGridConstants',
 //    function ($scope, $http, configcrudservice, uiGridConstants) {
-configApp.controller('ConfigController', function ($scope, $http, uiGridConstants) {
+ConfigApp.controller('ConfigController', function ($scope, $http, uiGridConstants) {
     $scope.title = "Application Configuration";
     var vm = $scope;
-    var configVars;
+    var data = [];
     var machineId;
     var machine_name;
     var location;
@@ -48,7 +48,7 @@ configApp.controller('ConfigController', function ($scope, $http, uiGridConstant
         enablePaging: true,
         pagingOptions: $scope.pagingOptions,
         enablePinning: true,
-        showFooter: true,
+        showGridFooter: true,
         enableSorting: true,
         enableFiltering: true,
         enableEditing: true,
@@ -61,9 +61,8 @@ configApp.controller('ConfigController', function ($scope, $http, uiGridConstant
         //    subGridVariable: 'subGridScopeVariable'
         //},
         //column definitions
-        //we can specify sorting mechnism also
-        ColumnDefs: [
-            { displayName: '#', cellTemplate: '{{rowRenderIndex + 1}}' },
+        columnDefs: [
+            //{ displayName: '#', cellTemplate: '{{rowRenderIndex + 1}}' },
             //{ displayName: '#', cellTemplate: '<div>{{$parent.$index + 1}}</div>' },
             { field: 'machineId', visible: false },
             { field: 'machine_name', groupable: true, cellTemplate: basicCellTemplate },
@@ -99,10 +98,12 @@ configApp.controller('ConfigController', function ($scope, $http, uiGridConstant
                 cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Click a Cell for Edit </button>'
             }
         ],
+        data: data,
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
         }
     };
+    var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ng-click="editCell(row.entity, row.getProperty(col.field), col.field)"><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';
     $scope.selectedCell;
     $scope.selectedRow;
     $scope.selectedColumn;
@@ -115,7 +116,6 @@ configApp.controller('ConfigController', function ($scope, $http, uiGridConstant
         //   alert("checking");  
         $scope.selectedRow[$scope.selectedColumn] = $scope.selectedCell;
     };
-    var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ng-click="editCell(row.entity, row.getProperty(col.field), col.field)"><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';
     $scope.filterOptions = {
         filterText: "",
         useExternalFilter: true
@@ -150,7 +150,7 @@ configApp.controller('ConfigController', function ($scope, $http, uiGridConstant
     function loadConfigs() {
         var ConfigRecords = $http.get("/api/ConfigApi");
         ConfigRecords.then(function (d) {
-            $scope.gridOptions.data = d.data;
+            $scope.gridOptions = { data: d.data };
         }, function () {
             //swal("Oops..", "Error occured while loading", "error"); //fail
         });

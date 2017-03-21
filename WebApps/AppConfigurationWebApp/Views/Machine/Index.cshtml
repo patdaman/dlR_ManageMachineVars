@@ -4,40 +4,46 @@
 }
 
 <h2>Machine Editor</h2>
+<script>
+    $(document).ready(function () {
+        $(".flip").click(function () {
+            $(".panel").slideToggle("slow");
+        });
+    });
+</script>
 
 <div ng-app="app" ng-controller="MachineController as vm">
-	<div class="gridStyle">
-		<form class="input" ng-submit="submit()" role="form">
-			<div style="border: 0px solid gray;width:500px;">
-				<labl> <b> Add a New Machine: Marcom Central </b></labl>
-				<div class="form-group">
-					<label>
-						<b>Machine:</b>
-					</label>
-					<input id="inputs" class="form-control" type="text" ng-model="vm.machine_name">
-				</div>
-				<div class="form-group">
-					<label><b>Location:</b></label>
-					<input id="Number1" class="form-control" type="text" ng-model="vm.location">
-				</div>
-				<div class="form-group">
-					<label>Usage:</label>
-					<input id="Date1" class="form-control" type="number" ng-model="vm.usage">
-				</div>
-				<div class="form-group">
-					<label>Active:</label>
-					<input id="Number2" class="form-control" type="number" ng-model="vm.active">
-				</div>
+    <form class="input" ng-submit="submit()" role="form">
+        <div style="border: 0px solid gray;width:500px;">
+            <div class="flip">
+                <labl> <b> Add a New Machine: Marcom Central </b></labl>
+            </div>
+            <div class="panel">
+                <div class="form-group">
+                    <label><b>Machine:</b></label>
+                    <input id="inputs" class="form-control" type="text" ng-model="vm.machine_name">
+                </div>
+                <div class="form-group">
+                    <label><b>Location:</b></label>
+                    <input id="Number1" class="form-control" type="text" ng-model="vm.location">
+                </div>
+                <div class="form-group">
+                    <label>Usage:</label>
+                    <input id="Date1" class="form-control" type="number" ng-model="vm.usage">
+                </div>
+                <div class="form-group">
+                    <label>Active:</label>
+                    <input id="Number2" class="form-control" type="number" ng-model="vm.active">
+                </div>
 
-				<div class="form-group">
-					<input type="submit" value="submit" id="but" class="btn btn-success">
-					<button type="button" ng-click="vm.changeGroupBy('machine_name','location')">Machine By Name and Location</button>
-					<button type="button" ng-click="vm.clearGroupBy()">Clear Group</button>
-				</div>
-			</div>
-		</form>
-	</div>
-	<div style="width: 1200px;">
-		<div class="gridStyle" ui-grid="gridOptions"></div>
-	</div>
+                <div class="form-group">
+                    <input type="submit" value="submit" id="but" class="btn btn-success">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="machineGrid" class="gridStyle" ui-grid="gridOptions" 
+         ui-grid-grouping ui-grid-exporter ui-grid-selection
+         ui-grid-resize-columns ui-grid-edit ui-grid-row-edit 
+         ui-grid-cellNav></div>
 </div>
