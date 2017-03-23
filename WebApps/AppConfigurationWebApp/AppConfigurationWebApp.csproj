@@ -308,6 +308,10 @@
       <Project>{d405b6fd-8a09-49fb-b4d7-1f11394b8623}</Project>
       <Name>BusinessLayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Lib\CommonUtils.AppConfiguration\CommonUtils.AppConfiguration.csproj">
+      <Project>{C2178048-9A6D-445F-9F22-9FFD190127DE}</Project>
+      <Name>CommonUtils.AppConfiguration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Lib\ViewModel\ViewModel.csproj">
       <Project>{4677beac-39cc-4376-94d6-4f1280b64eed}</Project>
       <Name>ViewModel</Name>

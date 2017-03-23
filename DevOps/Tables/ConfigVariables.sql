@@ -6,10 +6,12 @@
     [key]            VARCHAR (256) NOT NULL,
     [value_name]     VARCHAR (256) CONSTRAINT [DF_ConfigVariables_value_name] DEFAULT ('value') NOT NULL,
     [create_date]    DATETIME      CONSTRAINT [DF_ConfigVariables_create_date] DEFAULT (getdate()) NOT NULL,
-    [modify_date]    DATETIME      NULL,
+    [modify_date]    DATETIME      CONSTRAINT [DF_ConfigVariables_modify_date] DEFAULT (getdate()) NOT NULL,
     [active]         BIT           CONSTRAINT [DF_ConfigVariables_active] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_ConfigVariables] PRIMARY KEY CLUSTERED ([id] ASC)
 );
+
+
 
 
 

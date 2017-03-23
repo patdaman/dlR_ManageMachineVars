@@ -138,7 +138,6 @@ namespace BusinessLayer
                     id = x.id,
                     configvar_id = x.configvar_id,
                     environment_type = x.environment_type,
-                    machine_id = x.machine_id,
                     value = x.value,
                     create_date = x.create_date,
                     modify_date = x.modify_date

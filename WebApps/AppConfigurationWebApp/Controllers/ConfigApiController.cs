@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonUtils.AppConfiguration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,13 +11,14 @@ namespace AppConfigurationWebApp.Controllers
     public class ConfigApiController : ApiController
     {
         BusinessLayer.ManageComplexConfigVariables configProcessor = new BusinessLayer.ManageComplexConfigVariables();
+        public AppConfigFunctions appConfigVars { get; private set; }
 
         // GET: api/Machine
         public HttpResponseMessage Get()
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.MachineAppVars>>(HttpStatusCode.OK, configProcessor.GetAllMachineConfigVariables());
+                return Request.CreateResponse<List<ViewModel.AppVar>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
                 //return Request.CreateResponse<List<ViewModel.ConfigVariable>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
                 //return Request.CreateResponse<List<ViewModel.MachineAppVars>>(HttpStatusCode.OK, configProcessor.GetAllVariables());
             }
@@ -38,23 +40,11 @@ namespace AppConfigurationWebApp.Controllers
             }
         }
 
-        public HttpResponseMessage Get(int varId, string varType)
+        public HttpResponseMessage Get(int varId, string envType)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.MachineAppVars>(HttpStatusCode.OK, configProcessor.GetGlobalVariable(varId, varType));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        public HttpResponseMessage Get(int machineId, int varId, string varType)
-        {
-            try
-            {
-                return Request.CreateResponse<ViewModel.MachineAppVars>(HttpStatusCode.OK, configProcessor.GetVariable(machineId, varId, varType));
+                return Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.GetVariable(varId, envType));
             }
             catch (Exception ex)
             {
@@ -67,11 +57,11 @@ namespace AppConfigurationWebApp.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public HttpResponseMessage Post(ViewModel.MachineAppVars value)
+        public HttpResponseMessage Put(ViewModel.AppVar value)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.MachineAppVars>(HttpStatusCode.OK, configProcessor.AddVariable(value));
+                return Post(value);
             }
             catch (Exception ex)
             {
@@ -79,6 +69,23 @@ namespace AppConfigurationWebApp.Controllers
             }
         }
 
+
+        public HttpResponseMessage Post(ViewModel.AppVar value)
+        {
+            try
+            {
+                var response = Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.UpdateVariable(value));
+                //appConfigVars = new AppConfigFunctions();
+                //var updateConfig = appConfigVars.UpdateOrCreateAppSetting(value.keyName, value.key, value.valueName, value.value, value.configParentElement, value.configAttribute);
+                //if (updateConfig == ViewModel.Enums.ModifyResult.Failed || updateConfig == ViewModel.Enums.ModifyResult.AccessDenied)
+                //    return Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.ExpectationFailed, value, "Config stored in database, but not in file" + Environment.NewLine + "Key Update Code: " + updateConfig.ToString());
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
 
         public HttpResponseMessage Delete(int id)
         {

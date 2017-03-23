@@ -34,7 +34,9 @@ namespace AppConfigurationWebApp
                       //"~/AngularJS/configApp.ts",
                       "~/AngularJS/Controllers/MachineController.ts",
                       //"~/AngularJS/Controllers/MachineController2.js",
-                      "~/AngularJS/Controllers/ConfigController.ts"));
+                      "~/AngularJS/Controllers/ConfigController.ts"
+                      //"~/AngularJS/Controllers/ConfigController2.js"
+                      ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

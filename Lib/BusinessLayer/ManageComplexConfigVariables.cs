@@ -43,12 +43,11 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         public List<ViewModel.MachineAppVars> GetAllVariables()
         {
-            List<ViewModel.MachineAppVars_Complete> allVars_Complete = new List<MachineAppVars_Complete>();
             List<ViewModel.MachineAppVars> allVars = new List<ViewModel.MachineAppVars>();
             List<ViewModel.ConfigVariable> configVars = new List<ViewModel.ConfigVariable>();
             List<ViewModel.EnvironmentDtoVariable> enVars = new List<ViewModel.EnvironmentDtoVariable>();
 
-            configVars = GetAllConfigVariables();
+            configVars = GetAllAppConfigVariables();
             enVars = GetAllEnVariables();
 
             return allVars;
@@ -61,9 +60,9 @@ namespace BusinessLayer
         ///
         /// <returns>   all machine configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ViewModel.MachineAppVars> GetAllMachineConfigVariables()
+        public List<ViewModel.AppVar> GetAllConfigVariables()
         {
-            List<ViewModel.MachineAppVars> allVars = new List<ViewModel.MachineAppVars>();
+            List<ViewModel.AppVar> allVars = new List<ViewModel.AppVar>();
             var allConfigVars = DevOpsContext.ConfigVariables.ToList();
             foreach (var appVar in allConfigVars)
             {
@@ -72,37 +71,33 @@ namespace BusinessLayer
 
                 foreach (var vc in varComponents)
                 {
-                    foreach (var path in vc.MachineComponentPaths)
+                    ViewModel.ConfigVariable configVar = ReturnConfigVariable(appVar);
+                    AppVar appVarModel = new AppVar(ReturnConfigVariable(appVar));
+                    appVarModel.componentId = vc.id;
+                    appVarModel.componentName = vc.component_name ?? string.Empty;
+
+                    foreach (var app in vc.Applications)
                     {
-                        var machine = DevOpsContext.Machines.Where(x => x.id == path.machine_id).FirstOrDefault();
-                        foreach (var app in vc.Applications)
-                        {
-                            var configVar = ReturnConfigVariable(appVar);
-                            foreach (var val in configVar.ConfigVariableValues)
-                            {
-                                MachineAppVars appVarModel = new MachineAppVars(ReturnConfigVariable(appVar));
-
-                                appVarModel.varModify_date = val.modify_date;
-                                appVarModel.varCreate_date = val.create_date;
-                                appVarModel.value = val.value;
-
-                                appVarModel.machineId = machine.id;
-                                appVarModel.machine_name = machine.machine_name ?? string.Empty;
-                                appVarModel.location = machine.location ?? string.Empty;
-                                appVarModel.usage = machine.usage ?? string.Empty;
-
-                                appVarModel.componentId = vc.id;
-                                appVarModel.componentName = vc.component_name ?? string.Empty;
-
-                                appVarModel.applicationId = app.id;
-                                appVarModel.applicationName = app.application_name ?? string.Empty;
-                                appVarModel.applicationRelease = app.release ?? string.Empty;
-
-                                appVarModel.varPath = path.config_path ?? string.Empty;
-                                allVars.Add(appVarModel);
-                            }
-                        }
+                        if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
+                            appVarModel.applicationNames = app.application_name;
+                        else
+                            appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                     }
+                    foreach (ViewModel.ConfigVariableValue val in configVar.ConfigVariableValues)
+                    {
+                        ConfigVarValues appVarValueModel = new ConfigVarValues()
+                        {
+                            id = val.id,
+                            configvar_id = val.configvar_id,
+                            environment = val.environment_type,
+                            modify_date = val.modify_date,
+                            create_date = val.create_date,
+                            publish_date = val.publish_date,
+                            value = val.value,
+                        };
+                        appVarModel.values.Add(appVarValueModel);
+                    }
+                    allVars.Add(appVarModel);
                 }
             }
             return allVars;
@@ -115,7 +110,7 @@ namespace BusinessLayer
         ///
         /// <returns>   all configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ViewModel.ConfigVariable> GetAllConfigVariables()
+        public List<ViewModel.ConfigVariable> GetAllAppConfigVariables()
         {
             var configVars = new List<ViewModel.ConfigVariable>();
             var allConfigVars = (from vars in DevOpsContext.ConfigVariables
@@ -148,7 +143,8 @@ namespace BusinessLayer
                 element = config.element,
                 key = config.key,
                 modify_date = config.modify_date,
-                value_name = config.value_name,
+                value_name = config.value_name ?? "",
+                parent_element = config.parent_element,
                 ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)
             };
@@ -186,9 +182,82 @@ namespace BusinessLayer
             return enVars;
         }
 
-        public MachineAppVars GetVariable(int machineId, int varId, string varType)
+        private AppVar GetVariable(int value)
         {
             throw new NotImplementedException();
+        }
+
+        public AppVar GetVariable(int varId, string envType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AppVar UpdateVariable(AppVar appValue)
+        {
+            EFDataModel.DevOps.ConfigVariable efConfig = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.varId).FirstOrDefault();
+            List<EFDataModel.DevOps.ConfigVariableValue> efConfigValueList = efConfig.ConfigVariableValues.ToList();
+            EFDataModel.DevOps.Component efComponent = DevOpsContext.Components.Where(y => y.component_name == appValue.componentName).FirstOrDefault();
+
+            if (efConfig == null)
+            {
+                efConfig = new EFDataModel.DevOps.ConfigVariable()
+                {
+                    active = true,
+                    element = appValue.configElement,
+                    key = appValue.key,
+                    //key_name = appValue.keyName,
+                    parent_element = appValue.configParentElement,
+                    //value_name = appValue.valueName,
+                    modify_date = DateTime.Now
+                };
+                DevOpsContext.ConfigVariables.Add(efConfig);
+            }
+            else
+            {
+                //efConfig.active = appValue.varActive;
+                efConfig.element = appValue.configElement;
+                efConfig.key = appValue.key;
+                //efConfig.key_name = appValue.keyName;
+                efConfig.parent_element = appValue.configParentElement;
+                //efConfig.value_name = appValue.valueName;
+                efConfig.modify_date = DateTime.Now;
+            }
+            foreach (var val in appValue.values)
+            {
+                var efConfigValue = efConfigValueList.Where(x => x.configvar_id == val.configvar_id
+                    && x.environment_type == val.environment).FirstOrDefault();
+                if (efConfigValue == null)
+                {
+                    efConfigValue = new EFDataModel.DevOps.ConfigVariableValue()
+                    {
+                        configvar_id = appValue.varId.Value,
+                        environment_type = val.environment,
+                        value = val.value,
+                        create_date = DateTime.Now,
+                        modify_date = DateTime.Now,
+                        published_date = val.publish_date
+                    };
+                    DevOpsContext.ConfigVariableValues.Add(efConfigValue);
+                }
+                else
+                {
+                    efConfigValue.value = val.value;
+                    efConfigValue.modify_date = DateTime.Now;
+                    efConfigValue.published_date = val.publish_date; 
+                }
+            }
+
+            try
+            {
+                DevOpsContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("Error saving to Database", e);
+            }
+
+            return appValue;
+            return GetVariable(appValue.varId.Value);
         }
 
         public MachineAppVars AddVariable(MachineAppVars value)

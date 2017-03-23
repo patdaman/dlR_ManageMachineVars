@@ -27,7 +27,7 @@ namespace EFDataModel.DevOps
         public string type { get; set; }
         public string path { get; set; }
         public System.DateTime create_date { get; set; }
-        public Nullable<System.DateTime> modify_date { get; set; }
+        public System.DateTime modify_date { get; set; }
         public bool active { get; set; }
     
         public virtual Enum_EnvironmentVariableType Enum_EnvironmentVariableType { get; set; }

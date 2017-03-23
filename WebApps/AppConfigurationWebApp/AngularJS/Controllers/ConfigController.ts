@@ -22,7 +22,7 @@ LogApp.value('apiUrl', 'http://localhost:41999');
 
 var ManagerApp = angular.module('ManagerApp', ['ConfigApp', 'LogApp', 'MachineApp']);
 
-ConfigApp.controller('ConfigController', function ($scope, $http,
+ConfigApp.controller('ConfigController', function ($scope, $http, $log, $q,
         uiGridConstants, uiGridGroupingConstants, uiGridExporterConstants) {
     $scope.title = "Application Configuration";
     var vm = $scope;
@@ -71,7 +71,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http,
         exporterMenuPdf: true,
         exporterCsvFilename: 'AppConfig.csv',
         exporterPdfDefaultStyle: { fontSize: 9 },
-        exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
+        exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
         exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
         exporterPdfHeader: { text: "Marcom Central - Component Configuration", style: 'headerStyle' },
         exporterPdfFooter: function (currentPage, pageCount) {
@@ -95,44 +95,32 @@ ConfigApp.controller('ConfigController', function ($scope, $http,
         enableCellSelection: false,
         enableRowSelection: true,
 
-        //expandableRowTemplate: 'expandableRowTemplate.html',
-        //expandableRowHeight: 150,
-        ////subGridVariable will be available in subGrid scope
-        //expandableRowScope: {
-        //    subGridVariable: 'subGridScopeVariable'
-        //},
+        expandableRowTemplate: '<div style="padding:5px;"><div ui-grid="row.entity.subGridOptions[0]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="height:340px;width:48%; display:inline-block;"></div><div ui-grid="row.entity.subGridOptions[1]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="height:340px;width:48%;display:inline-block;margin-left:5px"></div></div>',
+        expandableRowHeight: 150,
+        //subGridVariable will be available in subGrid scope
+        expandableRowScope: {
+            subGridVariable: 'subGridScopeVariable'
+        },
 
         //column definitions
         columnDefs: [
             //{ displayName: '#', cellTemplate: '{{rowRenderIndex + 1}}' },
             //{ displayName: '#', cellTemplate: '<div>{{$parent.$index + 1}}</div>' },
-            { field: 'machineId', visible: false },
-            { field: 'machine_name', grouping: { groupPriority: 2 }, sort: { priority: 2, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
-            { field: 'location', groupable: true, cellTemplate: basicCellTemplate },
-            { field: 'usage', grouping: { groupPriority: 3 }, sort: { priority: 3, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
-            { field: 'machineCreate_date', visible: false },
-            { field: 'machineModify_date', visible: false },
-            { field: 'machineActive', visible: false },
-            { field: 'applicationId', visible: false },
-            { field: 'applicationName', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
-            { field: 'applicationRelease', groupable: true, cellTemplate: basicCellTemplate },
+            { field: 'location', visible: false, groupable: true, cellTemplate: basicCellTemplate },
+            { field: 'applicationNames', enableCellEdit: false, cellTemplate: basicCellTemplate },
             { field: 'componentId', visible: false },
-            { field: 'componentName', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
+            { field: 'componentName', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
             { field: 'varId', visible: false },
-            { field: 'varType', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
             { field: 'configParentElement', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
             { field: 'configElement', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
             { field: 'configAttribute', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'keyName', enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'key', groupable: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'configValue_name', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
+            { field: 'keyName', visible: false, cellTemplate: basicCellTemplate, title: 'Key Name (If applicable)' },
+            { field: 'key', groupable: true, enableCellEdit: true, cellTemplate: basicCellTemplate, title: 'Key (If applicable)' },
             { field: 'valueName', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'value', enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'varPath', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'varActive', visible: false, enableCellEdit: true, type: 'boolean', width: '8%' },
-            { field: 'envType', visible: false, groupable: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'varCreate_date', visible: false, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-            { field: 'varModify_date', visible: false, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+            //{ field: 'environment', visible: true, cellTemplate: basicCellTemplate },
+            //{ field: 'value', enableCellEdit: true, cellTemplate: basicCellTemplate },
+            //{ field: 'varCreate_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+            //{ field: 'varModify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
             {
                 field: "Action",
                 width: 100,
@@ -170,6 +158,11 @@ ConfigApp.controller('ConfigController', function ($scope, $http,
         useExternalFilter: true
     };
 
+    $scope.getSubGridTemplate = function () {
+        var subgridTemplate = '<div ui-grid="row.entity.subGridOptions" ></div>';
+        return subgridTemplate;
+    };
+
     //$scope.gridOptions.sortInfo = {
     //    fields: ['machine_name', 'usage'],
     //    directions: ['asc'],
@@ -191,7 +184,26 @@ ConfigApp.controller('ConfigController', function ($scope, $http,
     // when data is modified on grid for sorting
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
+        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
     }
+
+    $scope.saveRow = function (rowEntity) {
+
+        var promise = $scope.saveRowFunction(rowEntity);
+        $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
+    };
+
+    $scope.saveRowFunction = function (row) {
+        var deferred = $q.defer();
+        if (row.id == undefined) {
+            $http.post('/api/ConfigApi/', row).success(deferred.resolve).error(deferred.reject);
+
+        } else {
+            //console.log("10 put ID: " + row.id);
+            $http.put('/api/ConfigApi/' + row.id, row).success(deferred.resolve).error(deferred.reject);
+        }
+        return deferred.promise;
+    };
 
     $scope.toggleEdit = function (rowNum) {
         $scope.gridOptions1.data[rowNum].editable = !$scope.gridOptions1.data[rowNum].editable;

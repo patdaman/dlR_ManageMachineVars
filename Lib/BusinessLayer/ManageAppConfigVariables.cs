@@ -247,7 +247,6 @@ namespace BusinessLayer
             {
                 ConfigVariable configVar;
                 ConfigVariableValue efValue;
-                IEnumerable<ConfigVariableValue> efValueList;
                 configVar = (from n in DevOpsContext.ConfigVariables
                          where n.element == x.element
                          where n.key == x.key
@@ -262,54 +261,26 @@ namespace BusinessLayer
                 }
                 else
                 {
-                    efValueList = configVar.ConfigVariableValues.Where(c => c.environment_type == environment).ToList();
-                    if (efValueList == null)
-                    {
-                        configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, null));
-                        configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, machineId));
-                    }
+                    efValue = configVar.ConfigVariableValues.Where(c => c.environment_type == environment).FirstOrDefault();
+                    if (efValue == null)
+                        configVar.ConfigVariableValues.Add(
+                            new ConfigVariableValue()
+                            {
+                                environment_type = environment.ToLower(),
+                                configvar_id = configVar.id,
+                                value = x.value,
+                                create_date = DateTime.Now,
+                                modify_date = DateTime.Now
+                            });
                     else
                     {
-                        efValue = efValueList.Where(v => v.machine_id == machineId).FirstOrDefault();
-                        if (efValue == null)
-                            configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, machineId));
-                        else
-                        {
-                            efValue.value = x.value;
-                            efValue.modify_date = DateTime.Now;
-                        }
-                        if (efValueList.Where(v => v.machine_id == null).Count() < 1)
-                            configVar.ConfigVariableValues.Add(newConfigVariableValue(environment.ToLower(), x.value, configVar.id, null));
+                        efValue.value = x.value;
+                        efValue.modify_date = DateTime.Now;
                     }
                 }
             }
             DevOpsContext.SaveChanges();
             return configVars;
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Creates a new configuration variable value. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/7/2017. </remarks>
-        ///
-        /// <param name="env">      The environment. </param>
-        /// <param name="val">      The value. </param>
-        /// <param name="con_id">   Identifier for the con. </param>
-        /// <param name="mac_id">   Identifier for the MAC. </param>
-        ///
-        /// <returns>   A ConfigVariableValue. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        private ConfigVariableValue newConfigVariableValue(string env, string val, int con_id, int? mac_id)
-        {
-            return new ConfigVariableValue()
-            {
-                machine_id = mac_id,
-                environment_type = env,
-                configvar_id = con_id,
-                value = val,
-                create_date = DateTime.Now,
-                modify_date = DateTime.Now
-            };
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -326,14 +297,12 @@ namespace BusinessLayer
             List<ConfigVariableValue> valueList = new List<ConfigVariableValue>();
             valueList.Add(new ConfigVariableValue()
             {
-                machine_id = null,
                 environment_type = environment.ToLower(),
                 value = vars.value,
                 create_date = DateTime.Now,
             });
             valueList.Add(new ConfigVariableValue()
             {
-                machine_id = machineId,
                 environment_type = environment.ToLower(),
                 value = vars.value,
                 create_date = DateTime.Now,

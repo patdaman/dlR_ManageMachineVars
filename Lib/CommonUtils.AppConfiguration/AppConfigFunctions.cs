@@ -398,6 +398,10 @@ namespace CommonUtils.AppConfiguration
                                 , new XAttribute(valueName, value)
                                 , new XAttribute("providerName", providerName)));
                     }
+                    else if (string.IsNullOrWhiteSpace(attribute) || string.IsNullOrWhiteSpace(keyName))
+                    {
+                        y.Add(new XElement(valueName, value));
+                    }
                     else
                     {
                         y.Add(new XElement(attribute
