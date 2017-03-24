@@ -93,7 +93,7 @@ namespace ViewModel
         public Nullable<int> varId { get; set; }
         public string configParentElement { get; set; }
         public string configElement { get; set; }
-        public string configAttribute { get; set; }
+        //public string configAttribute { get; set; }
         public string keyName { get; set; }
         public string key { get; set; }
         public string valueName { get; set; }
@@ -109,7 +109,7 @@ namespace ViewModel
             varId = x.varId;
             configParentElement = x.configParentElement;
             configElement = x.configElement;
-            configAttribute = x.configAttribute;
+            //configAttribute = x.configAttribute;
             keyName = x.keyName;
             key = x.key;
             valueName = x.valueName;
@@ -127,6 +127,7 @@ namespace ViewModel
             else
                 key = x.key;
             valueName = x.value_name;
+            values = new List<ConfigVarValues>();
         }
     }
 

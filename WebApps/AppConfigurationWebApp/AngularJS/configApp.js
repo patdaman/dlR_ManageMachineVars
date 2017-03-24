@@ -11,4 +11,3 @@ var logApp = angular.module('logApp', ['ui.grid',
     'ui.grid.selection', 'ui.grid.pinning']);
 logApp.value('apiUrl', 'http://localhost:41999');
 var managerApp = angular.module('managerApp', ['configApp', 'logApp']);
-//# sourceMappingURL=configApp.js.map

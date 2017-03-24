@@ -7,10 +7,19 @@
 
 <div ng-app="ManagerApp">
     <div ng-controller="ConfigController as vm">
-        <div class="gridStyle" ui-grid="gridOptions"
+        <div class="control-group">
+            <input type="button" class="btn btn-small" ng-click="expandAllRows()" value="Expand All" />
+            <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All" />
+
+            <input type="button" class="btn btn-small" ng-click="addVar()" value="Add Variable" />
+            <select ng-model="selectedEnvironment" ng-options="x for x in environments"></select>
+            <input type="button" class="btn btn-small" ng-click="publishSelectedRows()" value="Publish" />
+        </div>
+        <div ui-grid="gridOptions"
              ui-grid-grouping ui-grid-exporter ui-grid-selection
              ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
-             ui-grid-tree-view ui-grid-pagination ui-grid-cellNav>
+             ui-grid-pagination ui-grid-cellNav ui-grid-expandable
+             class="gridStyle" >
         </div>
     </div>
 </div>

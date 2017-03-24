@@ -72,7 +72,7 @@ namespace BusinessLayer
                 foreach (var vc in varComponents)
                 {
                     ViewModel.ConfigVariable configVar = ReturnConfigVariable(appVar);
-                    AppVar appVarModel = new AppVar(ReturnConfigVariable(appVar));
+                    AppVar appVarModel = new AppVar(configVar);
                     appVarModel.componentId = vc.id;
                     appVarModel.componentName = vc.component_name ?? string.Empty;
 
@@ -81,7 +81,8 @@ namespace BusinessLayer
                         if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
                             appVarModel.applicationNames = app.application_name;
                         else
-                            appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
+                            //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
+                            appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                     }
                     foreach (ViewModel.ConfigVariableValue val in configVar.ConfigVariableValues)
                     {
@@ -92,7 +93,7 @@ namespace BusinessLayer
                             environment = val.environment_type,
                             modify_date = val.modify_date,
                             create_date = val.create_date,
-                            publish_date = val.publish_date,
+                            publish_date = val.publish_date ?? DateTime.Parse("1900-01-01"),
                             value = val.value,
                         };
                         appVarModel.values.Add(appVarValueModel);

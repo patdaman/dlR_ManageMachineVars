@@ -10,4 +10,3 @@ var AppConfigurationWebApp;
         Model.Machine = Machine;
     })(Model = AppConfigurationWebApp.Model || (AppConfigurationWebApp.Model = {}));
 })(AppConfigurationWebApp || (AppConfigurationWebApp = {}));
-//# sourceMappingURL=Machine.js.map
