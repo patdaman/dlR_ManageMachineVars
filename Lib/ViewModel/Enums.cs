@@ -16,7 +16,8 @@ namespace ViewModel
             Failed,
             AccessDenied,
             NotFound,
-            Unknown
+            Unknown,
+            Commented
         }
     }
 }

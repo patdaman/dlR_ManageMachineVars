@@ -137,10 +137,12 @@ namespace BusinessLayer
                 {
                     id = x.id,
                     configvar_id = x.configvar_id,
-                    environment_type = x.environment_type,
+                    environment = x.environment_type,
                     value = x.value,
                     create_date = x.create_date,
-                    modify_date = x.modify_date
+                    modify_date = x.modify_date,
+                    publish_date = x.published_date,
+                    published = x.published
                 });
             }
             return vm;

@@ -76,6 +76,7 @@
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
           <Property Name="published_date" Type="datetime" />
+          <Property Name="published" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Enum_EnvironmentType">
           <Key>
@@ -670,6 +671,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="ConfigVariable" Relationship="Self.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariableValue" ToRole="ConfigVariables" />
           <NavigationProperty Name="Enum_EnvironmentType" Relationship="Self.FK_ConfigVariableValue_Enum_EnvironmentType" FromRole="ConfigVariableValue" ToRole="Enum_EnvironmentType" />
           <Property Name="published_date" Type="DateTime" Precision="3" />
+          <Property Name="published" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Enum_EnvironmentType">
           <Key>
@@ -1134,6 +1136,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigVariableValues">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigVariableValue">
               <MappingFragment StoreEntitySet="ConfigVariableValue">
+                <ScalarProperty Name="published" ColumnName="published" />
                 <ScalarProperty Name="published_date" ColumnName="published_date" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="configvar_id" ColumnName="configvar_id" />

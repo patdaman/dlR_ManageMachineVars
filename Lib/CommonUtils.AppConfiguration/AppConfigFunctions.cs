@@ -238,15 +238,33 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Removes the key value. </summary>
         ///
-        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
         ///
-        /// <param name="keyName">    The attribute. </param>
+        /// <param name="keyName">      The attribute. </param>
         /// <param name="appKey">       The application key. </param>
-        /// <param name="element">      (Optional) The element. </param>
+        /// <param name="forceDelete">  True to force delete. </param>
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult RemoveKeyValue(string keyName, string appKey, string element = null)
+        public Enums.ModifyResult RemoveKeyValue(string keyName, string appKey, bool forceDelete)
+        {
+            return RemoveKeyValue(keyName, appKey, String.Empty, forceDelete);
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Removes the key value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
+        ///
+        /// <param name="keyName">      The attribute. </param>
+        /// <param name="appKey">       The application key. </param>
+        /// <param name="element">      (Optional) The element. </param>
+        /// <param name="forceDelete">  (Optional)
+        ///                             True to force delete. </param>
+        ///
+        /// <returns>   An Enums.ModifyResult. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public Enums.ModifyResult RemoveKeyValue(string keyName, string appKey, string element = null, bool forceDelete = false)
         {
             foreach (XElement x in configFile.Descendants())
             {
@@ -257,8 +275,16 @@ namespace CommonUtils.AppConfiguration
                     {
                         try
                         {
-                            x.Remove();
-                            return Enums.ModifyResult.Removed;
+                            if (forceDelete)
+                            {
+                                x.Remove();
+                                return Enums.ModifyResult.Removed;
+                            }
+                            else
+                            {
+                                x.ReplaceWith(new XComment(x.ToString()));
+                                return Enums.ModifyResult.Commented;
+                            }
                         }
                         catch (Exception ex)
                         {

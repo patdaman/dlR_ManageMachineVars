@@ -8,7 +8,7 @@ using System.Web.Http;
 
 namespace AppConfigurationWebApp.Controllers
 {
-    public class ConfigApiController : ApiController
+    public class configValuesController : ApiController
     {
         BusinessLayer.ManageComplexConfigVariables configProcessor = new BusinessLayer.ManageComplexConfigVariables();
         public AppConfigFunctions appConfigVars { get; private set; }
@@ -18,9 +18,7 @@ namespace AppConfigurationWebApp.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.AppVar>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
-                //return Request.CreateResponse<List<ViewModel.ConfigVariable>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
-                //return Request.CreateResponse<List<ViewModel.MachineAppVars>>(HttpStatusCode.OK, configProcessor.GetAllVariables());
+                return Request.CreateResponse<List<ViewModel.ConfigVariableValue>>(HttpStatusCode.OK, configProcessor.GetConfigValues());
             }
             catch (Exception ex)
             {
@@ -28,11 +26,12 @@ namespace AppConfigurationWebApp.Controllers
             }
         }
 
-        public HttpResponseMessage Get(int machineId)
+        // GET: api/configValues/5
+        public HttpResponseMessage Get(int id)
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.AppVar>>(HttpStatusCode.OK, configProcessor.GetMachineVariables(machineId));
+                return Request.CreateResponse<List<ViewModel.ConfigVariableValue>>(HttpStatusCode.OK, configProcessor.GetConfigValues(id));
             }
             catch (Exception ex)
             {
@@ -40,24 +39,7 @@ namespace AppConfigurationWebApp.Controllers
             }
         }
 
-        public HttpResponseMessage Get(int varId, string envType)
-        {
-            try
-            {
-                return Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.GetVariable(varId, envType));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public HttpResponseMessage Put(ViewModel.AppVar value)
+        public HttpResponseMessage Put(ViewModel.ConfigVariableValue value)
         {
             try
             {
@@ -70,11 +52,11 @@ namespace AppConfigurationWebApp.Controllers
         }
 
 
-        public HttpResponseMessage Post(ViewModel.AppVar value)
+        public HttpResponseMessage Post(ViewModel.ConfigVariableValue value)
         {
             try
             {
-                var response = Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.UpdateVariable(value));
+                var response = Request.CreateResponse<ViewModel.ConfigVariableValue>(HttpStatusCode.OK, configProcessor.UpdateValue(value));
                 //appConfigVars = new AppConfigFunctions();
                 //var updateConfig = appConfigVars.UpdateOrCreateAppSetting(value.keyName, value.key, value.valueName, value.value, value.configParentElement, value.configAttribute);
                 //if (updateConfig == ViewModel.Enums.ModifyResult.Failed || updateConfig == ViewModel.Enums.ModifyResult.AccessDenied)
@@ -87,16 +69,9 @@ namespace AppConfigurationWebApp.Controllers
             }
         }
 
-        public HttpResponseMessage Delete(int id)
+        // DELETE: api/configValues/5
+        public void Delete(int id)
         {
-            try
-            {
-                return Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.DeleteVariable(id));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
         }
     }
 }

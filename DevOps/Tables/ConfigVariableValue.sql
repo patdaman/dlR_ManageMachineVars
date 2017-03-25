@@ -6,11 +6,14 @@
     [create_date]      DATETIME        CONSTRAINT [DF_ConfigVariableValue_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date]      DATETIME        CONSTRAINT [DF_ConfigVariableValue_modify_date] DEFAULT (getdate()) NOT NULL,
     [published_date]   DATETIME        NULL,
+    [published]        BIT             CONSTRAINT [DF_ConfigVariableValue_published] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ConfigVariableValue] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_ConfigVariableValue_ConfigVariables] FOREIGN KEY ([configvar_id]) REFERENCES [config].[ConfigVariables] ([id]),
     CONSTRAINT [FK_ConfigVariableValue_Enum_EnvironmentType] FOREIGN KEY ([environment_type]) REFERENCES [config].[Enum_EnvironmentType] ([name]),
     CONSTRAINT [IX_ConfigVariableValue] UNIQUE NONCLUSTERED ([environment_type] ASC, [configvar_id] ASC)
 );
+
+
 
 
 

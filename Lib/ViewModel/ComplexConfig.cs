@@ -87,29 +87,28 @@ namespace ViewModel
 
     public class AppVar
     {
+        public Nullable<int> configvar_id { get; set; }
         public string applicationNames { get; set; }
         public Nullable<int> componentId { get; set; }
         public string componentName { get; set; }
-        public Nullable<int> varId { get; set; }
         public string configParentElement { get; set; }
         public string configElement { get; set; }
         //public string configAttribute { get; set; }
         public string keyName { get; set; }
         public string key { get; set; }
         public string valueName { get; set; }
-        public List<ConfigVarValues> values { get; set; }
+        public List<ConfigVariableValue> values { get; set; }
 
         public AppVar()
         { }
         public AppVar(AppVar x)
         {
+            configvar_id = x.configvar_id;
             applicationNames = x.applicationNames;
             componentId = x.componentId;
             componentName = x.componentName;
-            varId = x.varId;
             configParentElement = x.configParentElement;
             configElement = x.configElement;
-            //configAttribute = x.configAttribute;
             keyName = x.keyName;
             key = x.key;
             valueName = x.valueName;
@@ -118,7 +117,7 @@ namespace ViewModel
 
         public AppVar(ConfigVariable x)
         {
-            varId = x.id;
+            configvar_id = x.id;
             configParentElement = x.parent_element;
             configElement = x.element;
             keyName = x.key_name;
@@ -127,30 +126,30 @@ namespace ViewModel
             else
                 key = x.key;
             valueName = x.value_name;
-            values = new List<ConfigVarValues>();
+            values = new List<ConfigVariableValue>();
         }
     }
 
-    public class ConfigVarValues
-    {
-        public int id { get; set; }
-        public int configvar_id { get; set; }
-        public string environment { get; set; }
-        public string value { get; set; }
-        public DateTime create_date { get; set; }
-        public DateTime modify_date { get; set; }
-        public Nullable<DateTime> publish_date { get; set; }
-        public ConfigVarValues()
-        { }
-        public ConfigVarValues(ConfigVarValues x)
-        {
-            id = x.id;
-            configvar_id = x.configvar_id;
-            environment = x.environment;
-            value = x.value;
-            create_date = x.create_date;
-            modify_date = x.modify_date;
-            publish_date = x.publish_date;
-        }
-    }
+    //public class ConfigVarValues
+    //{
+    //    public int id { get; set; }
+    //    public int configvar_id { get; set; }
+    //    public string environment { get; set; }
+    //    public string value { get; set; }
+    //    public DateTime create_date { get; set; }
+    //    public DateTime modify_date { get; set; }
+    //    public Nullable<DateTime> publish_date { get; set; }
+    //    public ConfigVarValues()
+    //    { }
+    //    public ConfigVarValues(ConfigVarValues x)
+    //    {
+    //        id = x.id;
+    //        configvar_id = x.configvar_id;
+    //        environment = x.environment;
+    //        value = x.value;
+    //        create_date = x.create_date;
+    //        modify_date = x.modify_date;
+    //        publish_date = x.publish_date;
+    //    }
+    //}
 }

@@ -190,13 +190,14 @@ namespace ViewModel
 
     public class ConfigVariableValue
     {
-        public int id { get; set; }
         public int configvar_id { get; set; }
-        public string environment_type { get; set; }
+        public Nullable<int> id { get; set; }
+        public string environment { get; set; }
         public string value { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
         public Nullable<DateTime> publish_date { get; set; }
+        public bool published { get; set; }
         public virtual ConfigVariable ConfigVariable { get; set; }
         public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
 
@@ -205,12 +206,14 @@ namespace ViewModel
 
         public ConfigVariableValue(ConfigVariableValue c)
         {
-            id = c.id;
             configvar_id = c.configvar_id;
-            environment_type = c.environment_type;
+            id = c.id;
+            environment = c.environment;
             value = c.value;
             create_date = c.create_date;
             modify_date = c.modify_date;
+            publish_date = c.publish_date;
+            published = c.published;
             //ConfigVariable = c.ConfigVariable;
             //Enum_EnvironmentType = c.Enum_EnvironmentType;
             //Machine = c.Machine;

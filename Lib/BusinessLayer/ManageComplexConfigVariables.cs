@@ -53,6 +53,11 @@ namespace BusinessLayer
             return allVars;
         }
 
+        public ViewModel.ConfigVariableValue UpdateValue(ViewModel.ConfigVariableValue value)
+        {
+            throw new NotImplementedException();
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machine configuration variables. </summary>
         ///
@@ -67,7 +72,6 @@ namespace BusinessLayer
             foreach (var appVar in allConfigVars)
             {
                 var varComponents = appVar.Components.ToList();
-                var varValues = appVar.ConfigVariableValues.ToList();
 
                 foreach (var vc in varComponents)
                 {
@@ -84,20 +88,7 @@ namespace BusinessLayer
                             //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                             appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                     }
-                    foreach (ViewModel.ConfigVariableValue val in configVar.ConfigVariableValues)
-                    {
-                        ConfigVarValues appVarValueModel = new ConfigVarValues()
-                        {
-                            id = val.id,
-                            configvar_id = val.configvar_id,
-                            environment = val.environment_type,
-                            modify_date = val.modify_date,
-                            create_date = val.create_date,
-                            publish_date = val.publish_date ?? DateTime.Parse("1900-01-01"),
-                            value = val.value,
-                        };
-                        appVarModel.values.Add(appVarValueModel);
-                    }
+                    appVarModel.values.AddRange(configVar.ConfigVariableValues);
                     allVars.Add(appVarModel);
                 }
             }
@@ -120,6 +111,44 @@ namespace BusinessLayer
             foreach (var config in allConfigVars)
             {
                 configVars.Add(ReturnConfigVariable(config));
+            }
+            return configVars;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration values. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
+        ///
+        /// <returns>   The configuration values. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.ConfigVariableValue> GetConfigValues()
+        {
+            List<ViewModel.ConfigVariableValue> configVars = new List<ViewModel.ConfigVariableValue>();
+            List<EFDataModel.DevOps.ConfigVariableValue> efConfigVals = DevOpsContext.ConfigVariableValues.ToList();
+            foreach (EFDataModel.DevOps.ConfigVariableValue efVal in efConfigVals)
+            {
+                configVars.Add(ReturnConfigValue(efVal));
+            }
+            return configVars;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration values. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
+        ///
+        /// <param name="configvar_id"> Identifier for the configvar. </param>
+        ///
+        /// <returns>   The configuration values. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.ConfigVariableValue> GetConfigValues(int configvar_id)
+        {
+            List<ViewModel.ConfigVariableValue> configVars = new List<ViewModel.ConfigVariableValue>();
+            List<EFDataModel.DevOps.ConfigVariableValue> efConfigVals = DevOpsContext.ConfigVariableValues.Where(x => x.configvar_id == configvar_id).ToList();
+            foreach (EFDataModel.DevOps.ConfigVariableValue efVal in efConfigVals)
+            {
+                configVars.Add(ReturnConfigValue(efVal));
             }
             return configVars;
         }
@@ -148,6 +177,30 @@ namespace BusinessLayer
                 parent_element = config.parent_element,
                 ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)
+            };
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Returns configuration value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
+        ///
+        /// <param name="configVal">    The configuration value. </param>
+        ///
+        /// <returns>   The configuration value. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ViewModel.ConfigVariableValue ReturnConfigValue(EFDataModel.DevOps.ConfigVariableValue configVal)
+        {
+            return new ViewModel.ConfigVariableValue()
+            {
+                configvar_id = configVal.configvar_id,
+                id = configVal.id,
+                environment = configVal.environment_type,
+                value = configVal.value,
+                create_date = configVal.create_date,
+                modify_date = configVal.modify_date,
+                publish_date = configVal.published_date,
+                published = configVal.published
             };
         }
 
@@ -183,9 +236,39 @@ namespace BusinessLayer
             return enVars;
         }
 
-        private AppVar GetVariable(int value)
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets a variable. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
+        ///
+        /// <param name="value">    The value. </param>
+        ///
+        /// <returns>   The variable. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private List<AppVar> GetVariable(int value)
         {
-            throw new NotImplementedException();
+            List<ViewModel.AppVar> appVars = new List<ViewModel.AppVar>();
+            EFDataModel.DevOps.ConfigVariable efConfigVar = DevOpsContext.ConfigVariables.Where(x => x.id == value).FirstOrDefault();
+            List<EFDataModel.DevOps.Component> varComponents = efConfigVar.Components.ToList();
+            foreach (EFDataModel.DevOps.Component vc in varComponents)
+            {
+                ViewModel.ConfigVariable configVar = ReturnConfigVariable(efConfigVar);
+                AppVar appVarModel = new AppVar(configVar);
+                appVarModel.componentId = vc.id;
+                appVarModel.componentName = vc.component_name ?? string.Empty;
+
+                foreach (var app in vc.Applications)
+                {
+                    if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
+                        appVarModel.applicationNames = app.application_name;
+                    else
+                        //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
+                        appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
+                }
+                appVarModel.values.AddRange(configVar.ConfigVariableValues);
+                appVars.Add(appVarModel);
+            }
+            return appVars;
         }
 
         public AppVar GetVariable(int varId, string envType)
@@ -193,9 +276,21 @@ namespace BusinessLayer
             throw new NotImplementedException();
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Updates the variable described by appValue. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
+        ///
+        /// <exception cref="InvalidOperationException">    Thrown when the requested operation is
+        ///                                                 invalid. </exception>
+        ///
+        /// <param name="appValue"> The application value. </param>
+        ///
+        /// <returns>   An AppVar. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public AppVar UpdateVariable(AppVar appValue)
         {
-            EFDataModel.DevOps.ConfigVariable efConfig = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.varId).FirstOrDefault();
+            EFDataModel.DevOps.ConfigVariable efConfig = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.configvar_id).FirstOrDefault();
             List<EFDataModel.DevOps.ConfigVariableValue> efConfigValueList = efConfig.ConfigVariableValues.ToList();
             EFDataModel.DevOps.Component efComponent = DevOpsContext.Components.Where(y => y.component_name == appValue.componentName).FirstOrDefault();
 
@@ -231,7 +326,7 @@ namespace BusinessLayer
                 {
                     efConfigValue = new EFDataModel.DevOps.ConfigVariableValue()
                     {
-                        configvar_id = appValue.varId.Value,
+                        configvar_id = appValue.configvar_id.Value,
                         environment_type = val.environment,
                         value = val.value,
                         create_date = DateTime.Now,
@@ -244,7 +339,7 @@ namespace BusinessLayer
                 {
                     efConfigValue.value = val.value;
                     efConfigValue.modify_date = DateTime.Now;
-                    efConfigValue.published_date = val.publish_date; 
+                    efConfigValue.published_date = val.publish_date;
                 }
             }
 
@@ -256,27 +351,50 @@ namespace BusinessLayer
             {
                 throw new InvalidOperationException("Error saving to Database", e);
             }
-
-            return appValue;
-            return GetVariable(appValue.varId.Value);
+            return GetVariable(appValue);
         }
 
-        public MachineAppVars AddVariable(MachineAppVars value)
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets a variable. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/24/2017. </remarks>
+        ///
+        /// <param name="appValue"> The application value. </param>
+        ///
+        /// <returns>   The variable. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private AppVar GetVariable(AppVar appValue)
+        {
+            EFDataModel.DevOps.ConfigVariable efConfigVar = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.configvar_id).FirstOrDefault();
+            EFDataModel.DevOps.Component varComponent = efConfigVar.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
+            ViewModel.ConfigVariable configVar = ReturnConfigVariable(efConfigVar);
+            AppVar appVar = new AppVar(configVar);
+            appVar.componentId = varComponent.id;
+            appVar.componentName = varComponent.component_name ?? string.Empty;
+
+            foreach (var app in varComponent.Applications)
+            {
+                if (string.IsNullOrWhiteSpace(appVar.applicationNames))
+                    appVar.applicationNames = app.application_name;
+                else
+                    //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
+                    appVar.applicationNames = string.Concat(appVar.applicationNames, ", ", app.application_name);
+            }
+            appVar.values.AddRange(configVar.ConfigVariableValues);
+            return appVar;
+        }
+
+        public AppVar AddVariable(AppVar value)
         {
             throw new NotImplementedException();
         }
 
-        public MachineAppVars DeleteVariable(int id)
+        public AppVar DeleteVariable(int id)
         {
             throw new NotImplementedException();
         }
 
-        public List<MachineAppVars> GetMachineVariables(int machineId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MachineAppVars GetGlobalVariable(int varId, string varType)
+        public List<AppVar> GetMachineVariables(int machineId)
         {
             throw new NotImplementedException();
         }
