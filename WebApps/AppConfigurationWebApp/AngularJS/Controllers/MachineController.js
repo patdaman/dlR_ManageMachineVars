@@ -246,3 +246,4 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
     };
     //$scope.gridOptions.data = $scope.Machines;
 });
+//# sourceMappingURL=MachineController.js.map

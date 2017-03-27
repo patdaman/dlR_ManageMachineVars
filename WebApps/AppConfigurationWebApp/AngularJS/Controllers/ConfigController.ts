@@ -1,11 +1,21 @@
 ﻿'use strict'
 
 var ConfigApp = angular.module('ConfigApp',
-    ['ui.grid', 'ui.grid.edit', 'ui.grid.grouping', 'ui.grid.saveState',
-        'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
-        'ui.grid.selection', 'ui.grid.rowEdit', 'ui.grid.resizeColumns',
-        'ui.grid.pinning', 'ui.grid.exporter', 'ui.grid.moveColumns',
-        'ui.grid.infiniteScroll', 'ui.grid.importer'
+    ['ui.grid',
+        'ui.grid.edit',
+        'ui.grid.grouping',
+        //'ui.grid.saveState',
+        'ui.grid.pagination',
+        'ui.grid.expandable',
+        'ui.grid.cellNav',
+        'ui.grid.selection',
+        'ui.grid.rowEdit',
+        'ui.grid.resizeColumns',
+        'ui.grid.pinning',
+        'ui.grid.exporter',
+        'ui.grid.moveColumns',
+        //'ui.grid.infiniteScroll',
+        'ui.grid.importer'
     ]);
 
 ConfigApp.value('configUrl', 'http://localhost:41999');
@@ -147,156 +157,144 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         $scope.gridOptions.groupBy();
     }
 
-    ////api that is called every time
-    //// when data is modified on grid for sorting
-    //$scope.gridOptions.onRegisterApi = function (gridApi) {
-    //    $scope.gridApi = gridApi;
-    //    gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-    //}
-
-    //$scope.saveRow = function (rowEntity) {
-
-    //    var promise = $scope.saveRowFunction(rowEntity);
-    //    $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
-    //};
-
-
-    $scope.info = {};
-
+    //api that is called every time
+    // when data is modified on grid for sorting
     $scope.gridOptions.onRegisterApi = function (gridApi) {
-        //set gridApi on scope
         $scope.gridApi = gridApi;
-        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-            var msg = 'row selected ' + row.isSelected;
-            $log.log(msg);
-        });
-
-        gridApi.selection.on.rowSelectionChangedBatch($scope, function (rows) {
-            var msg = 'rows changed ' + rows.length;
-            $log.log(msg);
-        });
-
-        gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
-            var selectedRows = $scope.gridApi.selection.getSelectedRows();
-
-            if (newValue != oldValue) {
-
-                rowEntity.state = "Changed";
-                //Get column
-                var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
-
-                angular.forEach(selectedRows, function (item) {
-                    item[rowCol] = rowEntity[rowCol];
-                    item.state = "Changed";
-                    item.isDirty = false;
-                    item.isError = false;
-                });
-
-            }
-        });
-
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+    }
+
+    $scope.saveRow = function (rowEntity) {
+
+        var promise = $scope.saveRowFunction(rowEntity);
+        $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
     };
-        //gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-        //    if (row.isExpanded) {
-        //        row.entity.subGridOptions = [{
-        //            virtualizationThreshold: 60,
-        //            columnDefs: [{
-        //                name: "Actions",
-        //                cellTemplate: '<div class="ui-grid-cell-contents" >' +
-        //                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-        //                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
-        //                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-        //                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-        //                '</div>',
-        //                enableCellEdit: false
-        //            },
-        //                { name: "id", field: "id", visible: false },
-        //                { name: "Variable id", field: "configvar_id", visible: false },
-        //                { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
-        //                { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-        //                { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
-        //            ],
-        //            onRegisterApi: function (gridApi) {
-        //                $scope.text = gridApi;
-        //                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-        //                    console.log(row);
-        //                });
 
-        //                gridApi.rowEdit.on.saveRow($scope, $scope.saveRow)
-        //            }
-        //        }, {
-        //                virtualizationThreshold: 60,
-        //                columnDefs: [{
-        //                    name: "Actions",
-        //                    cellTemplate: '<div class="ui-grid-cell-contents" >' +
-        //                    '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-        //                    '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
-        //                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-        //                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-        //                    '</div>',
-        //                    enableCellEdit: false
-        //                },
-        //                    { name: "id", field: "id", visible: false },
-        //                    { name: "Variable id", field: "configvar_id", visible: false },
-        //                    { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
-        //                    { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-        //                    { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                    { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                    { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                    { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
-        //                ]
-        //            }],
 
-        //            $http.get('/api/ConfigValues')
-        //                .success(function (data) {
-        //                    row.entity.subGridOptions.data = data
-        //                });
+    //$scope.info = {};
 
-        //    }
+    //$scope.gridOptions.onRegisterApi = function (gridApi) {
+    //    //set gridApi on scope
+    //    $scope.gridApi = gridApi;
+    //    gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+    //        var msg = 'row selected ' + row.isSelected;
+    //        $log.log(msg);
+    //    });
 
-        $scope.saveRowFunction = function (row) {
-            var deferred = $q.defer();
-            $http.post('/api/ConfigApi/', row).success(deferred.resolve).error(deferred.reject);
-            return deferred.promise;
-        };
+    //    gridApi.selection.on.rowSelectionChangedBatch($scope, function (rows) {
+    //        var msg = 'rows changed ' + rows.length;
+    //        $log.log(msg);
+    //    });
 
-        $scope.toggleEdit = function (rowNum) {
-            $scope.gridOptions1.data[rowNum].editable = !$scope.gridOptions1.data[rowNum].editable;
-            $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
-        };
+    //    gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
+    //        var selectedRows = $scope.gridApi.selection.getSelectedRows();
 
-        $scope.environments = ["development", "qa", "production"];
+    //        if (newValue != oldValue) {
 
-        $scope.expandAllRows = function () {
-            $scope.gridApi.expandable.expandAllRows();
-        }
+    //            rowEntity.state = "Changed";
+    //            //Get column
+    //            var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
 
-        $scope.collapseAllRows = function () {
-            $scope.gridApi.expandable.collapseAllRows();
-        }
+    //            angular.forEach(selectedRows, function (item) {
+    //                item[rowCol] = rowEntity[rowCol];
+    //                item.state = "Changed";
+    //                item.isDirty = false;
+    //                item.isError = false;
+    //            });
 
-        //loadConfigs();
+    //        }
+    //    });
 
-        //function loadConfigs() {
-        //    var ConfigRecords = $http.get('/api/ConfigApi');
-        //    ConfigRecords.then(function (data) {
-        //        $scope.gridOptions = { data: data.data };
-        //    })
-        //}
+    //    gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+    //};
+    //gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+    //    if (row.isExpanded) {
+    //        row.entity.subGridOptions = [{
+    //            virtualizationThreshold: 60,
+    //            columnDefs: [{
+    //                name: "Actions",
+    //                cellTemplate: '<div class="ui-grid-cell-contents" >' +
+    //                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
+    //                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
+    //                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
+    //                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
+    //                '</div>',
+    //                enableCellEdit: false
+    //            },
+    //                { name: "id", field: "id", visible: false },
+    //                { name: "Variable id", field: "configvar_id", visible: false },
+    //                { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
+    //                { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
+    //                { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+    //                { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+    //                { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+    //                { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
+    //            ],
+    //            onRegisterApi: function (gridApi) {
+    //                $scope.text = gridApi;
+    //                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+    //                    console.log(row);
+    //                });
 
-    //function loadConfigs() {
-    //    var ConfigRecords = $http.get('/api/ConfigApi');
-    //    ConfigRecords.then(function (data) {
+    //                gridApi.rowEdit.on.saveRow($scope, $scope.saveRow)
+    //            }
+    //        }, {
+    //                virtualizationThreshold: 60,
+    //                columnDefs: [{
+    //                    name: "Actions",
+    //                    cellTemplate: '<div class="ui-grid-cell-contents" >' +
+    //                    '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
+    //                    '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
+    //                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
+    //                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
+    //                    '</div>',
+    //                    enableCellEdit: false
+    //                },
+    //                    { name: "id", field: "id", visible: false },
+    //                    { name: "Variable id", field: "configvar_id", visible: false },
+    //                    { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
+    //                    { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
+    //                    { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+    //                    { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+    //                    { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
+    //                    { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
+    //                ]
+    //            }],
+
+    //            $http.get('/api/ConfigValues')
+    //                .success(function (data) {
+    //                    row.entity.subGridOptions.data = data
+    //                });
+
+    //    }
+
+    $scope.saveRowFunction = function (row) {
+        var deferred = $q.defer();
+        $http.post('/api/ConfigApi/', row).success(deferred.resolve).error(deferred.reject);
+        return deferred.promise;
+    };
+
+    $scope.toggleEdit = function (rowNum) {
+        $scope.gridOptions1.data[rowNum].editable = !$scope.gridOptions1.data[rowNum].editable;
+        $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+    };
+
+    $scope.environments = ["development", "qa", "production"];
+
+    $scope.expandAllRows = function () {
+        $scope.gridApi.expandable.expandAllRows();
+    }
+
+    $scope.collapseAllRows = function () {
+        $scope.gridApi.expandable.collapseAllRows();
+    }
+
     $http.get('/api/ConfigApi')
         .success(function (data) {
             for (i = 0; i < data.length; i++) {
                 data[i].subGridOptions = {
-                appScopeProvider: $scope,
-                //virtualizationThreshold: 60,
+                    appScopeProvider: $scope,
+                    //virtualizationThreshold: 60,
                     columnDefs: [{
                         name: "Actions",
                         cellTemplate: '<div class="ui-grid-cell-contents" >' +

@@ -1,9 +1,19 @@
 'use strict';
-var ConfigApp = angular.module('ConfigApp', ['ui.grid', 'ui.grid.edit', 'ui.grid.grouping', 'ui.grid.saveState',
-    'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
-    'ui.grid.selection', 'ui.grid.rowEdit', 'ui.grid.resizeColumns',
-    'ui.grid.pinning', 'ui.grid.exporter', 'ui.grid.moveColumns',
-    'ui.grid.infiniteScroll', 'ui.grid.importer'
+var ConfigApp = angular.module('ConfigApp', ['ui.grid',
+    'ui.grid.edit',
+    'ui.grid.grouping',
+    //'ui.grid.saveState',
+    'ui.grid.pagination',
+    'ui.grid.expandable',
+    'ui.grid.cellNav',
+    'ui.grid.selection',
+    'ui.grid.rowEdit',
+    'ui.grid.resizeColumns',
+    'ui.grid.pinning',
+    'ui.grid.exporter',
+    'ui.grid.moveColumns',
+    //'ui.grid.infiniteScroll',
+    'ui.grid.importer'
 ]);
 ConfigApp.value('configUrl', 'http://localhost:41999');
 var MachineApp = angular.module('MachineApp', ['ui.grid', 'ui.grid.edit',
@@ -120,16 +130,16 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         $scope.gridOptions.$gridScope.configGroups = [];
         $scope.gridOptions.groupBy();
     };
-    ////api that is called every time
-    //// when data is modified on grid for sorting
+    //api that is called every time
+    // when data is modified on grid for sorting
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
     };
-    //$scope.saveRow = function (rowEntity) {
-    //    var promise = $scope.saveRowFunction(rowEntity);
-    //    $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
-    //};
+    $scope.saveRow = function (rowEntity) {
+        var promise = $scope.saveRowFunction(rowEntity);
+        $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
+    };
     //$scope.info = {};
     //$scope.gridOptions.onRegisterApi = function (gridApi) {
     //    //set gridApi on scope
@@ -231,16 +241,6 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
     $scope.collapseAllRows = function () {
         $scope.gridApi.expandable.collapseAllRows();
     };
-    //loadConfigs();
-    //function loadConfigs() {
-    //    var ConfigRecords = $http.get('/api/ConfigApi');
-    //    ConfigRecords.then(function (data) {
-    //        $scope.gridOptions = { data: data.data };
-    //    })
-    //}
-    //function loadConfigs() {
-    //    var ConfigRecords = $http.get('/api/ConfigApi');
-    //    ConfigRecords.then(function (data) {
     $http.get('/api/ConfigApi')
         .success(function (data) {
         for (i = 0; i < data.length; i++) {
@@ -333,3 +333,4 @@ angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiG
         };
         return InlineEdit;
     }]);
+//# sourceMappingURL=ConfigController.js.map

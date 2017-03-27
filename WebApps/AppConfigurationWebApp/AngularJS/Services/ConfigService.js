@@ -37,3 +37,4 @@ configApp.service('configcrudservice', function ($http) {
         return deleterecord;
     };
 });
+//# sourceMappingURL=ConfigService.js.map

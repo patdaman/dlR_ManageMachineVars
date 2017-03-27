@@ -75,3 +75,4 @@ var AppConfigurationWebApp;
         Service.MachineApiService = MachineApiService;
     })(Service = AppConfigurationWebApp.Service || (AppConfigurationWebApp.Service = {}));
 })(AppConfigurationWebApp || (AppConfigurationWebApp = {}));
+//# sourceMappingURL=MachineApiService.js.map

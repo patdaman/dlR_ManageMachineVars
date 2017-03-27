@@ -198,8 +198,8 @@ namespace ViewModel
         public System.DateTime modify_date { get; set; }
         public Nullable<DateTime> publish_date { get; set; }
         public bool published { get; set; }
-        public virtual ConfigVariable ConfigVariable { get; set; }
-        public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
+        //public virtual ConfigVariable ConfigVariable { get; set; }
+        //public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
 
         public ConfigVariableValue()
         { }
