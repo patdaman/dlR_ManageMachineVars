@@ -310,13 +310,20 @@ namespace BusinessLayer
             }
             else
             {
-                //efConfig.active = appValue.varActive;
-                efConfig.element = appValue.configElement;
-                efConfig.key = appValue.key;
-                //efConfig.key_name = appValue.keyName;
-                efConfig.parent_element = appValue.configParentElement;
-                //efConfig.value_name = appValue.valueName;
-                efConfig.modify_date = DateTime.Now;
+                if (!(efConfig.element == appValue.configElement &&
+                    efConfig.key == appValue.key &&
+                    efConfig.key_name == appValue.keyName &&
+                    efConfig.parent_element == appValue.configParentElement &&
+                    efConfig.value_name == appValue.valueName))
+                {
+
+                    efConfig.element = appValue.configElement;
+                    efConfig.key = appValue.key;
+                    efConfig.key_name = appValue.keyName;
+                    efConfig.parent_element = appValue.configParentElement;
+                    efConfig.value_name = appValue.valueName;
+                    efConfig.modify_date = DateTime.Now;
+                }
             }
             foreach (var val in appValue.values)
             {
@@ -337,9 +344,12 @@ namespace BusinessLayer
                 }
                 else
                 {
-                    efConfigValue.value = val.value;
-                    efConfigValue.modify_date = DateTime.Now;
-                    efConfigValue.published_date = val.publish_date;
+                    if (efConfigValue.value != val.value)
+                    {
+                        efConfigValue.value = val.value;
+                        efConfigValue.modify_date = DateTime.Now;
+                        efConfigValue.published_date = val.publish_date;
+                    }
                 }
             }
 

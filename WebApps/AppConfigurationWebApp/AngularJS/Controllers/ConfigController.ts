@@ -1,4 +1,6 @@
-﻿'use strict'
+﻿// Code goes here
+
+'use strict'
 
 var ConfigApp = angular.module('ConfigApp',
     ['ui.grid', 'ui.grid.edit', 'ui.grid.grouping', 'ui.grid.saveState',
@@ -8,30 +10,14 @@ var ConfigApp = angular.module('ConfigApp',
         'ui.grid.infiniteScroll', 'ui.grid.importer'
     ]);
 
-ConfigApp.value('configUrl', 'http://localhost:41999');
-
-var MachineApp = angular.module('MachineApp', ['ui.grid', 'ui.grid.edit',
-    'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
-
-var LogApp = angular.module('LogApp',
-    ['ui.grid',
-        'ui.grid.pagination', 'ui.grid.expandable',
-        'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
-
-LogApp.value('apiUrl', 'http://localhost:41999');
-
-var ManagerApp = angular.module('ManagerApp', ['ConfigApp', 'LogApp', 'MachineApp']);
-
 ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout,
-    uiGridConstants,
-    //uiGridExporterConstants,
-    //uiGridGroupingConstants,
-    $q, $interval) {
+    uiGridConstants, $q, $interval) {
     $scope.title = "Application Configuration";
-    var vm = $scope;
-    //var data = [];
+    //var vm = $scope;
+    var data = [];
     var i;
+    var editMode = false;
+    var rowIndex;
 
     $scope.gridOptions = {
         enablePaging: true,
@@ -67,55 +53,59 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
 
         treeRowHeaderAlwaysVisible: false,
 
-        enableSelectAll: true,
-        enableEditing: true,
+        enableSelectAll: false,
+        enableEditing: false,
         enableColumnResize: false,
         enableCellSelection: false,
         enableRowSelection: true,
 
-        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-selection style="height:150px;width:88%; float:right"></div>',
-        expandableRowHeight: 150,
-        //subGridVariable will be available in subGrid scope
+        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-selection style="width:100%; float:right"></div>',
+        expandableRowHeight: 125,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
         },
-
-        //column definitions
-        columnDefs: [
-            { field: 'applicationNames', enableCellEdit: false, cellTemplate: basicCellTemplate },
-            { field: 'componentId', visible: false, enableCellEdit: false },
-            { field: 'componentName', enableCellEdit: false, grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
-            { field: 'configvar_id', visible: false, enableCellEdit: false },
-            { field: 'configParentElement', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'configElement', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            //{ field: 'configAttribute', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'keyName', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'key', groupable: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            { field: 'valueName', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate },
-            //{
-            //    field: "Action",
-            //    width: 150,
-            //    enableCellEdit: false,
-            //    enableFiltering: false,
-            //    cellTemplate: '<div class="inline-block"><div ng-if="!row.groupHeader"><button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="editCell()" >Edit </button>&nbsp<button id="delBtn" type="button" class="btn btn-xs btn-danger"  ng-click="saveRow()" >Save </button>&nbsp<button id="delBtn" type="button" class="btn btn-xs btn-danger"  ng-click="editCell()" >Remove </button></div></div>'
-            //    //cellTemplate: '<div><div ng-if="!row.groupHeader"><button id="pubBtn" type="button" class="btn btn-xs btn-primary"  ng-click="publishCell()" >Publish </button></div><div ng-if="!row.groupHeader"><button id="delBtn" type="button" class="btn btn-xs btn-danger"  ng-click="editCell()" >Remove </button></div></div>'
-            //}
-            {
-                name: "Actions",
-                cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents" >' +
-                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Delete</button>' +
-                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-                '</div></div>',
-                enableCellEdit: false
-            },
-        ],
-        //data: data,
-        //onRegisterApi: function (gridApi) {
-        //    $scope.gridApi = gridApi;
-        //}
     };
+
+    //column definitions
+    $scope.gridOptions.columnDefs = [
+        { field: 'applicationNames', enableCellEdit: false, cellTemplate: basicCellTemplate },
+        { field: 'componentId', visible: false, enableCellEdit: false },
+        { field: 'componentName', enableCellEdit: false, grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'asc' }, groupable: true, cellTemplate: basicCellTemplate },
+        { field: 'configvar_id', visible: false, enableCellEdit: false },
+        { field: 'configParentElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        { field: 'configElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        { field: 'keyName', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        { field: 'key', groupable: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        { field: 'valueName', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        //{ field: 'configParentElement', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        //{ field: 'configElement', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        //{ field: 'keyName', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        //{ field: 'key', groupable: true, enableCellEdit: true, cellTemplate: basicCellTemplate, cellEditableCondition: $scope.editMode },
+        //{ field: 'valueName', visible: false, enableCellEdit: true, cellTemplate: basicCellTemplate, cellEditableCondition: $scope.editMode },
+        //{
+        //    field: "Action",
+        //    width: 150,
+        //    enableCellEdit: false,
+        //    enableFiltering: false,
+        //    cellTemplate: '<div class="inline-block"><div ng-if="!row.groupHeader">' +
+        //    '<button id="editBtn" ng-if="!row.inlineEdit.isEditModeOn" type= "button" class="btn btn-xs btn-info"  ng-click="toggleEdit()" >Edit </button>' +
+        //    '<button id="editBtn" ng-if="!row.inlineEdit.isEditModeOn" type= "button" class="btn btn-xs btn-waring"  ng-click="publish()" >Publish </button>' +
+        //    '&nbsp <button id="delBtn" ng-if="row.inlineEdit.isEditModeOn" type="button" class="btn btn-xs btn-danger"  ng-click="saveRow()">Save </button>' +
+        //    '&nbsp <button id="delBtn" ng-if="row.inlineEdit.isEditModeOn" type="button" class="btn btn-xs btn-danger"  ng-click="editCell()">Remove </button>' + 
+        //    '</div></div>'
+        //    //cellTemplate: '<div><div ng-if="!row.groupHeader"><button id="pubBtn" type="button" class="btn btn-xs btn-primary"  ng-click="publishCell()" >Publish </button></div><div ng-if="!row.groupHeader"><button id="delBtn" type="button" class="btn btn-xs btn-danger"  ng-click="editCell()" >Remove </button></div></div>'
+        //}
+        {
+            name: "Actions",
+            cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents" >' +
+            '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
+            '<button value="Edit" class="btn btn-xs btn-danger" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Delete</button>' +
+            '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
+            '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
+            '</div></div>',
+            enableCellEdit: false
+        },
+    ];
 
     //var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ng-click="editCell(row.entity, row.getProperty(col.field), col.field)"><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';
     //var basicCellTemplate = '<div ng-if="!row.entity.editable">{{COL_FIELD}}</div><div ng-if="row.entity.editable"><input ng-model="MODEL_COL_FIELD"</div>';
@@ -136,32 +126,32 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         $scope.selectedRow[$scope.selectedColumn] = $scope.selectedCell;
     };
 
+    $scope.editable = function (row) {
+        editMode = !editMode;
+    };
+
     $scope.changeGroupBy = function (group1, group2) {
         $scope.gridOptions.$gridScope.configGroups = [];
         $scope.gridOptions.$gridScope.configGroups.push(group1);
         $scope.gridOptions.$gridScope.configGroups.push(group2);
         $scope.gridOptions.groupBy();
-    }
+    };
+
     $scope.clearGroupBy = function () {
         $scope.gridOptions.$gridScope.configGroups = [];
         $scope.gridOptions.groupBy();
-    }
+    };
 
-    ////api that is called every time
-    //// when data is modified on grid for sorting
+    //////api that is called every time
+    ////// when data is modified on grid for sorting
     //$scope.gridOptions.onRegisterApi = function (gridApi) {
     //    $scope.gridApi = gridApi;
+    //    gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+    //        $scope.rowIndex = $scope.grid_Options.data.indexOf(row.entity);
+    //        $scope.editMode = false;
+    //    });
     //    gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-    //}
-
-    //$scope.saveRow = function (rowEntity) {
-
-    //    var promise = $scope.saveRowFunction(rowEntity);
-    //    $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
     //};
-
-
-    $scope.info = {};
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         //set gridApi on scope
@@ -186,7 +176,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                 var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
 
                 angular.forEach(selectedRows, function (item) {
-                    item[rowCol] = rowEntity[rowCol];
+                    item[rowCol] = rowEntity[rowCol];// $scope.convertDate(rowEntity[rowCol]);
                     item.state = "Changed";
                     item.isDirty = false;
                     item.isError = false;
@@ -197,131 +187,79 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
 
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
     };
-        //gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-        //    if (row.isExpanded) {
-        //        row.entity.subGridOptions = [{
-        //            virtualizationThreshold: 60,
-        //            columnDefs: [{
-        //                name: "Actions",
-        //                cellTemplate: '<div class="ui-grid-cell-contents" >' +
-        //                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-        //                '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
-        //                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-        //                '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-        //                '</div>',
-        //                enableCellEdit: false
-        //            },
-        //                { name: "id", field: "id", visible: false },
-        //                { name: "Variable id", field: "configvar_id", visible: false },
-        //                { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
-        //                { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-        //                { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
-        //            ],
-        //            onRegisterApi: function (gridApi) {
-        //                $scope.text = gridApi;
-        //                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-        //                    console.log(row);
-        //                });
 
-        //                gridApi.rowEdit.on.saveRow($scope, $scope.saveRow)
-        //            }
-        //        }, {
-        //                virtualizationThreshold: 60,
-        //                columnDefs: [{
-        //                    name: "Actions",
-        //                    cellTemplate: '<div class="ui-grid-cell-contents" >' +
-        //                    '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-        //                    '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
-        //                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-        //                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-        //                    '</div>',
-        //                    enableCellEdit: false
-        //                },
-        //                    { name: "id", field: "id", visible: false },
-        //                    { name: "Variable id", field: "configvar_id", visible: false },
-        //                    { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
-        //                    { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-        //                    { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                    { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                    { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-        //                    { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
-        //                ]
-        //            }],
+    $scope.saveRow = function (rowEntity) {
+        var promise = $scope.saveRowFunction(rowEntity);
+        $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
+    };
 
-        //            $http.get('/api/ConfigValues')
-        //                .success(function (data) {
-        //                    row.entity.subGridOptions.data = data
-        //                });
+    $scope.saveRowFunction = function (row) {
+        var deferred = $q.defer();
+        $http.post('/api/ConfigApi/', row).success(deferred.resolve).error(deferred.reject);
+        return deferred.promise;
+    };
 
-        //    }
+    $scope.toggleEdit = function (rowNum) {
+        $scope.gridOptions1.data[rowNum].editable = !$scope.gridOptions1.data[rowNum].editable;
+        $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+    };
 
-        $scope.saveRowFunction = function (row) {
-            var deferred = $q.defer();
-            $http.post('/api/ConfigApi/', row).success(deferred.resolve).error(deferred.reject);
-            return deferred.promise;
-        };
+    $scope.environments = ["development", "qa", "production"];
 
-        $scope.toggleEdit = function (rowNum) {
-            $scope.gridOptions1.data[rowNum].editable = !$scope.gridOptions1.data[rowNum].editable;
-            $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
-        };
+    $scope.expandAllRows = function () {
+        $scope.gridApi.expandable.expandAllRows();
+    };
 
-        $scope.environments = ["development", "qa", "production"];
+    $scope.collapseAllRows = function () {
+        $scope.gridApi.expandable.collapseAllRows();
+    };
 
-        $scope.expandAllRows = function () {
-            $scope.gridApi.expandable.expandAllRows();
-        }
+    //$http({
+    //    method: "GET",
+    //    url: '/api/ConfigApi'
+    //}).then(function (data) {
 
-        $scope.collapseAllRows = function () {
-            $scope.gridApi.expandable.collapseAllRows();
-        }
-
-        //loadConfigs();
-
-        //function loadConfigs() {
-        //    var ConfigRecords = $http.get('/api/ConfigApi');
-        //    ConfigRecords.then(function (data) {
-        //        $scope.gridOptions = { data: data.data };
-        //    })
-        //}
-
-    //function loadConfigs() {
-    //    var ConfigRecords = $http.get('/api/ConfigApi');
-    //    ConfigRecords.then(function (data) {
     $http.get('/api/ConfigApi')
         .success(function (data) {
             for (i = 0; i < data.length; i++) {
                 data[i].subGridOptions = {
-                appScopeProvider: $scope,
-                //virtualizationThreshold: 60,
-                    columnDefs: [{
-                        name: "Actions",
-                        cellTemplate: '<div class="ui-grid-cell-contents" >' +
-                        '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                        '<button value="Edit" ng-if="!row.inlineEdit.isEditModeOn" ng-click="$scope.publishValue(row.entity)">Publish</button>' +
-                        '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-                        '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-                        '</div>',
-                        enableCellEdit: false
-                    },
+                    cellEditableCondition: 'false',
+                    enableHorizontalScrollbar: 0,
+                    appScopeProvider: $scope,
+                    columnDefs: [
                         { name: "id", field: "id", visible: false },
                         { name: "Variable id", field: "configvar_id", visible: false },
+                        { name: "Environment", field: "environment", visible: true },
+                        { name: "Value", field: "value", visible: true, enableCellEdit: true },
                         { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
                         { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
-                        { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-                        { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-                        { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"' },
-                        { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean', width: 50 },
+                        { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+                        { name: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+                        { name: "Last Publish Date", field: "publish_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+                        { name: "Is Published", field: "published", visible: true, enableCellEdit: false, type: 'boolean' },
+                        {
+                            name: "Actions",
+                            cellTemplate: '<div class="ui-grid-cell-contents" >' +
+                            '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
+                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
+                            '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
+                            '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
+                            '</div>',
+                            enableCellEdit: false
+                        },
                     ],
-                    data: data[i].values
-                }
+                    data: data[i].values,
+                    onRegisterApi: function (gridApi) {
+                        //set gridApi on scope
+                        $scope.gridApi = gridApi;
+                        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+                    }
+                };
             }
             $scope.gridOptions.data = data;
-        })
-});
+        });
+}
+);
 
 angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiGridRowEditService',
     function ($interval, $rootScope, uiGridRowEditService) {

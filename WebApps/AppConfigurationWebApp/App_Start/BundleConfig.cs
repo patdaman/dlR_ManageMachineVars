@@ -26,7 +26,7 @@ namespace AppConfigurationWebApp
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/angular.js",
                       "~/Scripts/angular-route.js",
-                      "~/Scripts/ui-grid.min.js",
+                      "~/Scripts/ui-grid.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
                       "~/Scripts/vfs_fonts.js",
