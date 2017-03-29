@@ -191,6 +191,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
     $scope.saveRow = function (rowEntity) {
         var promise = $scope.saveRowFunction(rowEntity);
         $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
+
     };
 
     $scope.saveRowFunction = function (row) {
@@ -204,7 +205,21 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         $scope.grid1Api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
     };
 
+    $scope.saveSubGridRow = function (rowEntity) {
+        var promise = $scope.saveSubGridRowFunction(rowEntity);
+        $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
+
+    };
+
+    $scope.saveSubGridRowFunction = function (row) {
+        var deferred = $q.defer();
+        $http.post('/api/ConfigValues/', row).success(deferred.resolve).error(deferred.reject);
+        return deferred.promise;
+    };
+
     $scope.environments = ["development", "qa", "production"];
+    $scope.machines = ["sdsvc01.dc.pti.com", "hqdev07.dev.corp.printable.com", "hqdev08.dev.corp.printable.com"];
+    $scope.components = ["Commerce", "DAL", "ManagerI18N", "Services"];
 
     $scope.expandAllRows = function () {
         $scope.gridApi.expandable.expandAllRows();
@@ -229,8 +244,8 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                     columnDefs: [
                         { name: "id", field: "id", visible: false },
                         { name: "Variable id", field: "configvar_id", visible: false },
-                        { name: "Environment", field: "environment", visible: true },
-                        { name: "Value", field: "value", visible: true, enableCellEdit: true },
+                        //{ name: "Environment", field: "environment", visible: true },
+                        //{ name: "Value", field: "value", visible: true, enableCellEdit: true },
                         { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
                         { name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
                         { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
@@ -252,7 +267,38 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                     onRegisterApi: function (gridApi) {
                         //set gridApi on scope
                         $scope.gridApi = gridApi;
-                        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+                        gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
+                            var selectedRows = $scope.gridApi.selection.getSelectedRows();
+                            var parentRow = rowEntity.grid.appScope.row;
+                            var index = $scope.subGridOptions.data.indexOf(rowEntity.entity);
+                            if (newValue != oldValue) {
+
+                                rowEntity.state = "Changed";
+                                //Get column
+                                var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
+
+                                angular.forEach(selectedRows, function (item) {
+                                    item[rowCol] = rowEntity[rowCol];
+                                    item.state = "Changed";
+                                    item.isDirty = false;
+                                    item.isError = false;
+                                });
+                                $scope.subGridOptions.data.splice(index, 1);
+
+                                $scope.subGridOptions.data.push({
+                                    "id": rowEntity.id,
+                                    "configvar_id": rowEntity.configvar_id,
+                                    "environment": rowEntity.environment,
+                                    "value": rowEntity.value,
+                                    "create_date": rowEntity.create_date,
+                                    "modify_date": rowEntity.modify_date,
+                                    "publish_date": rowEntity.publish_date,
+                                    "published": rowEntity.published,
+                                });
+                            }
+                        });
+                        gridApi.rowEdit.on.saveRow($scope, $scope.saveSubGridRow);
+
                     }
                 };
             }

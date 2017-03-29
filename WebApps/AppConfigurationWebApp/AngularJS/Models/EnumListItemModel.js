@@ -10,3 +10,4 @@ var ManageAppConfig_Typescript;
         Model.EnumListItemModel = EnumListItemModel;
     })(Model = ManageAppConfig_Typescript.Model || (ManageAppConfig_Typescript.Model = {}));
 })(ManageAppConfig_Typescript || (ManageAppConfig_Typescript = {}));
+//# sourceMappingURL=EnumListItemModel.js.map

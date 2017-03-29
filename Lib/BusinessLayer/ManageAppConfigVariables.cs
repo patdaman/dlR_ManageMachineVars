@@ -6,7 +6,7 @@ using System.Data.Entity.Core;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using static ViewModel.ConfigModels;
+using ViewModel;
 
 namespace BusinessLayer
 {
@@ -19,6 +19,12 @@ namespace BusinessLayer
         public int? appId { get; set; }
         public string appName { get; set; }
         public int? componentId { get; set; }
+
+        public List<AttributeKeyValuePair> GetPublishValues()
+        {
+            throw new NotImplementedException();
+        }
+
         public string componentName { get; set; }
 
         public string path { get; set; }
@@ -44,6 +50,16 @@ namespace BusinessLayer
             }
             if (!string.IsNullOrWhiteSpace(path))
                 appConfigVars = new AppConfigFunctions(path);
+        }
+
+        public List<AttributeKeyValuePair> GetPublishValues(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AttributeKeyValuePair PublishValue(AppVar value)
+        {
+            throw new NotImplementedException();
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -97,6 +113,16 @@ namespace BusinessLayer
             appConfigVars = new AppConfigFunctions(configFile);
             machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
+        }
+
+        public List<AttributeKeyValuePair> PublishValue(List<AppVar> value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AttributeKeyValuePair PublishValue()
+        {
+            throw new NotImplementedException();
         }
 
         public ManageAppConfigVariables(string path, string machineName)
@@ -159,7 +185,7 @@ namespace BusinessLayer
         {
             var keyValues = new List<AttributeKeyValuePair>();
 
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId ?? 0);
+            ICollection<EFDataModel.DevOps.ConfigVariable> configVars = QueryConfigVariables(appId ?? 0);
             foreach (var cvar in configVars.ToList())
             {
                 foreach (var val in cvar.ConfigVariableValues)
@@ -190,8 +216,8 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         public List<AttributeKeyValuePair> ImportAllAppConfigVariablesToDb()
         {
-            Component efComp;
-            IQueryable<Component> CompQuery;
+            EFDataModel.DevOps.Component efComp;
+            IQueryable<EFDataModel.DevOps.Component> CompQuery;
             if (componentId != null || !string.IsNullOrWhiteSpace(componentName))
             {
                 if (componentId == null)
@@ -210,8 +236,8 @@ namespace BusinessLayer
                 throw new ObjectNotFoundException("No matching Component found in database.");
             }
 
-            Machine efMac;
-            IQueryable<Machine> macQuery;
+            EFDataModel.DevOps.Machine efMac;
+            IQueryable<EFDataModel.DevOps.Machine> macQuery;
             if (machineId != null || !string.IsNullOrWhiteSpace(this.machineName))
             {
                 if (machineId == null)
@@ -230,13 +256,13 @@ namespace BusinessLayer
                 throw new ObjectNotFoundException("No matching Machine found in database.");
             }
 
-            MachineComponentPath efMacCompPath = (from macComp in DevOpsContext.MachineComponentPaths
+            EFDataModel.DevOps.MachineComponentPath efMacCompPath = (from macComp in DevOpsContext.MachineComponentPaths
                                                   where macComp.machine_id == efMac.id
                                                   where macComp.component_id == efComp.id
                                                   where macComp.config_path == path
                                                   select macComp).FirstOrDefault();
             if (efMacCompPath == null)
-                DevOpsContext.MachineComponentPaths.Add(new MachineComponentPath()
+                DevOpsContext.MachineComponentPaths.Add(new EFDataModel.DevOps.MachineComponentPath()
                                                             {
                                                                 machine_id = efMac.id,
                                                                 component_id = efComp.id,
@@ -245,8 +271,8 @@ namespace BusinessLayer
             List<AttributeKeyValuePair> configVars = appConfigVars.ListConfigVariables(configFile);
             foreach (var x in configVars)
             {
-                ConfigVariable configVar;
-                ConfigVariableValue efValue;
+                EFDataModel.DevOps.ConfigVariable configVar;
+                EFDataModel.DevOps.ConfigVariableValue efValue;
                 configVar = (from n in DevOpsContext.ConfigVariables
                          where n.element == x.element
                          where n.key == x.key
@@ -264,7 +290,7 @@ namespace BusinessLayer
                     efValue = configVar.ConfigVariableValues.Where(c => c.environment_type == environment).FirstOrDefault();
                     if (efValue == null)
                         configVar.ConfigVariableValues.Add(
-                            new ConfigVariableValue()
+                            new EFDataModel.DevOps.ConfigVariableValue()
                             {
                                 environment_type = environment.ToLower(),
                                 configvar_id = configVar.id,
@@ -292,22 +318,22 @@ namespace BusinessLayer
         ///
         /// <returns>   The new application configuration entity. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ConfigVariable CreateAppConfigEntity(AttributeKeyValuePair vars)
+        private EFDataModel.DevOps.ConfigVariable CreateAppConfigEntity(AttributeKeyValuePair vars)
         {
-            List<ConfigVariableValue> valueList = new List<ConfigVariableValue>();
-            valueList.Add(new ConfigVariableValue()
+            List<EFDataModel.DevOps.ConfigVariableValue> valueList = new List<EFDataModel.DevOps.ConfigVariableValue>();
+            valueList.Add(new EFDataModel.DevOps.ConfigVariableValue()
             {
                 environment_type = environment.ToLower(),
                 value = vars.value,
                 create_date = DateTime.Now,
             });
-            valueList.Add(new ConfigVariableValue()
+            valueList.Add(new EFDataModel.DevOps.ConfigVariableValue()
             {
                 environment_type = environment.ToLower(),
                 value = vars.value,
                 create_date = DateTime.Now,
             });
-            ConfigVariable efConfigVar = new ConfigVariable()
+            EFDataModel.DevOps.ConfigVariable efConfigVar = new EFDataModel.DevOps.ConfigVariable()
             {
                 parent_element = vars.parentElement,
                 element = vars.element,
@@ -315,7 +341,8 @@ namespace BusinessLayer
                 key = vars.key,
                 value_name = vars.valueName,
                 ConfigVariableValues = valueList,
-                create_date = DateTime.UtcNow,
+                create_date = DateTime.Now,
+                modify_date = DateTime.Now,
                 active = true
             };
             return efConfigVar;
@@ -440,7 +467,8 @@ namespace BusinessLayer
         public List<ConfigModifyResult> RemoveAllAppConfigVariables(string component)
         {
             var resultList = new List<ConfigModifyResult>();
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(componentName);
+            this.componentId = DevOpsContext.Components.Where(x => x.component_name == component).FirstOrDefault().id;
+            ICollection<EFDataModel.DevOps.ConfigVariable> configVars = QueryConfigVariables(componentId.Value);
             foreach (var cvar in configVars)
             {
                 // May not be necessary since inactive keys can be removed anyways
@@ -459,33 +487,29 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;ConfigModifyResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ConfigModifyResult> AddAllAppConfigVariables()
+        public List<ConfigModifyResult> AddAllAppConfigVariables(string environment = null)
         {
-            ICollection<ConfigVariable> configVars = QueryConfigVariables();
+            if (string.IsNullOrWhiteSpace(environment))
+                this.environment = environment;
+            ICollection<EFDataModel.DevOps.ConfigVariable> configVars = QueryConfigVariables();
             return AddAllAppConfigVariables(configVars);
         }
 
-        public List<ConfigModifyResult> AddAllAppConfigVariables(int appId)
-        {
-            ICollection<ConfigVariable> configVars;
-            if (appId == 0)
-                configVars = QueryConfigVariables();
-            else
-                configVars = QueryConfigVariables(appId);
-            return AddAllAppConfigVariables(configVars);
-        }
+        //public List<ConfigModifyResult> AddAllAppConfigVariables(int componentId)
+        //{
+        //    ICollection<ConfigVariable> configVars;
+        //    if (appId == 0)
+        //        configVars = QueryConfigVariables();
+        //    else
+        //        configVars = QueryConfigVariables(componentId);
+        //    return AddAllAppConfigVariables(configVars);
+        //}
 
-        public List<ConfigModifyResult> AddAllAppConfigVariables(string component)
-        {
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(component);
-            return AddAllAppConfigVariables(configVars);
-        }
-
-        public List<ConfigModifyResult> AddAllAppConfigVariables(int appId, int componentId)
-        {
-            ICollection<ConfigVariable> configVars = QueryConfigVariables(appId, componentId);
-            return AddAllAppConfigVariables(configVars);
-        }
+        //public List<ConfigModifyResult> AddAllAppConfigVariables(int appId, int componentId)
+        //{
+        //    ICollection<ConfigVariable> configVars = QueryConfigVariables(appId, componentId);
+        //    return AddAllAppConfigVariables(configVars);
+        //}
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Adds all application configuration variables. </summary>
@@ -496,7 +520,7 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;ConfigModifyResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        private List<ConfigModifyResult> AddAllAppConfigVariables(ICollection<ConfigVariable> configVars)
+        private List<ConfigModifyResult> AddAllAppConfigVariables(ICollection<EFDataModel.DevOps.ConfigVariable> configVars)
         {
             var resultList = new List<ConfigModifyResult>();
 
@@ -520,22 +544,14 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ICollection<ConfigVariable> QueryConfigVariables()
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables()
         {
             return QueryConfigVariables(0, 0);
         }
 
-        private ICollection<ConfigVariable> QueryConfigVariables(int appId)
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, string environment = null)
         {
-            return QueryConfigVariables(appId, 0);
-        }
-
-        private ICollection<ConfigVariable> QueryConfigVariables(string component)
-        {
-            int componentId = (from comp in DevOpsContext.Components
-                                                     where comp.component_name == component
-                                                     select comp).FirstOrDefault().id;
-            return QueryConfigVariables(0, componentId);
+            return QueryConfigVariables(componentId, 0);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -547,16 +563,28 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ICollection<ConfigVariable> QueryConfigVariables(int appId, int componentId)
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, int appId)
         {
-            IQueryable<Machine> machineObject = (from mac in DevOpsContext.Machines
+            IQueryable<EFDataModel.DevOps.Machine> machineObject = (from mac in DevOpsContext.Machines
                                                  where mac.machine_name == machineName
                                                  select mac);
-            IQueryable<Application> appObject = (from app in DevOpsContext.Applications
+            IQueryable<EFDataModel.DevOps.Machine> envMachineObjects = (from mac in DevOpsContext.Machines
+                                                 where mac.usage == environment
+                                                 select mac);
+            IQueryable<EFDataModel.DevOps.Application> appObject = (from app in DevOpsContext.Applications
                                                  where app.id == appId
                                                  select app);
-            ICollection<ConfigVariable> configVars;
-            if (componentId != 0)
+            IQueryable<EFDataModel.DevOps.ConfigVariable> environmentObjects = (from config in DevOpsContext.ConfigVariableValues
+                                                 where config.environment_type == environment
+                                                 select config.ConfigVariable);
+            ICollection<EFDataModel.DevOps.ConfigVariable> configVars;
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                configVars = (from cvar in DevOpsContext.ConfigVariables
+                              where environmentObjects.Contains(cvar)
+                              select cvar).ToList();
+            }
+            else if (componentId != 0)
             {
                 configVars = (from cvar in DevOpsContext.ConfigVariables
                               where cvar.Components.FirstOrDefault().id == componentId

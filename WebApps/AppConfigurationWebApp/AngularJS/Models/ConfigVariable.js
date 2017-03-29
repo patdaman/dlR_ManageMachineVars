@@ -10,3 +10,4 @@ var AppConfigurationWebApp;
         Model.ConfigVariable = ConfigVariable;
     })(Model = AppConfigurationWebApp.Model || (AppConfigurationWebApp.Model = {}));
 })(AppConfigurationWebApp || (AppConfigurationWebApp = {}));
+//# sourceMappingURL=ConfigVariable.js.map

@@ -11,7 +11,6 @@ namespace AppConfigurationWebApp.Controllers
     public class ConfigApiController : ApiController
     {
         BusinessLayer.ManageComplexConfigVariables configProcessor = new BusinessLayer.ManageComplexConfigVariables();
-        public AppConfigFunctions appConfigVars { get; private set; }
 
         // GET: api/Machine
         public HttpResponseMessage Get()
@@ -19,8 +18,6 @@ namespace AppConfigurationWebApp.Controllers
             try
             {
                 return Request.CreateResponse<List<ViewModel.AppVar>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
-                //return Request.CreateResponse<List<ViewModel.ConfigVariable>>(HttpStatusCode.OK, configProcessor.GetAllConfigVariables());
-                //return Request.CreateResponse<List<ViewModel.MachineAppVars>>(HttpStatusCode.OK, configProcessor.GetAllVariables());
             }
             catch (Exception ex)
             {
@@ -75,10 +72,6 @@ namespace AppConfigurationWebApp.Controllers
             try
             {
                 var response = Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.UpdateVariable(value));
-                //appConfigVars = new AppConfigFunctions();
-                //var updateConfig = appConfigVars.UpdateOrCreateAppSetting(value.keyName, value.key, value.valueName, value.value, value.configParentElement, value.configAttribute);
-                //if (updateConfig == ViewModel.Enums.ModifyResult.Failed || updateConfig == ViewModel.Enums.ModifyResult.AccessDenied)
-                //    return Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.ExpectationFailed, value, "Config stored in database, but not in file" + Environment.NewLine + "Key Update Code: " + updateConfig.ToString());
                 return response;
             }
             catch (Exception ex)

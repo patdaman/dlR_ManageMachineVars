@@ -23,7 +23,7 @@ namespace ManageConfigVariables
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
             AppConfigFunctions appConfigVars = new AppConfigFunctions(adminArgs.Path);
-            ViewModel.ConfigModels.AttributeKeyValuePair configVars = appConfigVars.GetAppConfigValue(adminArgs.Key, adminArgs.Parent);
+            ViewModel.AttributeKeyValuePair configVars = appConfigVars.GetAppConfigValue(adminArgs.Key, adminArgs.Parent);
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("Parent Attribute = {0}", configVars.parentElement);
             Console.WriteLine("Attribute = {0}", configVars.element);
@@ -175,7 +175,7 @@ namespace ManageConfigVariables
         public static void AddAllAppConfigVariables(AdminArgs adminArgs)
         {
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
-            List<ViewModel.ConfigModels.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables(string.Empty);
+            List<ViewModel.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables(string.Empty);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
             {
@@ -191,7 +191,7 @@ namespace ManageConfigVariables
             ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path, adminArgs.MachineName, 
                                                                                         adminArgs.ConfigEnvironment, 
                                                                                         adminArgs.ComponentName, adminArgs.ApplicationName);
-            List<ViewModel.ConfigModels.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
+            List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
             Console.WriteLine("-------------------------------------------");
             foreach (var x in configVars)
             {
@@ -216,7 +216,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void AddAllEnvVariables(AdminArgs adminArgs)
         {
-            List<ViewModel.ConfigModels.ConfigModifyResult> results = new List<ViewModel.ConfigModels.ConfigModifyResult>();
+            List<ViewModel.ConfigModifyResult> results = new List<ViewModel.ConfigModifyResult>();
             ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
             results = envProcessor.AddAllEnvVariables();
 
@@ -238,7 +238,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void RemoveAllEnvVariables(AdminArgs adminArgs)
         {
-            List<ViewModel.ConfigModels.ConfigModifyResult> results = new List<ViewModel.ConfigModels.ConfigModifyResult>();
+            List<ViewModel.ConfigModifyResult> results = new List<ViewModel.ConfigModifyResult>();
             ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
             results = envProcessor.RemoveAllEnvVariables();
 

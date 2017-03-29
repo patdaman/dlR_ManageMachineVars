@@ -183,7 +183,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
             var selectedRows = $scope.gridApi.selection.getSelectedRows();
 
-            if (newValue != oldValue) {
+            if (newValue !== oldValue) {
 
                 rowEntity.state = "Changed";
                 //Get column

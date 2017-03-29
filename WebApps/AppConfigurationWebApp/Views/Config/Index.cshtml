@@ -12,7 +12,15 @@
             <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All" />
 
             <input type="button" class="btn btn-small" ng-click="addVar()" value="Add Variable" />
-            <select ng-model="selectedEnvironment" ng-options="x for x in environments"></select>
+            <select ng-model="selectedEnvironment" ng-options="x for x in environments">
+                <option value="" style="color:red">Environment</option>
+            </select>
+            <select ng-model="selectedComponent" ng-options="c for c in components">
+                <option value="" style="color:red">Component</option>
+            </select>
+            <select ng-model="selectedMachine" ng-options="m for m in machines">
+                <option value="" style="color:red">Server</option>
+            </select>
             <input type="button" class="btn btn-small" ng-click="publishSelectedRows()" value="Publish" />
         </div>
         <div ui-grid="gridOptions"

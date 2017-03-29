@@ -8,7 +8,7 @@ using System.Web.Http;
 
 namespace AppConfigurationWebApp.Controllers
 {
-    public class configValuesController : ApiController
+    public class ConfigValuesApiController : ApiController
     {
         BusinessLayer.ManageComplexConfigVariables configProcessor = new BusinessLayer.ManageComplexConfigVariables();
         public AppConfigFunctions appConfigVars { get; private set; }
@@ -57,10 +57,6 @@ namespace AppConfigurationWebApp.Controllers
             try
             {
                 var response = Request.CreateResponse<ViewModel.ConfigVariableValue>(HttpStatusCode.OK, configProcessor.UpdateValue(value));
-                //appConfigVars = new AppConfigFunctions();
-                //var updateConfig = appConfigVars.UpdateOrCreateAppSetting(value.keyName, value.key, value.valueName, value.value, value.configParentElement, value.configAttribute);
-                //if (updateConfig == ViewModel.Enums.ModifyResult.Failed || updateConfig == ViewModel.Enums.ModifyResult.AccessDenied)
-                //    return Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.ExpectationFailed, value, "Config stored in database, but not in file" + Environment.NewLine + "Key Update Code: " + updateConfig.ToString());
                 return response;
             }
             catch (Exception ex)

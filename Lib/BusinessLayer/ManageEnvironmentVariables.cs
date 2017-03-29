@@ -243,14 +243,14 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;ConfigVariableResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ConfigModels.ConfigModifyResult> RemoveAllEnvVariables()
+        public List<ConfigModifyResult> RemoveAllEnvVariables()
         {
             var keyList = new List<string>();
 
-            var resultList = new List<ConfigModels.ConfigModifyResult>();
+            var resultList = new List<ConfigModifyResult>();
             foreach (var key in keyList)
             {
-                resultList.Add(new ConfigModels.ConfigModifyResult()
+                resultList.Add(new ConfigModifyResult()
                 {
                     key = key,
                     result = enVars.RemoveEnvironmentVariable(key)
@@ -266,13 +266,13 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;ConfigVariableResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<ConfigModels.ConfigModifyResult> AddAllEnvVariables()
+        public List<ConfigModifyResult> AddAllEnvVariables()
         {
-            var keyValueList = new List<ConfigModels.AttributeKeyValuePair>();
-            var resultList = new List<ConfigModels.ConfigModifyResult>();
+            var keyValueList = new List<AttributeKeyValuePair>();
+            var resultList = new List<ConfigModifyResult>();
             foreach (var keyValue in keyValueList)
             {
-                resultList.Add(new ConfigModels.ConfigModifyResult()
+                resultList.Add(new ConfigModifyResult()
                 {
                     key = keyValue.key,
                     result = enVars.SetEnvironmentVariable(keyValue.key, keyValue.value)

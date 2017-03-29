@@ -53,11 +53,6 @@ namespace BusinessLayer
             return allVars;
         }
 
-        public ViewModel.ConfigVariableValue UpdateValue(ViewModel.ConfigVariableValue value)
-        {
-            throw new NotImplementedException();
-        }
-
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machine configuration variables. </summary>
         ///
@@ -154,6 +149,79 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Updates the value described by value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/28/2017. </remarks>
+        ///
+        /// <param name="value">    The value. </param>
+        ///
+        /// <returns>   A ViewModel.ConfigVariableValue. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ViewModel.ConfigVariableValue UpdateValue(ViewModel.ConfigVariableValue value)
+        {
+            EFDataModel.DevOps.ConfigVariableValue efValue = DevOpsContext.ConfigVariableValues.Where(x => x.configvar_id == value.configvar_id && x.environment_type == value.environment).FirstOrDefault();
+            if (efValue == null)
+            {
+                EFDataModel.DevOps.ConfigVariable efConfigVar = DevOpsContext.ConfigVariables.Where(y => y.id == value.configvar_id).FirstOrDefault();
+                if (efConfigVar == null)
+                    throw new KeyNotFoundException("Config Variable not found");
+                efValue = new EFDataModel.DevOps.ConfigVariableValue()
+                {
+                    configvar_id = value.configvar_id,
+                    environment_type = value.environment,
+                    value = value.value,
+                    create_date = DateTime.Now,
+                    modify_date = DateTime.Now,
+                };
+                efConfigVar.ConfigVariableValues.Add(efValue);
+            }
+            else
+            {
+                if (efValue.value != value.value)
+                {
+                    efValue.value = value.value;
+                    efValue.modify_date = DateTime.Now;
+                }
+            }
+            DevOpsContext.SaveChanges();
+            return GetConfigValues(value.configvar_id, value.environment);
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration values. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/28/2017. </remarks>
+        ///
+        /// <exception cref="KeyNotFoundException"> Thrown when a Key Not Found error condition occurs. </exception>
+        ///
+        /// <param name="configvar_id"> Identifier for the configvar. </param>
+        /// <param name="environment">  The environment. </param>
+        ///
+        /// <returns>   The configuration values. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        private ViewModel.ConfigVariableValue GetConfigValues(int configvar_id, string environment)
+        {
+            EFDataModel.DevOps.ConfigVariableValue efValue = DevOpsContext.ConfigVariableValues.Where(x => x.configvar_id == configvar_id && x.environment_type == environment).FirstOrDefault();
+            if (efValue == null)
+            {
+                EFDataModel.DevOps.ConfigVariable efConfigVar = DevOpsContext.ConfigVariables.Where(y => y.id == configvar_id).FirstOrDefault();
+                if (efConfigVar == null)
+                    throw new KeyNotFoundException("Configuration Variable not found, please add / save new variable");
+                throw new KeyNotFoundException(string.Format("Config Variable {0} does not contain a value for {1} environment."));
+            }
+            return new ViewModel.ConfigVariableValue()
+            {
+                id = efValue.id,
+                configvar_id = efValue.configvar_id,
+                environment = efValue.environment_type,
+                create_date = efValue.create_date,
+                modify_date = efValue.modify_date,
+                publish_date = efValue.published_date,
+                published = efValue.published
+            };
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Returns configuration variable. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/17/2017. </remarks>
@@ -162,7 +230,7 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration variable. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ViewModel.ConfigVariable ReturnConfigVariable(EFDataModel.DevOps.ConfigVariable config)
+        private ViewModel.ConfigVariable ReturnConfigVariable(EFDataModel.DevOps.ConfigVariable config)
         {
             return new ViewModel.ConfigVariable()
             {
@@ -301,9 +369,9 @@ namespace BusinessLayer
                     active = true,
                     element = appValue.configElement,
                     key = appValue.key,
-                    //key_name = appValue.keyName,
+                    key_name = appValue.keyName ?? "key",
                     parent_element = appValue.configParentElement,
-                    //value_name = appValue.valueName,
+                    value_name = appValue.valueName ?? "value",
                     modify_date = DateTime.Now
                 };
                 DevOpsContext.ConfigVariables.Add(efConfig);
