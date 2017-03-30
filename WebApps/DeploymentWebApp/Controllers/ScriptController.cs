@@ -19,6 +19,7 @@ namespace DeploymentWebApp.Controllers
 
             ViewModel.PowershellScript script = new ViewModel.PowershellScript();
             script = scriptProcessor.GetAllScripts().FirstOrDefault();
+            ViewBag.scriptText = HttpUtility.HtmlEncode(script.ScriptText).ToString();
             ViewBag.scriptList = new SelectList(scripts, "ScriptId", "ScriptName", script.ScriptId);
             return View(script);
         }

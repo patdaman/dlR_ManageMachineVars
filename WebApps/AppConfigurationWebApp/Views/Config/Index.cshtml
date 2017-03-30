@@ -4,7 +4,8 @@
 }
 
 <h2>App Config Editor</h2>
-
+@Html.AntiForgeryToken()
+<hr />
 <div ng-app="ConfigApp">
     <div ng-controller="ConfigController as vm">
         <div class="control-group">

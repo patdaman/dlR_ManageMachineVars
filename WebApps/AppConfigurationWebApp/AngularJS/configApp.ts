@@ -18,4 +18,12 @@ var logApp = angular.module('logApp',
 
 logApp.value('apiUrl', 'http://localhost:41999');
 
+
 var managerApp = angular.module('managerApp', ['configApp', 'logApp']);
+
+
+var dashboardApp = angular.module('dashboardApp',
+    ['ng.epoch', 'n3-pie-chart']);
+dashboardApp.value('backendServerUrl', 'http://localhost:41999/signalr/performance');
+
+var app = angular.module('app', ['dashboardApp', 'logApp']);

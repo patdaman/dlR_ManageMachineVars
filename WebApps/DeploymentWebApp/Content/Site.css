@@ -47,3 +47,15 @@ div.flip {
     font-weight:bold;
     text-decoration:underline;
 }   
+
+.textarea {
+    max-width: 100%;
+}
+
+.CodeMirror textarea {
+    width:1000px;
+    height:600px;
+    white-space:nowrap;
+    overflow:auto;
+
+}
