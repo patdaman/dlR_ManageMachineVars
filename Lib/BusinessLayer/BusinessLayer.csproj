@@ -49,13 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConvertObjects.cs" />
-    <Compile Include="ManageAppConfigVariables.cs" />
-    <Compile Include="ManageComplexConfigVariables.cs" />
-    <Compile Include="ManageEnvironmentVariables.cs" />
+    <Compile Include="ConvertObjects_Reflection.cs" />
+    <Compile Include="ManageConfig_Files.cs" />
+    <Compile Include="ManageConfig_AppVariables.cs" />
+    <Compile Include="ManageConfig_ComplexVariables.cs" />
+    <Compile Include="ManageEnvironment_Variables.cs" />
     <Compile Include="ManageLogging.cs" />
     <Compile Include="ManageMachines.cs" />
-    <Compile Include="ManagePowershellScripts.cs" />
+    <Compile Include="ManagePowershell_Scripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

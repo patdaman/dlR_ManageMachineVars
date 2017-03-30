@@ -21,7 +21,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void GetAppConfigValue(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path);
             AppConfigFunctions appConfigVars = new AppConfigFunctions(adminArgs.Path);
             ViewModel.AttributeKeyValuePair configVars = appConfigVars.GetAppConfigValue(adminArgs.Key, adminArgs.Parent);
             Console.WriteLine("-------------------------------------------");
@@ -79,7 +79,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void ListAllDbConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables("", adminArgs.MachineName);
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables("", adminArgs.MachineName);
             var configVars = appConfigProcessor.ListAllAppConfigVariablesFromDb();
             foreach (var x in configVars)
             {
@@ -103,7 +103,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void ListAllAppConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path);
             var configVars = appConfigProcessor.ListAllAppConfigVariables();
             foreach (var x in configVars)
             {
@@ -127,7 +127,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void ListAllDiffConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path, adminArgs.MachineName);
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path, adminArgs.MachineName);
             var configVars = appConfigProcessor.ListAllAppConfigVariablesDifferentFromDb();
             foreach (var x in configVars)
             {
@@ -153,7 +153,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void RemoveAllAppConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path);
             var configVars = appConfigProcessor.RemoveAllAppConfigVariables(string.Empty);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
@@ -174,7 +174,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void AddAllAppConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path);
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path);
             List<ViewModel.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables(string.Empty);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
@@ -188,7 +188,7 @@ namespace ManageConfigVariables
 
         public static void ImportAllAppConfigVariables(AdminArgs adminArgs)
         {
-            ManageAppConfigVariables appConfigProcessor = new ManageAppConfigVariables(adminArgs.Path, adminArgs.MachineName, 
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path, adminArgs.MachineName, 
                                                                                         adminArgs.ConfigEnvironment, 
                                                                                         adminArgs.ComponentName, adminArgs.ApplicationName);
             List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
@@ -217,7 +217,7 @@ namespace ManageConfigVariables
         public static void AddAllEnvVariables(AdminArgs adminArgs)
         {
             List<ViewModel.ConfigModifyResult> results = new List<ViewModel.ConfigModifyResult>();
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             results = envProcessor.AddAllEnvVariables();
 
             foreach (var x in results)
@@ -239,7 +239,7 @@ namespace ManageConfigVariables
         public static void RemoveAllEnvVariables(AdminArgs adminArgs)
         {
             List<ViewModel.ConfigModifyResult> results = new List<ViewModel.ConfigModifyResult>();
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             results = envProcessor.RemoveAllEnvVariables();
 
             foreach (var x in results)
@@ -261,7 +261,7 @@ namespace ManageConfigVariables
         public static void GetEnvValue(AdminArgs adminArgs)
         {
             EnvVariable keyValue = new EnvVariable();
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             keyValue = envProcessor.GetEnvValue(adminArgs.Key);
 
             Console.WriteLine("-------------------------------------------");
@@ -281,7 +281,7 @@ namespace ManageConfigVariables
         public static void RemoveEnvVariable(AdminArgs adminArgs)
         {
             ViewModel.Enums.ModifyResult result;
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.RemoveEnvVariable(adminArgs.Key, adminArgs.Parent);
 
             Console.WriteLine("-------------------------------------------");
@@ -301,7 +301,7 @@ namespace ManageConfigVariables
         public static void AddEnvVariable(AdminArgs adminArgs)
         {
             ViewModel.Enums.ModifyResult result;
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.AddEnvVariable(adminArgs.Key, adminArgs.Value, adminArgs.KeyType);
 
             Console.WriteLine("-------------------------------------------");
@@ -322,7 +322,7 @@ namespace ManageConfigVariables
         public static void ListAllEnvVariables(AdminArgs adminArgs)
         {
             List<EnvVariable> result;
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.GetAllEnvVariables();
 
             foreach (var env in result)
@@ -345,7 +345,7 @@ namespace ManageConfigVariables
         public static void ListAllDbEnvVariables(AdminArgs adminArgs)
         {
             List<EnvVariable> result;
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.GetAllDbEnvVariables();
 
             foreach (var env in result)
@@ -368,7 +368,7 @@ namespace ManageConfigVariables
         public static void ListAllDbDiffEnvVariables(AdminArgs adminArgs)
         {
             List<EnvVariable> result;
-            ManageEnvironmentVariables envProcessor = new ManageEnvironmentVariables();
+            ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.GetAllDiffEnvVariables();
 
             foreach (var env in result)

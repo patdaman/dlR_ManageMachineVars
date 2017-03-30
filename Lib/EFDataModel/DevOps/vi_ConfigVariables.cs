@@ -15,10 +15,6 @@ namespace EFDataModel.DevOps
     public partial class vi_ConfigVariables
     {
         public int config_id { get; set; }
-        public int machine_id { get; set; }
-        public string machine_name { get; set; }
-        public Nullable<int> application_id { get; set; }
-        public string application_name { get; set; }
         public int component_id { get; set; }
         public string component_name { get; set; }
         public string environment_type { get; set; }
@@ -28,7 +24,9 @@ namespace EFDataModel.DevOps
         public string key { get; set; }
         public string value_name { get; set; }
         public string value { get; set; }
-        public string config_path { get; set; }
+        public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public Nullable<System.DateTime> published_date { get; set; }
+        public Nullable<bool> published { get; set; }
     }
 }

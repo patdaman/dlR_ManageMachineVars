@@ -10,7 +10,7 @@ namespace DeploymentWebApp.Controllers
 {
     public class ScriptApiController : ApiController
     {
-        BusinessLayer.ManagePowershellScripts scriptProcessor = new BusinessLayer.ManagePowershellScripts();
+        BusinessLayer.ManagePowershell_Scripts scriptProcessor = new BusinessLayer.ManagePowershell_Scripts();
 
         // GET: api/ScriptApi
         public HttpResponseMessage Get()

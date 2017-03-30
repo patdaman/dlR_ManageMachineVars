@@ -8,7 +8,7 @@ namespace DeploymentWebApp.Controllers
 {
     public class ScriptController : Controller
     {
-        BusinessLayer.ManagePowershellScripts scriptProcessor = new BusinessLayer.ManagePowershellScripts();
+        BusinessLayer.ManagePowershell_Scripts scriptProcessor = new BusinessLayer.ManagePowershell_Scripts();
         public ActionResult Index()
         {
             List<ViewModel.PowershellScript> scripts = new List<ViewModel.PowershellScript>();

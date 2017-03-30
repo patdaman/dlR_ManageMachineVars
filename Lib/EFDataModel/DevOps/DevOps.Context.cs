@@ -29,13 +29,15 @@ namespace EFDataModel.DevOps
     
         public virtual DbSet<Application> Applications { get; set; }
         public virtual DbSet<Component> Components { get; set; }
+        public virtual DbSet<ConfigFileAttribute> ConfigFileAttributes { get; set; }
+        public virtual DbSet<ConfigFileElement> ConfigFileElements { get; set; }
         public virtual DbSet<ConfigVariable> ConfigVariables { get; set; }
         public virtual DbSet<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual DbSet<Enum_EnvironmentType> Enum_EnvironmentType { get; set; }
         public virtual DbSet<Enum_EnvironmentVariableType> Enum_EnvironmentVariableType { get; set; }
         public virtual DbSet<Enum_Locations> Enum_Locations { get; set; }
         public virtual DbSet<EnvironmentVariable> EnvironmentVariables { get; set; }
-        public virtual DbSet<MachineComponentPath> MachineComponentPaths { get; set; }
+        public virtual DbSet<MachineComponentPathMap> MachineComponentPathMaps { get; set; }
         public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<ServerGroup> ServerGroups { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
@@ -43,8 +45,9 @@ namespace EFDataModel.DevOps
         public virtual DbSet<ExecutionHistory> ExecutionHistories { get; set; }
         public virtual DbSet<Script> Scripts { get; set; }
         public virtual DbSet<vi_ConfigVariables> vi_ConfigVariables { get; set; }
+        public virtual DbSet<ConfigFile> ConfigFiles { get; set; }
     
-        public virtual ObjectResult<usp_AddComponentsToMachine_Result> usp_AddComponentsToMachine(Nullable<int> configVarId, Nullable<int> machineId, string machineName, Nullable<int> appId, string appName, string rootConfigPath)
+        public virtual int usp_AddComponentsToMachine(Nullable<int> configVarId, Nullable<int> machineId, string machineName, Nullable<int> appId, string appName, string rootConfigPath)
         {
             var configVarIdParameter = configVarId.HasValue ?
                 new ObjectParameter("ConfigVarId", configVarId) :
@@ -70,7 +73,7 @@ namespace EFDataModel.DevOps
                 new ObjectParameter("RootConfigPath", rootConfigPath) :
                 new ObjectParameter("RootConfigPath", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<usp_AddComponentsToMachine_Result>("usp_AddComponentsToMachine", configVarIdParameter, machineIdParameter, machineNameParameter, appIdParameter, appNameParameter, rootConfigPathParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_AddComponentsToMachine", configVarIdParameter, machineIdParameter, machineNameParameter, appIdParameter, appNameParameter, rootConfigPathParameter);
         }
     
         public virtual int usp_GenerateAuditTables(string tableName, string auditNameExtention, Nullable<bool> dropAuditTable)
@@ -90,7 +93,7 @@ namespace EFDataModel.DevOps
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GenerateAuditTables", tableNameParameter, auditNameExtentionParameter, dropAuditTableParameter);
         }
     
-        public virtual ObjectResult<usp_GetConfigVariables_Result> usp_GetConfigVariables(Nullable<int> machineId, string machineName, Nullable<int> applicationId, string applicationName, string environment, Nullable<bool> displayOnlyActive)
+        public virtual int usp_GetConfigVariables(Nullable<int> machineId, string machineName, Nullable<int> applicationId, string applicationName, string environment, Nullable<bool> displayOnlyActive)
         {
             var machineIdParameter = machineId.HasValue ?
                 new ObjectParameter("MachineId", machineId) :
@@ -116,7 +119,7 @@ namespace EFDataModel.DevOps
                 new ObjectParameter("DisplayOnlyActive", displayOnlyActive) :
                 new ObjectParameter("DisplayOnlyActive", typeof(bool));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<usp_GetConfigVariables_Result>("usp_GetConfigVariables", machineIdParameter, machineNameParameter, applicationIdParameter, applicationNameParameter, environmentParameter, displayOnlyActiveParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GetConfigVariables", machineIdParameter, machineNameParameter, applicationIdParameter, applicationNameParameter, environmentParameter, displayOnlyActiveParameter);
         }
     
         public virtual int usp_InsertErrorDetails()

@@ -12,32 +12,27 @@ namespace EFDataModel.DevOps
     using System;
     using System.Collections.Generic;
     
-    public partial class Machine
+    public partial class ConfigFileElement
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Machine()
+        public ConfigFileElement()
         {
-            this.MachineComponentPathMaps = new HashSet<MachineComponentPathMap>();
-            this.ServerGroups = new HashSet<ServerGroup>();
-            this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
+            this.ConfigFileAttributes = new HashSet<ConfigFileAttribute>();
+            this.ConfigFileElements1 = new HashSet<ConfigFileElement>();
         }
     
         public int id { get; set; }
-        public string machine_name { get; set; }
-        public string ip_address { get; set; }
-        public string location { get; set; }
-        public string usage { get; set; }
+        public int configfile_id { get; set; }
+        public string element_name { get; set; }
+        public int parent_element_id { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
-        public bool active { get; set; }
     
-        public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
-        public virtual Enum_Locations Enum_Locations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MachineComponentPathMap> MachineComponentPathMaps { get; set; }
+        public virtual ICollection<ConfigFileAttribute> ConfigFileAttributes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ServerGroup> ServerGroups { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
+        public virtual ICollection<ConfigFileElement> ConfigFileElements1 { get; set; }
+        public virtual ConfigFileElement ConfigFileElement1 { get; set; }
+        public virtual ConfigFile ConfigFile { get; set; }
     }
 }

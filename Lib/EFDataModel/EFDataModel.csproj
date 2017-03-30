@@ -57,6 +57,15 @@
     <Compile Include="DevOps\Component.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\ConfigFile.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\ConfigFileAttribute.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DevOps\ConfigFileElement.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\ConfigVariable.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
@@ -102,7 +111,7 @@
     <Compile Include="DevOps\Machine.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
-    <Compile Include="DevOps\MachineComponentPath.cs">
+    <Compile Include="DevOps\MachineComponentPathMap.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Partials\DevOpsEntities.cs" />
@@ -110,12 +119,6 @@
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\ServerGroup.cs">
-      <DependentUpon>DevOps.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DevOps\usp_AddComponentsToMachine_Result.cs">
-      <DependentUpon>DevOps.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DevOps\usp_GetConfigVariables_Result.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\vi_ConfigVariables.cs">

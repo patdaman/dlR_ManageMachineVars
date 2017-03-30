@@ -18,6 +18,8 @@ namespace EFDataModel.DevOps
         public Enum_EnvironmentType()
         {
             this.ConfigVariableValues = new HashSet<ConfigVariableValue>();
+            this.Machines = new HashSet<Machine>();
+            this.ConfigFiles = new HashSet<ConfigFile>();
         }
     
         public string name { get; set; }
@@ -26,5 +28,9 @@ namespace EFDataModel.DevOps
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Machine> Machines { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConfigFile> ConfigFiles { get; set; }
     }
 }

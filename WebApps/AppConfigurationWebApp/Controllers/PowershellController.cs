@@ -8,7 +8,7 @@ namespace AppConfigurationWebApp.Controllers
 {
     public class PowershellController : Controller
     {
-        BusinessLayer.ManagePowershellScripts scriptProcessor = new BusinessLayer.ManagePowershellScripts();
+        BusinessLayer.ManagePowershell_Scripts scriptProcessor = new BusinessLayer.ManagePowershell_Scripts();
 
         // GET: Powershell
         //public ActionResult Index()

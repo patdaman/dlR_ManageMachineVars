@@ -10,7 +10,7 @@ namespace AppConfigurationWebApp.Controllers
 {
     public class ConfigValuesApiController : ApiController
     {
-        BusinessLayer.ManageComplexConfigVariables configProcessor = new BusinessLayer.ManageComplexConfigVariables();
+        BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
         public AppConfigFunctions appConfigVars { get; private set; }
 
         // GET: api/Machine
