@@ -20,7 +20,7 @@ namespace EFDataModel.DevOps
         public string environment_type { get; set; }
         public string parent_element { get; set; }
         public string element { get; set; }
-        public string key_name { get; set; }
+        public string attribute { get; set; }
         public string key { get; set; }
         public string value_name { get; set; }
         public string value { get; set; }

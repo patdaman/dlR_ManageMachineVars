@@ -12,7 +12,7 @@ namespace ViewModel
     {
         public string parentElement;
         public string element;
-        public string keyName;
+        public string attribute;
         public string key;
         public string valueName;
         public string value;
@@ -25,7 +25,7 @@ namespace ViewModel
         {
             parentElement = a.parentElement;
             element = a.element;
-            keyName = a.keyName;
+            attribute = a.attribute;
             key = a.key;
             valueName = a.valueName;
             value = a.value;

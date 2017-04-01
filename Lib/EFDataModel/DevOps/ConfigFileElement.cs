@@ -18,21 +18,17 @@ namespace EFDataModel.DevOps
         public ConfigFileElement()
         {
             this.ConfigFileAttributes = new HashSet<ConfigFileAttribute>();
-            this.ConfigFileElements1 = new HashSet<ConfigFileElement>();
         }
     
         public int id { get; set; }
         public int configfile_id { get; set; }
         public string element_name { get; set; }
-        public int parent_element_id { get; set; }
+        public int parent_element { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
     
+        public virtual ConfigFile ConfigFile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigFileAttribute> ConfigFileAttributes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ConfigFileElement> ConfigFileElements1 { get; set; }
-        public virtual ConfigFileElement ConfigFileElement1 { get; set; }
-        public virtual ConfigFile ConfigFile { get; set; }
     }
 }

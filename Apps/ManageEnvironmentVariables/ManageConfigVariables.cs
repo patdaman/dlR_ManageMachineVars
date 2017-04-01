@@ -87,10 +87,10 @@ namespace ManageConfigVariables
                 //{ "l|log=", "log file path",   v => LogFilePath = v },
                 //{ "e|email=", "email address for errors", v=> EmailAddress = v },
                 
-                { "pe|parent=", "Parent Attribute (eg: databases|appSettings|connectionStrings", v => {adminArgs.Parent = v; }},
+                { "pe|parent=", "Parent Element (eg: databases|appSettings|connectionStrings", v => {adminArgs.Parent = v; }},
+                { "el|element=", "Attribute (eg: add|db|", v => {adminArgs.Element = v; }},
                 { "at|attribute=", "Attribute (eg: add|db|", v => {adminArgs.Attribute = v; }},
                 { "kt|keytype=", "Key Type (Environment Variable) values: Machine|User|Session", v => {adminArgs.KeyType = v; }},
-                { "kn|keyname=", "Key name", v => {adminArgs.KeyName = v; }},
                 { "k|key=", "Key", v => {adminArgs.Key = v; }},
                 { "vn|valuename=", "Value Name", v => {adminArgs.ValueName = v; }},
                 { "v|value=", "Value", v => {adminArgs.Value = v; }},
@@ -101,10 +101,11 @@ namespace ManageConfigVariables
                 { "s|suffix=", "Environment Variable Suffix", v => {adminArgs.CustomSuffix = v; }},
                 { "p|path=", "Path to XML config file.", v => { adminArgs.Path = v; }},
                 { "m|machine=", "Machine Name to target.", v => { adminArgs.MachineName = v; }},
-                { "en|environment=", "Environment (Environment Variable OR App Config Type)", v => { adminArgs.ConfigEnvironment = v; }},
+                { "e|environment=", "Environment (Environment Variable OR App Config Type)", v => { adminArgs.ConfigEnvironment = v; }},
 
                 { "app|application=", "Application Name", v=> {adminArgs.ApplicationName = v; }},
                 { "c|component=", "Component Name", v=> {adminArgs.ComponentName = v; }},
+                { "o|output=", "Output Path for config file", v=> {adminArgs.OutputPath = v; }},
                 { "a|action=", "Action to perform (required)", v => { adminArgs.Action = v.ToLower(); }},
             };
             this.Initialize(typeof(ManageConfigVariables), "ManageConfigVariables"); 
@@ -274,6 +275,12 @@ namespace ManageConfigVariables
                     break;
                 case AdminActions.ImportAppConfig:
                     Actions.ImportAllAppConfigVariables(adminArgs);
+                    break;
+                case AdminActions.OutputConfigFile:
+                    Actions.OutputConfigFile(adminArgs);
+                    break;
+                case AdminActions.PublishConfig:
+                    Actions.PublishConfigFile(adminArgs);
                     break;
                 default:
                     throw new Exception($"Action {adminArgs.Action} is unknown");

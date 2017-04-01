@@ -4,6 +4,7 @@
 
 
 
+
 -- =============================================
 -- Author:		Patrick de los Reyes
 -- Create date: 2017-03-01
@@ -20,7 +21,7 @@ AS
 		, ConVal.environment_type
 		, ConfigVar.parent_element
 		, ConfigVar.element
-		, ConfigVar.[key_name]
+		, ConfigVar.attribute
 		, ConfigVar.[key]
 		, ConfigVar.value_name
 		, ConVal.[value]

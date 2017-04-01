@@ -93,8 +93,7 @@ namespace ViewModel
         public string componentName { get; set; }
         public string configParentElement { get; set; }
         public string configElement { get; set; }
-        //public string configAttribute { get; set; }
-        public string keyName { get; set; }
+        public string attribute { get; set; }
         public string key { get; set; }
         public string valueName { get; set; }
         public List<ConfigVariableValue> values { get; set; }
@@ -109,7 +108,7 @@ namespace ViewModel
             componentName = x.componentName;
             configParentElement = x.configParentElement;
             configElement = x.configElement;
-            keyName = x.keyName;
+            attribute = x.attribute;
             key = x.key;
             valueName = x.valueName;
             values = x.values;
@@ -120,7 +119,7 @@ namespace ViewModel
             configvar_id = x.id;
             configParentElement = x.parent_element;
             configElement = x.element;
-            keyName = x.key_name;
+            attribute = x.key_name;
             if (string.IsNullOrWhiteSpace(x.key))
                 key = x.value_name;
             else

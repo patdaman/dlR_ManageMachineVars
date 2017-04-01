@@ -60,7 +60,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         { field: 'configvar_id', visible: false, enableCellEdit: false },
         { field: 'configParentElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'configElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
-        { field: 'keyName', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        { field: 'attribute', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'key', groupable: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'valueName', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         //{

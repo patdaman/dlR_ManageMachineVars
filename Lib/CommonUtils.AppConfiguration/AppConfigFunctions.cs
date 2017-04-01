@@ -93,10 +93,11 @@ namespace CommonUtils.AppConfiguration
                     {
                         parentElement = element.Parent.Name.ToString() ?? "",
                         element = element.Name.ToString(),
-                        keyName = element.FirstAttribute.Name.ToString(),
+                        attribute = element.FirstAttribute.Name.ToString(),
                         key = element.FirstAttribute.Value.ToString(),
                         valueName = element.LastAttribute.Name.ToString(),
-                        value = element.LastAttribute.Value.ToString()
+                        value = element.LastAttribute.Value.ToString(),
+                        Result = new ConfigModifyResult()
                     });
                 }
                 else if (!element.HasElements
@@ -107,11 +108,28 @@ namespace CommonUtils.AppConfiguration
                     {
                         parentElement = element.Parent.Name.ToString() ?? "",
                         element = element.Name.ToString(),
-                        keyName = "",
-                        key = "",
-                        valueName = element.Name.ToString(),
-                        value = element.Value.ToString()
+                        attribute = "",
+                        key = element.Name.ToString(),
+                        valueName = "",
+                        value = element.Value.ToString(),
+                        Result = new ConfigModifyResult()
                     });
+                }
+                else
+                {
+                    var keyValue = new AttributeKeyValuePair()
+                    {
+                        parentElement = "",
+                        element = element.Name.ToString(),
+                        attribute = "",
+                        key = "",
+                        valueName = "",
+                        value = "",
+                        Result = new ConfigModifyResult()
+                    };
+                    if (element.Parent != null)
+                        keyValue.parentElement = element.Parent.Name.ToString();
+                    keyValues.Add(keyValue);
                 }
             }
             return keyValues;
@@ -195,12 +213,22 @@ namespace CommonUtils.AppConfiguration
                 {
                     foreach (var x in y.Elements())
                     {
+                        if (x.FirstAttribute.Value.ToString() == null)
+                            return new AttributeKeyValuePair()
+                            {
+                                parentElement = x.Parent.Name.ToString(),
+                                element = x.Name.ToString(),
+                                attribute = "",
+                                key = x.Name.ToString(),
+                                valueName = "",
+                                value = x.Value.ToString()
+                            };
                         if (x.FirstAttribute.Value.ToString() == appKey)
                             return new AttributeKeyValuePair()
                             {
                                 parentElement = x.Parent.Name.ToString(),
-                                element = x.FirstAttribute.Name.ToString(),
-                                keyName = x.FirstAttribute.Name.ToString(),
+                                element = x.Name.ToString(),
+                                attribute = x.FirstAttribute.Name.ToString(),
                                 key = x.FirstAttribute.Value.ToString(),
                                 valueName = x.FirstAttribute.NextAttribute.Value.ToString(),
                                 value = x.FirstAttribute.NextAttribute.Value.ToString()
@@ -217,9 +245,9 @@ namespace CommonUtils.AppConfiguration
                             return new AttributeKeyValuePair()
                             {
                                 parentElement = x.Parent.Name.ToString(),
-                                element = x.FirstAttribute.Name.ToString(),
-                                keyName = x.FirstAttribute.Name.ToString(),
-                                key = x.FirstAttribute.Value.ToString(),
+                                element = x.Name.ToString(),
+                                attribute = "",
+                                key = "",
                                 valueName = x.FirstAttribute.NextAttribute.Value.ToString(),
                                 value = x.FirstAttribute.NextAttribute.Value.ToString()
                             };
@@ -313,23 +341,7 @@ namespace CommonUtils.AppConfiguration
             {
                 parent_element = "appSettings";
             }
-            return UpdateOrCreateAppSetting("add", appKey, "value", value, "key", parent_element);
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Adds a connection string to 'value'. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 2/10/2017. </remarks>
-        ///
-        /// <param name="appKey">   The application key. </param>
-        /// <param name="value">    The value. </param>
-        ///
-        /// <returns>   An Enums.ModifyResult. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult AddConnectionString(string appKey, string value)
-        {
-            //return UpdateOrCreateAppSetting(appKey, "connectionString", value, "name", "connectionStrings", "add");
-            return UpdateOrCreateAppSetting("add", appKey, "connectionString", value, "name", "connectionStrings");
+            return AddKeyValue("add", appKey, "value", value, "key", parent_element);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -345,60 +357,93 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult UpdateOrCreateAppSetting(string keyName, string appKey, string valueName, string value, string parent_element = null, string attribute = null)
+        public List<Enums.ModifyResult> AddKeyValue(List<AttributeKeyValuePair> keyValuePairs)
         {
-            string providerName = string.Empty;
-            List<XElement> list;
+            List<Enums.ModifyResult> results = new List<Enums.ModifyResult>();
+            foreach (var valuePair in keyValuePairs)
+            {
+                results.Add(AddKeyValue(
+                    valuePair.attribute,
+                    valuePair.key,
+                    valuePair.valueName,
+                    valuePair.value,
+                    valuePair.element,
+                    valuePair.parentElement
+                    ));
+            }
+            return results;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds a key value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
+        ///
+        /// <param name="attribute">          The attribute. </param>
+        /// <param name="appKey">           The application key. </param>
+        /// <param name="valueName">        Name of the value. </param>
+        /// <param name="value">            The value. </param>
+        /// <param name="parent_element">   (Optional) The parent element. </param>
+        /// <param name="attribute">        (Optional) The element. </param>
+        ///
+        /// <returns>   An Enums.ModifyResult. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public Enums.ModifyResult AddKeyValue(string attribute, string appKey, string valueName, string value, string element, string parent_element = null)
+        {
+            if (string.IsNullOrWhiteSpace(parent_element))
+            {
+                var rootElement = configFile.Elements().Where(x => x.Name == element).FirstOrDefault();
+                if (rootElement == null)
+                {
+                    if (string.IsNullOrWhiteSpace(attribute))
+                    {
+                        if (string.IsNullOrWhiteSpace(valueName))
+                            configFile.Add(new XElement(element, string.Empty));
+                        else
+                            configFile.Add(new XElement(element, value));
+                        return Enums.ModifyResult.Created;
+                    }
+                    else
+                    {
+                        configFile.Add(new XElement(element,
+                              new XAttribute(attribute, appKey),
+                              new XAttribute(valueName, value)));
+                        return Enums.ModifyResult.Created;
+                    }
+                }
+            }
+
+            List<XElement> parentElement = configFile.Descendants(parent_element).ToList();
+            if (parentElement.Count == 0)
+            {
+                configFile.Root.Add(new XElement(parent_element, string.Empty));
+            }
 
             if (string.IsNullOrWhiteSpace(attribute))
             {
-                attribute = "add";
-            }
-
-            if (string.IsNullOrWhiteSpace(parent_element))
-            {
-                if (appKey == "key")
-                    parent_element = "appSettings";
-                if (valueName == "connectionString")
-                    parent_element = "connectionStrings";
-            }
-
-            if (parent_element == "connectionStrings")
-                providerName = "System.Data.EntityClient";
-
-            if (string.IsNullOrWhiteSpace(parent_element))
-            {
-                list = (from appNode in configFile.Descendants()
-                            select appNode)
-                            .ToList();
-            }
-            else
-            {
-                list = (from appNode in configFile.Descendants(parent_element)
-                            select appNode)
-                            .ToList();
-            }
-
-            if (list == null)
-            {
-                try
+                var namedElement = parentElement.Elements().Where(x => x.Name == element).FirstOrDefault();
+                if (namedElement == null)
                 {
-                    configFile.Root.Add(new XElement(parent_element));
+                    if (string.IsNullOrWhiteSpace(value))
+                        parentElement.FirstOrDefault().Add(new XElement(element, string.Empty));
+                    else
+                        parentElement.FirstOrDefault().Add(new XElement(element, value));
+                    return Enums.ModifyResult.Created;
                 }
-                catch (Exception ex)
+                else
                 {
-                    return Enums.ModifyResult.Failed;
-                    //this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
+                    parentElement.Elements().Where(x => x.Name == element).FirstOrDefault().Value = value;
+                    return Enums.ModifyResult.Updated;
                 }
             }
 
-            foreach (XElement y in configFile.Descendants(parent_element))
+            foreach (XElement y in parentElement)
             {
                 foreach (var x in y.Elements())
                 {
-                    if (x.Name == attribute)
+                    if (x.Name == element)
                     {
-                        if (x.FirstAttribute.Name.ToString() == keyName &&
+                        if (x.FirstAttribute.Name.ToString() == attribute &&
                             x.FirstAttribute.Value.ToString() == appKey)
                         {
                             try
@@ -408,38 +453,24 @@ namespace CommonUtils.AppConfiguration
                             }
                             catch (Exception ex)
                             {
-                                return Enums.ModifyResult.Failed;
                                 // this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
+                                return Enums.ModifyResult.Failed;
                             }
                         }
                     }
                 }
-                try
-                {
-                    if (!String.IsNullOrEmpty(providerName))
-                    {
-                        y.Add(new XElement(attribute
-                                , new XAttribute(keyName, appKey)
-                                , new XAttribute(valueName, value)
-                                , new XAttribute("providerName", providerName)));
-                    }
-                    else if (string.IsNullOrWhiteSpace(attribute) || string.IsNullOrWhiteSpace(keyName))
-                    {
-                        y.Add(new XElement(valueName, value));
-                    }
-                    else
-                    {
-                        y.Add(new XElement(attribute
-                                , new XAttribute(keyName, appKey)
-                                , new XAttribute(valueName, value)));
-                    }
-                    return Enums.ModifyResult.Created;
-                }
-                catch (Exception ex)
-                {
-                    return Enums.ModifyResult.Failed;
-                    //this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
-                }
+            }
+            try
+            {
+                parentElement.FirstOrDefault().Add(new XElement(element,
+                                              new XAttribute(attribute, appKey),
+                                              new XAttribute(valueName, value)));
+                return Enums.ModifyResult.Created;
+            }
+            catch (Exception ex)
+            {
+                //this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
+                return Enums.ModifyResult.Failed;
             }
             return Enums.ModifyResult.Unknown;
         }

@@ -221,7 +221,8 @@ namespace AppConfigurationWebApp.Controllers
                 {
                     environment = environment ?? string.Empty,
                 };
-                var response = Request.CreateResponse<ViewModel.AttributeKeyValuePair>(HttpStatusCode.OK, configProcessor.PublishValue());
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                //var response = Request.CreateResponse<ViewModel.AttributeKeyValuePair>(HttpStatusCode.OK, configProcessor.PublishValue());
                 return response;
             }
             catch (Exception ex)

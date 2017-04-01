@@ -297,7 +297,7 @@ namespace BusinessLayer
             {
                 id = config.id,
                 active = config.active,
-                key_name = config.key_name,
+                key_name = config.attribute,
                 create_date = config.create_date,
                 element = config.element,
                 key = config.key,
@@ -393,7 +393,7 @@ namespace BusinessLayer
                     active = true,
                     element = appValue.configElement,
                     key = appValue.key,
-                    key_name = appValue.keyName ?? "key",
+                    attribute = appValue.attribute ?? "key",
                     parent_element = appValue.configParentElement,
                     value_name = appValue.valueName ?? "value",
                     modify_date = DateTime.Now
@@ -404,14 +404,14 @@ namespace BusinessLayer
             {
                 if (!(efConfig.element == appValue.configElement &&
                     efConfig.key == appValue.key &&
-                    efConfig.key_name == appValue.keyName &&
+                    efConfig.attribute == appValue.attribute &&
                     efConfig.parent_element == appValue.configParentElement &&
                     efConfig.value_name == appValue.valueName))
                 {
 
                     efConfig.element = appValue.configElement;
                     efConfig.key = appValue.key;
-                    efConfig.key_name = appValue.keyName;
+                    efConfig.attribute = appValue.attribute;
                     efConfig.parent_element = appValue.configParentElement;
                     efConfig.value_name = appValue.valueName;
                     efConfig.modify_date = DateTime.Now;

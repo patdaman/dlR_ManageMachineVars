@@ -27,7 +27,7 @@ namespace ManageConfigVariables
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("Parent Attribute = {0}", configVars.parentElement);
             Console.WriteLine("Attribute = {0}", configVars.element);
-            Console.WriteLine("key name = {0}", configVars.keyName);
+            Console.WriteLine("key name = {0}", configVars.attribute);
             Console.WriteLine("key = {0}", configVars.key);
             Console.WriteLine("value name = {0}", configVars.valueName);
             Console.WriteLine("value = {0}", configVars.value);
@@ -86,7 +86,7 @@ namespace ManageConfigVariables
                 Console.WriteLine("-------------------------------------------");
                 Console.WriteLine("Parent Attribute = {0}", x.parentElement);
                 Console.WriteLine("Attribute = {0}", x.element);
-                Console.WriteLine("key name = {0}", x.keyName);
+                Console.WriteLine("key name = {0}", x.attribute);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
@@ -110,7 +110,7 @@ namespace ManageConfigVariables
                 Console.WriteLine("-------------------------------------------");
                 Console.WriteLine("Parent Attribute = {0}", x.parentElement);
                 Console.WriteLine("Attribute = {0}", x.element);
-                Console.WriteLine("key name = {0}", x.keyName);
+                Console.WriteLine("key name = {0}", x.attribute);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
@@ -134,7 +134,7 @@ namespace ManageConfigVariables
                 Console.WriteLine("-------------------------------------------");
                 Console.WriteLine("Parent Attribute = {0}", x.parentElement);
                 Console.WriteLine("Attribute = {0}", x.element);
-                Console.WriteLine("key name = {0}", x.keyName);
+                Console.WriteLine("key name = {0}", x.attribute);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
@@ -199,7 +199,7 @@ namespace ManageConfigVariables
                 Console.WriteLine("-------------------------------------------");
                 Console.WriteLine("Parent Attribute = {0}", x.parentElement);
                 Console.WriteLine("Attribute = {0}", x.element);
-                Console.WriteLine("key name = {0}", x.keyName);
+                Console.WriteLine("key name = {0}", x.attribute);
                 Console.WriteLine("Key = {0}", x.key);
                 Console.WriteLine("Value name = {0}", x.valueName);
                 Console.WriteLine("Value = {0}", x.value.ToString());
@@ -379,6 +379,58 @@ namespace ManageConfigVariables
                 Console.WriteLine("value = {0}", env.value.ToString());
             }
             Console.WriteLine("-------------------------------------------");
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Output configuration file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
+        ///
+        /// <param name="adminArgs">    The admin arguments. </param>
+        ///-------------------------------------------------------------------------------------------------
+        public static void OutputConfigFile(AdminArgs adminArgs)
+        {
+            ManageConfig_Files appConfigProcessor = new ManageConfig_Files(adminArgs.ConfigEnvironment,
+                                                                            adminArgs.ComponentName, 
+                                                                            adminArgs.OutputPath,
+                                                                            adminArgs.MachineName
+                                                                            );
+            try
+            {
+                appConfigProcessor.SaveFile(adminArgs.ComponentName, adminArgs.OutputPath, adminArgs.ConfigEnvironment);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(string.Format("Exception thrown: {0}", e.Message));
+                if (e.InnerException != null)
+                    Console.WriteLine(string.Format("Inner Exception:{0}{1}{2}", Environment.NewLine, "     ", e.InnerException.ToString()));
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Publish configuration file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
+        ///
+        /// <param name="adminArgs">    The admin arguments. </param>
+        ///-------------------------------------------------------------------------------------------------
+        public static void PublishConfigFile(AdminArgs adminArgs)
+        {
+            ManageConfig_Files appConfigProcessor = new ManageConfig_Files(adminArgs.ConfigEnvironment,
+                                                                            adminArgs.ComponentName,
+                                                                            adminArgs.OutputPath,
+                                                                            adminArgs.MachineName
+                                                                            );
+            try
+            {
+                appConfigProcessor.PublishFile(adminArgs.ComponentName, adminArgs.ConfigEnvironment);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(string.Format("Exception thrown: {0}", e.Message));
+                if (e.InnerException != null)
+                    Console.WriteLine(string.Format("Inner Exception:{0}{1}{2}", Environment.NewLine, "     ", e.InnerException.ToString()));
+            }
         }
     }
 }

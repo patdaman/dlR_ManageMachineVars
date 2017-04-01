@@ -24,6 +24,8 @@ namespace ManageConfigVariables
         public const string RemoveAppConfigVariable = "remove-appconfig";
         public const string GetAppConfigValue = "get-appconfigvalue";
         public const string ImportAppConfig = "import-appconfig";
+        public const string OutputConfigFile = "output-appconfig";
+        public const string PublishConfig = "publish-appconfig";
     }
 
     public class ConfigEnvironment
@@ -48,12 +50,36 @@ namespace ManageConfigVariables
         public string ComponentName { get; set; }
         public string Path { get; set; }
         public string Parent { get; set; }
+        public string Element { get; set; }
         public string Attribute { get; set; }
         public string KeyType { get; set; }
-        public string KeyName { get; set; }
         public string Key { get; set; }
         public string ValueName { get; set; }
         public string Value { get; set; }
         public string CustomSuffix { get; set; }
+        public string OutputPath { get; internal set; }
+
+        public AdminArgs()
+        { }
+        public AdminArgs(AdminArgs x)
+        {
+            UserName = x.UserName;
+            Password = x.Password;
+            Action = x.Action;
+            ConfigEnvironment = x.ConfigEnvironment;
+            MachineName = x.MachineName;
+            ApplicationName = x.ApplicationName;
+            ComponentName = x.ComponentName;
+            Path = x.Path;
+            Parent = x.Parent;
+            Element = x.Element;
+            Attribute = x.Attribute;
+            KeyType = x.KeyType;
+            Key = x.Key;
+            ValueName = x.ValueName;
+            Value = x.Value;
+            CustomSuffix = x.CustomSuffix;
+            OutputPath = x.OutputPath;
+        }
     }
 }
