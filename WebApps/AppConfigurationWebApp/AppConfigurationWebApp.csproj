@@ -193,6 +193,9 @@
     <Content Include="AngularJS\Controllers\DashboardController.js" />
     <Content Include="AngularJS\Controllers\MachineController2.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js" />
+    <Content Include="AngularJS\Controllers\Templates\configFileModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="AngularJS\Directives\Directives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
@@ -208,6 +211,12 @@
     <Content Include="Content\Dashboard\site.css" />
     <Content Include="Content\Dashboard\timeline.css" />
     <Content Include="Content\site_dashboard.css" />
+    <Content Include="Content\Templates\configFileModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\editableRowTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\editButton.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -215,6 +224,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\expandableRowTemplate.html" />
+    <Content Include="AngularJS\Controllers\Templates\editableRowTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\timeline.css" />
     <Content Include="Content\ui-grid.css" />
     <Content Include="Content\ui-grid.min.css" />
@@ -225,6 +237,7 @@
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
+    <Content Include="Scripts\angular-modal-service.js" />
     <Content Include="Scripts\angular-route.js" />
     <Content Include="Scripts\angular-route.min.js" />
     <Content Include="Scripts\angular-animate.min.js.map" />

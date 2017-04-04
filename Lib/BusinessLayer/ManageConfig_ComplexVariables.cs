@@ -54,6 +54,20 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/3/2017. </remarks>
+        ///
+        /// <param name="componentName">    Name of the component. </param>
+        ///
+        /// <returns>   The configuration file. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ConfigXml GetConfigFile(string componentName)
+        {
+            throw new NotImplementedException();
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machine configuration variables. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/17/2017. </remarks>

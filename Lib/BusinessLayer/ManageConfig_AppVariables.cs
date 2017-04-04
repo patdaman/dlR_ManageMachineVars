@@ -19,12 +19,6 @@ namespace BusinessLayer
         public int? appId { get; set; }
         public string appName { get; set; }
         public int? componentId { get; set; }
-
-        public List<AttributeKeyValuePair> GetPublishValues()
-        {
-            throw new NotImplementedException();
-        }
-
         public string componentName { get; set; }
 
         public string path { get; set; }
@@ -41,7 +35,7 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         public ManageConfig_AppVariables()
         {
-            machineName = Environment.MachineName.ToString();
+            //machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
             if (String.IsNullOrEmpty(path) && !String.IsNullOrEmpty(componentName))
             {
@@ -63,7 +57,6 @@ namespace BusinessLayer
         {
             configFile = xDoc;
             appConfigVars = new AppConfigFunctions(configFile);
-            machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
         }
 
@@ -78,7 +71,6 @@ namespace BusinessLayer
         {
             configFile = new XDocument();
             appConfigVars = new AppConfigFunctions(configFile);
-            machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
         }
 
@@ -86,7 +78,6 @@ namespace BusinessLayer
         {
             configFile = xDoc;
             appConfigVars = new AppConfigFunctions(configFile);
-            machineName = Environment.MachineName.ToString();
             DevOpsContext = entities;
         }
 
@@ -101,7 +92,6 @@ namespace BusinessLayer
             else
                 throw new UriFormatException("Path not a proper URI");
             appConfigVars = new AppConfigFunctions(configFile);
-            machineName = Environment.MachineName.ToString();
             DevOpsContext = new DevOpsEntities();
         }
 
@@ -242,11 +232,23 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         public List<AttributeKeyValuePair> ImportAllAppConfigVariablesToDb(XDocument configFile)
         {
+            /// ----------------------------------------------------------------------- ///
+            ///   REFACTOR!!!!
+            ///   
+            /// Todo:
+            ///  Add import of element / attribute structure to save all file detail
+            ///     in database: [DevOps].[config].[ConfigFile]
+            ///         etc
+            ///  Minimize footprint of this gawdawful method!      
+            ///   REFACTOR!!!!
+            ///  ---------------------------------------------------------------------- ///
             this.configFile = configFile;
             EFDataModel.DevOps.Component efComp = new EFDataModel.DevOps.Component();
             EFDataModel.DevOps.Component newComp = new EFDataModel.DevOps.Component();
             EFDataModel.DevOps.ConfigFile efConfigFile = new ConfigFile();
             EFDataModel.DevOps.Application efApp = new EFDataModel.DevOps.Application();
+            EFDataModel.DevOps.MachineComponentPathMap machinePath = new MachineComponentPathMap();
+            EFDataModel.DevOps.Machine efMac = new EFDataModel.DevOps.Machine();
 
             if (!string.IsNullOrWhiteSpace(this.appName))
             {
@@ -263,23 +265,75 @@ namespace BusinessLayer
             }
 
             IQueryable<EFDataModel.DevOps.Component> CompQuery;
-            if (componentId != null || !string.IsNullOrWhiteSpace(componentName))
+            if (componentId != null)
+                CompQuery = (from Comp in DevOpsContext.Components
+                             where Comp.id == componentId
+                             select Comp);
+            else
+                CompQuery = (from Comp in DevOpsContext.Components
+                             where Comp.component_name.ToLower() == componentName.ToLower()
+                             select Comp);
+            efComp = CompQuery.FirstOrDefault();
+
+            string file_name = Path.GetFileNameWithoutExtension(this.path);
+
+            if (efComp == null)
             {
-                if (componentId == null)
-                    CompQuery = (from Comp in DevOpsContext.Components
-                                 where Comp.component_name.ToLower() == componentName.ToLower()
-                                 select Comp);
+                if (!string.IsNullOrWhiteSpace(this.componentName))
+                {
+                    if (string.IsNullOrWhiteSpace(file_name))
+                        file_name = this.componentName + ".config";
+                    efConfigFile = new ConfigFile()
+                    {
+                        file_name = file_name,
+                        xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
+                        create_date = DateTime.Now,
+                        modify_date = DateTime.Now,
+                    };
+                    newComp = new EFDataModel.DevOps.Component()
+                    {
+                        component_name = this.componentName,
+                        create_date = DateTime.Now,
+                        modify_date = DateTime.Now,
+                        active = true,
+                        relative_path = this.path
+                    };
+                    newComp.ConfigFiles.Add(efConfigFile);
+                }
                 else
-                    CompQuery = (from Comp in DevOpsContext.Components
-                                 where Comp.id == componentId
-                                 select Comp);
-                efComp = CompQuery.FirstOrDefault();
+                {
+                    throw new ObjectNotFoundException("No Component found or created.");
+                }
+            }
+            else
+            {
                 this.componentId = efComp.id;
                 this.componentName = efComp.component_name;
+                efConfigFile = efComp.ConfigFiles.Where(x => x.file_name == file_name && x.component_id == this.componentId).FirstOrDefault();
             }
 
-            EFDataModel.DevOps.Machine efMac;
+            if (efConfigFile == null)
+            {
+                efConfigFile = new ConfigFile()
+                {
+                    file_name = file_name,
+                    xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
+                    create_date = DateTime.Now,
+                    modify_date = DateTime.Now,
+                };
+                if (efComp != null)
+                    efComp.ConfigFiles.Add(efConfigFile);
+                else
+                    newComp.ConfigFiles.Add(efConfigFile);
+            }
+
+            if (string.IsNullOrWhiteSpace(this.path))
+                this.path = String.Format(@"PrintableConfig\{0}\{0}.config", this.componentName);
+
             IQueryable<EFDataModel.DevOps.Machine> macQuery;
+            if (string.IsNullOrWhiteSpace(this.machineName))
+                this.machineName = string.Empty;
+            macQuery = DevOpsContext.Machines.Where(x => x.machine_name.ToLower() == this.machineName.ToLower());
             if (machineId != null || !string.IsNullOrWhiteSpace(this.machineName))
             {
                 if (machineId == null)
@@ -290,101 +344,31 @@ namespace BusinessLayer
                     macQuery = (from Mac in DevOpsContext.Machines
                                 where Mac.id == machineId
                                 select Mac);
-                efMac = macQuery.FirstOrDefault();
-                machineId = efMac.id;
-                EFDataModel.DevOps.MachineComponentPathMap machinePath;
+            }
+            efMac = macQuery.FirstOrDefault();
 
-                if (efComp == null)
+            if (efMac != null)
+            {
+                machineId = efMac.id;
+                machinePath = (from macComp in DevOpsContext.MachineComponentPathMaps
+                               where macComp.machine_id == efMac.id
+                               where macComp.config_path == path
+                               select macComp).FirstOrDefault();
+                if (machinePath == null)
                 {
-                    if (!string.IsNullOrWhiteSpace(this.componentName))
+                    machinePath = new EFDataModel.DevOps.MachineComponentPathMap()
                     {
-                        machinePath = new EFDataModel.DevOps.MachineComponentPathMap()
-                        {
-                            machine_id = this.machineId.Value,
-                            config_path = Path.GetDirectoryName(this.path)
-                        };
-                        string file_name = Path.GetFileNameWithoutExtension(this.path);
-                        if (string.IsNullOrWhiteSpace(file_name))
-                            file_name = this.componentName + ".config";
-                        efConfigFile = new ConfigFile()
-                        {
-                            file_name = file_name,
-                            xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
-                            create_date = DateTime.Now,
-                            modify_date = DateTime.Now,
-                        };
-                        if (string.IsNullOrWhiteSpace(this.path))
-                            this.path = String.Format(@"PrintableConfig\{0}\{0}.config", this.componentName);
-                        newComp = new EFDataModel.DevOps.Component()
-                        {
-                            component_name = this.componentName,
-                            create_date = DateTime.Now,
-                            modify_date = DateTime.Now,
-                            active = true,
-                            relative_path = this.path
-                        };
-                        newComp.MachineComponentPathMaps.Add(machinePath);
-                        newComp.ConfigFiles.Add(efConfigFile);
-                        if (efApp != null)
-                            newComp.Applications.Add(efApp);
-                        DevOpsContext.Components.Add(newComp);
+                        machine_id = this.machineId.Value,
+                        config_path = Path.GetDirectoryName(this.path)
+                    };
+                    if (efComp.component_name != null)
+                    {
+                        efComp.MachineComponentPathMaps.Add(machinePath);
                     }
                     else
                     {
-                        throw new ObjectNotFoundException("No Component found or created.");
+                        newComp.MachineComponentPathMaps.Add(machinePath);
                     }
-                }
-                else
-                {
-                    machinePath = (from macComp in DevOpsContext.MachineComponentPathMaps
-                                   where macComp.machine_id == efMac.id
-                                   where macComp.component_id == efComp.id
-                                   where macComp.config_path == path
-                                   select macComp).FirstOrDefault();
-                    if (machinePath == null || machinePath.config_path != this.path)
-                    {
-                        efComp.MachineComponentPathMaps.Add(new EFDataModel.DevOps.MachineComponentPathMap()
-                        {
-                            machine_id = this.machineId.Value,
-                            component_id = efComp.id,
-                            config_path = Path.GetDirectoryName(this.path)
-                        });
-                    }
-                }
-            }
-
-            if (efComp == null)
-            {
-                if (!string.IsNullOrWhiteSpace(this.componentName))
-                {
-                    string file_name = Path.GetFileNameWithoutExtension(this.path);
-                    if (string.IsNullOrWhiteSpace(file_name))
-                        file_name = this.componentName + ".config";
-                    efConfigFile = new ConfigFile()
-                    {
-                        file_name = file_name,
-                        xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
-                        create_date = DateTime.Now,
-                        modify_date = DateTime.Now,
-                    };
-                    if (string.IsNullOrWhiteSpace(this.path))
-                        this.path = String.Format(@"PrintableConfig\{0}\{0}.config", this.componentName);
-                    newComp = new EFDataModel.DevOps.Component()
-                    {
-                        component_name = this.componentName,
-                        create_date = DateTime.Now,
-                        modify_date = DateTime.Now,
-                        active = true,
-                        relative_path = this.path
-                    };
-                    newComp.ConfigFiles.Add(efConfigFile);
-                    if (efApp != null)
-                        newComp.Applications.Add(efApp);
-                    DevOpsContext.Components.Add(newComp);
-                }
-                else
-                {
-                    throw new ObjectNotFoundException("No Component found or created.");
                 }
             }
 
@@ -403,7 +387,10 @@ namespace BusinessLayer
                 if (configVar == null)
                 {
                     configVar = CreateAppConfigEntity(x);
-                    efComp.ConfigVariables.Add(configVar);
+                    if (efComp != null)
+                        efComp.ConfigVariables.Add(configVar);
+                    else
+                        newComp.ConfigVariables.Add(configVar);
                 }
                 else
                 {
@@ -424,19 +411,24 @@ namespace BusinessLayer
                         efValue.modify_date = DateTime.Now;
                     }
                 }
-
-                /// ----------------------------------------------------------------------- ///
-                ///   REFACTOR!!!!
-                ///   
-                /// Todo:
-                ///  Add import of element / attribute structure to save all file detail
-                ///     in database: [DevOps].[config].[ConfigFile]
-                ///         etc
-                ///  Minimize footprint of this gawdawful method!      
-                ///   REFACTOR!!!!
-                ///  ---------------------------------------------------------------------- ///
-
+                if (efComp != null)
+                    if (!efComp.ConfigVariables.Contains(configVar))
+                        efComp.ConfigVariables.Add(configVar);
+                else
+                    newComp.ConfigVariables.Add(configVar);
             }
+            if (efComp != null)
+            {
+                if (efApp != null)
+                    efComp.Applications.Add(efApp);
+            }
+            else
+            {
+                if (efApp != null)
+                    newComp.Applications.Add(efApp);
+                DevOpsContext.Components.Add(newComp);
+            }
+
             DevOpsContext.SaveChanges();
             return configVars;
         }
@@ -635,21 +627,15 @@ namespace BusinessLayer
             return AddAllAppConfigVariables(configVars);
         }
 
-        //public List<ConfigModifyResult> AddAllAppConfigVariables(int componentId)
-        //{
-        //    ICollection<ConfigVariable> configVars;
-        //    if (appId == 0)
-        //        configVars = QueryConfigVariables();
-        //    else
-        //        configVars = QueryConfigVariables(componentId);
-        //    return AddAllAppConfigVariables(configVars);
-        //}
-
-        //public List<ConfigModifyResult> AddAllAppConfigVariables(int appId, int componentId)
-        //{
-        //    ICollection<ConfigVariable> configVars = QueryConfigVariables(appId, componentId);
-        //    return AddAllAppConfigVariables(configVars);
-        //}
+        public List<ConfigModifyResult> AddAllAppConfigVariables(int componentId)
+        {
+            ICollection<EFDataModel.DevOps.ConfigVariable> configVars;
+            if (appId == 0)
+                configVars = QueryConfigVariables();
+            else
+                configVars = QueryConfigVariables(componentId);
+            return AddAllAppConfigVariables(configVars);
+        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Adds all application configuration variables. </summary>
@@ -689,8 +675,17 @@ namespace BusinessLayer
             return QueryConfigVariables(0, 0);
         }
 
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(string componentName, string environment = null)
+        {
+            this.environment = environment;
+            this.componentName = componentName;
+            var componentId = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault().id;
+            return QueryConfigVariables(componentId, 0);
+        }
+
         private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, string environment = null)
         {
+            this.environment = environment;
             return QueryConfigVariables(componentId, 0);
         }
 
@@ -703,7 +698,7 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, int appId)
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, int appId, int? machineId = null)
         {
             IQueryable<EFDataModel.DevOps.Machine> machineObject = (from mac in DevOpsContext.Machines
                                                                     where mac.machine_name == machineName
@@ -718,20 +713,14 @@ namespace BusinessLayer
                                                                                 where config.environment_type == environment
                                                                                 select config.ConfigVariable);
             ICollection<EFDataModel.DevOps.ConfigVariable> configVars;
-            //if (!string.IsNullOrWhiteSpace(environment))
-            //{
-            //    configVars = (from cvar in DevOpsContext.ConfigVariables
-            //                  where environmentObjects.Contains(cvar)
-            //                  select cvar).ToList();
-            //}
-            //else 
+
             if (componentId != 0)
             {
                 if (!string.IsNullOrWhiteSpace(this.environment))
-                   configVars = (from cvar in DevOpsContext.ConfigVariables
-                              where cvar.Components.FirstOrDefault().id == componentId
-                              where environmentObjects.Contains(cvar)
-                              select cvar).ToList();
+                    configVars = (from cvar in DevOpsContext.ConfigVariables
+                                  where cvar.Components.FirstOrDefault().id == componentId
+                                  where environmentObjects.Contains(cvar)
+                                  select cvar).ToList();
                 else
                     configVars = (from cvar in DevOpsContext.ConfigVariables
                                   where cvar.Components.FirstOrDefault().id == componentId
@@ -739,17 +728,41 @@ namespace BusinessLayer
             }
             else if (appId != 0)
             {
-                configVars = (from cvar in DevOpsContext.ConfigVariables
+                if (!string.IsNullOrWhiteSpace(this.environment))
+                    configVars = (from cvar in DevOpsContext.ConfigVariables
                               where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
                               select cvar).ToList();
+                else
+                    configVars = (from cvar in DevOpsContext.ConfigVariables
+                                  where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
+                                  where environmentObjects.Contains(cvar)
+                                  select cvar).ToList();
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(machineName))
             {
-                configVars = (from comp in DevOpsContext.ConfigVariables
-                              where comp.Components.Select(x => x.id).Intersect(
+                if (!string.IsNullOrWhiteSpace(this.environment))
+                    configVars = (from comp in DevOpsContext.ConfigVariables
+                                  where environmentObjects.Contains(comp)
+                                  where comp.Components.Select(x => x.id).Intersect(
                                   machineObject.FirstOrDefault().MachineComponentPathMaps.Select(ci => ci.component_id)
                                   ).Any()
                               select comp).ToList();
+                else
+                    configVars = (from comp in DevOpsContext.ConfigVariables
+                                  where comp.Components.Select(x => x.id).Intersect(
+                                      machineObject.FirstOrDefault().MachineComponentPathMaps.Select(ci => ci.component_id)
+                                      ).Any()
+                                  select comp).ToList();
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(this.environment))
+                    configVars = (from cvar in DevOpsContext.ConfigVariables
+                                  where environmentObjects.Contains(cvar)
+                                  select cvar).ToList();
+                else
+                    configVars = (from cvar in DevOpsContext.ConfigVariables
+                                  select cvar).ToList();
             }
             return configVars;
         }

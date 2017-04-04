@@ -44,9 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppConfigModels.cs" />
-    <Compile Include="ComplexConfig.cs" />
-    <Compile Include="ConfigModels.cs" />
+    <Compile Include="AppConfigDTOModels.cs" />
+    <Compile Include="AppConfigApiModels.cs" />
+    <Compile Include="AppConfigFunctionModels.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="LoggingModels.cs" />
     <Compile Include="PerformanceModel.cs" />

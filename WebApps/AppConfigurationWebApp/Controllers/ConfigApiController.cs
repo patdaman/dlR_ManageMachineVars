@@ -56,6 +56,27 @@ namespace AppConfigurationWebApp.Controllers
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets a HTTP response message using the given component name. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/3/2017. </remarks>
+        ///
+        /// <param name="componentName">    The component name to get. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public HttpResponseMessage Get(string componentName)
+        {
+            try
+            {
+                return Request.CreateResponse<ViewModel.ConfigXml>(HttpStatusCode.OK, configProcessor.GetConfigFile(componentName));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Puts the given value. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>

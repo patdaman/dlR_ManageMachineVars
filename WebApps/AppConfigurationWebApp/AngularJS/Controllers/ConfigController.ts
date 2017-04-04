@@ -5,17 +5,20 @@ var ConfigApp = angular.module('ConfigApp',
         'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
         'ui.grid.selection', 'ui.grid.rowEdit', 'ui.grid.resizeColumns',
         'ui.grid.pinning', 'ui.grid.exporter', 'ui.grid.moveColumns',
-        'ui.grid.infiniteScroll', 'ui.grid.importer'
+        'ui.grid.infiniteScroll', 'ui.grid.importer',
+        'angularModalService', 'ngAnimate'
     ]);
 
 ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout,
-    uiGridConstants, $q, $interval) {
+    uiGridConstants, $q, $interval, ModalService) {
     $scope.title = "Application Configuration";
     //var vm = $scope;
     var data = [];
     var i;
     var editMode = false;
     var rowIndex;
+    var configXml;
+    var filePath;
 
     $scope.gridOptions = {
         enablePaging: true,
@@ -72,7 +75,17 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         { field: 'configParentElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'configElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'attribute', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
-        { field: 'key', groupable: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
+        {
+            field: 'key', groupable: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false',
+            cellToolTip: function (row, col) {
+                if (isBlank(row.entity.attribute)) {
+                    return '<' + row.entity.configParentElement + '>\n\t<' + row.entity.key + '> {value} </' + row.entity.key + '>\n\t. . .\n</' + row.entity.configParentElement + '>';
+                }
+                else {
+                    return '<' + row.entity.configParentElement + ' . . . /> \n\t <' + row.entity.configElement + ' ' + row.entity.attribute + '="{value}" ' + row.entity.valueName + '="{value}" />\n\t. . .\n</' + row.entity.configParentElement + ' . . .>" tooltip-placement="right" ';
+                }
+            }
+        },
         { field: 'valueName', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         //{
         //    field: "Action",
@@ -94,14 +107,21 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
             '<button value="Edit" class="btn btn-xs btn-danger" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Delete</button>' +
             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-            '</div></div>',
+            '</div></div>' +
+            '<div ng-if="row.groupHeader"><div class="ui-grid-cell-contents"><button value="Edit" class="btn btn-xs btn-default" ng-click="$scope.showFile(row.entity)">View File</button></div>',
             enableCellEdit: false
         },
     ];
 
     //var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ng-click="editCell(row.entity, row.getProperty(col.field), col.field)"><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';
-    //var basicCellTemplate = '<div ng-if="!row.entity.editable">{{COL_FIELD}}</div><div ng-if="row.entity.editable"><input ng-model="MODEL_COL_FIELD"</div>';
-    var basicCellTemplate = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>';
+    var basicCellTemplate = '<div ng-if="!row.entity.editable">{{COL_FIELD}}</div><div ng-if="row.entity.editable"><input ng-model="MODEL_COL_FIELD"</div>';
+    //var basicCellTemplate = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>';
+
+    //var editableCellTemplate = '~/Content/Templates/editableRowTemplate.html';
+
+    function isBlank(str) {
+        return (!str || /^\s*$/.test(str));
+    }
 
     $scope.selectedCell;
     $scope.selectedRow;
@@ -197,9 +217,11 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         return deferred.promise;
     };
 
+    // These need to come from Api:
     $scope.environments = ["development", "qa", "production"];
     $scope.machines = ["sdsvc01.dc.pti.com", "hqdev07.dev.corp.printable.com", "hqdev08.dev.corp.printable.com"];
     $scope.components = ["Commerce", "DAL", "ManagerI18N", "Services"];
+    // End Todo
 
     $scope.expandAllRows = function () {
         $scope.gridApi.expandable.expandAllRows();
@@ -207,6 +229,28 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
 
     $scope.collapseAllRows = function () {
         $scope.gridApi.expandable.collapseAllRows();
+    };
+
+    $scope.showFile = function (rowEntity) {
+        var configFile = '';
+        ModalService.showModal({
+            templateUrl: "Templates/configFileModal.html",
+            controller: "ConfigViewer",
+            inputs: {
+                title: "A More Complex Example",
+                //title: configFile.fileName,
+                filePath: "file Path",
+                //filePath: configFile.filePath,
+                configXml: "config XML"
+                //configXml: configFile.fileText
+            }
+        }).then(function (modal) {
+            modal.element.modal();
+            modal.close.then(function (result) {
+                $scope.complexResult = "Name: " + result.name + ", age: " + result.age;
+            });
+        });
+
     };
 
     //$http({
@@ -283,6 +327,27 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         });
 }
 );
+
+ConfigApp.controller('ConfigViewer', 
+    function ($scope, $element, title, filePath, configXml, close) {
+
+        $scope.filePath = filePath;
+        $scope.configXml = configXml;
+        $scope.title = title;
+        $scope.close = function () {
+            close({
+                filePath: $scope.filePath,
+                configXml: $scope.configXml
+            }, 500); // close, but give 500ms for bootstrap to animate
+        };
+        $scope.cancel = function () {
+            $element.modal('hide');
+            close({
+                filePath: $scope.filePath,
+                configXml: $scope.configXml
+            }, 500); // close, but give 500ms for bootstrap to animate
+        };
+    });
 
 angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiGridRowEditService',
     function ($interval, $rootScope, uiGridRowEditService) {

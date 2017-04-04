@@ -25,7 +25,9 @@ namespace AppConfigurationWebApp
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/angular.js",
+                      "~/Scripts/angular-animate.js",
                       "~/Scripts/angular-route.js",
+                      "~/Scripts/angular-modal-service.js",
                       "~/Scripts/ui-grid.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
@@ -33,9 +35,7 @@ namespace AppConfigurationWebApp
                       //"~/AngularJS/app.ts",
                       //"~/AngularJS/configApp.ts",
                       "~/AngularJS/Controllers/MachineController.ts",
-                      //"~/AngularJS/Controllers/MachineController2.js",
                       "~/AngularJS/Controllers/ConfigController.ts"
-                      //"~/AngularJS/Controllers/ConfigController2.js"
                       ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(

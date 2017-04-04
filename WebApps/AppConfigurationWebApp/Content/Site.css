@@ -55,7 +55,13 @@ div.flip {
   height: 800px;
   align-content: center;
 }
- 
+
+.grid-tooltip {
+  overflow: visible;
+  z-index: 9999999;
+  float: left;
+}
+
 .my-custom-menu {
   position: absolute;
 }
