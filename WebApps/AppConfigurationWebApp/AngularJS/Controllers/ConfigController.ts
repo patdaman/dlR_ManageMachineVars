@@ -1,12 +1,23 @@
 ﻿'use strict'
 
 var ConfigApp = angular.module('ConfigApp',
-    ['ui.grid', 'ui.grid.edit', 'ui.grid.grouping', 'ui.grid.saveState',
-        'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
-        'ui.grid.selection', 'ui.grid.rowEdit', 'ui.grid.resizeColumns',
-        'ui.grid.pinning', 'ui.grid.exporter', 'ui.grid.moveColumns',
-        'ui.grid.infiniteScroll', 'ui.grid.importer',
-        'angularModalService', 'ngAnimate'
+        ['ui.grid',
+            'ui.grid.edit',
+            'ui.grid.grouping',
+            'ui.grid.saveState',
+            'ui.grid.pagination',
+            'ui.grid.expandable',
+            'ui.grid.cellNav',
+            'ui.grid.selection',
+            'ui.grid.rowEdit',
+            'ui.grid.resizeColumns',
+            'ui.grid.pinning',
+            'ui.grid.exporter',
+            'ui.grid.moveColumns',
+            'ui.grid.infiniteScroll',
+            'ui.grid.importer',
+            'angularModalService',
+            'ngAnimate'
     ]);
 
 ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout,
@@ -54,13 +65,14 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
 
         treeRowHeaderAlwaysVisible: false,
 
-        enableSelectAll: false,
-        enableEditing: false,
-        enableColumnResize: false,
-        enableCellSelection: false,
+        //enableSelectAll: false,
+        //enableEditing: false,
+        //enableColumnResize: false,
+        //enableCellSelection: false,
         enableRowSelection: true,
 
-        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit style="width:100%; float:right"></div>',
+        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-selection style="width:100%; float:right"></div>',
+        //expandableRowTemplate: '<div style="padding:5px;"><div ui-grid="row.entity.subGridOptions[0]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="display:inline-block;"></div><div ui-grid="row.entity.subGridOptions[1]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="height:340px;width:48%;display:inline-block;margin-left:5px"></div></div>',
         expandableRowHeight: 125,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
@@ -76,7 +88,9 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         { field: 'configElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'attribute', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         {
-            field: 'key', groupable: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false',
+            field: 'key',
+            //cellTemplate: basicCellTemplate,
+            cellTemplate: '<div class="ui-grid-cell-contents"><div ng-class="{\'viewr-dirty\' : row.inlineEdit.entity[col.field].isValueChanged }">{{row.entity[col.field]}}</div></div>',
             cellToolTip: function (row, col) {
                 if (isBlank(row.entity.attribute)) {
                     return '<' + row.entity.configParentElement + '>\n\t<' + row.entity.key + '> {value} </' + row.entity.key + '>\n\t. . .\n</' + row.entity.configParentElement + '>';
@@ -102,13 +116,13 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         //}
         {
             name: "Actions",
-            cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents" >' +
+            cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents">' +
             '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
             '<button value="Edit" class="btn btn-xs btn-danger" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Delete</button>' +
             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
             '</div></div>' +
-            '<div ng-if="row.groupHeader"><div class="ui-grid-cell-contents"><button value="Edit" class="btn btn-xs btn-default" ng-click="$scope.showFile(row.entity)">View File</button></div>',
+            '<div ng-if="row.groupHeader"><div class="ui-grid-cell-contents"><button class="btn btn-xs btn-default" ng-click="grid.appScope.showFile(row.entity)">View File</button></div>',
             enableCellEdit: false
         },
     ];
@@ -267,7 +281,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                     columnDefs: [
                         { name: "id", field: "id", visible: false },
                         { name: "Variable id", field: "configvar_id", visible: false },
-                        { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
+                        { name: "Environment", field: "environment", visible: true, enableCellEdit: false, cellTemplate: basicCellTemplate },
                         //{ name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
                         { name: "Value", field: "value", visible: true, cellEditableContition: false, cellTemplate: basicCellTemplate },
                         { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
@@ -278,7 +292,8 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                             name: "Actions",
                             cellTemplate: '<div class="ui-grid-cell-contents" >' +
                             '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
+                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="grid.appScope.publishValue(row.entity)">Publish</button>' +
+                            //'<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
                             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
                             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
                             '</div>',
@@ -289,6 +304,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                     onRegisterApi: function (gridApi) {
                         //set gridApi on scope
                         $scope.gridApi = gridApi;
+
                         //gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
                         //    var selectedRows = $scope.gridApi.selection.getSelectedRows();
                         //    var parentRow = rowEntity.grid.appScope.row;
@@ -349,8 +365,11 @@ ConfigApp.controller('ConfigViewer',
         };
     });
 
-angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiGridRowEditService',
+angular.module('ui.grid').factory('InlineEdit', 
     function ($interval, $rootScope, uiGridRowEditService) {
+
+//angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiGridRowEditService',
+//    function ($interval, $rootScope, uiGridRowEditService) {
         function InlineEdit(entity, index, grid) {
             this.grid = grid;
             this.index = index;
@@ -421,4 +440,5 @@ angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiG
         }
 
         return InlineEdit;
-    }]);
+    });
+    //}]);

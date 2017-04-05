@@ -1,0 +1,90 @@
+﻿@model ViewModel.PowershellScriptExecution
+
+@{
+    ViewBag.Title = "Results";
+}
+
+<h2>Results</h2>
+
+<div>
+    <h4>PowershellScriptExecution</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.MachineId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MachineId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MachineName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MachineName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScriptId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScriptId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScriptName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScriptName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScriptText)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScriptText)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ExecuteDateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExecuteDateTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ViewOnly)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ViewOnly)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Output)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Output)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @*@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |*@
+    @Html.ActionLink("Back to List", "Index")
+</p>

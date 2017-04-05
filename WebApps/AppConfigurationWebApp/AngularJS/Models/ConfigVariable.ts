@@ -1,6 +1,7 @@
 ﻿module AppConfigurationWebApp.Model {
     export class ConfigVariable {
         public id: number;
+        public configParentElement: string;
         public element: string;
         public attribute: string;
         public key: string;

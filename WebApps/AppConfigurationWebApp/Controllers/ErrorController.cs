@@ -10,7 +10,7 @@ namespace AppConfigurationWebApp.Controllers
     {
         public ViewResult Index()
         {
-            ViewBag.DeveloperRole = "ManageAppConfig_Developer";
+            ViewBag.DeveloperRole = "Engineers";
             return View();
         }
         public ViewResult NotFound()

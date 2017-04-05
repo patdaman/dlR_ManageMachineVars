@@ -1,10 +1,21 @@
 'use strict';
-var ConfigApp = angular.module('ConfigApp', ['ui.grid', 'ui.grid.edit', 'ui.grid.grouping', 'ui.grid.saveState',
-    'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
-    'ui.grid.selection', 'ui.grid.rowEdit', 'ui.grid.resizeColumns',
-    'ui.grid.pinning', 'ui.grid.exporter', 'ui.grid.moveColumns',
-    'ui.grid.infiniteScroll', 'ui.grid.importer',
-    'angularModalService', 'ngAnimate'
+var ConfigApp = angular.module('ConfigApp', ['ui.grid',
+    'ui.grid.edit',
+    'ui.grid.grouping',
+    'ui.grid.saveState',
+    'ui.grid.pagination',
+    'ui.grid.expandable',
+    'ui.grid.cellNav',
+    'ui.grid.selection',
+    'ui.grid.rowEdit',
+    'ui.grid.resizeColumns',
+    'ui.grid.pinning',
+    'ui.grid.exporter',
+    'ui.grid.moveColumns',
+    'ui.grid.infiniteScroll',
+    'ui.grid.importer',
+    'angularModalService',
+    'ngAnimate'
 ]);
 ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout, uiGridConstants, $q, $interval, ModalService) {
     $scope.title = "Application Configuration";
@@ -45,12 +56,13 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         exporterPdfMaxGridWidth: 500,
         exporterSuppressColumns: ['Action'],
         treeRowHeaderAlwaysVisible: false,
-        enableSelectAll: false,
-        enableEditing: false,
-        enableColumnResize: false,
-        enableCellSelection: false,
+        //enableSelectAll: false,
+        //enableEditing: false,
+        //enableColumnResize: false,
+        //enableCellSelection: false,
         enableRowSelection: true,
-        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit style="width:100%; float:right"></div>',
+        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-selection style="width:100%; float:right"></div>',
+        //expandableRowTemplate: '<div style="padding:5px;"><div ui-grid="row.entity.subGridOptions[0]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="display:inline-block;"></div><div ui-grid="row.entity.subGridOptions[1]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="height:340px;width:48%;display:inline-block;margin-left:5px"></div></div>',
         expandableRowHeight: 125,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
@@ -65,7 +77,9 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         { field: 'configElement', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         { field: 'attribute', visible: false, cellTemplate: basicCellTemplate, cellEditableCondition: 'false' },
         {
-            field: 'key', groupable: true, cellTemplate: basicCellTemplate, cellEditableCondition: 'false',
+            field: 'key',
+            //cellTemplate: basicCellTemplate,
+            cellTemplate: '<div class="ui-grid-cell-contents"><div ng-class="{\'viewr-dirty\' : row.inlineEdit.entity[col.field].isValueChanged }">{{row.entity[col.field]}}</div></div>',
             cellToolTip: function (row, col) {
                 if (isBlank(row.entity.attribute)) {
                     return '<' + row.entity.configParentElement + '>\n\t<' + row.entity.key + '> {value} </' + row.entity.key + '>\n\t. . .\n</' + row.entity.configParentElement + '>';
@@ -91,13 +105,13 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
         //}
         {
             name: "Actions",
-            cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents" >' +
+            cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents">' +
                 '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
                 '<button value="Edit" class="btn btn-xs btn-danger" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Delete</button>' +
                 '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
                 '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
                 '</div></div>' +
-                '<div ng-if="row.groupHeader"><div class="ui-grid-cell-contents"><button value="Edit" class="btn btn-xs btn-default" ng-click="$scope.showFile(row.entity)">View File</button></div>',
+                '<div ng-if="row.groupHeader"><div class="ui-grid-cell-contents"><button class="btn btn-xs btn-default" ng-click="grid.appScope.showFile(row.entity)">View File</button></div>',
             enableCellEdit: false
         },
     ];
@@ -224,7 +238,7 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                 columnDefs: [
                     { name: "id", field: "id", visible: false },
                     { name: "Variable id", field: "configvar_id", visible: false },
-                    { name: "Environment", field: "environment", visible: true, cellTemplate: basicCellTemplate },
+                    { name: "Environment", field: "environment", visible: true, enableCellEdit: false, cellTemplate: basicCellTemplate },
                     //{ name: "Value", field: "value", visible: true, enableCellEdit: true, cellTemplate: basicCellTemplate },
                     { name: "Value", field: "value", visible: true, cellEditableContition: false, cellTemplate: basicCellTemplate },
                     { name: "Create Date", field: "create_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
@@ -235,7 +249,8 @@ ConfigApp.controller('ConfigController', function ($scope, $http, $log, $timeout
                         name: "Actions",
                         cellTemplate: '<div class="ui-grid-cell-contents" >' +
                             '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
+                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="grid.appScope.publishValue(row.entity)">Publish</button>' +
+                            //'<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
                             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
                             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
                             '</div>',
@@ -298,65 +313,67 @@ ConfigApp.controller('ConfigViewer', function ($scope, $element, title, filePath
         }, 500); // close, but give 500ms for bootstrap to animate
     };
 });
-angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiGridRowEditService',
-    function ($interval, $rootScope, uiGridRowEditService) {
-        function InlineEdit(entity, index, grid) {
-            this.grid = grid;
-            this.index = index;
-            this.entity = {};
-            this.isEditModeOn = false;
-            this.init(entity);
-        }
-        InlineEdit.prototype = {
-            init: function (rawEntity) {
-                var self = this;
-                for (var prop in rawEntity) {
-                    self.entity[prop] = {
-                        value: rawEntity[prop],
-                        isValueChanged: false,
-                        isSave: false,
-                        isCancel: false,
-                        isEdit: false
-                    };
-                }
-            },
-            enterEditMode: function (event) {
-                event && event.stopPropagation();
-                var self = this;
-                self.isEditModeOn = true;
-                // cancel all rows which are in edit mode
-                self.grid.rows.forEach(function (row) {
-                    if (row.inlineEdit && row.inlineEdit.isEditModeOn && row.uid !== self.grid.rows[self.index].uid) {
-                        row.inlineEdit.cancelEdit();
-                    }
-                });
-                // Reset all the values
-                for (var prop in self.entity) {
-                    self.entity[prop].isSave = false;
-                    self.entity[prop].isCancel = false;
-                    self.entity[prop].isEdit = true;
-                }
-            },
-            saveEdit: function (event) {
-                event && event.stopPropagation();
-                var self = this;
-                self.isEditModeOn = false;
-                for (var prop in self.entity) {
-                    self.entity[prop].isSave = true;
-                    self.entity[prop].isEdit = false;
-                }
-                uiGridRowEditService.saveRow(self.grid, self.grid.rows[self.index])();
-            },
-            cancelEdit: function (event) {
-                event && event.stopPropagation();
-                var self = this;
-                self.isEditModeOn = false;
-                for (var prop in self.entity) {
-                    self.entity[prop].isCancel = true;
-                    self.entity[prop].isEdit = false;
-                }
+angular.module('ui.grid').factory('InlineEdit', function ($interval, $rootScope, uiGridRowEditService) {
+    //angular.module('ui.grid').factory('InlineEdit', ['$interval', '$rootScope', 'uiGridRowEditService',
+    //    function ($interval, $rootScope, uiGridRowEditService) {
+    function InlineEdit(entity, index, grid) {
+        this.grid = grid;
+        this.index = index;
+        this.entity = {};
+        this.isEditModeOn = false;
+        this.init(entity);
+    }
+    InlineEdit.prototype = {
+        init: function (rawEntity) {
+            var self = this;
+            for (var prop in rawEntity) {
+                self.entity[prop] = {
+                    value: rawEntity[prop],
+                    isValueChanged: false,
+                    isSave: false,
+                    isCancel: false,
+                    isEdit: false
+                };
             }
-        };
-        return InlineEdit;
-    }]);
+        },
+        enterEditMode: function (event) {
+            event && event.stopPropagation();
+            var self = this;
+            self.isEditModeOn = true;
+            // cancel all rows which are in edit mode
+            self.grid.rows.forEach(function (row) {
+                if (row.inlineEdit && row.inlineEdit.isEditModeOn && row.uid !== self.grid.rows[self.index].uid) {
+                    row.inlineEdit.cancelEdit();
+                }
+            });
+            // Reset all the values
+            for (var prop in self.entity) {
+                self.entity[prop].isSave = false;
+                self.entity[prop].isCancel = false;
+                self.entity[prop].isEdit = true;
+            }
+        },
+        saveEdit: function (event) {
+            event && event.stopPropagation();
+            var self = this;
+            self.isEditModeOn = false;
+            for (var prop in self.entity) {
+                self.entity[prop].isSave = true;
+                self.entity[prop].isEdit = false;
+            }
+            uiGridRowEditService.saveRow(self.grid, self.grid.rows[self.index])();
+        },
+        cancelEdit: function (event) {
+            event && event.stopPropagation();
+            var self = this;
+            self.isEditModeOn = false;
+            for (var prop in self.entity) {
+                self.entity[prop].isCancel = true;
+                self.entity[prop].isEdit = false;
+            }
+        }
+    };
+    return InlineEdit;
+});
+//}]);
 //# sourceMappingURL=ConfigController.js.map

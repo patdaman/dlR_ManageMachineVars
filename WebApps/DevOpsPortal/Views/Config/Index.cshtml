@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "DevOps - App Config Editor";
+}
+
+@*<script src="@Url.Content("~/Scripts/csv.js")"></script>
+<script src="@Url.Content("~/Scripts/pdfmake.js")"></script>
+<script src="@Url.Content("~/Scripts/vfs_fonts.js")"></script>
+<script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Scripts/angular-modal-service.js")"></script>*@
+<script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap-tpls.js")"></script>
+<script src="@Url.Content("~/Scripts/ui-grid.js")"></script>
+<script src="@Url.Content("~/AngularJS/Services/GridRowEditService.js")"></script>
+<script src="@Url.Content("~/AngularJS/Controllers/ConfigController.js")"></script>
+<script src="@Url.Content("~/AngularJS/Services/ConfigService.js")"></script>
+<script src="@Url.Content("~/Scripts/angular-modal-service.js")"></script>
+
+<h2>App Config Editor</h2>
+@Html.AntiForgeryToken()
+<hr />
+<div ng-app="ConfigApp">
+    <div ng-controller="ConfigController as vm">
+        <div class="control-group">
+            <input type="button" class="btn btn-small" ng-click="expandAllRows()" value="Expand All" />
+            <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All" />
+
+            <input type="button" class="btn btn-small" ng-click="addVar()" value="Add Variable" />
+            <select ng-model="selectedEnvironment" ng-options="x for x in environments">
+                <option value="" style="color:red">Environment</option>
+            </select>
+            <select ng-model="selectedComponent" ng-options="c for c in components">
+                <option value="" style="color:red">Component</option>
+            </select>
+            <select ng-model="selectedMachine" ng-options="m for m in machines">
+                <option value="" style="color:red">Server</option>
+            </select>
+            <input type="button" class="btn btn-small" ng-click="publishSelectedRows()" value="Publish" />
+        </div>
+        <div ui-grid="gridOptions"
+             ui-grid-grouping ui-grid-exporter ui-grid-selection
+             ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
+             ui-grid-pagination ui-grid-cellNav ui-grid-expandable
+             class="gridStyle" >
+        </div>
+    </div>
+</div>

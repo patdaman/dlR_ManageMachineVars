@@ -1,0 +1,65 @@
+﻿<script src="@Url.Content("~/Scripts/codemirror/lib/codemirror.js")"></script>
+<script src="@Url.Content("~/Scripts/codemirror/mode/powershell/powershell.js")"></script>
+<script src="@Url.Content("~/Scripts/codemirror/addon/hint/show-hint.js")"></script>
+<link href="~/Scripts/codemirror/addon/hint/show-hint.css" rel="stylesheet" type="text/css" />
+<link href="~/Scripts/codemirror/lib/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="~/Scripts/codemirror/theme/midnight.css" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/AngularJS/Services/PowershellService.js")"></script>
+<script src="@Url.Content("~/AngularJS/Controllers/PowershellController.js")"></script>
+<link href="~/Content/site.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "DevOps Powershell";
+}
+<h2>Powershell Scripts</h2>
+
+@Html.AntiForgeryToken()
+<hr />
+<div ng-app="PowershellApp">
+    <div ng-controller="Script as vm">
+        <div class="form-group">
+            @Html.DropDownList("scriptList", String.Empty)
+        </div>
+        <p />
+        <div class="form-group">
+            <input type="button" class="btn btn-info" ng-click="editScript()" value="Edit Script" />
+            <select ng-model="selectedEnvironment" ng-options="x for x in environments">
+                <option value="" style="color:red">Environment</option>
+            </select>
+            <select ng-model="selectedComponent" ng-options="c for c in components">
+                <option value="" style="color:red">Component</option>
+            </select>
+            <select ng-model="selectedMachine" ng-options="m for m in machines">
+                <option value="" style="color:red">Server</option>
+            </select>
+                <input type="button" class="btn btn-small" ng-click="addScript()" value="Add Script" />
+        </div>
+        <div class="form-group">
+        <div class="CodeMirror">
+            <textarea id="code" name="code">
+                @HttpUtility.HtmlDecode(ViewBag.scriptText)
+            </textarea>
+        </div>
+        </div>
+        <div class="form-group">
+            <input type="button" value="Update" ng-click="updateScript()" class="btn btn-warning" />
+            &nbsp;
+            <input type="button" value="Execute" ng-click="executeScript()" class="btn btn-danger" />
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            mode: "powershell",
+            lineNumbers: true,
+            indentUnit: 4,
+            tabMode: "shift",
+            matchBrackets: true,
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}

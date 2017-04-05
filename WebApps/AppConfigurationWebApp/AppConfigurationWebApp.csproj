@@ -199,6 +199,7 @@
     <Content Include="AngularJS\Directives\Directives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
+    <Content Include="AngularJS\Services\Modal.js" />
     <Content Include="Content\app.css" />
     <Content Include="Content\Dashboard\app.css" />
     <Content Include="Content\Dashboard\epoch.min.css" />
@@ -210,6 +211,7 @@
     <Content Include="Content\Dashboard\sb-admin.css" />
     <Content Include="Content\Dashboard\site.css" />
     <Content Include="Content\Dashboard\timeline.css" />
+    <Content Include="Content\grid.css" />
     <Content Include="Content\site_dashboard.css" />
     <Content Include="Content\Templates\configFileModal.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -266,7 +268,6 @@
     <Content Include="Views\Powershell\Results.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AngularJS\Controllers\ConfigController2.js" />
     <Content Include="AngularJS\Models\Machine.js" />
     <Content Include="AngularJS\Models\MachineJs.js" />
     <Content Include="AngularJS\Services\MachineService.js" />

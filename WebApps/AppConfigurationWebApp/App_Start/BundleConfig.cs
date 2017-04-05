@@ -28,10 +28,10 @@ namespace AppConfigurationWebApp
                       "~/Scripts/angular-animate.js",
                       "~/Scripts/angular-route.js",
                       "~/Scripts/angular-modal-service.js",
-                      "~/Scripts/ui-grid.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
                       "~/Scripts/vfs_fonts.js",
+                      "~/Scripts/ui-grid.js",
                       //"~/AngularJS/app.ts",
                       //"~/AngularJS/configApp.ts",
                       "~/AngularJS/Controllers/MachineController.ts",
@@ -41,6 +41,7 @@ namespace AppConfigurationWebApp
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/ui-grid.css",
+                      "~/Content/grid.css",
                       "~/Content/Site.css"));
         }
     }
