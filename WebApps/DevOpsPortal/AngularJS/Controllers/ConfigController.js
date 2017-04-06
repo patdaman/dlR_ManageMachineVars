@@ -33,6 +33,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var configXml;
     var filePath;
 
+    var environment = 'development';
+    var componentId;
+    var componentName;
+
     $scope.gridOptions = {
         enablePaging: true,
         paginationPageSizes: [10, 20, 50, 100],
@@ -171,6 +175,11 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
+        gridApi.cellNav.on.navigate(null, function (newRowCol, oldRowCol) {
+            $scope.gridApi.selection.selectRow(newRowCol.row.entity);
+            $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.COLUMN);
+        });
+         
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
             var msg = 'row selected ' + row.isSelected;
             $log.log(msg);
@@ -228,7 +237,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $scope.saveSubGridRowFunction = function (row) {
         var deferred = $q.defer();
-        $http.post('/api/ConfigValues/', row).success(deferred.resolve).error(deferred.reject);
+        $http.post('/api/ConfigValuesApi/', row).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
@@ -247,7 +256,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.showFile = function (rowEntity) {
-        var configFile = '';
+        var configFile = $http.get('/api/ConfigApi?componentName=' + rowEntity.componentName + '&environment=development' );
         ModalService.showModal({
             templateUrl: "Content/Templates/configFileModal.html",
             controller: "ConfigViewer",
@@ -296,7 +305,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                             name: "Actions",
                             cellTemplate: '<div class="ui-grid-cell-contents" >' +
                             '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="grid.appScope.publishValue(row.entity)">Publish</button>' +
+                            '<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="publishValue(row.entity)">Publish</button>' +
                             //'<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
                             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
                             '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
@@ -309,36 +318,37 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         //set gridApi on scope
                         $scope.gridApi = gridApi;
 
-                        //gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
-                        //    var selectedRows = $scope.gridApi.selection.getSelectedRows();
-                        //    var parentRow = rowEntity.grid.appScope.row;
-                        //    var index = $scope.subGridOptions.data.indexOf(rowEntity.entity);
-                        //    if (newValue != oldValue) {
+                        gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
+                            //var selectedRows = $scope.gridApi.selection.getSelectedRows();
+                            //var parentRow = rowEntity.grid.appScope.row;
+                            var index = data.indexOf(rowEntity.entity);
+                            if (newValue !== oldValue) {
 
-                        //        rowEntity.state = "Changed";
-                        //        //Get column
-                        //        var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
+                                rowEntity.state = "Changed";
+                                //Get column
+                                var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
 
-                        //        angular.forEach(selectedRows, function (item) {
-                        //            item[rowCol] = rowEntity[rowCol];
-                        //            item.state = "Changed";
-                        //            item.isDirty = false;
-                        //            item.isError = false;
-                        //        });
-                        //        $scope.subGridOptions.data.splice(index, 1);
+                                angular.forEach(selectedRows, function (item) {
+                                    item[rowCol] = rowEntity[rowCol];
+                                    item.state = "Changed";
+                                    item.isDirty = false;
+                                    item.isError = false;
+                                });
+                                $scope.subGridOptions.data.splice(index, 1);
 
-                        //        $scope.subGridOptions.data.push({
-                        //            "id": rowEntity.id,
-                        //            "configvar_id": rowEntity.configvar_id,
-                        //            "environment": rowEntity.environment,
-                        //            "value": rowEntity.value,
-                        //            "create_date": rowEntity.create_date,
-                        //            "modify_date": rowEntity.modify_date,
-                        //            "publish_date": rowEntity.publish_date,
-                        //            "published": rowEntity.published,
-                        //        });
-                        //    }
-                        //});
+                                $scope.subGridOptions.data.push({
+                                    "id": rowEntity.id,
+                                    "configvar_id": rowEntity.configvar_id,
+                                    "environment": rowEntity.environment,
+                                    "value": rowEntity.value,
+                                    "create_date": rowEntity.create_date,
+                                    "modify_date": rowEntity.modify_date,
+                                    "publish_date": rowEntity.publish_date,
+                                    "published": rowEntity.published,
+                                });
+                            }
+                        });
+
                         gridApi.rowEdit.on.saveRow($scope, $scope.saveSubGridRow);
                     }
                 };
@@ -369,36 +379,3 @@ ConfigApp.controller('ConfigViewer',
         };
     });
 
-
-ConfigApp.factory('configModal', function ($compile, $rootScope) {
-    return function () {
-        var elm;
-        var modal = {
-            open: function (entity) {
-                //var title = entity.title;
-                var title = 'Component.config';
-                //var filePath = entity.filePath;
-                var filePath = 'entity.filePath';
-                //var configXml = entity.configXml;
-                var configXml = 'entity.configXml';
-                var html = '<div class="modal" ng-style="modalStyle">{{modalStyle}}<div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">{{title}}</h4></div><div class="modal-body"><p>{{filePath}}</p><div class="form-group"><textarea id="code" name="code">{{configXml}}</textarea></div></div><div class="modal-footer"><button type="button" ng-click="close()" class="btn btn-primary" data-dismiss="modal">Save</button><button id="buttonClose" ng-click="close()" class="btn">Close</button></div></div></div></div>';
-                elm = angular.element(html);
-                angular.element(document.body).prepend(elm);
-
-                $rootScope.close = function () {
-                    modal.close();
-                };
-
-                $rootScope.modalStyle = { "display": "block" };
-
-                $compile(elm)($rootScope);
-            },
-            close: function () {
-                if (elm) {
-                    elm.remove();
-                }
-            }
-        };
-        return modal;
-    };
-});

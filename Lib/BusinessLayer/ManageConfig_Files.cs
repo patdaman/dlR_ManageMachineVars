@@ -232,5 +232,75 @@ namespace BusinessLayer
 #endif
             configFile.Save(outputPath);
         }
+
+        public ConfigXml GetConfigXml(int? componentId = null)
+        {
+            EFDataModel.DevOps.Component component;
+            if (string.IsNullOrWhiteSpace(this.componentName))
+                this.componentName = "";
+            component = DevOpsContext.Components.Where(x => x.component_name.ToLower() == this.componentName.ToLower()).FirstOrDefault();
+            if (componentId != null)
+            {
+                this.componentId = componentId;
+                component = DevOpsContext.Components.Where(x => x.id == this.componentId).FirstOrDefault();
+            }
+            else 
+            {
+                component = DevOpsContext.Components.Where(x => x.component_name.ToLower() == this.componentName.ToLower()).FirstOrDefault();
+            }
+            if (component == null)
+                throw new KeyNotFoundException("Component not found");
+            this.componentName = component.component_name;
+            this.componentId = component.id;
+            this.path = component.relative_path;
+
+
+            ConfigXml configXml = new ConfigXml()
+            {
+                title = component.component_name,
+                componentId = this.componentId,
+                componentName = this.componentName,
+                path = component.relative_path,
+                text = GetConfigFile(this.componentId).ToString(),
+            };
+            return configXml;
+        }
+
+        public XDocument GetConfigFile(int? componentId = null)
+        {
+            if (componentId != null)
+                this.componentId = componentId;
+            if (string.IsNullOrWhiteSpace(this.componentName))
+            {
+                this.componentName = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault().component_name;
+            }
+            if (string.IsNullOrWhiteSpace(this.componentName))
+                throw new KeyNotFoundException("Component not found.");
+
+            if (string.IsNullOrWhiteSpace(environment))
+            {
+                if (string.IsNullOrWhiteSpace(this.environment))
+                    throw new ArgumentNullException(string.Format("No environment selected for {0} config file.", this.componentName));
+                environment = this.environment;
+            }
+
+            ManageConfig_AppVariables variableProcessor = new ManageConfig_AppVariables(DevOpsContext)
+            {
+                environment = environment ?? string.Empty
+            };
+            List<AttributeKeyValuePair> elements = variableProcessor.ListAllAppConfigVariablesFromDb(componentId, environment);
+            AttributeKeyValuePair efRootElement = elements.Where(x => string.IsNullOrWhiteSpace(x.parentElement)).FirstOrDefault();
+
+            configFile = new XDocument(new XElement(efRootElement.element, string.Empty))
+            {
+                Declaration = new XDeclaration("1.0", "utf-8", "yes")
+            };
+
+            elements.RemoveAll(x => string.IsNullOrWhiteSpace(x.parentElement));
+            //elements.Remove(efRootElement);
+            AppConfigFunctions configProcessor = new AppConfigFunctions(configFile);
+            var results = configProcessor.AddKeyValue(elements);
+            return configFile;
+        }
     }
 }

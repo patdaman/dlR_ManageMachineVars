@@ -181,9 +181,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularJS\Controllers\DashboardController.js" />
-    <Content Include="AngularJS\Controllers\keyCellTemplate.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="AngularJS\Controllers\PowershellController.js" />
     <Content Include="AngularJS\Directives\Directives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />

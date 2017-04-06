@@ -296,7 +296,7 @@ namespace BusinessLayer
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,
                         active = true,
-                        relative_path = this.path
+                        relative_path = Path.GetDirectoryName(this.path),
                     };
                     newComp.ConfigFiles.Add(efConfigFile);
                 }

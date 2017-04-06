@@ -413,10 +413,15 @@ namespace CommonUtils.AppConfiguration
                 }
             }
 
-            List<XElement> parentElement = configFile.Descendants(parent_element).ToList();
-            if (parentElement.Count == 0)
+            List<XElement> parentElement = new List<XElement>();
+            if (!string.IsNullOrWhiteSpace(parent_element))
             {
-                configFile.Root.Add(new XElement(parent_element, string.Empty));
+                if (configFile.Descendants(parent_element) != null)
+                    parentElement.AddRange(configFile.Descendants(parent_element).ToList());
+                if (parentElement == null || parentElement.Count == 0)
+                {
+                    configFile.Root.Add(new XElement(parent_element, string.Empty));
+                }
             }
 
             if (string.IsNullOrWhiteSpace(attribute))

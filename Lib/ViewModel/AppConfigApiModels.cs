@@ -131,11 +131,11 @@ namespace ViewModel
 
     public class ConfigXml
     {
-        Nullable<int> componentId { get; set; }
-        string componentName { get; set; }
-        string title { get; set; }
-        string path { get; set; }
-        string text { get; set; }
+        public Nullable<int> componentId { get; set; }
+        public string componentName { get; set; }
+        public string title { get; set; }
+        public string path { get; set; }
+        public string text { get; set; }
         public ConfigXml()
         { }
         public ConfigXml(ConfigXml x)

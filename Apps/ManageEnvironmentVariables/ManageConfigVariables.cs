@@ -60,9 +60,9 @@ namespace ManageConfigVariables
                 Console.WriteLine();
                 //this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
             }
-#if DEBUG
-        IsInteractive = true;
-#endif
+//#if DEBUG
+//        IsInteractive = true;
+//#endif
         if (IsInteractive)
             {
                 Console.WriteLine("ENTER to exit.");

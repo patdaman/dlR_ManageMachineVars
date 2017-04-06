@@ -61,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtils.PerformanceCoun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsPortal", "WebApps\DevOpsPortal\DevOpsPortal.csproj", "{270BB71E-2ED4-4E49-9E64-241BEAF5B905}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsPortal.Tests", "DevOpsPortal.Tests\DevOpsPortal.Tests.csproj", "{84D3D5A2-D3CB-44A1-A685-3C6F0B27DA39}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsPortal.Tests", "WebApps\DevOpsPortal.Tests\DevOpsPortal.Tests.csproj", "{84D3D5A2-D3CB-44A1-A685-3C6F0B27DA39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

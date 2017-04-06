@@ -102,7 +102,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebApps\DevOpsPortal\DevOpsPortal.csproj">
+    <ProjectReference Include="..\DevOpsPortal\DevOpsPortal.csproj">
       <Project>{270BB71E-2ED4-4E49-9E64-241BEAF5B905}</Project>
       <Name>DevOpsPortal</Name>
     </ProjectReference>

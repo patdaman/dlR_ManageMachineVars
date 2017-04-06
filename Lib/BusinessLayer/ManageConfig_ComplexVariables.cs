@@ -62,9 +62,15 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration file. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ConfigXml GetConfigFile(string componentName)
+        public ConfigXml GetConfigFile(string componentName, string environment)
         {
-            throw new NotImplementedException();
+            ConfigXml configFile = new ConfigXml();
+            ManageConfig_Files fileProcessor = new ManageConfig_Files(DevOpsContext)
+            {
+                componentName = componentName,
+                environment = environment
+            };
+            return fileProcessor.GetConfigXml();
         }
 
         ///-------------------------------------------------------------------------------------------------
