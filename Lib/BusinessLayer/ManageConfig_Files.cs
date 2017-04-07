@@ -233,6 +233,18 @@ namespace BusinessLayer
             configFile.Save(outputPath);
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration XML. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/6/2017. </remarks>
+        ///
+        /// <exception cref="KeyNotFoundException"> Thrown when a Key Not Found error condition occurs. </exception>
+        ///
+        /// <param name="componentId">  (Optional)
+        ///                                                        Identifier for the component. </param>
+        ///
+        /// <returns>   The configuration XML. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public ConfigXml GetConfigXml(int? componentId = null)
         {
             EFDataModel.DevOps.Component component;
@@ -254,18 +266,38 @@ namespace BusinessLayer
             this.componentId = component.id;
             this.path = component.relative_path;
 
-
+            XDocument xmlDoc = GetConfigFile(this.componentId);
+            if (xmlDoc == null)
+            {
+                throw new ArgumentNullException(string.Format("Config File for {0} not found", this.componentName));
+            }
+            string xmlText = xmlDoc.Declaration + Environment.NewLine + xmlDoc.ToString();
             ConfigXml configXml = new ConfigXml()
             {
                 title = component.component_name,
                 componentId = this.componentId,
                 componentName = this.componentName,
                 path = component.relative_path,
-                text = GetConfigFile(this.componentId).ToString(),
+                text = xmlText,
             };
             return configXml;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/6/2017. </remarks>
+        ///
+        /// <exception cref="KeyNotFoundException">     Thrown when a Key Not Found error condition
+        ///                                             occurs. </exception>
+        /// <exception cref="ArgumentNullException">    Thrown when one or more required arguments are
+        ///                                             null. </exception>
+        ///
+        /// <param name="componentId">  (Optional)
+        ///                             Identifier for the component. </param>
+        ///
+        /// <returns>   The configuration file. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public XDocument GetConfigFile(int? componentId = null)
         {
             if (componentId != null)

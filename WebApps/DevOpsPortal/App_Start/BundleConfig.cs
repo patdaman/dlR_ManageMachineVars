@@ -27,9 +27,9 @@ namespace DevOpsPortal
                       "~/Scripts/angular-modal-service.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
-                      "~/Scripts/vfs_fonts.js"
+                      "~/Scripts/vfs_fonts.js",
                       //"~/Scripts/ui-grid.js",
-                      //"~/AngularJS/app.js",
+                      "~/AngularJS/app.js"
                       //"~/AngularJS/Controllers/MachineController.js",
                       //"~/AngularJS/Controllers/ConfigController.js"
                       ));

@@ -180,14 +180,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AngularJS\app.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js" />
-    <Content Include="AngularJS\Directives\Directives.js" />
+    <Content Include="AngularJS\Directives\ConfigDirectives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
     <Content Include="AngularJS\Services\MachineService.js" />
-    <Content Include="AngularJS\Services\Modal.js" />
+    <Content Include="AngularJS\Services\ngClickCopy.js" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -202,10 +203,9 @@
     <Content Include="Content\Dashboard\site.css" />
     <Content Include="Content\Dashboard\timeline.css" />
     <Content Include="Content\site_dashboard.css" />
+    <Content Include="Content\Templates\actionsTemplate.html" />
+    <Content Include="Content\Templates\basicCellTemplate.html" />
     <Content Include="Content\Templates\configFileModal.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Templates\editableRowTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\editButton.html">
@@ -215,9 +215,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\expandableRowTemplate.html" />
-    <Content Include="Content\Templates\keyCellTemplate.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Content\Templates\groupRowTemplate.html" />
     <Content Include="Content\timeline.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Content\ui-grid.css" />
@@ -716,7 +714,6 @@
     <Content Include="AngularJS\Controllers\MachineController.js" />
     <Content Include="AngularJS\Services\ConfigService.js" />
     <Content Include="AngularJS\Services\EnumListService.js" />
-    <TypeScriptCompile Include="AngularJS\Services\MachineApiService.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
