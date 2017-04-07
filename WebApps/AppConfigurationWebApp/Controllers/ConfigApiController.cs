@@ -64,11 +64,11 @@ namespace AppConfigurationWebApp.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Get(string componentName)
+        public HttpResponseMessage Get(string componentName, string environment)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.ConfigXml>(HttpStatusCode.OK, configProcessor.GetConfigFile(componentName));
+                return Request.CreateResponse<ViewModel.ConfigXml>(HttpStatusCode.OK, configProcessor.GetConfigFile(componentName, environment));
             }
             catch (Exception ex)
             {

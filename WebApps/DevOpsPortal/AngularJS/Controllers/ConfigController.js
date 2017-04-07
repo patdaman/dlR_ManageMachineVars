@@ -1,4 +1,4 @@
-﻿'use strict'
+﻿//'use strict'
 
 var ConfigApp = angular.module('ConfigApp',
         ['ui.grid',
@@ -30,13 +30,15 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var editMode = false;
 
     var rowIndex;
+    var var_id;
+    var keyName;
     var configXml;
     var filePath;
-
-    var environment = 'development';
     var componentId;
     var componentName;
 
+    $scope.environment = 'development';
+    
     $scope.edit = false;
     $scope.canEdit = function () {
         return $scope.edit;
@@ -52,11 +54,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         showGridFooter: true,
         enableSorting: true,
         enableFiltering: true,
-        appScopeProvider: {
-            showRow: function (row) {
-                return row.key !== '';
-            }
-        },
+        appScopeProvider: $scope,
 
         enableGridMenu: true,
         exporterMenuCsv: true,
@@ -85,8 +83,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         enableCellEditOnFocus: true,
         enableRowSelection: false,
 
-        //expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-selection style="width:100%; float:right"></div>',
-        //expandableRowTemplate: '<div style="padding:5px;"><div ui-grid="row.entity.subGridOptions[0]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="display:inline-block;"></div><div ui-grid="row.entity.subGridOptions[1]" ui-grid-edit  ui-grid-row-edit ui-grid-selection style="height:340px;width:48%;display:inline-block;margin-left:5px"></div></div>',
         expandableRowTemplate: 'Content/Templates/expandableRowTemplate.html',
         expandableRowHeight: 125,
         expandableRowScope: {
@@ -95,7 +91,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.gridOptions.columnDefs = [
-        { field: 'applicationNames', enableCellEdit: false, cellTemplate: basicCellTemplate },
+        { field: 'applicationNames', enableCellEdit: false },
         { field: 'componentId', visible: false, enableCellEdit: false },
         { field: 'componentName', enableCellEdit: false, grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'asc' }, groupable: true },
         { field: 'configvar_id', visible: false, enableCellEdit: false },
@@ -104,8 +100,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         { field: 'attribute', visible: false, enableCellEdit: false },
         {
             field: 'key',
+            //cellTemplate: editableTemplate,
             cellEditableCondition: $scope.canEdit,
-            //enableCellEdit: true,
             width: "50%",
             cellToolTip: function (row, col) {
                 if (grid.appScope.isBlank(row.entity.attribute)) {
@@ -122,108 +118,67 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             width: 150,
             cellTemplate: 'Content/Templates/actionsTemplate.html',
             enableCellEdit: false,
+            visible: true,
             enableFiltering: false
-        },
-                {
-                    name: "Actions",
-                    cellTemplate: '<div ng-if="!row.groupHeader"><div class="ui-grid-cell-contents">' +
-                    '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="grid.appScope.editCell(row.entity)">Edit</button>' +
-                    //'<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                    '<button value="Edit" class="btn btn-xs btn-danger" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Delete</button>' +
-                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-                    '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-                    '</div></div>' +
-                    '<div ng-if="row.groupHeader"><div class="ui-grid-cell-contents"><button class="btn btn-xs btn-default" ng-click="grid.appScope.showFile(row.entity)">View File</button></div>',
-                    enableCellEdit: false
-                },
-
+        }
     ];
 
-    //var basicCellTemplate = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>';
-    var basicCellTemplate = 'Content/Templates/basicCellTemplate.html';
-
-    $scope.editCell = function (rowEntity) {
-        var row = $scope.gridApi.cellNav.getFocusedCell();
-        $scope.edit = true;
-        $scope.scrollToFocus(row.row.entity.id, row.col.colDef.key);
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
+        $scope.gridApi = gridApi;
     };
 
+    var editableTemplate = '<div ng-if="!row.entity.editable">{{COL_FIELD}}</div><div ng-if="row.entity.editable"><input ng-model="MODEL_COL_FIELD"</div>';
     $scope.isBlank = function (str) {
         return (!str || /^\s*$/.test(str));
     }
 
-    $templateCache.put('ui-grid/uiGridViewport',
-        "<div class=\"ui-grid-viewport\" ng-style=\"colContainer.getViewportStyle()\"><div class=\"ui-grid-canvas\"><div ng-repeat=\"(rowRenderIndex, row) in rowContainer.renderedRows track by $index\" ng-if=\"grid.appScope.showRow(row.entity)\" class=\"ui-grid-row\" ng-style=\"Viewport.rowStyle(rowRenderIndex)\"><div ui-grid-row=\"row\" row-render-index=\"rowRenderIndex\"></div></div></div></div>"
-    );
+    $scope.editCell = function (row) {
+        $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
+        var rowId = row.entity.index;
+        $scope.var_id = row.entity.configvar_id;
+        $scope.keyName = row.entity.key;
+        $scope.gridOptions.data[rowId].editable = true;
+        $scope.edit = true;
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+        $scope.scrollToFocus($scope.rowIndex, 6);
+        $scope.scrollToFocus($scope.rowIndex, 7);
+    };
+
+    $scope.cancelEdit = function (rowEntity) {
+        rowEntity.key = $scope.keyName;
+        $scope.edit = false;
+        var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
+        var dataRows = gridRows.map(function (gridRow) { return gridRow.entity; });
+        $scope.gridApi.rowEdit.setRowsClean(dataRows);
+        var rowId = rowEntity.index;
+        $scope.gridOptions.data[rowId].editable = false;
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+    };
+
+    //$templateCache.put('ui-grid/uiGridViewport',
+    //    "<div class=\"ui-grid-viewport\" ng-style=\"colContainer.getViewportStyle()\"><div class=\"ui-grid-canvas\"><div ng-repeat=\"(rowRenderIndex, row) in rowContainer.renderedRows track by $index\" ng-if=\"grid.appScope.showRow(row.entity)\" class=\"ui-grid-row\" ng-style=\"Viewport.rowStyle(rowRenderIndex)\"><div ui-grid-row=\"row\" row-render-index=\"rowRenderIndex\"></div></div></div></div>"
+    //);
 
     $scope.scrollToFocus = function (rowIndex, colIndex) {
         $scope.canEdit();
         $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
     };
 
-    //$scope.selectedCell;
-    //$scope.selectedRow;
-    //$scope.selectedColumn;
-
-    //$scope.editCell = function (row, cell, column) {
-    //    $scope.selectedCell = cell;
-    //    $scope.selectedRow = row;
-    //    $scope.selectedColumn = column;
-    //};
-
-    //$scope.updateCell = function () {
-    //    //   alert("checking");  
-    //    $scope.selectedRow[$scope.selectedColumn] = $scope.selectedCell;
-    //};
-
-    //$scope.editable = function (row) {
-    //    $scope.editMode = !editMode;
-    //};
-
-    $scope.gridOptions.onRegisterApi = function (gridApi) {
-        $scope.gridApi = gridApi;
-        //gridApi.cellNav.on.navigate(null, function (newRowCol, oldRowCol) {
-        //    $scope.gridApi.selection.selectRow(newRowCol.row.entity);
-        //    $scope.gridApi.core.notifyDataChange($scope.gridApi.grid, uiGridConstants.dataChange.COLUMN);
-        //});
-
-        //gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
-        //    var selectedRows = $scope.gridApi.selection.getSelectedRows();
-
-        //    if (newValue !== oldValue) {
-
-        //        rowEntity.state = "Changed";
-        //        //Get column
-        //        var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
-
-        //        angular.forEach(selectedRows, function (item) {
-        //            item[rowCol] = rowEntity[rowCol];
-        //            item.state = "Changed";
-        //            item.isDirty = false;
-        //            item.isError = false;
-        //        });
-
-        //    }
-        //});
-
-        gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-    };
-
     $scope.saveRow = function (rowEntity) {
         var promise = $scope.saveRowFunction(rowEntity);
         $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
         $scope.edit = false;
+        var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
+        var dataRows = gridRows.map(function (gridRow) { return gridRow.entity; });
+        $scope.gridApi.rowEdit.setRowsClean(dataRows);
+        var rowId = rowEntity.index;
+        $scope.gridOptions.data[rowId].editable = false;
     };
 
     $scope.saveRowFunction = function (row) {
         var deferred = $q.defer();
         $http.post('/api/ConfigApi/', row).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
-    };
-
-    $scope.toggleEdit = function (rowNum) {
-        $scope.gridOptions.data[rowNum].editable = !$scope.gridOptions1.data[rowNum].editable;
-        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
     };
 
     $scope.saveSubGridRow = function (rowEntity) {
@@ -244,11 +199,11 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.components = ["Commerce", "DAL", "ManagerI18N", "Services"];
     // End Todo
 
-    //$scope.showFile = function (rowEntity) {
-    //    var configFile = $http.get('/api/ConfigApi?componentName=' + rowEntity.componentName + '&environment=development' );
     $scope.showFile = function (row) {
-
-        $http.get('/api/ConfigApi?componentName=' + 'Commerce' + '&environment=development')
+        var componentRow = '$$' + row.uid;
+        var rowEntity = row.entity;
+        var componentAggObject = rowEntity['$$uiGrid-000B'];
+        $http.get('/api/ConfigApi?componentName=' + componentAggObject.groupVal.value + '&environment=' + $scope.environment)
             .success(function (data) {
                 ModalService.showModal({
                     templateUrl: "Content/Templates/configFileModal.html",
@@ -266,8 +221,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         //});
                     });
             }
-    )
-    };
+    )};
 
     $scope.addVar = function (row) {
         ModalService.showModal({
@@ -285,77 +239,38 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             for (i = 0; i < data.length; i++) {
                 data[i].subGridOptions = {
                     enableHorizontalScrollbar: 0,
-                    //appScopeProvider: $scope,
-                    appScopeProvider: {
-                        showRow: function (row) {
-                            return row.environment !== 'development';
-                        }
-                    },
+                    appScopeProvider: $scope,
+                    enableCellSelection: true,
+                    enableCellEditOnFocus: true,
+                    enableRowSelection: false,
                     columnDefs: [
                         { displayName: "id", field: "id", visible: false, resizable: true },
                         { displayName: "Variable id", field: "configvar_id", visible: false },
-                        { displayName: "Environment", field: "environment", visible: true, enableCellEdit: false, cellTemplate: basicCellTemplate },
-                        { displayName: "Value", field: "value", visible: true, enableCellEdit: true, width: "50%" },
+                        { displayName: "Environment", field: "environment", visible: true, enableCellEdit: false },
+                        { displayName: "Value", field: "value", visible: true, cellEditableCondition: $scope.canEdit, width: "70%" },
                         { displayName: "Create Date", field: "create_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Last Publish Date", field: "publish_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
-                        { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' },
-                        {
-                            name: "Actions",
-                            cellTemplate: '<div class="ui-grid-cell-contents" >' +
-                            '<button value="Edit" class="btn btn-xs btn-info" ng-if="!row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.enterEditMode($event)">Edit</button>' +
-                            //'<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="publishValue(row.entity)">Publish</button>' +
-                            //'<button value="Edit" class="btn btn-xs btn-warning" ng-if="!row.inlineEdit.isEditModeOn" ng-click="appScopeProvider.publishValue(row.entity)">Publish</button>' +
-                            '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.saveEdit($event)">Update</button>' +
-                            '<button value="Edit" ng-if="row.inlineEdit.isEditModeOn" ng-click="row.inlineEdit.cancelEdit($event)">Cancel</button>' +
-                            '</div>',
-                            enableCellEdit: false
-                        },
+                        { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' }
+                        //{
+                        //    name: "Actions",
+                        //    cellTemplate: 'Content/Templates/actionsTemplate.html',
+                        //    enableCellEdit: false
+                        //},
                     ],
                     data: data[i].values,
                     onRegisterApi: function (gridApi) {
-                        //set gridApi on scope
                         $scope.gridApi = gridApi;
-
-                        //gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
-                        //    //var selectedRows = $scope.gridApi.selection.getSelectedRows();
-                        //    //var parentRow = rowEntity.grid.appScope.row;
-                        //    var index = data.indexOf(rowEntity.entity);
-                        //    if (newValue !== oldValue) {
-
-                        //        rowEntity.state = "Changed";
-                        //        //Get column
-                        //        var rowCol = $scope.gridApi.cellNav.getFocusedCell().col.colDef.name;
-
-                        //        angular.forEach(selectedRows, function (item) {
-                        //            item[rowCol] = rowEntity[rowCol];
-                        //            item.state = "Changed";
-                        //            item.isDirty = false;
-                        //            item.isError = false;
-                        //        });
-                        //        $scope.subGridOptions.data.splice(index, 1);
-
-                        //        $scope.subGridOptions.data.push({
-                        //            "id": rowEntity.id,
-                        //            "configvar_id": rowEntity.configvar_id,
-                        //            "environment": rowEntity.environment,
-                        //            "value": rowEntity.value,
-                        //            "create_date": rowEntity.create_date,
-                        //            "modify_date": rowEntity.modify_date,
-                        //            "publish_date": rowEntity.publish_date,
-                        //            "published": rowEntity.published,
-                        //        });
-                        //    }
-                        //});
-
                         gridApi.rowEdit.on.saveRow($scope, $scope.saveSubGridRow);
                     }
                 };
             }
             $scope.gridOptions.data = data;
+            angular.forEach(data, function (data, index) {
+                data["index"] = index + 1;
+            });
         });
-}
-);
+});
 
 ConfigApp.controller('ConfigViewer',
     function ($scope, $element, title, filePath, configXml, close) {

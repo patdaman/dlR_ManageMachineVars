@@ -21,10 +21,6 @@
 <div ng-app="ConfigApp">
     <div ng-controller="ConfigController as vm">
         <div class="control-group">
-            @*<input type="button" class="btn btn-small" ng-click="expandAllRows()" value="Expand All" />
-            <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All" />*@
-
-            <input type="button" class="btn btn-small" ng-click="loadGrid()" value="Load" />
             <select ng-model="selectedEnvironment" ng-options="x for x in environments">
                 <option value="" style="color:red">Environment</option>
             </select>

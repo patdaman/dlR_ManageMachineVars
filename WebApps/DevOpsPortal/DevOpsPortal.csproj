@@ -203,8 +203,12 @@
     <Content Include="Content\Dashboard\site.css" />
     <Content Include="Content\Dashboard\timeline.css" />
     <Content Include="Content\site_dashboard.css" />
-    <Content Include="Content\Templates\actionsTemplate.html" />
-    <Content Include="Content\Templates\basicCellTemplate.html" />
+    <Content Include="Content\Templates\actionsTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\basicCellTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\configFileModal.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -214,8 +218,12 @@
     <Content Include="Content\Templates\addComponentModal.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\expandableRowTemplate.html" />
-    <Content Include="Content\Templates\groupRowTemplate.html" />
+    <Content Include="Content\Templates\expandableRowTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\groupRowTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\timeline.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Content\ui-grid.css" />

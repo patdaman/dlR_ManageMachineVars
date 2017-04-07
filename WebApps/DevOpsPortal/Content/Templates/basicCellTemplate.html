@@ -1,9 +1,4 @@
-﻿<!--<div ng-if="!row.entity.editable">{{COL_FIELD}}</div>
-<div ng-if="row.entity.editable">
-    <input ng-model="MODEL_COL_FIELD" />
-</div>-->
-
-<div ng-mouseover="rowStyle={'background-color': 'red'}; grid.appScope.onRowHover(this);" ng-mouseleave="rowStyle={}">
+﻿<div ng-mouseover="rowStyle={'background-color': 'red'}; grid.appScope.onRowHover(this);" ng-mouseleave="rowStyle={}">
     <div ng-style="rowStyle" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ui-grid-one-bind-id-grid="rowRenderIndex + '-' + col.uid + '-cell'"
          class="ui-grid-cell" ng-class="{ 'ui-grid-row-header-cell': col.isRowHeader }" role="{{col.isRowHeader ? 'rowheader' : 'gridcell'}}" ui-grid-cell>
         <div class="ui-grid-cell-contents">{{row.entity[col.field]}}</div>
