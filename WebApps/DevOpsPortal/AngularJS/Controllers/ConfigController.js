@@ -37,8 +37,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var componentId;
     var componentName;
 
+    var selectedComponent;
+
     $scope.environment = 'development';
-    
+    $scope.filterEnvironment = function () {
+        return $scope.environment;
+    };
+
     $scope.edit = false;
     $scope.canEdit = function () {
         return $scope.edit;
@@ -199,11 +204,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.components = ["Commerce", "DAL", "ManagerI18N", "Services"];
     // End Todo
 
+    $scope.updateEnvironment = function () {
+        $scope.environment = $scope.selectedEnvironment;
+        $scope.gridApi.core.refresh();
+    };
+
     $scope.showFile = function (row) {
         var componentRow = '$$' + row.uid;
         var rowEntity = row.entity;
         var componentAggObject = rowEntity['$$uiGrid-000B'];
-        $http.get('/api/ConfigApi?componentName=' + componentAggObject.groupVal.value + '&environment=' + $scope.environment)
+        $http.get('/api/ConfigApi?componentName=' + componentAggObject.groupVal.value + '&environment=' + $scope.selectedEnvironment)
             .success(function (data) {
                 ModalService.showModal({
                     templateUrl: "Content/Templates/configFileModal.html",
@@ -239,17 +249,30 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             for (i = 0; i < data.length; i++) {
                 data[i].subGridOptions = {
                     enableHorizontalScrollbar: 0,
+                    enableVerticalScrollbar: 0,
                     appScopeProvider: $scope,
                     enableCellSelection: true,
                     enableCellEditOnFocus: true,
                     enableRowSelection: false,
+                    enableFiltering: true,
+                    //filterOptions: $scope.subGridFilterOptions,
                     columnDefs: [
                         { displayName: "id", field: "id", visible: false, resizable: true },
                         { displayName: "Variable id", field: "configvar_id", visible: false },
-                        { displayName: "Environment", field: "environment", visible: true, enableCellEdit: false },
-                        { displayName: "Value", field: "value", visible: true, cellEditableCondition: $scope.canEdit, width: "70%" },
+                        {
+                            field: "environment",
+                            visible: true,
+                            enableFiltering: false,
+                            filter: {
+                                condition: uiGridConstants.filter.CONTAINS,
+                                term: $scope.environment
+                            },
+                            filterCellFiltered: true,
+                            enableCellEdit: false
+                        },
+                        { displayName: "Value", field: "value", visible: true, cellEditableCondition: $scope.canEdit, enableFiltering: false, width: "70%" },
                         { displayName: "Create Date", field: "create_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
-                        { displayName: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+                        { displayName: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', enableFiltering: false, cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Last Publish Date", field: "publish_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' }
                         //{

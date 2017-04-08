@@ -21,7 +21,7 @@
 <div ng-app="ConfigApp">
     <div ng-controller="ConfigController as vm">
         <div class="control-group">
-            <select ng-model="selectedEnvironment" ng-options="x for x in environments">
+            <select ng-model="selectedEnvironment" ng-options="x for x in environments" ng-change="updateEnvironment()">
                 <option value="" style="color:red">Environment</option>
             </select>
             <select ng-model="selectedComponent" ng-options="c for c in components">
