@@ -26,6 +26,7 @@ namespace EFDataModel.DevOps
         public string xml_declaration { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
+        public string root_element { get; set; }
     
         public virtual Component Component { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

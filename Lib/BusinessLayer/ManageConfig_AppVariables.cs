@@ -287,6 +287,7 @@ namespace BusinessLayer
                     {
                         file_name = file_name,
                         xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
+                        root_element = configFile.Root.Name.ToString(),
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,
                     };

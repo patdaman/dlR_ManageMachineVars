@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DevOpsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DevOpsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AppComponents">
           <Key>
             <PropertyRef Name="application_id" />
@@ -59,6 +59,7 @@
           <Property Name="component_id" Type="int" Nullable="false" />
           <Property Name="file_name" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="xml_declaration" Type="varchar" MaxLength="512" />
+          <Property Name="root_element" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
         </EntityType>
@@ -663,8 +664,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="MachineVariablesMap" EntitySet="MachineVariablesMap" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DevOpsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -708,6 +708,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Component" Relationship="Self.FK_ConfigFile_Components" FromRole="ConfigFile" ToRole="Components" />
           <NavigationProperty Name="ConfigFileElements" Relationship="Self.FK_ConfigFileElements_ConfigFile" FromRole="ConfigFile" ToRole="ConfigFileElements" />
+          <Property Name="root_element" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ConfigFileAttribute">
           <Key>
@@ -1209,6 +1210,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigFiles">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigFile">
               <MappingFragment StoreEntitySet="ConfigFile">
+                <ScalarProperty Name="root_element" ColumnName="root_element" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="component_id" ColumnName="component_id" />
                 <ScalarProperty Name="file_name" ColumnName="file_name" />

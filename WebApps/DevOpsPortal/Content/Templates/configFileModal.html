@@ -10,13 +10,15 @@
                     {{filePath}}
                 </p>
                 <div class="form-group" style="width:500px;">
-                    <textarea id="code" name="code" style="width:500px;">
+                    <!--<textarea id="config" name="config" ng-model="config.text" ng-model-options="{ getterSetter: true }" rows="40" cols="150">-->
+                    <textarea id="config" name="config" rows="40" cols="150">
                         {{configXml}}
                     </textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" ng-click="ng-click-copy()" class="btn btn-primary">Copy To Clipboard</button>
+                <a href="" class="btn btn-dark btn-primary" ng-click="download()">Download</a>
+                <button type="button" ng-click="ng-click-copy()" class="btn btn-default">Copy To Clipboard</button>
                 <!--<button type="button" ng-click="close()" class="btn btn-primary" data-dismiss="modal">Save</button>-->
                 <button type="button" ng-click="cancel()" class="btn">Close</button>
             </div>

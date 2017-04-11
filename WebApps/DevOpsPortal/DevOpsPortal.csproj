@@ -46,6 +46,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -127,6 +131,7 @@
     <Folder Include="AngularJS\Models\" />
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -161,8 +166,10 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ConfigApiController.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
+    <Compile Include="Controllers\ConfigFileController.cs" />
     <Compile Include="Controllers\ConfigPublishApiController.cs" />
     <Compile Include="Controllers\ConfigValuesApiController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
@@ -183,12 +190,13 @@
     <Content Include="AngularJS\app.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js" />
-    <Content Include="AngularJS\Directives\ConfigDirectives.js" />
+    <Content Include="AngularJS\Directives\appDirectives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
     <Content Include="AngularJS\Services\MachineService.js" />
     <Content Include="AngularJS\Services\ngClickCopy.js" />
+    <Content Include="AngularJS\Services\Utils.js" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -233,14 +241,15 @@
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-modal-service.js" />
-    <Content Include="Scripts\angular-route.js" />
-    <Content Include="Scripts\angular-route.min.js" />
+    <Content Include="Scripts\angular-ui-router.js" />
+    <Content Include="Scripts\angular-ui-router.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\Blob.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -661,7 +670,6 @@
     <Content Include="Scripts\CodeMirror\theme\zenburn.css" />
     <Content Include="Scripts\csv.js" />
     <Content Include="Scripts\Dashboard\errors.json" />
-    <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Content\ui-grid.woff" />
     <Content Include="Content\ui-grid.ttf" />
@@ -679,9 +687,22 @@
     <Content Include="Scripts\Dashboard\raphael.min.js" />
     <Content Include="Scripts\Dashboard\sb-admin-2.js" />
     <Content Include="Scripts\Dashboard\velocity.js" />
+    <Content Include="Scripts\FileAPI.flash.swf" />
+    <Content Include="Scripts\FileAPI.js" />
+    <Content Include="Scripts\FileAPI.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\lodash.core.js" />
+    <Content Include="Scripts\lodash.core.min.js" />
+    <Content Include="Scripts\lodash.js" />
+    <Content Include="Scripts\lodash.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\ng-file-upload-all.js" />
+    <Content Include="Scripts\ng-file-upload-all.min.js" />
+    <Content Include="Scripts\ng-file-upload-shim.js" />
+    <Content Include="Scripts\ng-file-upload-shim.min.js" />
+    <Content Include="Scripts\ng-file-upload.js" />
+    <Content Include="Scripts\ng-file-upload.min.js" />
     <Content Include="Scripts\pdfmake.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
@@ -732,6 +753,10 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Lib\ApiLib\ApiLib.csproj">
+      <Project>{9FC2FC92-F678-4325-9DA4-49BF6C0772B5}</Project>
+      <Name>ApiLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Lib\BusinessLayer\BusinessLayer.csproj">
       <Project>{d405b6fd-8a09-49fb-b4d7-1f11394b8623}</Project>
       <Name>BusinessLayer</Name>
@@ -739,6 +764,10 @@
     <ProjectReference Include="..\..\Lib\CommonUtils.AppConfiguration\CommonUtils.AppConfiguration.csproj">
       <Project>{c2178048-9a6d-445f-9f22-9ffd190127de}</Project>
       <Name>CommonUtils.AppConfiguration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lib\Logging\Logging.csproj">
+      <Project>{8857177F-4D00-4C57-BD56-41B0AD1BE9AA}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Lib\ViewModel\ViewModel.csproj">
       <Project>{4677beac-39cc-4376-94d6-4f1280b64eed}</Project>

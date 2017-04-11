@@ -11,6 +11,8 @@
 
 <script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap-tpls.js")"></script>
 <script src="@Url.Content("~/Scripts/ui-grid.js")"></script>
+@*<script src="@Url.Content("~/Scripts/blob.js")"></script>*@
+<script src="@Url.Content("~/Scripts/lodash.core.js")"></script>
 <script src="@Url.Content("~/AngularJS/Services/GridRowEditService.js")"></script>
 <script src="@Url.Content("~/AngularJS/Controllers/ConfigController.js")"></script>
 <script src="@Url.Content("~/AngularJS/Services/ConfigService.js")"></script>
@@ -24,7 +26,7 @@
             <select ng-model="selectedEnvironment" ng-options="x for x in environments" ng-change="updateEnvironment()">
                 <option value="" style="color:red">Environment</option>
             </select>
-            <select ng-model="selectedComponent" ng-options="c for c in components">
+            <select ng-model="selectedComponent" ng-options="c for c in components" ng-change="filterComponent()">
                 <option value="" style="color:red">Component</option>
             </select>
             <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add Component" />

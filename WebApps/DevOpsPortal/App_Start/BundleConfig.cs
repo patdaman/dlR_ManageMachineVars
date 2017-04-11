@@ -23,15 +23,13 @@ namespace DevOpsPortal
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/angular.js",
                       "~/Scripts/angular-animate.js",
-                      "~/Scripts/angular-route.js",
+                      "~/Scripts/angular-ui-router.js",
                       "~/Scripts/angular-modal-service.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
                       "~/Scripts/vfs_fonts.js",
                       //"~/Scripts/ui-grid.js",
                       "~/AngularJS/app.js"
-                      //"~/AngularJS/Controllers/MachineController.js",
-                      //"~/AngularJS/Controllers/ConfigController.js"
                       ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
