@@ -2,7 +2,7 @@
     function (componentName, environment) {
         $http({
             method: 'GET',
-            url: 'api/ConfigFile/download',
+            url: 'api/ConfigPublishApi/download',
             //withCredentials: true,
             params: {
                 componentNameame: name,
@@ -91,7 +91,8 @@ ConfigApp.service('configcrudservice', function ($http) {
     }
 });
 
-ConfigApp.service('ngCopy', ['$window', function ($window) {
+angular.module('ngClickCopy',  [])
+    .service('ngCopy', ['$window', function ($window) {
     var body = angular.element($window.document.body);
     var textarea = angular.element('<textarea/>');
     textarea.css({

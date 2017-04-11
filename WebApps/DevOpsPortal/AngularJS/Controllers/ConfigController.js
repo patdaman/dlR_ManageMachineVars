@@ -19,12 +19,12 @@ var ConfigApp = angular.module('ConfigApp',
             'ui.router',
             'angularModalService',
             'ngAnimate',
-            'ui.bootstrap'
+            'ui.bootstrap',
+            'ngClickCopy'
         ])
 
     .config(['$stateProvider',
     function ($stateProvider) {
-        // our routers, self explanatory
         $stateProvider
             .state('Authorised', {
                 url: '/Authorised',
@@ -114,10 +114,11 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         enableCellSelection: true,
         enableCellEditOnFocus: true,
         enableRowSelection: false,
+        enableRowHeaderSelection: false,
         multiselect: false,
 
         expandableRowTemplate: 'Content/Templates/expandableRowTemplate.html',
-        expandableRowHeight: 61,
+        expandableRowHeight: 64,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
         },
@@ -152,7 +153,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         { field: 'attribute', visible: false, enableCellEdit: false },
         {
             field: 'key',
-            //cellTemplate: editableTemplate,
             cellEditableCondition: $scope.canEdit,
             width: "50%",
             cellToolTip: function (row, col) {
@@ -192,7 +192,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $scope.findMatch = function (rowIndex) {
         $scope.gridOptions.enableRowSelection = true;
-        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.OPTIONS)
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS)
         $scope.gridApi.selection.clearSelectedRows();
         var row = $scope.gridApi.selection.selectRow(rowIndex);
         $scope.gridOptions.enableRowSelection = false;
@@ -202,30 +202,38 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $scope.editCell = function (row) {
         $scope.currentRow = row;
+        $scope.gridApi.grid.cellNav.clearFocus();
+        $scope.gridApi.grid.cellNav.focusedCells = [];
         $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
+
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
         if (typeof row.entity.key !== "undefined") {
             $scope.var_id = row.entity.configvar_id;
             $scope.keyName = row.entity.key;
-            $scope.rowId = (row.entity.index) -1;
+            $scope.rowId = (row.entity.index) - 1;
         }
         else {
             $scope.parentVar_id = row.entity.configvar_id;
             $scope.value = row.entity.value;
             var parentRow = row.grid.parentRow.treeNode.row;
-            $scope.rowId = (parentRow.entity.index) -1;
+            $scope.rowId = (parentRow.entity.index) - 1;
         }
-        //var otherRow = $scope.grid.
         $scope.gridOptions.data[$scope.rowId].editable = true;
         $scope.edit = true;
+        $scope.scrollToFocus(1, 7);
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
-        if ($scope.rowIndex !== "undefined")
-            $scope.scrollToFocus($scope.rowIndex, 7);
-        else
+        if ($scope.rowIndex !== "undefined") {
             $scope.scrollToFocus($scope.rowId, 7);
+            $scope.scrollToFocus($scope.rowId, 7);
+        }
+        else {
+            $scope.scrollToFocus($scope.rowId, 7);
+            $scope.scrollToFocus($scope.rowId, 7);
+        }
     };
 
     $scope.cancelEdit = function (rowEntity) {
-        if (typeof row.entity.keyName !== "undefined") {
+        if (typeof rowEntity.keyName !== "undefined") {
             rowEntity.key = $scope.keyName;
         }
         else {
@@ -233,7 +241,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         }
         $scope.edit = false;
         var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
-        var dataRows = gridRows.map(function (gridRow) { return gridRow.entity; });
+        var dataRows = gridRows.map(function (gridRow) {
+            return gridRow.entity;
+        });
         $scope.gridApi.rowEdit.setRowsClean(dataRows);
         var rowId = rowEntity.index;
         $scope.gridOptions.data[rowId].editable = false;
@@ -243,7 +253,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $scope.scrollToFocus = function (rowIndex, colIndex) {
         $scope.canEdit();
-        $scope.gridApi.core.scrollTo($scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
         $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
     };
 
@@ -252,7 +261,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
         $scope.edit = false;
         var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
-        var dataRows = gridRows.map(function (gridRow) { return gridRow.entity; });
+        var dataRows = gridRows.map(function (gridRow) {
+            return gridRow.entity;
+        });
         $scope.gridApi.rowEdit.setRowsClean(dataRows);
         var rowId = rowEntity.index;
         $scope.gridOptions.data[rowId].editable = false;
@@ -289,13 +300,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.filterComponent = function () {
         $scope.component = $scope.selectedComponent;
         $scope.gridApi.grid.refresh();
-        //$scope.gridApi.core.refresh();
     };
 
     $scope.showFile = function (row) {
         var componentRow = '$$' + row.uid;
         var rowEntity = row.entity;
-        var componentAggObject = rowEntity['$$uiGrid-000B'];
+        var componentAggObject = rowEntity['$$uiGrid-000A'];
         $http.get('/api/ConfigApi?componentName=' + componentAggObject.groupVal + '&environment=' + $scope.environment)
             .success(function (data) {
                 ModalService.showModal({
@@ -312,12 +322,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         //modal.close.then(function (result) {
                         //    $scope.complexResult = "Name: " + result.name + ", age: " + result.age;
                         //});
+                        modal.download.then(function () {
+                            $scope.downloadConfig();
+                        });
                     });
             }
     )
     };
 
-    $scope.download = function (text) {
+    //$scope.download = function (text) {
+    $scope.downloadConfig = function () {
         $scope.callDownloadFile = function () {
             downloadFile($scope.componentName, $scope.environment);
         }
@@ -343,7 +357,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     appScopeProvider: $scope,
                     enableCellSelection: true,
                     enableCellEditOnFocus: true,
-                    enableRowSelection: false,
+                    enableRowSelection: true,
+                    enableRowHeaderSelection: false,
+                    multiselect: false,
                     enableFiltering: true,
                     columnDefs: [
                         { displayName: "id", field: "id", visible: false, resizable: true },
@@ -415,5 +431,8 @@ ConfigApp.controller('ConfigViewer',
                 configXml: $scope.configXml
             }, 500); // close, but give 500ms for bootstrap to animate
         };
+        $scope.download = function () {
+            $scope.downloadConfig();
+        }
     });
 

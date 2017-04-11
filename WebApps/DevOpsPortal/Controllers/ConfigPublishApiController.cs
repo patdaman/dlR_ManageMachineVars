@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Web;
 using System.Web.Http;
+using System.Xml;
+using System.Xml.Linq;
+using ViewModel;
 
 namespace DevOpsPortal.Controllers
 {
@@ -68,20 +75,55 @@ namespace DevOpsPortal.Controllers
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
         // GET: api/configValues/5
-        public HttpResponseMessage Get(int id, string environment = null)
+        public HttpResponseMessage Download(string componentName, string environment = null)
         {
+            BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
+            {
+                componentName = componentName,
+                environment = environment,
+            };
             try
             {
-                configProcessor = new BusinessLayer.ManageConfig_Files()
+                ConfigXml configFile = fileProcessor.GetConfigXml();
+                string fileName = Path.GetFileName(configFile.path);
+                if (configFile != null)
                 {
-                    environment = environment ?? string.Empty,
-                };
-                return Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.GetPublishValues(id));
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        using (StreamWriter writer = new StreamWriter(memoryStream))
+                        {
+                            writer.Write(configFile.text);
+                            writer.Flush();
+                            memoryStream.Position = 0;
+                            HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
+                            httpResponseMessage.Content = new ByteArrayContent(memoryStream.ToArray());
+                            httpResponseMessage.Content.Headers.Add("x-filename", fileName);
+                            httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
+                            httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                            httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
+                            httpResponseMessage.StatusCode = HttpStatusCode.OK;
+                            return httpResponseMessage;
+                        }
+                    }
+                }
+                return this.Request.CreateResponse(HttpStatusCode.NotFound, "File not found.");
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+                return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
             }
+            //try
+            //{
+            //    configProcessor = new BusinessLayer.ManageConfig_Files()
+            //    {
+            //        environment = environment ?? string.Empty,
+            //    };
+            //    return Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.GetPublishValues(id));
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            //}
         }
 
         ///-------------------------------------------------------------------------------------------------
