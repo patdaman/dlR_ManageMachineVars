@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Xml;
@@ -17,51 +18,7 @@ namespace DevOpsPortal.Controllers
     public class ConfigPublishApiController : ApiController
     {
         private BusinessLayer.ManageConfig_Files configProcessor { get; set; }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets the get. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Get()
-        {
-            try
-            {
-                configProcessor = new BusinessLayer.ManageConfig_Files();
-                return Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.GetPublishValues());
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets a HTTP response message using the given environment. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="environment">  The environment to get. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Get(string environment)
-        {
-            try
-            {
-                configProcessor = new BusinessLayer.ManageConfig_Files()
-                {
-                    environment = environment ?? string.Empty,
-                };
-                return Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.GetPublishValues());
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
+        private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets. </summary>
@@ -74,8 +31,8 @@ namespace DevOpsPortal.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        // GET: api/configValues/5
-        public HttpResponseMessage Download(string componentName, string environment = null)
+        [HttpGet]
+        public HttpResponseMessage Download(string componentName, string environment)
         {
             BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
             {
@@ -112,18 +69,73 @@ namespace DevOpsPortal.Controllers
             {
                 return this.Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
             }
-            //try
-            //{
-            //    configProcessor = new BusinessLayer.ManageConfig_Files()
-            //    {
-            //        environment = environment ?? string.Empty,
-            //    };
-            //    return Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.GetPublishValues(id));
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            //}
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Posts the configuration file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/11/2017. </remarks>
+        ///
+        /// <exception cref="HttpResponseException">    Thrown when a HTTP Response error condition
+        ///                                             occurs. </exception>
+        /// <exception cref="Exception">                Thrown when an exception error condition occurs. </exception>
+        ///
+        /// <returns>   A Task&lt;IHttpActionResult&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string action = null)
+        {
+            BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
+            {
+                componentName = componentName,
+                environment = environment,
+                outputPath = ConfigFilePath
+            };
+            if (!Request.Content.IsMimeMultipartContent())
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+
+            var provider = new MultipartMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+            foreach (var file in provider.Contents)
+            {
+                var fullFileName = file.Headers.ContentDisposition.FileName.Trim('\"');
+                var sections = fullFileName.Split('\\');
+                var fileName = sections[sections.Length - 1];
+                var fileExt = fileName.Split('.')[1];
+                var buffer = await file.ReadAsStreamAsync();
+                try
+                {
+                    if (File.Exists(ConfigFilePath + fileName))
+                        try
+                        {
+
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("File Name already exists: " + fileName, ex);
+                        }
+                    XDocument configFile = XDocument.Load(buffer);
+                    using (var fileStream = File.Create(ConfigFilePath + fileName))
+                    {
+                        buffer.CopyTo(fileStream);
+                    }
+                    ConfigXml newConfigObject = new ConfigXml();
+                    if (fileExt == "config" || fileExt == "xml")
+                    {
+                        if (action.Equals("publish"))
+                            configProcessor.PublishFile(configFile);
+                        else
+                            configProcessor.UploadConfigFile(configFile);
+                    }
+                    else
+                        throw new Exception("File type not valid: " + fileExt);
+                }
+                catch (Exception ex)
+                {
+                    var response = Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+                    return ResponseMessage(response);
+                }
+            }
+            return Ok();
         }
 
         ///-------------------------------------------------------------------------------------------------

@@ -66,9 +66,14 @@ namespace AppConfigurationWebApp.Controllers
         ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Get(string componentName, string environment)
         {
+            BusinessLayer.ManageConfig_Files configFileProcessor = new BusinessLayer.ManageConfig_Files()
+            {
+                componentName = componentName,
+                environment = environment
+            };
             try
             {
-                return Request.CreateResponse<ViewModel.ConfigXml>(HttpStatusCode.OK, configProcessor.GetConfigFile(componentName, environment));
+                return Request.CreateResponse<ViewModel.ConfigXml>(HttpStatusCode.OK, configFileProcessor.GetConfigXml());
             }
             catch (Exception ex)
             {

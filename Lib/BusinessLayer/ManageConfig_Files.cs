@@ -133,6 +133,39 @@ namespace BusinessLayer
             throw new NotImplementedException();
         }
 
+        public void UploadConfigFile(XDocument configFile = null)
+        {
+            if (configFile == null)
+            {
+                if (this.configFile == null)
+                    throw new Exception("No Configuration File to upload.");
+            }
+            else
+                this.configFile = configFile;
+            ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(this.configFile)
+            {
+                environment = this.environment,
+                componentName = this.componentName
+            };
+            List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
+        }
+
+        public void PublishFile(XDocument configFile)
+        {
+            this.configFile = configFile;
+            if (this.componentId == null)
+            {
+                if (string.IsNullOrWhiteSpace(this.componentName))
+                    throw new Exception("No Component Provided.");
+                else
+                    PublishFile(this.componentName, this.environment);
+            }
+            else
+            {
+                PublishFile(this.componentId.Value, this.environment);
+            }
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Publish file. </summary>
         ///
@@ -157,10 +190,19 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public void PublishFile(int componentId, string environment = null)
+        public void PublishFile(int componentId, string environment)
         {
             var componentObject = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
-
+            SaveFile(componentId, this.outputPath, environment);
+            foreach (var c in componentObject.ConfigVariables.ToList())
+            {
+                foreach (var cv in c.ConfigVariableValues.Where(x => x.environment_type == environment))
+                {
+                    cv.published = true;
+                    cv.published_date = DateTime.Now;
+                }
+            }
+            DevOpsContext.SaveChanges();
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -172,7 +214,7 @@ namespace BusinessLayer
         /// <param name="outputPath">       Full pathname of the output file. </param>
         /// <param name="environment">      (Optional) The environment. </param>
         ///-------------------------------------------------------------------------------------------------
-        public void SaveFile(string componentName, string outputPath, string environment = null)
+        public void SaveFile(string componentName, string outputPath = null, string environment = null)
         {
             var componentObject = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
             this.componentName = componentName;
@@ -191,42 +233,20 @@ namespace BusinessLayer
         /// <param name="outputPath">   Full pathname of the output file. </param>
         /// <param name="environment">  (Optional) The environment. </param>
         ///-------------------------------------------------------------------------------------------------
-        public void SaveFile(int componentId, string outputPath, string environment = null)
+        public void SaveFile(int componentId, string outputPath = null, string environment = null)
         {
+            if (outputPath == null)
+            {
+                if (this.outputPath == null)
+                    throw new Exception("No Path set for saving file.");
+            }
+            else
+                this.outputPath = outputPath;
             if (File.Exists(outputPath))
             {
                 File.Delete(outputPath);
             }
-            if (string.IsNullOrWhiteSpace(this.componentName))
-            {
-                this.componentName = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault().component_name;
-            }
-            if (string.IsNullOrWhiteSpace(this.componentName))
-                throw new KeyNotFoundException("Component not found.");
-
-            if (string.IsNullOrWhiteSpace(environment))
-            {
-                if (string.IsNullOrWhiteSpace(this.environment))
-                    throw new ArgumentNullException(string.Format("No environment selected for {0} config file.", this.componentName));
-                environment = this.environment;
-            }
-
-            ManageConfig_AppVariables variableProcessor = new ManageConfig_AppVariables(DevOpsContext)
-            {
-                environment = environment ?? string.Empty
-            };
-            List<AttributeKeyValuePair> elements = variableProcessor.ListAllAppConfigVariablesFromDb(componentId, environment);
-            AttributeKeyValuePair efRootElement = elements.Where(x => string.IsNullOrWhiteSpace(x.parentElement)).FirstOrDefault();
-
-            elements.Remove(efRootElement);
-
-            configFile = new XDocument(new XElement(efRootElement.element, string.Empty))
-            {
-                Declaration = new XDeclaration("1.0", "utf-8", "yes")
-            };
-
-            AppConfigFunctions configProcessor = new AppConfigFunctions(configFile);
-            var results = configProcessor.AddKeyValue(elements);
+            configFile = GetConfigFile(componentId);
 #if DEBUG
             outputPath = string.Format(@"D:\DevOps\Config\{0}.config", this.componentName);
 #endif
@@ -264,7 +284,8 @@ namespace BusinessLayer
                 throw new KeyNotFoundException("Component not found");
             this.componentName = component.component_name;
             this.componentId = component.id;
-            this.path = component.relative_path;
+            this.path = component.relative_path + @"\" + 
+                (component.ConfigFiles.FirstOrDefault().file_name + @".config") ?? "";
 
             XDocument xmlDoc = GetConfigFile(this.componentId);
             if (xmlDoc == null)
@@ -277,7 +298,7 @@ namespace BusinessLayer
                 title = component.component_name,
                 componentId = this.componentId,
                 componentName = this.componentName,
-                path = component.relative_path,
+                path = this.path,
                 text = xmlText,
             };
             return configXml;

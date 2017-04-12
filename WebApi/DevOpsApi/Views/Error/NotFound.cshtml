@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "NotFound";
+}
+
+<h2>Error: Page Not Found</h2>
+
+
+<div class="not-found">
+    <p />
+    <img src="Assets/error-img.png" title="error" />
+    <p><h3><span>You Requested the page that does not exist or is no longer there.</span></h3></p>
+    @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "btn btn-primary btn-lg" })
+
+</div>
+

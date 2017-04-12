@@ -155,6 +155,15 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             field: 'key',
             cellEditableCondition: $scope.canEdit,
             width: "50%",
+            filter: {
+                condition: function (searchTerm, cellValue) {
+                    let result = true;
+                    result = '' !== cellValue;
+                    return result;
+                },
+                noTerm: true
+            },
+            filterCellFiltered: true,
             cellToolTip: function (row, col) {
                 if (grid.appScope.isBlank(row.entity.attribute)) {
                     return '<' + row.entity.configParentElement + '><br>&nbsp;<' + row.entity.key + '> {value} </' + row.entity.key + '><br>&nbsp;. . .<br></' + row.entity.configParentElement + '>';
@@ -224,7 +233,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
         if ($scope.rowIndex !== "undefined") {
             $scope.scrollToFocus($scope.rowId, 7);
-            $scope.scrollToFocus($scope.rowId, 7);
+            //$scope.scrollToFocus($scope.rowId, 7);
         }
         else {
             $scope.scrollToFocus($scope.rowId, 7);
@@ -279,6 +288,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var promise = $scope.saveSubGridRowFunction(rowEntity);
         $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise);
         $scope.edit = false;
+        var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
+        var dataRows = gridRows.map(function (gridRow) {
+            return gridRow.entity;
+        });
+        $scope.gridApi.rowEdit.setRowsClean(dataRows);
+        var rowId = rowEntity.index;
+        $scope.gridOptions.data[rowId].editable = false;
     };
 
     $scope.saveSubGridRowFunction = function (row) {
@@ -302,6 +318,30 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $scope.gridApi.grid.refresh();
     };
 
+    $scope.addComponent = function () {
+        ModalService.showModal({
+            templateUrl: "Content/Templates/configFileModal.html",
+            controller: "AddComponent"
+        })
+        .then(function (modal) {
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+    };
+
+    $scope.addVar = function (row) {
+        ModalService.showModal({
+            templateUrl: "Content/Templates/configFileModal.html",
+            controller: "AddVar"
+        })
+            .then(function (modal) {
+
+            }).catch(function (error) {
+                console.log(error);
+            })
+    };
+
     $scope.showFile = function (row) {
         var componentRow = '$$' + row.uid;
         var rowEntity = row.entity;
@@ -314,38 +354,31 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     inputs: {
                         title: data.componentName,
                         filePath: data.path,
-                        configXml: data.text
+                        configXml: data.text,
+                        publish: false,
+                        download: false
                     }
                 })
                     .then(function (modal) {
                         modal.element.modal();
-                        //modal.close.then(function (result) {
-                        //    $scope.complexResult = "Name: " + result.name + ", age: " + result.age;
-                        //});
-                        modal.download.then(function () {
-                            $scope.downloadConfig();
+                        modal.close.then(function (result) {
+                            if (result.download) {
+                                $scope.downloadConfig(result.title)
+                            };
+                            if (result.publish) {
+                                $scope.downloadConfig(result.title)
+                            };
                         });
-                    });
-            }
-    )
+                    })
+            })
     };
 
-    //$scope.download = function (text) {
-    $scope.downloadConfig = function () {
-        $scope.callDownloadFile = function () {
-            downloadFile($scope.componentName, $scope.environment);
-        }
+    $scope.downloadConfig = function (componentName) {
+        $scope.downloadFile(componentName, $scope.environment);
     };
 
-    $scope.addVar = function (row) {
-        ModalService.showModal({
-            templateUrl: "",
-            controller: "",
-            inputs: {
-                title: "",
-                componentName: "",
-            }
-        })
+    $scope.uploadConfig = function (componentName, environment) {
+        $scope.uploadFile(componentName, environment);
     };
 
     $http.get('/api/ConfigApi')
@@ -386,7 +419,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' },
                         {
                             name: "Actions",
-                            cellTemplate: 'Content/Templates/actionsTemplate.html',
+                            cellTemplate: 'Content/Templates/subGridActionsTemplate.html',
                             enableCellEdit: false,
                             width: 149,
                             visible: true,
@@ -401,7 +434,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         //        $scope.cancelEdit(row);
 
                         //    }});
-                        gridApi.rowEdit.on.saveRow($scope, $scope.saveSubGridRow);
                     }
                 };
             }
@@ -410,29 +442,142 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 data["index"] = index + 1;
             });
         });
+
+    $scope.downloadFile = function (componentName, environment) {
+        $http({
+            method: 'GET',
+            url: 'api/ConfigPublishApi',
+            //withCredentials: true,
+            params: {
+                componentName: componentName,
+                environment: environment
+            },
+            responseType: 'arraybuffer'
+        }).success(function (data, status, headers) {
+            headers = headers();
+
+            var filename = headers['x-filename'];
+            var contentType = headers['content-type'];
+
+            var linkElement = document.createElement('a');
+            try {
+                var blob = new Blob([data], { type: contentType });
+                var url = window.URL.createObjectURL(blob);
+
+                linkElement.setAttribute('href', url);
+                linkElement.setAttribute("download", filename);
+                var clickEvent;
+
+                //This is true only for IE,firefox
+                if (document.createEvent) {
+                    // To create a mouse event , first we need to create an event and then initialize it.
+                    clickEvent = document.createEvent("MouseEvent");
+                    clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                }
+                else {
+                    clickEvent = new MouseEvent('click', {
+                        'view': window,
+                        'bubbles': true,
+                        'cancelable': true
+                    });
+                }
+                linkElement.dispatchEvent(clickEvent);
+            } catch (ex) {
+                console.log(ex);
+            }
+        }).error(function (data) {
+            console.log(data);
+        });
+    }
 });
 
 ConfigApp.controller('ConfigViewer',
-    function ($scope, $element, title, filePath, configXml, close) {
-
-        $scope.filePath = filePath;
-        $scope.configXml = configXml;
-        $scope.title = title;
-        $scope.close = function () {
+    function ($rootScope, $scope, $element, title, filePath, configXml, close, publish, download) {
+        //var vm = this;
+        var vm = $scope;
+        vm.filePath = filePath;
+        vm.configXml = configXml;
+        vm.title = title;
+        vm.close = function () {
             close({
                 filePath: $scope.filePath,
                 configXml: $scope.configXml
             }, 500); // close, but give 500ms for bootstrap to animate
         };
-        $scope.cancel = function () {
+        vm.cancel = function () {
+            $element.modal('hide');
+            close(null, 500);
+        };
+        vm.publish = function () {
             $element.modal('hide');
             close({
-                filePath: $scope.filePath,
-                configXml: $scope.configXml
+                publish: true,
+                title: vm.title
+            }, 500);
+        }
+        vm.download = function () {
+            $element.modal('hide');
+            close({
+                download: true,
+                title: vm.title
+            }, 500);
+        }
+        vm.ngClickCopy = function () {
+            vm.ngClickCopy;
+            //$rootscope.ngClickCopy;
+        }
+    });
+
+ConfigApp.controller('AddComponent',
+    function ($rootScope, $scope, $element, filePath, componentName, close, publish, upload) {
+        //var vm = this;
+        var vm = $scope;
+        vm.filePath = filePath;
+        vm.configXml = configXml;
+        vm.title = title;
+        vm.close = function () {
+            close({
             }, 500); // close, but give 500ms for bootstrap to animate
         };
-        $scope.download = function () {
-            $scope.downloadConfig();
+        vm.cancel = function () {
+            $element.modal('hide');
+            close(null, 500);
+        };
+        vm.publish = function () {
+            $element.modal('hide');
+            close({
+                publish: true,
+                componentName: vm.componentName
+            }, 500);
+        }
+        vm.upload = function () {
+            $element.modal('hide');
+            close({
+                upload: true,
+                componentName: vm.componentName
+            }, 500);
+        }
+    });
+
+ConfigApp.controller('AddVar',
+    function ($rootScope, $scope, $element, componentName, close, publish) {
+        var vm = $scope;
+        vm.componentName = componentName;
+        vm.close = function () {
+            close({
+                componentName: vm.componentName
+            }, 500); // close, but give 500ms for bootstrap to animate
+        };
+        vm.cancel = function () {
+            $element.modal('hide');
+            close(null, 500);
+        };
+        vm.publish = function () {
+            $element.modal('hide');
+            close({
+                publish: true,
+                componentName: vm.componentName
+            }, 500);
         }
     });
 

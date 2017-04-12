@@ -62,16 +62,16 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration file. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ConfigXml GetConfigFile(string componentName, string environment)
-        {
-            ConfigXml configFile = new ConfigXml();
-            ManageConfig_Files fileProcessor = new ManageConfig_Files(DevOpsContext)
-            {
-                componentName = componentName,
-                environment = environment
-            };
-            return fileProcessor.GetConfigXml();
-        }
+        //public ConfigXml GetConfigFile(string componentName, string environment)
+        //{
+        //    ConfigXml configFile = new ConfigXml();
+        //    ManageConfig_Files fileProcessor = new ManageConfig_Files(DevOpsContext)
+        //    {
+        //        componentName = componentName,
+        //        environment = environment
+        //    };
+        //    return fileProcessor.GetConfigXml();
+        //}
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machine configuration variables. </summary>

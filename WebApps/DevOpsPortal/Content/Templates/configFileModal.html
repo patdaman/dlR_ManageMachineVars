@@ -15,9 +15,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="" class="btn btn-dark btn-primary" ng-click="$parent.download()">Download</a>
-                <button type="button" ng-click="ng-click-copy()" class="btn btn-default">Copy To Clipboard</button>
-                <!--<button type="button" ng-click="close()" class="btn btn-primary" data-dismiss="modal">Save</button>-->
+                <button type="button" ng-click="ngClickCopy()" class="btn btn-default" style="float:left;">Copy To Clipboard</button>
+                <a href="#" type="button" class="btn btn-dark btn-primary" ng-click="download()">Download</a>
+                <!--<button type="button" class="btn btn-dark btn-primary" ng-click="download()">Download</button>-->
+                <button type="button" ng-click="publish()" class="btn btn-warning">Publish</button>
                 <button type="button" ng-click="cancel()" class="btn">Close</button>
             </div>
         </div>

@@ -180,7 +180,6 @@
     <Compile Include="Controllers\MachineController.cs" />
     <Compile Include="Controllers\PowershellApiController.cs" />
     <Compile Include="Controllers\PowershellController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -229,6 +228,7 @@
     <Content Include="Content\Templates\expandableRowTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Templates\subGridActionsTemplate.html" />
     <Content Include="Content\timeline.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Content\ui-grid.css" />
