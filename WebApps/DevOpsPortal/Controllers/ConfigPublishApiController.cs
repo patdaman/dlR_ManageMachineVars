@@ -102,19 +102,20 @@ namespace DevOpsPortal.Controllers
                 var fileName = sections[sections.Length - 1];
                 var fileExt = fileName.Split('.')[1];
                 var buffer = await file.ReadAsStreamAsync();
+                string filePath = ConfigFilePath + @"\" + componentName + @"\" + fileName;
                 try
                 {
-                    if (File.Exists(ConfigFilePath + fileName))
+                    if (File.Exists(filePath))
                         try
                         {
-
+                            File.Delete(filePath);
                         }
                         catch (Exception ex)
                         {
                             throw new Exception("File Name already exists: " + fileName, ex);
                         }
                     XDocument configFile = XDocument.Load(buffer);
-                    using (var fileStream = File.Create(ConfigFilePath + fileName))
+                    using (var fileStream = File.Create(filePath))
                     {
                         buffer.CopyTo(fileStream);
                     }

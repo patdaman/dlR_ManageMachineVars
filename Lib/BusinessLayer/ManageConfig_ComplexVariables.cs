@@ -54,6 +54,59 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets drop down values. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/12/2017. </remarks>
+        ///
+        /// <param name="type"> The type. </param>
+        ///
+        /// <returns>   The drop down values. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<NameValuePair> GetDropDownValues(string type)
+        {
+            List<NameValuePair> values = new List<NameValuePair>();
+            if (type.ToLower().StartsWith("comp"))
+            {
+                var components = DevOpsContext.Components.ToList();
+                foreach (var c in components)
+                    values.Add(new NameValuePair()
+                    {
+                        id = c.id,
+                        name = c.component_name,
+                        value = c.component_name,
+                        active = c.active
+                    });
+            }
+            else if (type.ToLower().StartsWith("env"))
+            {
+                var environments = DevOpsContext.Enum_EnvironmentType.ToList();
+                foreach (var e in environments)
+                    values.Add(new NameValuePair()
+                    {
+                        id = null,
+                        name = e.name,
+                        value = e.name,
+                        active = e.active
+                    });
+            }
+            else if (type.ToLower().StartsWith("app"))
+            {
+                var apps = DevOpsContext.Applications.ToList();
+                foreach (var a in apps)
+                    values.Add(new NameValuePair()
+                    {
+                        id = a.id,
+                        name = a.application_name,
+                        value = a.application_name,
+                        active = a.active
+                    });
+            }
+            else
+                throw new ArgumentException("Invalid value type requested.");
+            return values;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets configuration file. </summary>
         ///
         /// <remarks>   Pdelosreyes, 4/3/2017. </remarks>

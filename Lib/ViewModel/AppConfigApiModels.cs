@@ -6,82 +6,22 @@ using System.Threading.Tasks;
 
 namespace ViewModel
 {
-    public class MachineAppVars
+    public class NameValuePair
     {
-        public Nullable<int> machineId { get; set; }
-        public string machine_name { get; set; }
-        public string location { get; set; }
-        public string usage { get; set; }
-        public System.DateTime machineCreate_date { get; set; }
-        public Nullable<System.DateTime> machineModify_date { get; set; }
-        public bool machineActive { get; set; }
-        public List<int> applicationIds { get; set; }
-        public List<string> applicationNames { get; set; }
-        public List<string> applicationReleases { get; set; }
-        public Nullable<int> componentId { get; set; }
-        public string componentName { get; set; }
-        public Nullable<int> varId { get; set; }
-        public string varType { get; set; }
-        public string configParentElement { get; set; }
-        public string configElement { get; set; }
-        public string configAttribute { get; set; }
-        public string keyName { get; set; }
-        public string key { get; set; }
-        public string configValue_name { get; set; }
-        public string valueName { get; set; }
+        public int? id { get; set; }
+        public string name { get; set; }
         public string value { get; set; }
-        public string varPath { get; set; }
-        public bool varActive { get; set; }
-        public string envType { get; set; }
-        public System.DateTime varCreate_date { get; set; }
-        public Nullable<System.DateTime> varModify_date { get; set; }
-
-        public MachineAppVars()
-        { }
-        public MachineAppVars(MachineAppVars x)
+        public bool active { get; set; }
+        public NameValuePair()
         {
-            machineId = x.machineId;
-            machine_name = x.machine_name;
-            location = x.location;
-            usage = x.usage;
-            machineCreate_date = x.machineCreate_date;
-            machineModify_date = x.machineModify_date;
-            machineActive = x.machineActive;
-            applicationIds = x.applicationIds;
-            applicationNames = x.applicationNames;
-            applicationReleases = x.applicationReleases;
-            varId = x.varId;
-            varType = x.varType;
-            configElement = x.configElement;
-            configAttribute = x.configAttribute;
-            key = x.key;
-            keyName = x.keyName;
-            configValue_name = x.configValue_name;
-            varPath = x.varPath;
-            varActive = x.varActive;
-            varCreate_date = x.varCreate_date;
-            varModify_date = x.varModify_date;
-            envType = x.envType;
+            active = true;
         }
-
-        public MachineAppVars(ConfigVariable x)
+        public NameValuePair(NameValuePair x)
         {
-            varId = x.id;
-            varType = "AppConfig";
-            configParentElement = x.parent_element;
-            configElement = x.element;
-            keyName = x.key_name;
-            keyName = x.key_name;
-            key = x.key;
-            configValue_name = x.value_name;
-            varActive = x.active;
-            varCreate_date = x.create_date;
-            varModify_date = x.modify_date;
-        }
-
-        public MachineAppVars(EnvironmentDtoVariable x)
-        {
-
+            id = x.id;
+            name = x.name;
+            value = x.value;
+            active = x.active;
         }
     }
 
@@ -170,4 +110,84 @@ namespace ViewModel
     //        publish_date = x.publish_date;
     //    }
     //}
+
+
+    public class MachineAppVars
+    {
+        public Nullable<int> machineId { get; set; }
+        public string machine_name { get; set; }
+        public string location { get; set; }
+        public string usage { get; set; }
+        public System.DateTime machineCreate_date { get; set; }
+        public Nullable<System.DateTime> machineModify_date { get; set; }
+        public bool machineActive { get; set; }
+        public List<int> applicationIds { get; set; }
+        public List<string> applicationNames { get; set; }
+        public List<string> applicationReleases { get; set; }
+        public Nullable<int> componentId { get; set; }
+        public string componentName { get; set; }
+        public Nullable<int> varId { get; set; }
+        public string varType { get; set; }
+        public string configParentElement { get; set; }
+        public string configElement { get; set; }
+        public string configAttribute { get; set; }
+        public string keyName { get; set; }
+        public string key { get; set; }
+        public string configValue_name { get; set; }
+        public string valueName { get; set; }
+        public string value { get; set; }
+        public string varPath { get; set; }
+        public bool varActive { get; set; }
+        public string envType { get; set; }
+        public System.DateTime varCreate_date { get; set; }
+        public Nullable<System.DateTime> varModify_date { get; set; }
+
+        public MachineAppVars()
+        { }
+        public MachineAppVars(MachineAppVars x)
+        {
+            machineId = x.machineId;
+            machine_name = x.machine_name;
+            location = x.location;
+            usage = x.usage;
+            machineCreate_date = x.machineCreate_date;
+            machineModify_date = x.machineModify_date;
+            machineActive = x.machineActive;
+            applicationIds = x.applicationIds;
+            applicationNames = x.applicationNames;
+            applicationReleases = x.applicationReleases;
+            varId = x.varId;
+            varType = x.varType;
+            configElement = x.configElement;
+            configAttribute = x.configAttribute;
+            key = x.key;
+            keyName = x.keyName;
+            configValue_name = x.configValue_name;
+            varPath = x.varPath;
+            varActive = x.varActive;
+            varCreate_date = x.varCreate_date;
+            varModify_date = x.varModify_date;
+            envType = x.envType;
+        }
+
+        public MachineAppVars(ConfigVariable x)
+        {
+            varId = x.id;
+            varType = "AppConfig";
+            configParentElement = x.parent_element;
+            configElement = x.element;
+            keyName = x.key_name;
+            keyName = x.key_name;
+            key = x.key;
+            configValue_name = x.value_name;
+            varActive = x.active;
+            varCreate_date = x.create_date;
+            varModify_date = x.modify_date;
+        }
+
+        public MachineAppVars(EnvironmentDtoVariable x)
+        {
+
+        }
+    }
 }

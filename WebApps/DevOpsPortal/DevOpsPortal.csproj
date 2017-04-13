@@ -213,6 +213,7 @@
     <Content Include="Content\Templates\actionsTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Templates\addVariableModal.html" />
     <Content Include="Content\Templates\basicCellTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -228,7 +229,9 @@
     <Content Include="Content\Templates\expandableRowTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\subGridActionsTemplate.html" />
+    <Content Include="Content\Templates\subGridActionsTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\timeline.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Content\ui-grid.css" />

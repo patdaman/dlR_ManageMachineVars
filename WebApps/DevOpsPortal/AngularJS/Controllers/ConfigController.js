@@ -59,7 +59,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var currentRow;
     var focusedCell;
 
+    var environments = [];
+    var components = [];
+    var applications = [];
+
     var selectedComponent;
+    var component;
+    var selectedApplication;
+    var application;
+    var selectedEnvironment;
+    var environment;
 
     $scope.environment = 'development';
     $scope.filterEnvironment = function () {
@@ -303,40 +312,122 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         return deferred.promise;
     };
 
-    // These need to come from Api:
-    $scope.environments = ["development", "qa", "production"];
-    $scope.components = ["Commerce", "DAL", "ManagerI18N", "Services"];
-    // End Todo
+    //$scope.environments = function () {
+    //    return $scope.enumList("environment")
+    //};
+    //$scope.enumList = function (enumType) {
+    //    $http({
+    //        method: 'GET',
+    //        url: '/api/ConfigValuesApi/',
+    //        //withCredentials: true,
+    //        params: {
+    //            type: emunType
+    //        },
+    //    }).then(function (result) {
+    //        return result.data;
+    //    })
+    //};
+
+    $http({
+        method: 'GET',
+        url: '/api/ConfigValuesApi/',
+        //withCredentials: true,
+        params: {
+            type: "environment"
+        },
+        //responseType: 'arraybuffer'
+    }).then(function (result) {
+        $scope.environments = result.data;
+    });
+
+    $http({
+        method: 'GET',
+        url: '/api/ConfigValuesApi/',
+        //withCredentials: true,
+        params: {
+            type: "component"
+        },
+        //responseType: 'arraybuffer'
+    }).then(function (result) {
+        $scope.components = result.data;
+    });
+
+    $http({
+        method: 'GET',
+        url: '/api/ConfigValuesApi/',
+        //withCredentials: true,
+        params: {
+            type: "application"
+        },
+        //responseType: 'arraybuffer'
+    }).then(function (result) {
+        $scope.applications = result.data;
+    });
 
     $scope.updateEnvironment = function () {
         $scope.environment = $scope.selectedEnvironment;
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
     };
 
-    $scope.filterComponent = function () {
+    $scope.updateComponent = function () {
         $scope.component = $scope.selectedComponent;
         $scope.gridApi.grid.refresh();
     };
 
+    $scope.updateApplication = function () {
+        $scope.application = $scope.selectedApplication;
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+    };
+
     $scope.addComponent = function () {
         ModalService.showModal({
-            templateUrl: "Content/Templates/configFileModal.html",
-            controller: "AddComponent"
+            templateUrl: "Content/Templates/addComponentModal.html",
+            controller: "AddComponent",
+            inputs: {
+                filePath: "",
+                components: $scope.components,
+                componentComponents: "",
+                componentName: "",
+                componentEnvironment: "",
+                environments: $scope.environments,
+                fileName: "",
+                file: null,
+                publish: false,
+                upload: false
+        }
         })
         .then(function (modal) {
-
+            modal.element.modal();
+            modal.close.then(function (result) {
+            });
         }).catch(function (error) {
             console.log(error);
         })
     };
 
     $scope.addVar = function (row) {
+        var componentRow = '$$' + row.uid;
+        var rowEntity = row.entity;
+        var componentAggObject = rowEntity['$$uiGrid-000A'];
+        var firstChildParentElement = row.treeNode.children[0].row.entity.configParentElement;
         ModalService.showModal({
-            templateUrl: "Content/Templates/configFileModal.html",
-            controller: "AddVar"
+            templateUrl: "Content/Templates/addVariableModal.html",
+            controller: "AddVar",
+            inputs: {
+                componentName: componentAggObject.groupVal,
+                parentElement: firstChildParentElement,
+                element: "",
+                keyName: "",
+                key: "",
+                valueName: "",
+                save: false,
+                publish: false
+            }
         })
             .then(function (modal) {
-
+                modal.element.modal();
+                modal.close.then(function (result) {
+                });
             }).catch(function (error) {
                 console.log(error);
             })
@@ -499,9 +590,8 @@ ConfigApp.controller('ConfigViewer',
         vm.configXml = configXml;
         vm.title = title;
         vm.close = function () {
+            $element.modal('hide');
             close({
-                filePath: $scope.filePath,
-                configXml: $scope.configXml
             }, 500); // close, but give 500ms for bootstrap to animate
         };
         vm.cancel = function () {
@@ -529,12 +619,17 @@ ConfigApp.controller('ConfigViewer',
     });
 
 ConfigApp.controller('AddComponent',
-    function ($rootScope, $scope, $element, filePath, componentName, close, publish, upload) {
+    function ($rootScope, $scope, $element, close, filePath, components, componentComponents, componentName, fileName, componentEnvironment, environments, file, publish, upload) {
         //var vm = this;
         var vm = $scope;
         vm.filePath = filePath;
-        vm.configXml = configXml;
-        vm.title = title;
+        vm.componentComponents = componentComponents;
+        vm.components = components;
+        vm.componentName = componentName;
+        vm.componentEnvironment = componentEnvironment;
+        vm.environments = environments;
+        vm.fileName = fileName;
+        vm.file = file;
         vm.close = function () {
             close({
             }, 500); // close, but give 500ms for bootstrap to animate
@@ -560,15 +655,24 @@ ConfigApp.controller('AddComponent',
     });
 
 ConfigApp.controller('AddVar',
-    function ($rootScope, $scope, $element, componentName, close, publish) {
+    function ($rootScope, $scope, $element, close, componentName, parentElement, element, keyName, key, valueName, save, publish) {
         var vm = $scope;
         vm.componentName = componentName;
+        vm.element = element;
+        vm.parentElement = parentElement;
+        vm.keyName = keyName;
+        vm.key = key;
+        vm.valueName = valueName;
         vm.close = function () {
             close({
                 componentName: vm.componentName
             }, 500); // close, but give 500ms for bootstrap to animate
         };
         vm.cancel = function () {
+            $element.modal('hide');
+            close(null, 500);
+        };
+        vm.save = function () {
             $element.modal('hide');
             close(null, 500);
         };
