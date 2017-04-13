@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using System.Xml;
 using System.Xml.Linq;
 using ViewModel;
 
@@ -102,19 +98,20 @@ namespace DevOpsPortal.Controllers
                 var fileName = sections[sections.Length - 1];
                 var fileExt = fileName.Split('.')[1];
                 var buffer = await file.ReadAsStreamAsync();
+                var saveFilePath = ConfigFilePath + @"\" + componentName + @"\" + environment + @"\" + fileName;
                 try
                 {
-                    if (File.Exists(ConfigFilePath + fileName))
+                    if (File.Exists(saveFilePath))
                         try
                         {
-
+                            File.Delete(saveFilePath);
                         }
                         catch (Exception ex)
                         {
                             throw new Exception("File Name already exists: " + fileName, ex);
                         }
                     XDocument configFile = XDocument.Load(buffer);
-                    using (var fileStream = File.Create(ConfigFilePath + fileName))
+                    using (var fileStream = File.Create(saveFilePath))
                     {
                         buffer.CopyTo(fileStream);
                     }
