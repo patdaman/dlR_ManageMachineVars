@@ -54,6 +54,49 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets the component. </summary>
+        ///
+        /// <remarks>   Patman, 4/14/2017. </remarks>
+        ///
+        /// <returns>   The component. </returns>
+        ///-------------------------------------------------------------------------------------------------
+
+        public List<ViewModel.Component> GetComponent()
+        {
+            List<ViewModel.Component> components = new List<ViewModel.Component>();
+            var efComponents = DevOpsContext.Components.ToList();
+            foreach (var c in efComponents)
+            {
+                components.Add(new ViewModel.Component()
+                {
+                    id = c.id,
+                    component_name = c.component_name,
+                    active = c.active,
+                    create_date = c.create_date,
+                    modify_date = c.modify_date,
+                    relative_path = c.relative_path,
+                    MachineComponentPaths = 
+                });
+            }
+            return components;
+        }
+
+        public ViewModel.Component GetComponent(int componentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ViewModel.Component GetComponent(string componentName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ViewModel.Component AddUpdateComponent(ViewModel.Component component)
+        {
+            throw new NotImplementedException();
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets drop down values. </summary>
         ///
         /// <remarks>   Pdelosreyes, 4/12/2017. </remarks>
@@ -105,26 +148,6 @@ namespace BusinessLayer
                 throw new ArgumentException("Invalid value type requested.");
             return values;
         }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets configuration file. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 4/3/2017. </remarks>
-        ///
-        /// <param name="componentName">    Name of the component. </param>
-        ///
-        /// <returns>   The configuration file. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        //public ConfigXml GetConfigFile(string componentName, string environment)
-        //{
-        //    ConfigXml configFile = new ConfigXml();
-        //    ManageConfig_Files fileProcessor = new ManageConfig_Files(DevOpsContext)
-        //    {
-        //        componentName = componentName,
-        //        environment = environment
-        //    };
-        //    return fileProcessor.GetConfigXml();
-        //}
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machine configuration variables. </summary>
@@ -320,6 +343,24 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         //  <section> Begin Private Methods </section>
         ///-------------------------------------------------------------------------------------------------
+
+
+        private ViewModel.Component ReturnConfigVariable(EFDataModel.DevOps.Component component)
+        {
+            return new ViewModel.Component()
+            {
+                id = component.id,
+                active = component.active,
+                component_name = component.component_name,
+                create_date = component.create_date,
+                relative_path = component.relative_path,
+                modify_date = component.modify_date,
+                MachineComponentPaths = component.value_name ?? "",
+                parent_element = component.parent_element,
+                component.ariableValues = EfToVmConverter.Efcomponent.alueListToVm(component.component.ariableValues),
+                Components = EfToVmConverter.EfComponentListToVm(component.Components)
+            };
+        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets configuration values. </summary>

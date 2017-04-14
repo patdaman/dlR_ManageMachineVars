@@ -220,7 +220,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
         gridApi.cellNav.on.navigate($scope, function (selected) {
-            if ('.ui-grid-cell-focus ') {
+            //if ('.ui-grid-cell-focus ')
+            {
                 if ($scope.bypassEditCancel === false) {
                     if ($scope.rowId !== (selected.row.entity.index)) {
                         if (selected.row.entity.index === 'undefined') {
@@ -355,6 +356,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $scope.bypassEditCancel = true;
     };
 
+    // Key Value Save Promise
     $scope.saveSubGridRowFunction = function (rowEntity) {
         var deferred = $q.defer();
         $http.post('/api/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
@@ -589,7 +591,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     onRegisterApi: function (gridApi) {
                         $scope.gridApi = gridApi;
                         gridApi.cellNav.on.navigate($scope, function (selected) {
-                            if ('.ui-grid-cell-focus ') {
+                            //if ('.ui-grid-cell-focus ')
+                            {
                                 if ($scope.bypassEditCancel === false) {
                                     if (selected.row.grid.parentRow === 'undefined') {
                                         $scope.cancelEdit();
@@ -616,7 +619,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         console.log(value);
         $scope.gridOptions.appScopeProvider.gridApi.grid.api.grid.columns[2].filters[0].term = value;
 
-        angular.forEach($scope.gridOptions.data, function(data) {
+        angular.forEach($scope.gridOptions.data, function (data) {
             data.values.subGridOptions;
         });
     };
