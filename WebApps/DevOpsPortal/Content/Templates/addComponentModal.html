@@ -14,25 +14,28 @@
                 <p>
                     <div class="form-group">
                         <label><b>New Component Name:</b></label>
-                        <input id="component" class="form-control" type="text" ng-model="vm.componentName">
+                        <input id="component" class="form-control" type="text" ng-model="componentName">
                     </div>
                     <div class="form-group">
                         <label><b>Application(s):</b></label>
-                        <input id="apps" class="form-control" type="text" ng-model="vm.apps">
+                        <input id="apps" class="form-control" type="text" ng-model="applications">
+                        <select ng-model="applications" ng-options="c.name for c in environments">
+                            <option value="" style="color:red">Select Environment:</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>File Path:</label>
-                        <input id="path" class="form-control" type="text" ng-model="vm.filePath">
+                        <input id="path" class="form-control" type="text" ng-model="filePath">
                     </div>
                     <div class="form-group">
                         <label>Environment:</label>
-                        <input id="path" class="form-control" type="text" ng-model="vm.filePath">
+                        <input id="path" class="form-control" type="text" ng-model="environment">
                     </div>
                 </p>
                 <p>
                     <div class="form-group">
                         <label>Add File:</label>
-                        <input id="file" class="form-control" type="text" ng-model="vm.file">
+                        <input id="file" class="form-control" type="text" ng-model="file">
                     </div>
                     <select ng-model="componentEnvironment" ng-options="c.name for c in environments">
                         <option value="" style="color:red">Select Environment:</option>
