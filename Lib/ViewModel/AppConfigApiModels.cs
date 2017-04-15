@@ -59,7 +59,7 @@ namespace ViewModel
             configvar_id = x.id;
             configParentElement = x.parent_element;
             configElement = x.element;
-            attribute = x.key_name;
+            attribute = x.attribute;
             if (string.IsNullOrWhiteSpace(x.key))
                 key = x.value_name;
             else
@@ -176,8 +176,8 @@ namespace ViewModel
             varType = "AppConfig";
             configParentElement = x.parent_element;
             configElement = x.element;
-            keyName = x.key_name;
-            keyName = x.key_name;
+            keyName = x.attribute;
+            keyName = x.attribute;
             key = x.key;
             configValue_name = x.value_name;
             varActive = x.active;

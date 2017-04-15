@@ -116,6 +116,7 @@ namespace ViewModel
         public virtual List<MachineComponentPath> MachineComponentPaths { get; set; }
         public virtual List<Application> Applications { get; set; }
         public virtual List<ConfigVariable> ConfigVariables { get; set; }
+        public virtual List<ConfigFile> ConfigFiles { get; set; }
 
         public Component()
         { }
@@ -131,6 +132,33 @@ namespace ViewModel
             //MachineComponentPaths = c.MachineComponentPaths;
             //Applications = c.Applications;
             //ConfigVariables = c.ConfigVariables;
+        }
+    }
+
+    public class ConfigFile
+    {
+        public ConfigFile() { }
+
+        public int id { get; set; }
+        public int component_id { get; set; }
+        public string file_name { get; set; }
+        public string xml_declaration { get; set; }
+        public System.DateTime create_date { get; set; }
+        public System.DateTime modify_date { get; set; }
+        public string root_element { get; set; }
+        public Component Component { get; set; }
+        //public ICollection<ConfigFileElement> ConfigFileElements { get; set; }
+        
+        public ConfigFile(ConfigFile c)
+        {
+            id = c.id;
+            component_id = c.component_id;
+            file_name = c.file_name;
+            xml_declaration = c.xml_declaration;
+            create_date = c.create_date;
+            modify_date = c.modify_date;
+            root_element = c.root_element;
+            //Component = c.Component;
         }
     }
 
@@ -160,7 +188,7 @@ namespace ViewModel
         public int id { get; set; }
         public string parent_element { get; set; }
         public string element { get; set; }
-        public string key_name { get; set; }
+        public string attribute { get; set; }
         public string key { get; set; }
         public string value_name { get; set; }
         public System.DateTime create_date { get; set; }
@@ -177,7 +205,7 @@ namespace ViewModel
             id = c.id;
             parent_element = c.parent_element;
             element = c.element;
-            key_name = c.key_name;
+            attribute = c.attribute;
             key = c.key;
             value_name = c.value_name;
             create_date = c.create_date;

@@ -245,7 +245,7 @@ namespace BusinessLayer
             this.configFile = configFile;
             EFDataModel.DevOps.Component efComp = new EFDataModel.DevOps.Component();
             EFDataModel.DevOps.Component newComp = new EFDataModel.DevOps.Component();
-            EFDataModel.DevOps.ConfigFile efConfigFile = new ConfigFile();
+            EFDataModel.DevOps.ConfigFile efConfigFile = new EFDataModel.DevOps.ConfigFile();
             EFDataModel.DevOps.Application efApp = new EFDataModel.DevOps.Application();
             EFDataModel.DevOps.MachineComponentPathMap machinePath = new MachineComponentPathMap();
             EFDataModel.DevOps.Machine efMac = new EFDataModel.DevOps.Machine();
@@ -283,7 +283,7 @@ namespace BusinessLayer
                 {
                     if (string.IsNullOrWhiteSpace(file_name))
                         file_name = this.componentName + ".config";
-                    efConfigFile = new ConfigFile()
+                    efConfigFile = new EFDataModel.DevOps.ConfigFile()
                     {
                         file_name = file_name,
                         xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
@@ -315,7 +315,7 @@ namespace BusinessLayer
 
             if (efConfigFile == null)
             {
-                efConfigFile = new ConfigFile()
+                efConfigFile = new EFDataModel.DevOps.ConfigFile()
                 {
                     file_name = file_name,
                     xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
@@ -432,6 +432,74 @@ namespace BusinessLayer
 
             DevOpsContext.SaveChanges();
             return configVars;
+        }
+
+        public void AddComponent(ViewModel.Component component)
+        {
+            EFDataModel.DevOps.Component efComponent = new EFDataModel.DevOps.Component()
+            {
+                active = component.active,
+                component_name = component.component_name,
+                create_date = component.create_date,
+                id = component.id,
+                modify_date = component.modify_date ?? DateTime.Now,
+                relative_path = component.relative_path,
+                MachineComponentPathMaps = new List<EFDataModel.DevOps.MachineComponentPathMap>(),
+                ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
+                Applications = new List<EFDataModel.DevOps.Application>(),
+                ConfigVariables = new List<EFDataModel.DevOps.ConfigVariable>(),
+            };
+            List<EFDataModel.DevOps.Application> efApplications = new List<EFDataModel.DevOps.Application>();
+            foreach (var a in component.Applications)
+            {
+                efComponent.Applications.Add(new EFDataModel.DevOps.Application()
+                {
+                    active = a.active,
+                    application_name = a.application_name,
+                    create_date = a.create_date,
+                    modify_date = a.modify_date ?? DateTime.Now,
+                    release = a.release,
+                });
+            }
+
+            foreach (var f in component.ConfigFiles)
+            {
+                efComponent.ConfigFiles.Add(new EFDataModel.DevOps.ConfigFile()
+                {
+                    component_id = f.component_id,
+                    create_date = f.create_date,
+                    file_name = f.file_name,
+                    modify_date = f.modify_date,
+                    root_element = f.root_element,
+                    xml_declaration = f.xml_declaration,
+                });
+            }
+            foreach (var m in component.MachineComponentPaths)
+            {
+                efComponent.MachineComponentPathMaps.Add(new EFDataModel.DevOps.MachineComponentPathMap()
+                {
+                    component_id = m.component_id,
+                    config_path = m.config_path,
+                    machine_id = m.machine_id,
+                });
+            }
+            foreach (var v in component.ConfigVariables)
+            {
+                efComponent.ConfigVariables.Add(new EFDataModel.DevOps.ConfigVariable()
+                {
+                    active = v.active,
+                    attribute = v.attribute,
+                    create_date = v.create_date,
+                    element = v.element,
+                    key = v.key,
+                    modify_date = v.modify_date ?? DateTime.Now,
+                    parent_element = v.parent_element,
+                    value_name = v.value_name,
+                });
+            }
+
+            DevOpsContext.Components.Add(efComponent);
+            DevOpsContext.SaveChanges();
         }
 
         ///-------------------------------------------------------------------------------------------------

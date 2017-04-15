@@ -176,6 +176,28 @@ namespace BusinessLayer
             return vm;
         }
 
+        internal List<MachineComponentPath> EfMachineComponentPathListToVm(ICollection<MachineComponentPathMap> machineComponentPathMaps)
+        {
+            var EFmachineComponentPaths = new List<ViewModel.Machine>();
+            foreach (var machine in EFmachines)
+            {
+                //machines.Add(MachineEfToVm(machine));
+                //machines.Add(new ViewModel.Machine(MachineEfToVm(machine)));
+                EFmachineComponentPaths.Add(new ViewModel.Machine()
+                {
+                    id = machine.id,
+                    machine_name = machine.machine_name,
+                    ip_address = machine.ip_address,
+                    location = machine.location,
+                    usage = machine.usage,
+                    create_date = machine.create_date,
+                    modify_date = machine.modify_date,
+                    active = machine.active,
+                });
+            }
+            return EFmachineComponentPaths;
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Configuration ef to view model. </summary>
         ///

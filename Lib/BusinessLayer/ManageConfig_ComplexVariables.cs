@@ -67,28 +67,21 @@ namespace BusinessLayer
             var efComponents = DevOpsContext.Components.ToList();
             foreach (var c in efComponents)
             {
-                components.Add(new ViewModel.Component()
-                {
-                    id = c.id,
-                    component_name = c.component_name,
-                    active = c.active,
-                    create_date = c.create_date,
-                    modify_date = c.modify_date,
-                    relative_path = c.relative_path,
-                    MachineComponentPaths = 
-                });
+                components.Add(ReturnComponentVariable(c));
             }
             return components;
         }
 
         public ViewModel.Component GetComponent(int componentId)
         {
-            throw new NotImplementedException();
+            var efComponent = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
+            return ReturnComponentVariable(efComponent);
         }
 
         public ViewModel.Component GetComponent(string componentName)
         {
-            throw new NotImplementedException();
+            var efComponent = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
+            return ReturnComponentVariable(efComponent);
         }
 
         public ViewModel.Component AddUpdateComponent(ViewModel.Component component)
@@ -341,11 +334,28 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Deletes the component described by componentId. </summary>
+        ///
+        /// <remarks>   Patman, 4/14/2017. </remarks>
+        ///
+        /// <param name="componentId">  Identifier for the component. </param>
+        ///
+        /// <returns>   A ViewModel.Component. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ViewModel.Component DeleteComponent(int componentId)
+        {
+            var comp = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
+            DevOpsContext.Components.Remove(comp);
+            DevOpsContext.SaveChanges();
+            return new ViewModel.Component();
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         //  <section> Begin Private Methods </section>
         ///-------------------------------------------------------------------------------------------------
 
 
-        private ViewModel.Component ReturnConfigVariable(EFDataModel.DevOps.Component component)
+        private ViewModel.Component ReturnComponentVariable(EFDataModel.DevOps.Component component)
         {
             return new ViewModel.Component()
             {
@@ -355,10 +365,9 @@ namespace BusinessLayer
                 create_date = component.create_date,
                 relative_path = component.relative_path,
                 modify_date = component.modify_date,
-                MachineComponentPaths = component.value_name ?? "",
-                parent_element = component.parent_element,
-                component.ariableValues = EfToVmConverter.Efcomponent.alueListToVm(component.component.ariableValues),
-                Components = EfToVmConverter.EfComponentListToVm(component.Components)
+                MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
+                Applications = EfToVmConverter.EfAppListToVm(component.Applications),
+                ConfigVariables = EfToVmConverter.EfConfigListToVm(component.ConfigVariables).ToList(),
             };
         }
 
@@ -411,7 +420,7 @@ namespace BusinessLayer
             {
                 id = config.id,
                 active = config.active,
-                key_name = config.attribute,
+                attribute = config.attribute,
                 create_date = config.create_date,
                 element = config.element,
                 key = config.key,
