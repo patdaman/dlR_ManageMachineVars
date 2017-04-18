@@ -176,26 +176,31 @@ namespace BusinessLayer
             return vm;
         }
 
-        internal List<MachineComponentPath> EfMachineComponentPathListToVm(ICollection<MachineComponentPathMap> machineComponentPathMaps)
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Ef machine component path list to view model. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/17/2017. </remarks>
+        ///
+        /// <param name="EFmachineComponentPathMaps">   The fmachine component path maps. </param>
+        ///
+        /// <returns>   A List&lt;MachineComponentPath&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
+        internal List<MachineComponentPath> EfMachineComponentPathListToVm(ICollection<MachineComponentPathMap> EFmachineComponentPathMaps)
         {
-            var EFmachineComponentPaths = new List<ViewModel.Machine>();
-            foreach (var machine in EFmachines)
+            var MachineComponentPaths = new List<ViewModel.MachineComponentPath>();
+
+            foreach (var machine in EFmachineComponentPathMaps)
             {
                 //machines.Add(MachineEfToVm(machine));
                 //machines.Add(new ViewModel.Machine(MachineEfToVm(machine)));
-                EFmachineComponentPaths.Add(new ViewModel.Machine()
+                MachineComponentPaths.Add(new ViewModel.MachineComponentPath()
                 {
-                    id = machine.id,
-                    machine_name = machine.machine_name,
-                    ip_address = machine.ip_address,
-                    location = machine.location,
-                    usage = machine.usage,
-                    create_date = machine.create_date,
-                    modify_date = machine.modify_date,
-                    active = machine.active,
+                    machine_id = machine.machine_id,
+                    component_id = machine.component_id,
+                    config_path = machine.config_path,
                 });
             }
-            return EFmachineComponentPaths;
+            return MachineComponentPaths;
         }
 
         ///-------------------------------------------------------------------------------------------------

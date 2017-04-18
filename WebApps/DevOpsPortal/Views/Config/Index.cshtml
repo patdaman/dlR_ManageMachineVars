@@ -32,7 +32,8 @@
             <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
             </select>
-            <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add Component" />
+
+            <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add / Edit Component" />
             @*<input type="button" class="btn btn-small" ng-click="publishSelectedRows()" value="Publish" />*@
         </div>
             <div ui-grid="gridOptions"

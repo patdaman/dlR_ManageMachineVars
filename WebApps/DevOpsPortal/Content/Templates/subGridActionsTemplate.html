@@ -1,16 +1,15 @@
 ﻿<div ng-if="row.groupHeader">
     <div class="ui-grid-cell-contents">
         <button value="Edit" class="btn btn-xs btn-default" ng-click="grid.appScope.showFile(row)">View File</button>
-        <!--<button value="AddVar" class="btn btn-xs btn-info" ng-click="grid.appScope.addVar(row.entity)">Add Var</button>-->
-        <a href="" class="btn btn-dark btn-primary" ng-click="download()">Download</a>
+        <button value="AddVar" class="btn btn-xs btn-info" ng-click="grid.appScope.addVar(row.entity)">Add Var</button>
     </div>
 </div>
 
 <div ng-if="!row.groupHeader">
     <div class="ui-grid-cell-contents">
         <!--<button id="editBtn" ng-if="grid.appScope.gridOptions.data[row.parent].subGridOptions.data[grid.appScope.subGridRowId].editable !== true" type="button" class="btn btn-xs btn-default" ng-click="grid.appScope.editCell(row)">Edit </button>-->
-        <button id="editBtn" ng-if="!grid.appScope.subEdit || grid.renderContainers.body.visibleRowCache.indexOf(row) !== grid.appScope.rowIndex || row.grid.parentRow.treeNode.row.entity.index !== grid.appScope.rowId" type="button" class="btn btn-xs btn-default" ng-click="grid.appScope.editCell(row)">Edit </button>
-        <button id="saveBtn" ng-if="grid.appScope.subEdit && grid.renderContainers.body.visibleRowCache.indexOf(row) === grid.appScope.rowIndex && row.grid.parentRow.treeNode.row.entity.index === grid.appScope.rowId" type="button" class="btn btn-xs btn-warning" ng-click="grid.appScope.saveSubGridRow(row.entity)">Save </button>
-        &nbsp; <button id="cancelBtn" ng-if="grid.appScope.subEdit && grid.renderContainers.body.visibleRowCache.indexOf(row) === grid.appScope.rowIndex && row.grid.parentRow.treeNode.row.entity.index === grid.appScope.rowId" type="button" class="btn btn-xs btn-info" ng-click="grid.appScope.cancelEdit()">Cancel </button>
+        <button id="editBtn" ng-if="!grid.appScope.subEdit || grid.renderContainers.body.visibleRowCache.indexOf(row) !== grid.appScope.rowIndex || row.entity.configvar_id !== grid.appScope.var_id" type="button" class="btn btn-xs btn-default" ng-click="grid.appScope.editCell(row)">Edit </button>
+        <button id="saveBtn" ng-if="grid.appScope.subEdit && grid.renderContainers.body.visibleRowCache.indexOf(row) === grid.appScope.rowIndex && row.entity.configvar_id === grid.appScope.var_id" type="button" class="btn btn-xs btn-warning" ng-click="grid.appScope.saveSubGridRow(row.entity)">Save </button>
+        &nbsp; <button id="cancelBtn" ng-if="grid.appScope.subEdit && grid.renderContainers.body.visibleRowCache.indexOf(row) === grid.appScope.rowIndex && row.entity.configvar_id === grid.appScope.var_id" type="button" class="btn btn-xs btn-info" ng-click="grid.appScope.cancelEdit()">Cancel </button>
     </div>
 </div>
