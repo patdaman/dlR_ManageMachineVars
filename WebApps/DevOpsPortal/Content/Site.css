@@ -27,10 +27,10 @@ textarea {
 div.panel {
     margin: 0px;
 	padding: 5px;
-	text-align: left;
+	/*text-align: left;
 	background: #ddd;
 	border: solid 1px #fff;
-    max-width: 75%;
+    max-width: 75%;*/
 	display: none;
 }
 
@@ -44,6 +44,29 @@ div.flip {
 }
 
 .flip:hover span{
+    font-weight:bold;
+    text-decoration:underline;
+}  
+
+div.panelReverse {
+    margin: 0px;
+	padding: 5px;
+	/*text-align: left;
+	background: #ddd;
+	border: solid 1px #fff;
+    max-width: 75%;*/
+}
+
+/* Instruction panel button */
+div.flipReverse {
+    border: solid 1px #fff;
+}
+
+.flipReverse span{
+    color: blue;
+}
+
+.flipReverse:hover span{
     font-weight:bold;
     text-decoration:underline;
 }  

@@ -506,11 +506,23 @@ namespace BusinessLayer
         private AppVar AddUpdateVariable(AppVar appValue)
         {
             EFDataModel.DevOps.ConfigVariable efConfig = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.configvar_id).FirstOrDefault();
-            List<EFDataModel.DevOps.ConfigVariableValue> efConfigValueList = efConfig.ConfigVariableValues.ToList();
-            EFDataModel.DevOps.Component efComponent = DevOpsContext.Components.Where(y => y.component_name == appValue.componentName).FirstOrDefault();
+            List<EFDataModel.DevOps.ConfigVariableValue> efConfigValueList = new List<EFDataModel.DevOps.ConfigVariableValue>();
+            EFDataModel.DevOps.Component efComponent;
+            if (appValue.componentId != null)
+            {
+                efComponent = DevOpsContext.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
+            }
+            else if (!string.IsNullOrWhiteSpace(appValue.componentName))
+            {
+                efComponent = DevOpsContext.Components.Where(y => y.component_name == appValue.componentName).FirstOrDefault();
+            }
+            else
+                throw new ArgumentNullException("No Component provided to add variable.");
 
             if (efConfig == null)
             {
+                if (string.IsNullOrWhiteSpace(appValue.configElement))
+                    appValue.configElement = appValue.key;
                 efConfig = new EFDataModel.DevOps.ConfigVariable()
                 {
                     active = true,
@@ -519,12 +531,31 @@ namespace BusinessLayer
                     attribute = appValue.attribute ?? "key",
                     parent_element = appValue.configParentElement,
                     value_name = appValue.valueName ?? "value",
-                    modify_date = DateTime.Now
+                    create_date = DateTime.Now,
+                    modify_date = DateTime.Now,
                 };
+                if (appValue.values.Count > 0)
+                {
+                    foreach (var val in appValue.values)
+                    {
+                        efConfig.ConfigVariableValues.Add(new EFDataModel.DevOps.ConfigVariableValue()
+                        {
+                            configvar_id = val.configvar_id,
+                            create_date = val.create_date ?? DateTime.Now,
+                            modify_date = val.modify_date ?? DateTime.Now,
+                            environment_type = val.environment,
+                            published = val.published ?? false,
+                            published_date = val.publish_date,
+                            value = val.value
+                        });
+                    }
+                }
+                efConfig.Components.Add(efComponent);
                 DevOpsContext.ConfigVariables.Add(efConfig);
             }
             else
             {
+                efConfigValueList = efConfig.ConfigVariableValues.ToList();
                 if (!(efConfig.element == appValue.configElement &&
                     efConfig.key == appValue.key &&
                     efConfig.attribute == appValue.attribute &&
@@ -537,6 +568,7 @@ namespace BusinessLayer
                     efConfig.attribute = appValue.attribute;
                     efConfig.parent_element = appValue.configParentElement;
                     efConfig.value_name = appValue.valueName;
+                    //efConfig.create_date = efConfig.create_date;
                     efConfig.modify_date = DateTime.Now;
                 }
             }

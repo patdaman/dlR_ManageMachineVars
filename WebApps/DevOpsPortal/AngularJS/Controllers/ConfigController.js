@@ -21,6 +21,7 @@ var ConfigApp = angular.module('ConfigApp',
             'ngAnimate',
             'ui.bootstrap',
             'ngClickCopy'
+            //,'angularFileUpload'
         ])
 
     .config(['$stateProvider',
@@ -245,7 +246,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 treeRowHeaderAlwaysVisible: false,
                 columnDefs: [
                     { displayName: "id", field: "id", visible: false },
-                        { displayName: "Variable id", field: "configvar_id", visible: false },
+                    { displayName: "Variable id", field: "configvar_id", visible: false },
                     {
                         field: "environment",
                         visible: true,
@@ -259,16 +260,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         filterCellFiltered: true,
                         enableCellEdit: false
                     },
-                {
-                    displayName: "Value",
-                    field: "value",
-                    visible: true,
-                    cellEditableCondition: $scope.subCanEdit,
-                    enableFiltering: false, width: "70%"
-                },
-                { displayName: "Create Date", field: "create_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
-                { displayName: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', enableFiltering: false, cellFilter: 'date:"MM-dd-yyyy"' },
-                { displayName: "Last Publish Date", field: "publish_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+                    {
+                        displayName: "Value",
+                        field: "value",
+                        visible: true,
+                        cellEditableCondition: $scope.subCanEdit,
+                        enableFiltering: false, width: "70%"
+                    },
+                    { displayName: "Create Date", field: "create_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+                    { displayName: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', enableFiltering: false, cellFilter: 'date:"MM-dd-yyyy"' },
+                    { displayName: "Last Publish Date", field: "publish_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
                     { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' },
                     {
                         name: "Actions",
@@ -303,6 +304,17 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         });
     });
 
+    // Filters the subgrid based on the Selected Environment
+    //  note - does not refresh currently visible sub grid rows that are not the last one expanded / selected
+    $scope.filterSubGrid = function (value) {
+        console.log(value);
+        $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
+        //angular.forEach($scope.gridOptions.data, function (data) {
+        //    data.values.subGridOptions;
+        //});
+        $scope.subGridApi.core.refresh();
+    };
+
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
     $scope.editCell = function (row) {
         $scope.gridApi.grid.cellNav.clearFocus();
@@ -315,18 +327,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             row.grid.appScope.gridApi.grid.cellNav.clearFocus();
             row.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
             $scope.rowId = row.entity.index;
-            //$scope.scrollToFocus($scope.rowId, 7);
             $scope.key = row.entity.key;
             $scope.edit = true;
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             $scope.canEdit();
-            //if (typeof $scope.selectedRow !== "undefined") {
             if ($scope.selectedRow !== "") {
                 $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.clearFocus();
                 $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
                 $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             }
-            $scope.scrollToFocus($scope.rowId, 7);
+            $scope.gridApi.cellNav.scrollToFocus($scope.rowId, 7);
             $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
         }
             // For Values
@@ -339,7 +349,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     $scope.subGridRowId = index;
                 }
             });
-            //$scope.subGridApi.cellNav.scrollToFocus(row.grid.rows[$scope.subGridRowId], 4);
             $scope.subGridApi.cellNav.scrollToFocus($scope.subGridRowId, 4);
             $scope.value = row.entity.value;
             $scope.subEdit = true;
@@ -349,12 +358,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 $scope.selectedRow.grid.appScope.subGridApi.grid.cellNav.focusedCells = [];
                 $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
             }
-            //$scope.subGridApi.cellNav.scrollToFocus($scope.subGridRowId, 4);
             $scope.subGridApi.grid.appScope.subGridApi.cellNav.scrollToFocus($scope.subGridRowId, 4);
             //row.grid.appScope.subGridApi.cellNav.scrollToFocus($scope.subGridRowId, 4);
             //row.grid.api.cellNav.scrollToFocus(row.grid.rows[$scope.subGridRowId], 4);
             $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
-            $scope.subGridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             row.grid.appScope.subGridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         }
@@ -392,11 +399,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         }
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         $scope.bypassEditCancel = true;
-    };
-
-    $scope.scrollToFocus = function (rowIndex, colIndex) {
-        $scope.canEdit();
-        $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[rowIndex], $scope.gridOptions.columnDefs[colIndex]);
     };
 
     // Grid save function
@@ -484,21 +486,24 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $scope.applications = result.data;
     });
 
+    // Function call from Index page dropdown OnChange
     $scope.updateEnvironment = function () {
         $scope.environment = $scope.selectedEnvironment.value;
         $scope.filterSubGrid($scope.environment);
     };
-
+    // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
         $scope.component = $scope.selectedComponent;
         $scope.gridApi.grid.refresh();
     };
-
+    // Function call from Index page dropdown OnChange
     $scope.updateApplication = function () {
         $scope.application = $scope.selectedApplication;
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
     };
 
+    // Bring up the Add / Edit Component Modal
+    //  including file upload
     $scope.addComponent = function () {
         ModalService.showModal({
             templateUrl: "Content/Templates/addComponentModal.html",
@@ -512,25 +517,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 componentEnvironment: "",
                 environments: $scope.environments,
                 fileName: "",
-                file: null,
-                publish: false,
-                upload: false
             }
         })
         .then(function (modal) {
             modal.element.modal();
             modal.close.then(function (result) {
-                if (result.upload === true) {
-                    if (result.file !== 'undefined' && result.file !== null) {
-                        $scope.uploadFile(result.file, result.fileName, result.filePath, result.componentEnvironment, result.componentName, result.componentId, result.applications);
-                    }
-                } else if (result.publish === true) {
-                    if (result.file !== 'undefined' && result.file !== null) {
-                        $scope.publishFile(result.file, result.fileName, result.filePath, result.componentEnvironment, result.componentName, result.componentId, result.applications);
-                    }
-                } else if (result.componentId !== 'undefined' && result.componentId !== null) {
+                if (result.publish === true) {
+                    $scope.publishFile(result.fileName, result.filePath, result.componentEnvironment, result.componentName, result.componentId, result.applications);
+                } else if (result.componentId !== 'undefined' && result.componentId !== null && result.save) {
                     $scope.updateComponent(result.fileName, result.filePath, result.componentEnvironment, result.componentName, result.componentId, result.applications)
-                } else {
+                } else if (result.save) {
                     $scope.updateComponent(result.fileName, result.filePath, result.componentEnvironment, result.componentName, result.componentId, result.applications)
                 }
             });
@@ -543,25 +539,70 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.addVar = function (row) {
         var componentRow = '$$' + row.uid;
         var rowEntity = row.entity;
-        var componentAggObject = rowEntity['$$uiGrid-000A'];
-        var firstChildParentElement = row.treeNode.children[0].row.entity.configParentElement;
+        var componentAggObject = row.treeNode.aggregations[0].groupVal;
+        var firstChild = row.treeNode.children[0].row.entity;
+        var firstChildParentElement = firstChild.configParentElement;
+        var show;
+        var isNew;
+        if (typeof firstChild === "undefined") {
+            isNew = 1;
+            show = 0;
+        }
+        else {
+            firstChildParentElement = firstChild.configParentElement;
+            isNew = 0;
+            if (firstChild.attribute !== "") {
+                show = 1;
+            }
+            else {
+                show = 0;
+            }
+        }
+
         ModalService.showModal({
             templateUrl: "Content/Templates/addVariableModal.html",
             controller: "AddVar",
             inputs: {
-                componentName: componentAggObject.groupVal,
+                componentName: componentAggObject,
                 parentElement: firstChildParentElement,
+                applicationNames: firstChild.applicationNames,
                 element: "",
                 keyName: "",
                 key: "",
                 valueName: "",
                 save: false,
-                publish: false
+                show: show,
+                isNew: isNew,
             }
         })
             .then(function (modal) {
                 modal.element.modal();
                 modal.close.then(function (result) {
+                    if (result.save) {
+                        var deferred = $q.defer();
+                        var data = JSON.stringify({
+                            "componentId": firstChild.componentId,
+                            "componentName": result.componentName,
+                            "applicationNames": firstChild.applicationNames,
+                            "configParentElement": result.parentElement,
+                            "configElement": result.element,
+                            "attribute": result.keyName,
+                            "key": result.key,
+                            "valueName": result.valueName,
+                            "values": []
+                        });
+                        $http({
+                            method: 'POST',
+                            url: 'api/ConfigApi/',
+                            //withCredentials: true,
+                            data: data,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }).success(deferred.resolve)
+                                .error(deferred.reject);
+                        return deferred.promise;
+                    };
                 });
             }).catch(function (error) {
                 console.log(error);
@@ -573,8 +614,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentRow = '$$' + row.uid;
         var componentGroupName = row.treeNode.aggregations[0].groupVal;
         var rowEntity = row.entity;
-        //var componentAggObject = rowEntity['$$uiGrid-000A'];
-        //$http.get('/api/ConfigApi?componentName=' + componentAggObject.groupVal + '&environment=' + $scope.environment)
         $http.get('/api/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
             .success(function (data) {
                 ModalService.showModal({
@@ -600,17 +639,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         });
                     })
             })
-    };
-
-    // Filters the subgrid based on the Selected Environment
-    //  note - does not refresh currently visible sub grid rows that are not the last one expanded / selected
-    $scope.filterSubGrid = function (value) {
-        console.log(value);
-        $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
-        //angular.forEach($scope.gridOptions.data, function (data) {
-        //    data.values.subGridOptions;
-        //});
-        $scope.subGridApi.core.refresh();
     };
 
     // Config File Download
@@ -663,12 +691,26 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             console.log(data);
         });
     }
-
-    $scope.uploadConfig = function (componentName, environment) {
-        $scope.uploadFile(componentName, environment);
-    };
 });
 
+///-------------------------------------------------------------------------------------------------
+/// <summary>   Controller for the Config File Viewer / Downloader Modal. </summary>
+///
+/// <remarks>   Pdelosreyes, 4/19/2017. </remarks>
+///
+/// <param name="'ConfigViewer'">   The configuration viewer'. </param>
+/// <param name="($rootScope">      The $root scope. </param>
+/// <param name="$scope">           The $scope. </param>
+/// <param name="$element">         The $element. </param>
+/// <param name="title">            The title. </param>
+/// <param name="filePath">         Full pathname of the file. </param>
+/// <param name="configXml">        The configuration XML. </param>
+/// <param name="close">            The close. </param>
+/// <param name="publish">          The publish. </param>
+/// <param name="download">         The download. </param>
+///
+/// <returns>   . </returns>
+///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigViewer',
     function ($rootScope, $scope, $element, title, filePath, configXml, close, publish, download) {
         //var vm = this;
@@ -679,22 +721,29 @@ ConfigApp.controller('ConfigViewer',
         vm.close = function () {
             $element.modal('hide');
             close({
+                publish: false,
+                download: false,
             }, 500); // close, but give 500ms for bootstrap to animate
         };
         vm.cancel = function () {
             $element.modal('hide');
-            close(null, 500);
+            close({
+                publish: false,
+                download: false,
+            }, 500);
         };
         vm.publish = function () {
             $element.modal('hide');
             close({
                 publish: true,
+                download: false,
                 title: vm.title
             }, 500);
         }
         vm.download = function () {
             $element.modal('hide');
             close({
+                publish: false,
                 download: true,
                 title: vm.title
             }, 500);
@@ -705,8 +754,31 @@ ConfigApp.controller('ConfigViewer',
         }
     });
 
+///-------------------------------------------------------------------------------------------------
+/// <summary>   Controllers. </summary>
+///
+/// <remarks>   Pdelosreyes, 4/19/2017. </remarks>
+///
+/// <param name="'AddComponent'">       The add component'. </param>
+/// <param name="($rootScope">          The $root scope. </param>
+/// <param name="$scope">               The $scope. </param>
+/// <param name="$element">             The $element. </param>
+/// <param name="close">                The close. </param>
+/// <param name="filePath">             Full pathname of the file. </param>
+/// <param name="components">           The components. </param>
+/// <param name="componentComponents">  The component components. </param>
+/// <param name="componentName">        Name of the component. </param>
+/// <param name="fileName">             Filename of the file. </param>
+/// <param name="componentEnvironment"> The component environment. </param>
+/// <param name="environments">         The environments. </param>
+/// <param name="file">                 The file. </param>
+/// <param name="publish">              The publish. </param>
+/// <param name="upload">               The upload. </param>
+///
+/// <returns>   . </returns>
+///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddComponent',
-    function ($rootScope, $scope, $element, close, filePath, components, componentComponents, componentName, fileName, componentEnvironment, environments, file, publish, upload) {
+    function ($rootScope, $scope, $element, close, filePath, components, componentComponents, componentName, fileName, componentEnvironment, environments) {
         //var vm = this;
         var vm = $scope;
         vm.filePath = filePath;
@@ -716,59 +788,90 @@ ConfigApp.controller('AddComponent',
         vm.componentEnvironment = componentEnvironment;
         vm.environments = environments;
         vm.fileName = fileName;
-        vm.file = file;
         vm.close = function () {
             close({
             }, 500); // close, but give 500ms for bootstrap to animate
         };
         vm.cancel = function () {
             $element.modal('hide');
-            close(null, 500);
+            close({
+                publish: false,
+                save: false,
+            }, 500);
         };
         vm.publish = function () {
             $element.modal('hide');
             close({
+                save: true,
                 publish: true,
                 componentName: vm.componentName
             }, 500);
         }
-        vm.upload = function () {
+        vm.save = function () {
             $element.modal('hide');
             close({
-                upload: true,
+                save: true,
+                publish: false,
                 componentName: vm.componentName
             }, 500);
         }
     });
 
+///-------------------------------------------------------------------------------------------------
+/// <summary>   Controllers. </summary>
+///
+/// <remarks>   Pdelosreyes, 4/19/2017. </remarks>
+///
+/// <param name="'AddVar'">         The add var'. </param>
+/// <param name="($rootScope">      The $root scope. </param>
+/// <param name="$scope">           The $scope. </param>
+/// <param name="$element">         The $element. </param>
+/// <param name="close">            The close. </param>
+/// <param name="componentName">    Name of the component. </param>
+/// <param name="parentElement">    The parent element. </param>
+/// <param name="element">          The element. </param>
+/// <param name="keyName">          Name of the key. </param>
+/// <param name="key">              The key. </param>
+/// <param name="valueName">        Name of the value. </param>
+/// <param name="save">             The save. </param>
+/// <param name="publish">          The publish. </param>
+///
+/// <returns>   . </returns>
+///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddVar',
-    function ($rootScope, $scope, $element, close, componentName, parentElement, element, keyName, key, valueName, save, publish) {
+    function ($rootScope, $scope, $element, close, componentName, parentElement, element, keyName, key, valueName, show, isNew, save) {
         var vm = $scope;
+        var additionalParentElements = [];
         vm.componentName = componentName;
         vm.element = element;
         vm.parentElement = parentElement;
         vm.keyName = keyName;
         vm.key = key;
         vm.valueName = valueName;
+        vm.show = show;
+        vm.isNew = isNew;
         vm.close = function () {
             close({
-                componentName: vm.componentName
+                save: false,
             }, 500); // close, but give 500ms for bootstrap to animate
         };
         vm.cancel = function () {
             $element.modal('hide');
-            close(null, 500);
+            close({
+                save: false,
+            }, 500);
         };
         vm.save = function () {
             $element.modal('hide');
-            close(null, 500);
-        };
-        vm.publish = function () {
-            $element.modal('hide');
             close({
-                publish: true,
-                componentName: vm.componentName
+                save: true,
+                componentName: vm.componentName,
+                element: vm.element,
+                parentElement: vm.parentElement,
+                keyName: vm.keyName,
+                key: vm.key,
+                valueName: valueName,
+                additionalParentElements: vm.additionalParentElements
             }, 500);
-        }
+        };
     });
-

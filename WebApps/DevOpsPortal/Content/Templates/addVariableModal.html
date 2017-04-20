@@ -14,36 +14,92 @@
                     <label>Key:</label>
                     <input id="key" class="form-control" type="text" ng-model="key">
                 </div>
-                <br />
-                <div class="form-group">
-                    <h4><b>The following are only required required for XML formatting with attributes</b></h4>
-                    <h6>&lt;{Parent Element}&gt;</h6>
-                    <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;add key:"{key}" value="{value}"&gt;</h6>
-                    <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;db name:"{key}" connection_string="{value}"&gt;</h6>
-                    <h6>&lt;/{Parent Element}&gt;</h6>
+                <div ng-if="!show || new">
+                    <h5>&lt;{{parentElement}}&gt;</h5>
+                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{key}&gt;{value}&lt;/{key}&gt;</h5>
+                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{key}}&gt;{value}&lt;/{{key}}&gt;</h5>
+                    <h5>&lt;/{{parentElement}}&gt;</h5>
+                    <br />
                 </div>
-                <div class="form-group">
-                    <label>Element:</label>
-                    <input id="element" class="form-control" type="text" ng-model="element">
+                <div ng-if="show || new">
+                    <script>
+                        $(document).ready(function () {
+                            $(".flip").click(function () {
+                                $(".panel").slideToggle("slow");
+                            });
+                        });
+                    </script>
+                    <div ng-if="new">
+                        <div class="flip">
+                            <!--<h5><b>Add fields required for XML formatting with attributes</b></h5>-->
+                            <button type="button" class="btn btn-primary">Add fields required for XML formatting with attributes</button>
+                        </div>
+                    </div>
+                    <div ng-if="new" class="panel">
+                        <div class="form-group">
+                            <h4><b>The following are required for XML formatting with attributes</b></h4>
+                            <h6>&lt;{Parent Element}&gt;</h6>
+                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{element} {attribute}:"{key}" {valueName}="{value}"&gt;</h6>
+                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;add key:"{key}" value="{value}"&gt;</h6>
+                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;db name:"{key}" connection_string="{value}"&gt;</h6>
+                            <h6>&lt;/{Parent Element}&gt;</h6>
+                        </div>
+                        <div class="form-group">
+                            <label>Element:</label>
+                            <input id="element" class="form-control" type="text" ng-model="element">
+                        </div>
+                        <div class="form-group">
+                            <label>Key Name / Attribute:</label>
+                            <input id="keyName" class="form-control" type="text" ng-model="keyName">
+                        </div>
+                        <div class="form-group">
+                            <label>valueName:</label>
+                            <input id="valueName" class="form-control" type="text" ng-model="valueName">
+                        </div>
+                        <h5>&lt;{{parentElement}}&gt;</h5>
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{keyName}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
+                        <h5>&lt;/{{parentElement}}&gt;</h5>
+                    </div>
+                    <div ng-if="!new">
+                        <div class="form-group">
+                            <h4><b>The following are required for XML formatting with attributes</b></h4>
+                            <h6>&lt;{Parent Element}&gt;</h6>
+                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{element} {attribute}:"{key}" {valueName}="{value}"&gt;</h6>
+                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;add key:"{key}" value="{value}"&gt;</h6>
+                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;db name:"{key}" connection_string="{value}"&gt;</h6>
+                            <h6>&lt;/{Parent Element}&gt;</h6>
+                        </div>
+                        <div class="form-group">
+                            <label>Element:</label>
+                            <input id="element" class="form-control" type="text" ng-model="element">
+                        </div>
+                        <div class="form-group">
+                            <label>Key Name / Attribute:</label>
+                            <input id="keyName" class="form-control" type="text" ng-model="keyName">
+                        </div>
+                        <div class="form-group">
+                            <label>Value Name:</label>
+                            <input id="valueName" class="form-control" type="text" ng-model="valueName">
+                        </div>
+                        <h5>&lt;{{parentElement}}&gt;</h5>
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{keyName}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
+                        <h5>&lt;/{{parentElement}}&gt;</h5>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Key Name / Attribute:</label>
-                    <input id="keyName" class="form-control" type="text" ng-model="keyName">
-                </div>
-                <div class="form-group">
-                    <label>valueName:</label>
-                    <input id="valueName" class="form-control" type="text" ng-model="valueName">
-                </div>
-                <h5>&lt;{{parentElement}}&gt;</h5>
-                <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{keyName}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
-                <h5>&lt;/{{parentElement}}&gt;</h5>
                 <br />
             </div>
             <div class="modal-footer">
                 <!--<button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Publish</button>-->
-                <button type="button" ng-click="upload()" class="btn btn-primary">Save</button>
-                <button type="button" ng-click="cancel()" class="btn">Cancel</button>
+                <button type="button" ng-click="save()" class="btn btn-primary">Save</button>
+                <button type="button" ng-click="close()" class="btn">Cancel</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $(".flip").click(function () {
+            $(".panel").slideToggle("slow");
+        });
+    });
+</script>

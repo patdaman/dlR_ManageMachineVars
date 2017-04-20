@@ -34,11 +34,13 @@
                 <p>
                     <div class="form-group">
                         <label>Add File:</label>
-                        <input id="file" class="form-control" type="text" ng-model="file">
                     </div>
                     <select ng-model="componentEnvironment" ng-options="c.name for c in environments">
                         <option value="" style="color:red">Select Environment:</option>
                     </select>
+                    <div class="form-group">
+                        <input type="file" ng-file-select="onFileSelect($files)" multiple>
+                    </div>
                 </p>
             </div>
             <div class="modal-footer">

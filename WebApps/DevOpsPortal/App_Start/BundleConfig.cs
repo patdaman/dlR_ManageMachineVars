@@ -25,11 +25,14 @@ namespace DevOpsPortal
                       "~/Scripts/angular-animate.js",
                       "~/Scripts/angular-ui-router.js",
                       "~/Scripts/angular-modal-service.js",
+                      "~/Scripts/angular-resource.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
                       "~/Scripts/vfs_fonts.js",
                       //"~/Scripts/ui-grid.js",
-                      "~/AngularJS/app.js"
+                      "~/AngularJS/app.js",
+                      //"~/AngularJS/Controllers/ConfigController.js",
+                      "~/Scripts/Site.js"
                       ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
