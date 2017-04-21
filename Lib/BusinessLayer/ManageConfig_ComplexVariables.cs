@@ -78,15 +78,49 @@ namespace BusinessLayer
             return ReturnComponentVariable(efComponent);
         }
 
-        public ViewModel.Component GetComponent(string componentName)
+        //public ViewModel.Component GetComponent(string componentName)
+        //{
+        //    var efComponent = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
+        //    return ReturnComponentVariable(efComponent);
+        //}
+
+        public ViewModel.Component GetComponent(string componentName, bool noVal = false)
         {
             var efComponent = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
-            return ReturnComponentVariable(efComponent);
+            return ReturnComponentVariable(efComponent, noVal);
         }
 
         public ViewModel.Component AddUpdateComponent(ViewModel.Component component)
         {
-            throw new NotImplementedException();
+            EFDataModel.DevOps.Component efComp;
+            if (component.id != null && component.id != 0)
+                efComp = DevOpsContext.Components.Where(x => x.id == component.id).FirstOrDefault();
+            else
+                efComp = DevOpsContext.Components.Where(x => x.component_name == component.component_name).FirstOrDefault();
+            if (efComp == null)
+                DevOpsContext.Components.Add(new EFDataModel.DevOps.Component()
+                {
+                    component_name = component.component_name,
+                    create_date = component.create_date,
+                    modify_date = component.modify_date ?? DateTime.Now,
+                    MachineComponentPathMaps = new List<MachineComponentPathMap>(),
+                    active = component.active,
+                    relative_path = component.relative_path,
+                    ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
+                    ConfigVariables = new List<EFDataModel.DevOps.ConfigVariable>(),
+                    Applications = new List<EFDataModel.DevOps.Application>(),
+                    //Applications = GetEfApplication(component.Applications),
+                });
+            else
+            {
+                efComp.component_name = component.component_name;
+                //efComp.create_date = component.create_date;
+                //efComp.modify_date = component.modify_date ?? DateTime.Now;
+                //efComp.active = component.active;
+                efComp.relative_path = component.relative_path;
+                //efComp.Applications.AddRange(GetEfApplication(component.Applications));
+            }
+            return GetComponent(component.component_name, true);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -140,6 +174,95 @@ namespace BusinessLayer
             else
                 throw new ArgumentException("Invalid value type requested.");
             return values;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets an application. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/20/2017. </remarks>
+        ///
+        /// <param name="apps"> The apps. </param>
+        ///
+        /// <returns>   The application. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.Application> GetApplication(List<ApplicationDto> apps)
+        {
+            List<ViewModel.Application> vmApps = new List<ViewModel.Application>();
+            if (apps.Count > 0)
+            {
+                List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => apps.Select(y => y.name).Contains(x.application_name)).ToList();
+                foreach (var vmApp in apps)
+                {
+                    var app = efApps.Where(x => x.application_name == vmApp.name).FirstOrDefault();
+                    if (app == null)
+                    {
+                        vmApps.Add(new ViewModel.Application(vmApp)
+                        {
+                            active = true,
+                            create_date = DateTime.Now,
+                            modify_date = DateTime.Now,
+                            release = ".42",
+                            EnvironmentVariables = new List<EnvironmentDtoVariable>(),
+                        });
+                    }
+                    else
+                    {
+                        vmApps.Add(new ViewModel.Application()
+                        {
+                            id = app.id,
+                            active = app.active,
+                            application_name = app.application_name,
+                            create_date = app.create_date,
+                            modify_date = app.modify_date,
+                            release = app.release,
+                            EnvironmentVariables = new List<EnvironmentDtoVariable>(),
+                        });
+                    }
+                }
+            }
+            return vmApps;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets ef application. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/20/2017. </remarks>
+        ///
+        /// <param name="vmApps">   The view model apps. </param>
+        ///
+        /// <returns>   The ef application. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<EFDataModel.DevOps.Application> GetEfApplication(List<ViewModel.Application> vmApps)
+        {
+            List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => vmApps.Select(y => y.application_name).Contains(x.application_name)).ToList();
+            foreach (var vmApp in vmApps)
+            {
+                EFDataModel.DevOps.Application app = efApps.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
+                if (app == null)
+                {
+                    if (string.IsNullOrWhiteSpace(vmApp.release))
+                        vmApp.release = ".42";
+                    efApps.Add(new EFDataModel.DevOps.Application()
+                    {
+                        application_name = vmApp.application_name,
+                        active = vmApp.active, // ?? true,
+                        create_date = vmApp.create_date, // ?? DateTime.Now,
+                        modify_date = vmApp.modify_date ?? DateTime.Now,
+                        release = vmApp.release,
+                        EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
+                    });
+                }
+                else
+                {
+                    app.id = vmApp.id;
+                    app.active = vmApp.active;
+                    app.application_name = vmApp.application_name;
+                    app.create_date = vmApp.create_date;
+                    app.modify_date = vmApp.modify_date ?? DateTime.Now;
+                    app.release = vmApp.release;
+                }
+            }
+            return efApps;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -355,20 +478,38 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
 
 
-        private ViewModel.Component ReturnComponentVariable(EFDataModel.DevOps.Component component)
+        private ViewModel.Component ReturnComponentVariable(EFDataModel.DevOps.Component component, bool noVal = false)
         {
-            return new ViewModel.Component()
+            if (noVal)
             {
-                id = component.id,
-                active = component.active,
-                component_name = component.component_name,
-                create_date = component.create_date,
-                relative_path = component.relative_path,
-                modify_date = component.modify_date,
-                MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
-                Applications = EfToVmConverter.EfAppListToVm(component.Applications),
-                ConfigVariables = EfToVmConverter.EfConfigListToVm(component.ConfigVariables).ToList(),
-            };
+                return new ViewModel.Component()
+                {
+                    id = component.id,
+                    active = component.active,
+                    component_name = component.component_name,
+                    create_date = component.create_date,
+                    relative_path = component.relative_path,
+                    modify_date = component.modify_date,
+                    MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
+                    Applications = EfToVmConverter.EfAppListToVm(component.Applications),
+                    ConfigVariables = new List<ViewModel.ConfigVariable>(),
+                };
+            }
+            else
+            {
+                return new ViewModel.Component()
+                {
+                    id = component.id,
+                    active = component.active,
+                    component_name = component.component_name,
+                    create_date = component.create_date,
+                    relative_path = component.relative_path,
+                    modify_date = component.modify_date,
+                    MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
+                    Applications = EfToVmConverter.EfAppListToVm(component.Applications),
+                    ConfigVariables = EfToVmConverter.EfConfigListToVm(component.ConfigVariables).ToList(),
+                };
+            }
         }
 
         ///-------------------------------------------------------------------------------------------------

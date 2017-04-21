@@ -67,7 +67,35 @@ namespace DevOpsPortal.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.GetComponent(componentName));
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.GetComponent(componentName, true));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Puts. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/20/2017. </remarks>
+        ///
+        /// <param name="componentName">    The component name to get. </param>
+        /// <param name="filePath">         Full pathname of the file. </param>
+        /// <param name="applicationNames"> List of names of the applications. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        [HttpPost]
+        public HttpResponseMessage Post(ViewModel.ComponentDto componentModel)
+        {
+
+            try
+            {
+                ViewModel.Component newComp = new ViewModel.Component(componentModel);
+                newComp.Applications = configProcessor.GetApplication(componentModel.applications);
+                //return Post(newComp);
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(newComp));
             }
             catch (Exception ex)
             {
@@ -84,17 +112,17 @@ namespace DevOpsPortal.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Put(ViewModel.Component component)
-        {
-            try
-            {
-                return Post(component);
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
+        //public HttpResponseMessage Put(ViewModel.Component component)
+        //{
+        //    try
+        //    {
+        //        return Post(component);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+        //    }
+        //}
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Post this message. </summary>
@@ -107,18 +135,18 @@ namespace DevOpsPortal.Controllers
         ///
         /// ### <param name="value">    . </param>
         ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Post(ViewModel.Component component)
-        {
-            try
-            {
-                var response = Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(component));
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
+        //public HttpResponseMessage Post(ViewModel.Component component)
+        //{
+        //    try
+        //    {
+        //        var response = Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(component));
+        //        return response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+        //    }
+        //}
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Deletes the given ID. </summary>

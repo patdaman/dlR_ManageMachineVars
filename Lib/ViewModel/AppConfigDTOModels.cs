@@ -103,6 +103,11 @@ namespace ViewModel
             //Components = a.Components;
             //EnvironmentVariables = a.EnvironmentVariables;
         }
+        public Application(ApplicationDto a)
+        {
+            id = a.id ?? 0;
+            application_name = a.name;
+        }
     }
 
     public class Component
@@ -132,6 +137,46 @@ namespace ViewModel
             //MachineComponentPaths = c.MachineComponentPaths;
             //Applications = c.Applications;
             //ConfigVariables = c.ConfigVariables;
+        }
+
+        public Component(ComponentDto c)
+        {
+            component_name = c.componentName;
+            relative_path = c.filePath;
+            create_date = DateTime.Now;
+            modify_date = DateTime.Now;
+            active = true;
+            MachineComponentPaths = new List<MachineComponentPath>();
+            Applications = new List<Application>();
+            ConfigVariables = new List<ConfigVariable>();
+        }
+    }
+
+    public class ComponentDto
+    {
+        public ComponentDto() { }
+
+        public string componentName { get; set; }
+        public string filePath { get; set; }
+        public List<ApplicationDto> applications { get; set; }
+
+        public ComponentDto(ComponentDto c)
+        {
+            componentName = c.componentName;
+            filePath = c.filePath;
+            applications = c.applications;
+        }
+    }
+
+    public class ApplicationDto
+    {
+        public ApplicationDto() {}
+        public int? id { get; set; }
+        public string name { get; set; }
+        public ApplicationDto(ApplicationDto a)
+        {
+            id = a.id;
+            name = a.name;
         }
     }
 

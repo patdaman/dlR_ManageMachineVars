@@ -145,7 +145,9 @@ namespace BusinessLayer
             ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(this.configFile)
             {
                 environment = this.environment,
-                componentName = this.componentName
+                componentName = this.componentName,
+                path = this.outputPath,
+                appName = this.appName
             };
             List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
         }

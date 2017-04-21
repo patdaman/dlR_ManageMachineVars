@@ -122,3 +122,54 @@ div.flipReverse {
 .CodeMirror textarea {
     resize: both;
 }
+
+/* for drag and drop file upload */ 
+.drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD;
+    width: 200px;
+    height: 75px;
+    text-align: center;
+    padding-top: 15px;
+    margin: 0px;
+}
+.dragover {
+    border: 5px dashed blue;
+}
+
+/* multi-select */
+.multiSelect {
+    overflow: auto;
+}
+.multiSelect .select {
+    margin-right: 20px;
+    float: left;
+}
+.multiSelect .text {
+    clear: both;
+    font-size: 11px;
+}
+.multiSelect label::after {
+    content: ":";
+}
+.btn.mover {
+    display: block;
+    margin-top: 25px;
+    vertical-align: top;
+}
+.btn.mover.left {
+    padding: 3px 8px 2px 6px;
+}
+.btn.mover.right {
+    margin-top: 24px;
+    padding: 3px 7px 2px;
+}
+.btn.mover i {
+    margin: 0;
+}
+
+/* demo css */
+li {
+    list-style-type: disc;
+}
+}

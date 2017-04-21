@@ -14,7 +14,8 @@ namespace DevOpsPortal.Controllers
     public class ConfigPublishApiController : ApiController
     {
         private BusinessLayer.ManageConfig_Files configProcessor { get; set; }
-        private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
+        private static string ConfigFilePath = @"D:\Temp\";
+        // private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets. </summary>
@@ -78,17 +79,13 @@ namespace DevOpsPortal.Controllers
         ///
         /// <returns>   A Task&lt;IHttpActionResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string action = null)
+        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, List<string> applications, string action = null)
         {
-            BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
-            {
-                componentName = componentName,
-                environment = environment,
-                outputPath = ConfigFilePath
-            };
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
 
+            if (string.IsNullOrWhiteSpace(action))
+                action = "import";
             var provider = new MultipartMemoryStreamProvider();
             await Request.Content.ReadAsMultipartAsync(provider);
             foreach (var file in provider.Contents)
@@ -98,7 +95,16 @@ namespace DevOpsPortal.Controllers
                 var fileName = sections[sections.Length - 1];
                 var fileExt = fileName.Split('.')[1];
                 var buffer = await file.ReadAsStreamAsync();
-                var saveFilePath = ConfigFilePath + @"\" + componentName + @"\" + environment + @"\" + fileName;
+                var saveFilePath = ConfigFilePath + @"\" + componentName + @"\" + environment + @"\";
+                Directory.CreateDirectory(saveFilePath);
+                saveFilePath = saveFilePath + fileName;
+                BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
+                {
+                    componentName = componentName,
+                    environment = environment,
+                    appName = applications.ToString(),
+                    outputPath = saveFilePath,
+                };
                 try
                 {
                     if (File.Exists(saveFilePath))
@@ -119,9 +125,9 @@ namespace DevOpsPortal.Controllers
                     if (fileExt == "config" || fileExt == "xml")
                     {
                         if (action.Equals("publish"))
-                            configProcessor.PublishFile(configFile);
+                            fileProcessor.PublishFile(configFile);
                         else
-                            configProcessor.UploadConfigFile(configFile);
+                            fileProcessor.UploadConfigFile(configFile);
                     }
                     else
                         throw new Exception("File type not valid: " + fileExt);
