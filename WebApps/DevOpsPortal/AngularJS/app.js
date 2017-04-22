@@ -27,7 +27,8 @@ var ConfigApp = angular.module('ConfigApp',
 //ConfigApp.value('configUrl', 'http://localhost:41999');
 //ConfigApp.value('configUrl', 'http://168lyr1');
 //ConfigApp.value('configUrl', 'http://localhost');
-ConfigApp.value('configUrl', 'http://localhost:43767');
+//ConfigApp.value('configUrl', 'http://localhost:43767');
+ConfigApp.value('configUrl', 'http://localhost:47149');
 var machineApp = angular.module('machineApp', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
     'ui.grid.selection', 'ui.grid.pinning']);

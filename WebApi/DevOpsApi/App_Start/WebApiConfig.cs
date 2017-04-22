@@ -11,9 +11,8 @@ namespace DevOpsApi
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.EnableCors();
-            //EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:80/DemoApp/WebForm1.aspx", "*", "GET,PUT,POST");
-            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "GET,PUT,POST");
+            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
 
             // Web API routes
             config.MapHttpAttributeRoutes();
