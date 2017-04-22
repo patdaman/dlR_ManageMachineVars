@@ -20,6 +20,7 @@ namespace BusinessLayer
         public string machineName { get; set; }
         public int? appId { get; set; }
         public string appName { get; set; }
+        public ViewModel.NameValuePair applications { get; set; }
         public int? componentId { get; set; }
         public string componentName { get; set; }
 

@@ -34,7 +34,7 @@ namespace BusinessLayer
                     create_date = app.create_date,
                     modify_date = app.modify_date,
                     active = app.active,
-            });
+                });
             }
             return applications;
         }
@@ -79,7 +79,7 @@ namespace BusinessLayer
                     create_date = machine.create_date,
                     modify_date = machine.modify_date,
                     active = machine.active,
-            });
+                });
             }
             return machines;
         }
@@ -126,7 +126,7 @@ namespace BusinessLayer
         ///
         /// <returns>   A list of. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ICollection<ViewModel.ConfigVariableValue> EfConfigValueListToVm(ICollection<EFDataModel.DevOps.ConfigVariableValue> EF)
+        public ICollection<ViewModel.ConfigVariableValue> EfConfigValueListToVm(ICollection<EFDataModel.DevOps.ConfigVariableValue> EF, List<EFDataModel.DevOps.Enum_EnvironmentType> environments = null)
         {
             var vm = new List<ViewModel.ConfigVariableValue>();
             foreach (var x in EF)
@@ -144,6 +144,26 @@ namespace BusinessLayer
                     publish_date = x.published_date,
                     published = x.published
                 });
+            }
+            if (environments != null && EF.Count > 0)
+            {
+                var defaultVal = EF.FirstOrDefault();
+                foreach (var e in environments)
+                {
+                    var check = vm.Where(z => z.environment == e.name.ToString()).FirstOrDefault();
+                    if (check == null)
+                        vm.Add(new ViewModel.ConfigVariableValue()
+                        {
+                            id = null,
+                            configvar_id = defaultVal.configvar_id,
+                            environment = e.name.ToString(),
+                            value = string.Empty,
+                            create_date = null,
+                            modify_date = null,
+                            publish_date = null,
+                            published = false
+                        });
+                }
             }
             return vm;
         }

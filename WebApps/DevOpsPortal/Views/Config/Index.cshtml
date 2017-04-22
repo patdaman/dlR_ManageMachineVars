@@ -14,6 +14,9 @@
 <script src="@Url.Content("~/Scripts/ng-file-upload.js")"></script>
 <script src="@Url.Content("~/Scripts/ng-file-upload-shim.js")"></script>
 <script src="@Url.Content("~/AngularJS/Services/GridRowEditService.js")"></script>
+<script src="@Url.Content("~/AngularJS/app.js")"></script>
+<script src="@Url.Content("~/AngularJS/Controllers/ConfigModalController.js")"></script>
+<script src="@Url.Content("~/AngularJS/Directives/ConfigDirectives.js")"></script>
 <script src="@Url.Content("~/AngularJS/Controllers/ConfigController.js")"></script>
 <script src="@Url.Content("~/AngularJS/Services/ConfigService.js")"></script>
 
@@ -35,6 +38,7 @@
 
             <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add / Edit Component" />
             @*<input type="button" class="btn btn-small" ng-click="publishSelectedRows()" value="Publish" />*@
+            <div class="float:right">Api Url: {{urlBase}}</div>
         </div>
             <div ui-grid="gridOptions"
             ui-grid-grouping ui-grid-exporter ui-grid-selection

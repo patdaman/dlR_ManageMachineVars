@@ -13,7 +13,13 @@ namespace DevOpsApi.Controllers
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
         public AppConfigFunctions appConfigVars { get; private set; }
 
-        // GET: api/Machine
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   GET: api/Machine. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/12/2017. </remarks>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Get()
         {
             try
@@ -26,7 +32,15 @@ namespace DevOpsApi.Controllers
             }
         }
 
-        // GET: api/configValues/5
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   GET: api/configValues/5. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/12/2017. </remarks>
+        ///
+        /// <param name="id">   The Identifier to get. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Get(int id)
         {
             try
@@ -39,6 +53,27 @@ namespace DevOpsApi.Controllers
             }
         }
 
+        public HttpResponseMessage Get(string type)
+        {
+            try
+            {
+                return Request.CreateResponse<List<ViewModel.NameValuePair>>(HttpStatusCode.OK, configProcessor.GetDropDownValues(type));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Puts the given value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/12/2017. </remarks>
+        ///
+        /// <param name="value">    The value to put. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Put(ViewModel.ConfigVariableValue value)
         {
             try
@@ -51,7 +86,15 @@ namespace DevOpsApi.Controllers
             }
         }
 
-
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Post this message. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/12/2017. </remarks>
+        ///
+        /// <param name="value">    The value to put. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Post(ViewModel.ConfigVariableValue value)
         {
             try

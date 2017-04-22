@@ -286,6 +286,7 @@ namespace BusinessLayer
                     efConfigFile = new EFDataModel.DevOps.ConfigFile()
                     {
                         file_name = file_name,
+                        environment = this.environment,
                         xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
                         root_element = configFile.Root.Name.ToString(),
                         create_date = DateTime.Now,
@@ -310,7 +311,7 @@ namespace BusinessLayer
             {
                 this.componentId = efComp.id;
                 this.componentName = efComp.component_name;
-                efConfigFile = efComp.ConfigFiles.Where(x => x.file_name == file_name && x.component_id == this.componentId).FirstOrDefault();
+                efConfigFile = efComp.ConfigFiles.Where(x => x.file_name == file_name && x.component_id == this.componentId && x.environment == this.environment).FirstOrDefault();
             }
 
             if (efConfigFile == null)
@@ -318,6 +319,7 @@ namespace BusinessLayer
                 efConfigFile = new EFDataModel.DevOps.ConfigFile()
                 {
                     file_name = file_name,
+                    environment = this.environment,
                     xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
                     root_element = configFile.Root.Name.ToString(),
                     create_date = DateTime.Now,

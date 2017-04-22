@@ -557,6 +557,7 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         private ViewModel.ConfigVariable ReturnConfigVariable(EFDataModel.DevOps.ConfigVariable config)
         {
+            var environments = DevOpsContext.Enum_EnvironmentType.ToList();
             return new ViewModel.ConfigVariable()
             {
                 id = config.id,
@@ -568,7 +569,7 @@ namespace BusinessLayer
                 modify_date = config.modify_date,
                 value_name = config.value_name ?? "",
                 parent_element = config.parent_element,
-                ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues),
+                ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues, environments),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)
             };
         }

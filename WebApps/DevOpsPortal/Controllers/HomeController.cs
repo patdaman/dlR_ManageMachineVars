@@ -10,7 +10,8 @@ namespace DevOpsPortal.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            //return View();
+            return RedirectToAction("Index", "Config");
         }
 
         public ActionResult About()

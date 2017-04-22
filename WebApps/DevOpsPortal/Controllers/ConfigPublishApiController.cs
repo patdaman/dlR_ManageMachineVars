@@ -79,7 +79,9 @@ namespace DevOpsPortal.Controllers
         ///
         /// <returns>   A Task&lt;IHttpActionResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, List<string> applications, string action = null)
+        //public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, List<string> applications, string action = null)
+        //public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string action = null)
+        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string applications, string action = null)
         {
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
@@ -107,30 +109,33 @@ namespace DevOpsPortal.Controllers
                 };
                 try
                 {
-                    if (File.Exists(saveFilePath))
-                        try
-                        {
-                            File.Delete(saveFilePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception("File Name already exists: " + fileName, ex);
-                        }
                     XDocument configFile = XDocument.Load(buffer);
-                    using (var fileStream = File.Create(saveFilePath))
-                    {
-                        buffer.CopyTo(fileStream);
-                    }
                     ConfigXml newConfigObject = new ConfigXml();
-                    if (fileExt == "config" || fileExt == "xml")
+                    if (fileExt.ToLower() != "config" && fileExt.ToLower() != "xml")
                     {
-                        if (action.Equals("publish"))
-                            fileProcessor.PublishFile(configFile);
-                        else
-                            fileProcessor.UploadConfigFile(configFile);
+                        throw new Exception("File type not valid: " + fileExt);
+                    }
+                    if (action.Equals("publish"))
+                    {
+                        if (File.Exists(saveFilePath))
+                            try
+                            {
+                                File.Delete(saveFilePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("File Name already exists: " + fileName, ex);
+                            }
+                        using (var fileStream = File.Create(saveFilePath))
+                        {
+                            buffer.CopyTo(fileStream);
+                        }
+                        fileProcessor.PublishFile(configFile);
                     }
                     else
-                        throw new Exception("File type not valid: " + fileExt);
+                    {
+                        fileProcessor.UploadConfigFile(configFile);
+                    }
                 }
                 catch (Exception ex)
                 {

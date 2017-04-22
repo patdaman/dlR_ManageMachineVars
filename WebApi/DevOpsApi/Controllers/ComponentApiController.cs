@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace DevOpsPortal.Controllers
+namespace DevOpsApi.Controllers
 {
     public class ComponentApiController : ApiController
     {
@@ -89,6 +89,7 @@ namespace DevOpsPortal.Controllers
         [HttpPost]
         public HttpResponseMessage Post(ViewModel.ComponentDto componentModel)
         {
+
             try
             {
                 ViewModel.Component newComp = new ViewModel.Component(componentModel);

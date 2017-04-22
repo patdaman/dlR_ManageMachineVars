@@ -57,6 +57,7 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="component_id" Type="int" Nullable="false" />
+          <Property Name="environment" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="file_name" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="xml_declaration" Type="varchar" MaxLength="512" />
           <Property Name="root_element" Type="varchar" MaxLength="256" Nullable="false" />
@@ -353,6 +354,18 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ConfigFile_Enum_EnvironmentType">
+          <End Role="Enum_EnvironmentType" Type="Self.Enum_EnvironmentType" Multiplicity="1" />
+          <End Role="ConfigFile" Type="Self.ConfigFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Enum_EnvironmentType">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="ConfigFile">
+              <PropertyRef Name="environment" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ConfigFileAttributes_ConfigFileElements">
           <End Role="ConfigFileElements" Type="Self.ConfigFileElements" Multiplicity="1" />
           <End Role="ConfigFileAttributes" Type="Self.ConfigFileAttributes" Multiplicity="*" />
@@ -603,6 +616,10 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="Components" EntitySet="Components" />
             <End Role="ConfigFile" EntitySet="ConfigFile" />
           </AssociationSet>
+          <AssociationSet Name="FK_ConfigFile_Enum_EnvironmentType" Association="Self.FK_ConfigFile_Enum_EnvironmentType">
+            <End Role="Enum_EnvironmentType" EntitySet="Enum_EnvironmentType" />
+            <End Role="ConfigFile" EntitySet="ConfigFile" />
+          </AssociationSet>
           <AssociationSet Name="FK_ConfigFileAttributes_ConfigFileElements" Association="Self.FK_ConfigFileAttributes_ConfigFileElements">
             <End Role="ConfigFileElements" EntitySet="ConfigFileElements" />
             <End Role="ConfigFileAttributes" EntitySet="ConfigFileAttributes" />
@@ -709,6 +726,8 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="Component" Relationship="Self.FK_ConfigFile_Components" FromRole="ConfigFile" ToRole="Components" />
           <NavigationProperty Name="ConfigFileElements" Relationship="Self.FK_ConfigFileElements_ConfigFile" FromRole="ConfigFile" ToRole="ConfigFileElements" />
           <Property Name="root_element" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="environment" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Enum_EnvironmentType" Relationship="DevOpsModel.FK_ConfigFile_Enum_EnvironmentType" FromRole="ConfigFile" ToRole="Enum_EnvironmentType" />
         </EntityType>
         <EntityType Name="ConfigFileAttribute">
           <Key>
@@ -775,6 +794,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="ConfigVariableValues" Relationship="Self.FK_ConfigVariableValue_Enum_EnvironmentType" FromRole="Enum_EnvironmentType" ToRole="ConfigVariableValue" />
           <NavigationProperty Name="Machines" Relationship="Self.FK_Machines_Enum_EnvironmentType" FromRole="Enum_EnvironmentType" ToRole="Machines" />
+          <NavigationProperty Name="ConfigFiles" Relationship="DevOpsModel.FK_ConfigFile_Enum_EnvironmentType" FromRole="Enum_EnvironmentType" ToRole="ConfigFile" />
         </EntityType>
         <EntityType Name="Enum_EnvironmentVariableType">
           <Key>
@@ -1088,7 +1108,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <End Role="EnvironmentVariables" Type="Self.EnvironmentVariable" Multiplicity="*" />
           <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="DevOpsEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Applications" EntityType="Self.Application" />
           <EntitySet Name="Components" EntityType="Self.Component" />
           <EntitySet Name="ConfigFiles" EntityType="Self.ConfigFile" />
@@ -1176,13 +1196,29 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
             <End Role="Machines" EntitySet="Machines" />
           </AssociationSet>
+          <AssociationSet Name="FK_ConfigFile_Enum_EnvironmentType" Association="DevOpsModel.FK_ConfigFile_Enum_EnvironmentType">
+            <End Role="Enum_EnvironmentType" EntitySet="Enum_EnvironmentType" />
+            <End Role="ConfigFile" EntitySet="ConfigFiles" />
+          </AssociationSet>
         </EntityContainer>
+        <Association Name="FK_ConfigFile_Enum_EnvironmentType">
+          <End Type="DevOpsModel.Enum_EnvironmentType" Role="Enum_EnvironmentType" Multiplicity="1" />
+          <End Type="DevOpsModel.ConfigFile" Role="ConfigFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Enum_EnvironmentType">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="ConfigFile">
+              <PropertyRef Name="environment" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DevOpsModelStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="DevOpsModelStoreContainer" CdmEntityContainer="DevOpsEntities">
           <EntitySetMapping Name="Applications">
             <EntityTypeMapping TypeName="DevOpsModel.Application">
               <MappingFragment StoreEntitySet="Applications">
@@ -1210,6 +1246,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigFiles">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigFile">
               <MappingFragment StoreEntitySet="ConfigFile">
+                <ScalarProperty Name="environment" ColumnName="environment" />
                 <ScalarProperty Name="root_element" ColumnName="root_element" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="component_id" ColumnName="component_id" />

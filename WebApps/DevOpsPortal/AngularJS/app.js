@@ -16,14 +16,18 @@ var ConfigApp = angular.module('ConfigApp',
             'ui.grid.moveColumns',
             'ui.grid.infiniteScroll',
             'ui.grid.importer',
+            'ui.router',
             'angularModalService',
             'ngAnimate',
-            'ui.bootstrap'
-        ]);
+            'ui.bootstrap',
+            'ngClickCopy',
+            'ngFileUpload'
+        ])
 
 //ConfigApp.value('configUrl', 'http://localhost:41999');
-ConfigApp.value('configUrl', '');
-
+//ConfigApp.value('configUrl', 'http://168lyr1');
+//ConfigApp.value('configUrl', 'http://localhost');
+ConfigApp.value('configUrl', 'http://localhost:43767');
 var machineApp = angular.module('machineApp', ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
     'ui.grid.selection', 'ui.grid.pinning']);

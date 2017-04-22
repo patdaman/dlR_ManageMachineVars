@@ -1,47 +1,25 @@
 ﻿'use strict'
 
-var ConfigApp = angular.module('ConfigApp',
-        ['ui.grid',
-            'ui.grid.edit',
-            'ui.grid.grouping',
-            'ui.grid.saveState',
-            'ui.grid.pagination',
-            'ui.grid.expandable',
-            'ui.grid.cellNav',
-            'ui.grid.selection',
-            'ui.grid.rowEdit',
-            'ui.grid.resizeColumns',
-            'ui.grid.pinning',
-            'ui.grid.exporter',
-            'ui.grid.moveColumns',
-            'ui.grid.infiniteScroll',
-            'ui.grid.importer',
-            'ui.router',
-            'angularModalService',
-            'ngAnimate',
-            'ui.bootstrap',
-            'ngClickCopy'
-            , 'ngFileUpload'
-        ])
-
-    .config(['$stateProvider',
-    function ($stateProvider) {
-        $stateProvider
-            .state('Authorised', {
-                url: '/Authorised',
-                templateUrl: './Views/Authorised.html',
-                controller: 'customerController'
-            })
-            .state('Restricted', {
-                url: '/Restricted',
-                templateUrl: './Views/Restricted.html',
-                controller: 'androidController'
-            })
-        ;
-    }]);
-
+///-------------------------------------------------------------------------------------------------
+/// <summary>   ConfigController </summary>
+///
+/// <remarks>   Pdelosreyes, 4/21/2017. </remarks>
+///
+/// <param name="'ConfigController'">   The configuration controller'. </param>
+/// <param name="($rootScope">          The $root scope. </param>
+/// <param name="$scope">               The $scope. </param>
+/// <param name="$http">                The $http. </param>
+/// <param name="$log">                 The $log. </param>
+/// <param name="$timeout">             The $timeout. </param>
+/// <param name="uiGridConstants">      The grid constants. </param>
+/// <param name="$q">                   The $q. </param>
+/// <param name="$interval">            The $interval. </param>
+/// <param name="ModalService">         The modal service. </param>
+///
+/// <returns>   . </returns>
+///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $log, $timeout,
-    uiGridConstants, $q, $interval, ModalService) {
+    uiGridConstants, $q, $interval, ModalService, configUrl) {
     $scope.title = "Application Configuration";
 
     var data = [];
@@ -77,6 +55,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var selectedEnvironment;
     var environment;
 
+    $scope.urlBase = configUrl;
     $scope.selectedRow = "";
     $scope.key = "";
     $scope.value = "";
@@ -147,7 +126,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         enableRowHeaderSelection: false,
         enableMultiselect: false,
 
-        expandableRowTemplate: 'Content/Templates/expandableRowTemplate.html',
+        expandableRowTemplate: '/Content/Templates/expandableRowTemplate.html',
         expandableRowHeight: 64,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
@@ -207,7 +186,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         {
             name: "Actions",
             width: 150,
-            cellTemplate: 'Content/Templates/actionsTemplate.html',
+            cellTemplate: '/Content/Templates/actionsTemplate.html',
             enableCellEdit: false,
             visible: true,
             enableFiltering: false
@@ -230,7 +209,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
     };
 
-    $http.get('/api/ConfigApi')
+    $http.get(configUrl + '/api/ConfigApi')
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
             data[i].subGridOptions = {
@@ -273,7 +252,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' },
                     {
                         name: "Actions",
-                        cellTemplate: 'Content/Templates/subGridActionsTemplate.html',
+                        cellTemplate: '/Content/Templates/subGridActionsTemplate.html',
                         enableCellEdit: false,
                         width: 149,
                         visible: true,
@@ -419,7 +398,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the key data save promise
     $scope.saveRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        $http.post('/api/ConfigApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        $http.post(configUrl + '/api/ConfigApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
@@ -443,14 +422,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the value Save Promise
     $scope.saveSubGridRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        $http.post('/api/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        $http.post(configUrl + '/api/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
     // List of environments:
     $http({
         method: 'GET',
-        url: '/api/ConfigValuesApi/',
+        url: configUrl + '/api/ConfigValuesApi/',
         //withCredentials: true,
         params: {
             type: "environment"
@@ -463,7 +442,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of components:
     $http({
         method: 'GET',
-        url: '/api/ConfigValuesApi/',
+        url: configUrl + '/api/ConfigValuesApi/',
         //withCredentials: true,
         params: {
             type: "component"
@@ -476,7 +455,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of applications:
     $http({
         method: 'GET',
-        url: '/api/ConfigValuesApi/',
+        url: configUrl + '/api/ConfigValuesApi/',
         //withCredentials: true,
         params: {
             type: "application"
@@ -506,7 +485,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     //  including file upload
     $scope.addComponent = function () {
         ModalService.showModal({
-            templateUrl: "Content/Templates/addComponentModal.html",
+            templateUrl: "/Content/Templates/addComponentModal.html",
             controller: "AddComponent",
             inputs: {
                 components: $scope.components,
@@ -527,7 +506,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     });
                     $http({
                         method: 'POST',
-                        url: 'api/ComponentApi/',
+                        url: configUrl + '/api/ComponentApi/',
                         //withCredentials: true,
                         data: data,
                         headers: {
@@ -568,7 +547,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         }
 
         ModalService.showModal({
-            templateUrl: "Content/Templates/addVariableModal.html",
+            templateUrl: "/Content/Templates/addVariableModal.html",
             controller: "AddVar",
             inputs: {
                 componentName: componentAggObject,
@@ -601,7 +580,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         });
                         $http({
                             method: 'POST',
-                            url: 'api/ConfigApi/',
+                            url: configUrl + '/api/ConfigApi/',
                             //withCredentials: true,
                             data: data,
                             headers: {
@@ -622,10 +601,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentRow = '$$' + row.uid;
         var componentGroupName = row.treeNode.aggregations[0].groupVal;
         var rowEntity = row.entity;
-        $http.get('/api/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
+        $http.get(configUrl + '/api/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
             .success(function (data) {
                 ModalService.showModal({
-                    templateUrl: "Content/Templates/configFileModal.html",
+                    templateUrl: "/Content/Templates/configFileModal.html",
                     controller: "ConfigViewer",
                     inputs: {
                         title: data.componentName,
@@ -656,7 +635,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.downloadFile = function (componentName, environment) {
         $http({
             method: 'GET',
-            url: 'api/ConfigPublishApi',
+            url: configUrl + '/api/ConfigPublishApi',
             //withCredentials: true,
             params: {
                 componentName: componentName,
@@ -701,372 +680,3 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     }
 });
 
-///-------------------------------------------------------------------------------------------------
-/// <summary>   Controller for the Config File Viewer / Downloader Modal. </summary>
-///
-/// <remarks>   Pdelosreyes, 4/19/2017. </remarks>
-///
-/// <param name="'ConfigViewer'">   The configuration viewer'. </param>
-/// <param name="($rootScope">      The $root scope. </param>
-/// <param name="$scope">           The $scope. </param>
-/// <param name="$element">         The $element. </param>
-/// <param name="title">            The title. </param>
-/// <param name="filePath">         Full pathname of the file. </param>
-/// <param name="configXml">        The configuration XML. </param>
-/// <param name="close">            The close. </param>
-/// <param name="publish">          The publish. </param>
-/// <param name="download">         The download. </param>
-///
-/// <returns>   . </returns>
-///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('ConfigViewer',
-    function ($rootScope, $scope, $element, title, filePath, configXml, close, publish, download) {
-        //var vm = this;
-        var vm = $scope;
-        vm.filePath = filePath;
-        vm.configXml = configXml;
-        vm.title = title;
-        vm.close = function () {
-            $element.modal('hide');
-            close({
-                publish: false,
-                download: false,
-            }, 500); // close, but give 500ms for bootstrap to animate
-        };
-        vm.cancel = function () {
-            $element.modal('hide');
-            close({
-                publish: false,
-                download: false,
-            }, 500);
-        };
-        vm.publish = function () {
-            $element.modal('hide');
-            close({
-                publish: true,
-                download: false,
-                title: vm.title
-            }, 500);
-        }
-        vm.download = function () {
-            $element.modal('hide');
-            close({
-                publish: false,
-                download: true,
-                title: vm.title
-            }, 500);
-        }
-        vm.ngClickCopy = function () {
-            vm.ngClickCopy;
-            //$rootscope.ngClickCopy;
-        }
-    });
-
-///-------------------------------------------------------------------------------------------------
-/// <summary>   Controllers. </summary>
-///
-/// <remarks>   Pdelosreyes, 4/19/2017. </remarks>
-///
-/// <param name="'AddComponent'">       The add component'. </param>
-/// <param name="($rootScope">          The $root scope. </param>
-/// <param name="$scope">               The $scope. </param>
-/// <param name="$element">             The $element. </param>
-/// <param name="close">                The close. </param>
-/// <param name="filePath">             Full pathname of the file. </param>
-/// <param name="components">           The components. </param>
-/// <param name="componentComponents">  The component components. </param>
-/// <param name="componentName">        Name of the component. </param>
-/// <param name="fileName">             Filename of the file. </param>
-/// <param name="componentEnvironment"> The component environment. </param>
-/// <param name="environments">         The environments. </param>
-/// <param name="file">                 The file. </param>
-/// <param name="publish">              The publish. </param>
-/// <param name="upload">               The upload. </param>
-///
-/// <returns>   . </returns>
-///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddComponent',
-    function ($rootScope, $scope, $element, $http, $timeout, Upload, close, components, applications, environments) {
-        //var vm = this;
-        var vm = $scope;
-        var componentData;
-        var componentComponents;
-        var filePath = filePath;
-        var availableApplications = [];
-        var componentApplications = [];
-        var componentName;
-        var componentEnvironment;
-        var fileName;
-        var localComponent;
-
-        vm.availableApplications = [];
-        vm.componentApplications = [];
-        vm.componentName = "";
-        vm.componentEnvironment = "";
-        vm.fileName = "";
-        vm.applications = applications;
-        vm.components = components;
-        vm.componentEnvironment = componentEnvironment;
-        vm.environments = environments;
-        vm.localComponent = {
-            componentName: vm.componentName,
-            filePath: vm.filePath,
-            applications: vm.componentApplications,
-        }
-
-        vm.availableApplications = applications.map(function (item) { return item["name"]; });
-
-        vm.selectComponent = function (component) {
-            $http({
-                method: 'GET',
-                url: '/api/ComponentApi',
-                //withCredentials: true,
-                params: {
-                    componentName: component.name,
-                },
-                //responseType: 'arraybuffer'
-            }).then(function (result) {
-                vm.componentData = result.data;
-                if (typeof vm.componentData.ConfigFile !== "undefined")
-                    vm.fileName = vm.componentData.ConfigFiles.file_name;
-                vm.filePath = vm.componentData.relative_path;
-                vm.componentName = vm.componentComponents.name;
-                vm.componentApplications = [];
-                angular.forEach(result.data.Applications, function (Applications) {
-                    var name = Applications.application_name;
-                    var id = Applications.id;
-                    var value = Applications.application_name;
-                    vm.componentApplications.push({ id: id, name: name, value: value });
-                });
-                vm.localComponent = {
-                    componentName: vm.componentName,
-                    filePath: vm.filePath,
-                    applications: vm.componentApplications,
-                }
-            });
-        };
-
-        vm.$watch('files', function () {
-            $scope.upload($scope.files);
-        });
-        vm.$watch('file', function () {
-            if ($scope.file != null) {
-                $scope.files = [$scope.file];
-            }
-        });
-        vm.log = '';
-
-        vm.upload = function (files) {
-            if (files) {
-                var file = files;
-                if (!file.$error) {
-                    Upload.upload({
-                        url: 'api/ConfigPublishApi',
-                        params: {
-                            componentName: vm.componentName,
-                            environment: vm.componentEnvironment.name,
-                            applications: vm.componentApplications.join(','),
-                        },
-                        data: {
-                            file: file
-                        }
-                    }).then(function (resp) {
-                        $timeout(function () {
-                            $scope.log = 'file: ' +
-                            resp.config.data.file.name +
-                            ', Response: ' + JSON.stringify(resp.data) +
-                            '\n' + $scope.log;
-                        });
-                    }, null, function (evt) {
-                        var progressPercentage = parseInt(100.0 *
-                                evt.loaded / evt.total);
-                        $scope.log = 'progress: ' + progressPercentage +
-                            '% ' + evt.config.data.file.name + '\n' +
-                          $scope.log;
-                    });
-                }
-            }
-        }
-
-        vm.close = function () {
-            close({
-            }, 500); // close, but give 500ms for bootstrap to animate
-        };
-        vm.cancel = function () {
-            $element.modal('hide');
-            close({
-                publish: false,
-                save: false,
-            }, 500);
-        };
-        vm.publish = function () {
-            $element.modal('hide');
-            close({
-                save: true,
-                publish: true,
-                componentApplications: vm.componentApplications,
-                componentName: vm.componentName,
-                filePath: vm.filePath,
-            }, 500);
-        }
-        vm.save = function () {
-            $element.modal('hide');
-            close({
-                save: true,
-                publish: false,
-                componentApplications: vm.componentApplications,
-                componentName: vm.componentName,
-                filePath: vm.filePath,
-            }, 500);
-        }
-    });
-
-///-------------------------------------------------------------------------------------------------
-/// <summary>   AddVar Controller </summary>
-///
-/// <remarks>   Pdelosreyes, 4/19/2017. </remarks>
-///
-/// <param name="close">            The close. </param>
-/// <param name="componentName">    Name of the component. </param>
-/// <param name="parentElement">    The parent element. </param>
-/// <param name="element">          The element. </param>
-/// <param name="keyName">          Name of the key. </param>
-/// <param name="key">              The key. </param>
-/// <param name="valueName">        Name of the value. </param>
-/// <param name="save">             The save. </param>
-/// <param name="publish">          The publish. </param>
-///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddVar',
-    function ($rootScope, $scope, $element, close, componentName, parentElement, element, keyName, key, valueName, show, isNew, save) {
-        var vm = $scope;
-        var additionalParentElements = [];
-        vm.componentName = componentName;
-        vm.element = element;
-        vm.parentElement = parentElement;
-        vm.keyName = keyName;
-        vm.key = key;
-        vm.valueName = valueName;
-        vm.show = show;
-        vm.isNew = isNew;
-        vm.close = function () {
-            close({
-                save: false,
-            }, 500); // close, but give 500ms for bootstrap to animate
-        };
-        vm.cancel = function () {
-            $element.modal('hide');
-            close({
-                save: false,
-            }, 500);
-        };
-        vm.save = function () {
-            $element.modal('hide');
-            close({
-                save: true,
-                componentName: vm.componentName,
-                element: vm.element,
-                parentElement: vm.parentElement,
-                keyName: vm.keyName,
-                key: vm.key,
-                valueName: valueName,
-                additionalParentElements: vm.additionalParentElements
-            }, 500);
-        };
-    });
-
-ConfigApp.directive('multiSelect', function ($q) {
-    return {
-        restrict: 'E',
-        require: 'ngModel',
-        scope: {
-            selectedLabel: "@",
-            availableLabel: "@",
-            displayAttr: "@",
-            available: "=",
-            model: "=ngModel"
-        },
-        template: '<div class="multiSelect">' +
-                    '<div class="select">' +
-                      '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
-                          '({{ model.length }})</label>' +
-                      '<select id="currentRoles" ng-model="selected.current" multiple ' +
-                          'class="pull-left" ng-options="e as e[displayAttr] for e in model">' +
-                          '</select>' +
-                    '</div>' +
-                    '<div class="select buttons">' +
-                      '<button class="btn mover left" ng-click="add()" title="Add selected" ' +
-                          'ng-disabled="selected.available.length == 0">' +
-                        '<i class="icon-arrow-left"></i>' +
-                      '</button>' +
-                      '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' +
-                          'ng-disabled="selected.current.length == 0">' +
-                        '<i class="icon-arrow-right"></i>' +
-                      '</button>' +
-                    '</div>' +
-                    '<div class="select">' +
-                      '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
-                          '({{ available.length }})</label>' +
-                      '<select id="multiSelectAvailable" ng-model="selected.available" multiple ' +
-                          'ng-options="e as e[displayAttr] for e in available"></select>' +
-                    '</div>' +
-                  '</div>',
-        link: function (scope, elm, attrs) {
-            scope.selected = {
-                available: [],
-                current: []
-            };
-
-            /* Handles cases where scope data hasn't been initialized yet */
-            var dataLoading = function (scopeAttr) {
-                var loading = $q.defer();
-                if (scope[scopeAttr]) {
-                    loading.resolve(scope[scopeAttr]);
-                } else {
-                    scope.$watch(scopeAttr, function (newValue, oldValue) {
-                        if (newValue !== undefined)
-                            loading.resolve(newValue);
-                    });
-                }
-                return loading.promise;
-            };
-
-            /* Filters out items in original that are also in toFilter. Compares by reference. */
-            var filterOut = function (original, toFilter) {
-                var filtered = [];
-                angular.forEach(original, function (entity) {
-                    var match = false;
-                    for (var i = 0; i < toFilter.length; i++) {
-                        if (toFilter[i][attrs.displayAttr] == entity[attrs.displayAttr]) {
-                            match = true;
-                            break;
-                        }
-                    }
-                    if (!match) {
-                        filtered.push(entity);
-                    }
-                });
-                return filtered;
-            };
-
-            scope.refreshAvailable = function () {
-                scope.available = filterOut(scope.available, scope.model);
-                scope.selected.available = [];
-                scope.selected.current = [];
-            };
-
-            scope.add = function () {
-                scope.model = scope.model.concat(scope.selected.available);
-                scope.refreshAvailable();
-            };
-            scope.remove = function () {
-                scope.available = scope.available.concat(scope.selected.current);
-                scope.model = filterOut(scope.model, scope.selected.current);
-                scope.refreshAvailable();
-            };
-
-            $q.all([dataLoading("model"), dataLoading("available")]).then(function (results) {
-                scope.refreshAvailable();
-            });
-        }
-    };
-})
