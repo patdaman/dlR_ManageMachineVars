@@ -8,6 +8,9 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
+#if RELEASE
+    [Authorize(Roles = "Engineers")]
+#endif
     public class ConfigValuesApiController : ApiController
     {
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
@@ -20,6 +23,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get()
         {
             try
@@ -41,6 +45,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get(int id)
         {
             try
@@ -53,6 +58,7 @@ namespace DevOpsApi.Controllers
             }
         }
 
+        [HttpGet]
         public HttpResponseMessage Get(string type)
         {
             try
@@ -74,6 +80,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpPut]
         public HttpResponseMessage Put(ViewModel.ConfigVariableValue value)
         {
             try
@@ -95,6 +102,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpPost]
         public HttpResponseMessage Post(ViewModel.ConfigVariableValue value)
         {
             try
@@ -109,6 +117,10 @@ namespace DevOpsApi.Controllers
         }
 
         // DELETE: api/configValues/5
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpDelete]
         public void Delete(int id)
         {
         }

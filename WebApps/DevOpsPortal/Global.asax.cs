@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CommonUtils.Exception;
+using CommonUtils.Logging;
+using System;
 using System.Web;
-using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -11,6 +10,8 @@ namespace DevOpsPortal
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private static readonly log4net.ILog iLog = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public LoggingPatternUser logger = new LoggingPatternUser() { Logger = iLog };
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -19,19 +20,19 @@ namespace DevOpsPortal
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
-        //private void LogError()
-        //{
-        //    // Get the exception object.
-        //    Exception ex = Server.GetLastError();
-        //    logger.Error("An unhandled exception occurred. Details follow.");
-        //    logger.Error(String.Format("{0}\n\nStack Trace:\n{1}",
-        //        ExamineException.GetInnerExceptionMessages(ex),
-        //        ExamineException.GetInnerExceptionStackTraces(ex)));
-        //}
+        private void LogError()
+        {
+            // Get the exception object.
+            Exception ex = Server.GetLastError();
+            logger.Error("An unhandled exception occurred. Details follow.");
+            logger.Error(String.Format("{0}\n\nStack Trace:\n{1}",
+                ExamineException.GetInnerExceptionMessages(ex),
+                ExamineException.GetInnerExceptionStackTraces(ex)));
+        }
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            // LogError();
+            LogError();
             HandleError(sender);
         }
 

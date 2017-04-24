@@ -116,13 +116,10 @@ namespace CommonUtils.Logging
                                     );
                             }
                     }
-
                     if (appender is UdpAppender)
                         (appender as UdpAppender).ActivateOptions();
-
                 }
             }
-
         }
 
         private static IAppender getAppender(String appenderName)
@@ -130,7 +127,6 @@ namespace CommonUtils.Logging
             Hierarchy hier = log4net.LogManager.GetRepository() as Hierarchy;
             return hier.GetAppenders().
                     Where(app => app.Name.Equals(appenderName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-
         }
 
         public static void CloseAppender(String appenderName)
@@ -144,12 +140,11 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Sets log file path. </summary>
         ///
-        /// <remarks>   Ssur, 20160311. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
         /// <param name="logFilePath">          Full pathname of the log file. </param>
         /// <param name="logConfigFilePath">    Full pathname of the log configuration file. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public static void SetLogFilePath(string logFilePath, string logConfigFilePath)
         {
 
@@ -161,12 +156,12 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Sets log email subject and priority. </summary>
         ///
-        /// <remarks>   Ssur, 20160226. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="subject">  The subject. </param>
-        /// <param name="priority"> The priority. </param>
+        /// <param name="subject">      The subject. </param>
+        /// <param name="priority">     (Optional) The priority. </param>
+        /// <param name="smtpAppender"> (Optional) The SMTP appender. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public static void SetLogEmailSubjectPriority(string subject, System.Net.Mail.MailPriority priority = System.Net.Mail.MailPriority.Normal, string smtpAppender = "SmtpAppender")
         {
             List<AppenderPropertyValue> apvlist = new List<AppenderPropertyValue>()
@@ -180,11 +175,11 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Sets log email priority. </summary>
         ///
-        /// <remarks>   Ssur, 20160226. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="priority"> The priority. </param>
+        /// <param name="priority">     (Optional) The priority. </param>
+        /// <param name="smtpAppender"> (Optional) The SMTP appender. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public static void SetLogEmailPriority(System.Net.Mail.MailPriority priority = System.Net.Mail.MailPriority.Normal, string smtpAppender = "SmtpAppender")
         {
             List<AppenderPropertyValue> apvlist = new List<AppenderPropertyValue>()

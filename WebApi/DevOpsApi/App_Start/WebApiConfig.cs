@@ -12,6 +12,7 @@ namespace DevOpsApi
         {
             // Web API configuration and services
             EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
+            cors.SupportsCredentials = true;
             config.EnableCors(cors);
 
             // Web API routes

@@ -1,5 +1,11 @@
 ﻿'use strict'
 
+var DevOpsWebApp;
+var AppBuildTag = DevOpsWebApp.AppBuildTag;
+var ApiPath = DevOpsWebApp.ApiPath;
+var SignalRPath = DevOpsWebApp.SignalRPath;
+var TitleTag = DevOpsWebApp.TitleTag;
+
 var ConfigApp = angular.module('ConfigApp',
         ['ui.grid',
             'ui.grid.edit',
@@ -16,7 +22,7 @@ var ConfigApp = angular.module('ConfigApp',
             'ui.grid.moveColumns',
             'ui.grid.infiniteScroll',
             'ui.grid.importer',
-            'ui.router',
+            //'ui.router',
             'angularModalService',
             'ngAnimate',
             'ui.bootstrap',
@@ -24,28 +30,88 @@ var ConfigApp = angular.module('ConfigApp',
             'ngFileUpload'
         ])
 
-//ConfigApp.value('configUrl', 'http://localhost:41999');
-//ConfigApp.value('configUrl', 'http://168lyr1');
-//ConfigApp.value('configUrl', 'http://localhost');
-//ConfigApp.value('configUrl', 'http://localhost:43767');
-ConfigApp.value('configUrl', 'http://localhost:47149');
-var machineApp = angular.module('machineApp', ['ui.grid', 'ui.grid.edit',
+var machineApp = angular.module('machineApp',
+    ['ui.grid', 'ui.grid.edit',
     'ui.grid.pagination', 'ui.grid.expandable',
     'ui.grid.selection', 'ui.grid.pinning']);
 
 var logApp = angular.module('logApp',
     ['ui.grid',
-        'ui.grid.pagination', 'ui.grid.expandable',
-        'ui.grid.selection', 'ui.grid.pinning']);
+    'ui.grid.pagination', 'ui.grid.expandable',
+    'ui.grid.selection', 'ui.grid.pinning']);
 
-logApp.value('apiUrl', 'http://localhost:41999');
-
-
-var managerApp = angular.module('managerApp', ['configApp', 'logApp']);
+//var dashboardApp = angular.module('dashboardApp',
+//    ['ng.epoch', 'n3-pie-chart']);
 
 
-var dashboardApp = angular.module('dashboardApp',
-    ['ng.epoch', 'n3-pie-chart']);
-dashboardApp.value('backendServerUrl', 'http://localhost:41999/signalr/performance');
+///  ----------------------------------------------------------- ///
+/// <summary>   The application. </summary>
+///
+///  ----------------------------------------------------------- ///
+var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp']);
+//var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'dashboardApp']);
 
-var app = angular.module('app', ['dashboardApp', 'logApp']);
+app.run(['$rootScope', function ($rootScope) {
+    $rootScope.AppBuildStatus = TitleTag;
+    $rootScope.APIPath = ApiPath;
+    }]);
+///  ----------------------------------------------------------- ///
+/// <summary>   The application. </summary>
+///
+///  ----------------------------------------------------------- ///
+
+
+// http interceptor to add hostname [] are for minification safety
+app.factory('httpAPIPathAdder', [function () {
+    return {
+        request: function (config) {
+            if (config.url.search("api:") === 0)
+                config.url = ApiPath + config.url.slice(4);
+            return config;
+        }
+    }
+}]);
+
+// for CORS
+app.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    $httpProvider.interceptors.push('httpAPIPathAdder');
+}]);
+
+// error handling [] are for minification safety
+app.factory('$exceptionHandler', [function () {
+    return function (exception, cause) {
+        if (exception) {
+            if (exception.message) {
+                var showstr = exception.message;
+                if (cause)
+                    showstr = showstr + "\nCause: " + cause;
+                console.log(showstr);
+                alert(showstr);
+            }
+            else if (exception.Message) {
+                var Showstr = exception.Message;
+                if (cause)
+                    Showstr = Showstr + "\nCause: " + cause;
+                console.log(Showstr);
+                alert(Showstr);
+            }
+            else {
+                console.log(exception);
+                alert(exception);
+            }
+        }
+        else {
+            if (cause) {
+                console.log(cause);
+                alert(cause);
+            }
+            else {
+                console.log("Unknown Exception");
+                alert("Unknown Exception");
+            }
+            alert("Unknown Exception")
+        }
+    }
+}]);

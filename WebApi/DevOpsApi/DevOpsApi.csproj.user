@@ -3,7 +3,7 @@
   <PropertyGroup>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <NameOfLastUsedPublishProfile>File System Local</NameOfLastUsedPublishProfile>
     <IISExpressSSLPort>44354</IISExpressSSLPort>
   </PropertyGroup>

@@ -7,11 +7,15 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
+#if RELEASE
+    [Authorize(Roles = "Engineers")]
+#endif
     public class MachineApiController : ApiController
     {
         BusinessLayer.ManageMachines machineProcessor = new BusinessLayer.ManageMachines();
 
         // GET: api/Machine
+        [HttpGet]
         public HttpResponseMessage Get()
         {
             try
@@ -25,6 +29,7 @@ namespace DevOpsApi.Controllers
         }
 
         // GET: api/Machine/5
+        [HttpGet]
         public HttpResponseMessage Get(int id)
         {
             try
@@ -37,6 +42,10 @@ namespace DevOpsApi.Controllers
             }
         }
 
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPut]
         public HttpResponseMessage Put(ViewModel.Machine value)
         {
             try
@@ -50,6 +59,10 @@ namespace DevOpsApi.Controllers
         }
 
         // POST: api/Machine
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPost]
         public HttpResponseMessage Post(ViewModel.Machine value)
         {
             try
@@ -63,6 +76,7 @@ namespace DevOpsApi.Controllers
         }
 
         // DELETE: api/Machine/5
+        [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {
             try

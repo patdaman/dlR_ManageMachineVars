@@ -8,6 +8,9 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
+#if RELEASE
+    [Authorize(Roles = "Engineers")]
+#endif
     public class ConfigApiController : ApiController
     {
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
@@ -20,6 +23,7 @@ namespace DevOpsApi.Controllers
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
         ///  GET: api/ConfigApi
+        [HttpGet]
         public HttpResponseMessage Get()
         {
             try
@@ -43,6 +47,7 @@ namespace DevOpsApi.Controllers
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
         ///   GET: api/ConfigApi/varId=x,envType=yyyy
+        [HttpGet]
         public HttpResponseMessage Get(int varId, string envType = null)
         {
             try
@@ -64,6 +69,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get(string componentName, string environment)
         {
             BusinessLayer.ManageConfig_Files configFileProcessor = new BusinessLayer.ManageConfig_Files()
@@ -90,6 +96,10 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPut]
         public HttpResponseMessage Put(ViewModel.AppVar value)
         {
             try
@@ -111,6 +121,10 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPost]
         public HttpResponseMessage Post(ViewModel.AppVar value)
         {
             try
@@ -133,6 +147,10 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {
             try

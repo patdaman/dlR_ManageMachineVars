@@ -1,26 +1,7 @@
-﻿///-------------------------------------------------------------------------------------------------
-// <copyright file="LoggingPatternPayload.cs" company="Signal Genetics Inc.">
-// Copyright (c) 2016 Signal Genetics Inc.. All rights reserved.
-// </copyright>
-// <author>Ssur</author>
-// <date>20160301</date>
-// <summary>Implements the logging pattern payload class</summary>
-///-------------------------------------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace CommonUtils.Logging
 {
-    ///-------------------------------------------------------------------------------------------------
-    /// <summary>   A logging pattern payload. </summary>
-    ///
-    /// <remarks>   Ssur, 20160211. </remarks>
-    ///-------------------------------------------------------------------------------------------------
-
     public class CustomLoggingPatternPayload
     {
         ///-------------------------------------------------------------------------------------------------
@@ -30,21 +11,7 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
 
         public bool IsCont { get; set; }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets or sets the message object. </summary>
-        ///
-        /// <value> The message object. </value>
-        ///-------------------------------------------------------------------------------------------------
-
         public object MessageObject { get; set; }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets or sets the identifier of the tracking. </summary>
-        ///
-        /// <value> The identifier of the tracking. </value>
-        ///-------------------------------------------------------------------------------------------------
-
         public String TrackingID { get; set; }
         public String MessagePrefix { get; set; }
 

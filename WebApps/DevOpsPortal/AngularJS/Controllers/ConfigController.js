@@ -19,9 +19,10 @@
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $log, $timeout,
-    uiGridConstants, $q, $interval, ModalService, configUrl) {
+    uiGridConstants, $q, $interval, ModalService) {
     $scope.title = "Application Configuration";
 
+    var apiRelPath = "api:/ConfigApi";
     var data = [];
     var i;
 
@@ -55,7 +56,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var selectedEnvironment;
     var environment;
 
-    $scope.urlBase = configUrl;
+    $scope.ApiBaseUrl = ApiPath;
+    $scope.ApiBaseUrlHelp = ApiPath.slice(0, -3) + 'Help';
+
     $scope.selectedRow = "";
     $scope.key = "";
     $scope.value = "";
@@ -67,14 +70,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.application = '';
-    $scope.filterApplication = function () {
-        return $scope.application;
-    };
-
     $scope.component = '';
-    $scope.filterComponent = function () {
-        return $scope.component;
-    };
 
     $scope.edit = false;
     $scope.canEdit = function () {
@@ -209,7 +205,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
     };
 
-    $http.get(configUrl + '/api/ConfigApi')
+    //$http.get(ApiPath + '/api/ConfigApi')
+    $http.get(apiRelPath)
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
             data[i].subGridOptions = {
@@ -398,7 +395,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the key data save promise
     $scope.saveRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        $http.post(configUrl + '/api/ConfigApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        //$http.post(ApiPath + '/api/ConfigApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        $http.post(apiRelPath, rowEntity).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
@@ -422,14 +420,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the value Save Promise
     $scope.saveSubGridRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        $http.post(configUrl + '/api/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        //$http.post(ApiPath + '/api/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        $http.post('api:/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
     // List of environments:
     $http({
         method: 'GET',
-        url: configUrl + '/api/ConfigValuesApi/',
+        //url: ApiPath + '/api/ConfigValuesApi/',
+        url: 'api:/ConfigValuesApi/',
         //withCredentials: true,
         params: {
             type: "environment"
@@ -442,7 +442,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of components:
     $http({
         method: 'GET',
-        url: configUrl + '/api/ConfigValuesApi/',
+        //url: ApiPath + '/api/ConfigValuesApi/',
+        url: 'api:/ConfigValuesApi/',
         //withCredentials: true,
         params: {
             type: "component"
@@ -455,7 +456,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of applications:
     $http({
         method: 'GET',
-        url: configUrl + '/api/ConfigValuesApi/',
+        //url: ApiPath + '/api/ConfigValuesApi/',
+        url: 'api:/ConfigValuesApi/',
         //withCredentials: true,
         params: {
             type: "application"
@@ -506,7 +508,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     });
                     $http({
                         method: 'POST',
-                        url: configUrl + '/api/ComponentApi/',
+                        //url: ApiPath + '/api/ComponentApi/',
+                        url: 'api:/ComponentApi/',
                         //withCredentials: true,
                         data: data,
                         headers: {
@@ -580,7 +583,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         });
                         $http({
                             method: 'POST',
-                            url: configUrl + '/api/ConfigApi/',
+                            //url: ApiPath + '/api/ComponentApi/',
+                            url: 'api:/ComponentApi/',
                             //withCredentials: true,
                             data: data,
                             headers: {
@@ -601,7 +605,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentRow = '$$' + row.uid;
         var componentGroupName = row.treeNode.aggregations[0].groupVal;
         var rowEntity = row.entity;
-        $http.get(configUrl + '/api/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
+        //$http.get(ApiPath + '/api/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
+        $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
             .success(function (data) {
                 ModalService.showModal({
                     templateUrl: "/Content/Templates/configFileModal.html",
@@ -635,7 +640,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.downloadFile = function (componentName, environment) {
         $http({
             method: 'GET',
-            url: configUrl + '/api/ConfigPublishApi',
+            //url: ApiPath + '/api/ConfigPublishApi',
+            url: 'api:/ConfigPublishApi',
             //withCredentials: true,
             params: {
                 componentName: componentName,

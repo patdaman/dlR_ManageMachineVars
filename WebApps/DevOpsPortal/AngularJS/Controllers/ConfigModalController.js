@@ -85,8 +85,9 @@ ConfigApp.controller('ConfigViewer',
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddComponent',
-    function ($rootScope, $scope, $element, $http, $timeout, Upload, close, components, applications, environments, configUrl) {
-        //var vm = this;
+    function ($rootScope, $scope, $element, $http, $timeout, Upload, close, components, applications, environments) {
+        var apiRelPath = "api:/ConfigApi";
+
         var vm = $scope;
         var componentData;
         var componentComponents;
@@ -105,7 +106,6 @@ ConfigApp.controller('AddComponent',
         vm.fileName = "";
         vm.applications = applications;
         vm.components = components;
-        vm.componentEnvironment = componentEnvironment;
         vm.environments = environments;
         vm.localComponent = {
             componentName: vm.componentName,
@@ -116,7 +116,7 @@ ConfigApp.controller('AddComponent',
         vm.selectComponent = function (component) {
             $http({
                 method: 'GET',
-                url: configUrl + '/api/ComponentApi',
+                url: 'api:/ComponentApi',
                 //withCredentials: true,
                 params: {
                     componentName: component.name,
@@ -147,7 +147,7 @@ ConfigApp.controller('AddComponent',
             $scope.upload($scope.files);
         });
         vm.$watch('file', function () {
-            if ($scope.file != null) {
+            if ($scope.file !== null) {
                 $scope.files = [$scope.file];
             }
         });
@@ -159,7 +159,7 @@ ConfigApp.controller('AddComponent',
                 if (!file.$error) {
                     var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) { return item["name"]; }));
                     Upload.upload({
-                        url: configUrl + '/api/ConfigPublishApi',
+                        url: 'api:/ConfigPublishApi',
                         params: {
                             componentName: vm.componentName,
                             environment: vm.componentEnvironment.name,

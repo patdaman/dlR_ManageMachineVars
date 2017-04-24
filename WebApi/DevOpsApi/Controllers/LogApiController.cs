@@ -7,6 +7,9 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
+#if RELEASE
+    [Authorize(Roles = "Engineers")]
+#endif
     public class LogApiController : ApiController
     {
         BusinessLayer.ManageLogging logProcessor = new BusinessLayer.ManageLogging();
@@ -18,6 +21,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get()
         {
             try
@@ -40,6 +44,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get(DateTime startDate, DateTime endDate)
         {
             try
@@ -65,6 +70,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get(string machineName, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
@@ -97,6 +103,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
         public HttpResponseMessage Get(List<string> machineNames, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
@@ -114,16 +121,19 @@ namespace DevOpsApi.Controllers
             }
         }
 
+        //[HttpPost]
         //// POST: api/Log
         //public void Post([FromBody]string value)
         //{
         //}
 
+        //[HttpPut]
         //// PUT: api/Log/5
         //public void Put(int id, [FromBody]string value)
         //{
         //}
 
+        //[HttpDelete]
         //// DELETE: api/Log/5
         //public void Delete(int id)
         //{

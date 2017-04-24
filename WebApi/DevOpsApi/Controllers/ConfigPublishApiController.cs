@@ -11,10 +11,13 @@ using ViewModel;
 
 namespace DevOpsApi.Controllers
 {
+#if RELEASE
+    [Authorize(Roles = "Engineers")]
+#endif
     public class ConfigPublishApiController : ApiController
     {
         private BusinessLayer.ManageConfig_Files configProcessor { get; set; }
-        private static string ConfigFilePath = @"D:\Temp\";
+        private static string ConfigFilePath = @"D:\ConfigFiles\";
         // private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
 
         ///-------------------------------------------------------------------------------------------------
@@ -28,7 +31,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        [HttpGet]
+        //[HttpGet]
         public HttpResponseMessage Download(string componentName, string environment)
         {
             BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
@@ -79,8 +82,6 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A Task&lt;IHttpActionResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        //public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, List<string> applications, string action = null)
-        //public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string action = null)
         public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string applications, string action = null)
         {
             if (!Request.Content.IsMimeMultipartContent())
@@ -178,6 +179,10 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPost]
         public HttpResponseMessage Post(ViewModel.AppVar value, string environment = null)
         {
             try
@@ -204,6 +209,10 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPut]
         public HttpResponseMessage Put(List<ViewModel.AppVar> value)
         {
             try
@@ -227,6 +236,10 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpPost]
         public HttpResponseMessage Post(List<ViewModel.AppVar> value, string environment = null)
         {
             try
@@ -253,6 +266,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpPut]
         public HttpResponseMessage Put(string environment)
         {
             try
@@ -275,6 +289,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        [HttpPost]
         public HttpResponseMessage Post(string environment)
         {
             try
@@ -296,6 +311,10 @@ namespace DevOpsApi.Controllers
         // DELETE: api/configValues/5
         //  Rollback to previous publish...
         //  Todo!!
+#if RELEASE
+    [Authorize(Roles = "DevOps")]
+#endif
+        [HttpDelete]
         public void Delete(ViewModel.AppVar value)
         {
         }

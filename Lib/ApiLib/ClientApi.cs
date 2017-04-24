@@ -60,7 +60,7 @@ namespace ApiLib
         //    }
         //    catch (Exception ex)
         //    {
-        //        rexp = new CustomException(CustomExceptionTypes.NonSignalException_Error, message_default, ex);
+        //        rexp = new CustomException(CustomExceptionTypes.NonMarcomException_Error, message_default, ex);
         //    }
 
         //    return rexp;

@@ -21,7 +21,7 @@
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>44339</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
@@ -124,6 +124,7 @@
   <ItemGroup>
     <Folder Include="AngularJS\Models\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Assets\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
+    <Content Include="AngularJS\Services\IHttpService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
     <Content Include="AngularJS\Services\MachineService.js" />
     <Content Include="AngularJS\Services\ngClickCopy.js" />
@@ -623,6 +625,7 @@
     <Content Include="Content\ui-grid.woff" />
     <Content Include="Content\ui-grid.ttf" />
     <Content Include="Content\ui-grid.eot" />
+    <Content Include="log.config" />
     <None Include="Properties\PublishProfiles\FileSystem Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Local_FileSystem.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -681,6 +684,7 @@
     <Content Include="Views\Machine\Index.cshtml" />
     <Content Include="Views\Powershell\Index.cshtml" />
     <Content Include="Views\Powershell\Results.cshtml" />
+    <Content Include="Views\Shared\AngularDependancies.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularJS\Controllers\ConfigController.js" />
@@ -712,6 +716,10 @@
     <ProjectReference Include="..\..\Lib\CommonUtils.AppConfiguration\CommonUtils.AppConfiguration.csproj">
       <Project>{c2178048-9a6d-445f-9f22-9ffd190127de}</Project>
       <Name>CommonUtils.AppConfiguration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lib\CommonUtils.ExceptionUtils\CommonUtils.Exception.csproj">
+      <Project>{3FEAD7C0-7FC3-4F61-89D0-501153733EE3}</Project>
+      <Name>CommonUtils.Exception</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Lib\Logging\Logging.csproj">
       <Project>{8857177F-4D00-4C57-BD56-41B0AD1BE9AA}</Project>

@@ -23,22 +23,18 @@
 <h2>App Config Editor</h2>
 @Html.AntiForgeryToken()
 <hr />
-<div ng-app="ConfigApp">
+<div ng-app="app">
     <div ng-controller="ConfigController as vm">
         <div class="control-group">
             <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">
                 <option value="" style="color:red">Environment</option>
             </select>
-            @*<select ng-model="selectedComponent" ng-options="c.name for c in components" ng-change="updateComponent()">
-                <option value="" style="color:red">Component</option>
-            </select>*@
             <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
             </select>
 
             <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add / Edit Component" />
-            @*<input type="button" class="btn btn-small" ng-click="publishSelectedRows()" value="Publish" />*@
-            <div class="float:right">Api Url: {{urlBase}}</div>
+            <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
         </div>
             <div ui-grid="gridOptions"
             ui-grid-grouping ui-grid-exporter ui-grid-selection

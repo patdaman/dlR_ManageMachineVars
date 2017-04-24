@@ -1,46 +1,25 @@
-﻿///-------------------------------------------------------------------------------------------------
-// <copyright file="LoggingPatternUser.cs" company="Signal Genetics Inc.">
-// Copyright (c) 2016 Signal Genetics Inc.. All rights reserved.
-// </copyright>
-// <author>Ssur</author>
-// <date>20160211</date>
-// <summary>Implements the logging pattern user class</summary>
-///-------------------------------------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using log4net;
+﻿using log4net;
 
 namespace CommonUtils.Logging
 {
     ///-------------------------------------------------------------------------------------------------
     /// <summary>   A logging pattern user. </summary>
     ///
-    /// <remarks>   Ssur, 20160301. </remarks>
+    /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
     ///-------------------------------------------------------------------------------------------------
-
     public class LoggingPatternUser
     {
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets or sets the logger. </summary>
-        ///
-        /// <value> The logger. </value>
-        ///-------------------------------------------------------------------------------------------------
-
         public ILog Logger { get; set; }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Fatals. </summary>
         ///
-        /// <remarks>   Ssur, 20160301. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="Obj">      The object. </param>
-        /// <param name="IsCont">   true if this object is container. </param>
+        /// <param name="Obj">          The object. </param>
+        /// <param name="IsCont">       (Optional) true if this object is container. </param>
+        /// <param name="trackingID">   (Optional) Identifier for the tracking. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public void Fatal(object Obj, bool IsCont = false, string trackingID=null)
         {
             CustomLoggingPatternPayload lpp = new CustomLoggingPatternPayload() { IsCont = IsCont, MessageObject = Obj, TrackingID= trackingID};
@@ -50,12 +29,12 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Debugs. </summary>
         ///
-        /// <remarks>   Ssur, 20160301. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="Obj">      The object. </param>
-        /// <param name="IsCont">   true if this object is container. </param>
+        /// <param name="Obj">          The object. </param>
+        /// <param name="IsCont">       (Optional) true if this object is container. </param>
+        /// <param name="trackingID">   (Optional) Identifier for the tracking. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public void Debug(object Obj, bool IsCont = false, string trackingID=null)
         {
             CustomLoggingPatternPayload lpp = new CustomLoggingPatternPayload() { IsCont = IsCont, MessageObject = Obj, TrackingID= trackingID };
@@ -65,12 +44,12 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Infoes. </summary>
         ///
-        /// <remarks>   Ssur, 20160301. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="Obj">      The object. </param>
-        /// <param name="IsCont">   true if this object is container. </param>
+        /// <param name="Obj">          The object. </param>
+        /// <param name="IsCont">       (Optional) true if this object is container. </param>
+        /// <param name="trackingID">   (Optional) Identifier for the tracking. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public void Info(object Obj, bool IsCont = false, string trackingID=null)
         {
             CustomLoggingPatternPayload lpp = new CustomLoggingPatternPayload() { IsCont = IsCont, MessageObject = Obj, TrackingID= trackingID };
@@ -80,12 +59,12 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Errors. </summary>
         ///
-        /// <remarks>   Ssur, 20160301. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="Obj">      The object. </param>
-        /// <param name="IsCont">   true if this object is container. </param>
+        /// <param name="Obj">          The object. </param>
+        /// <param name="IsCont">       (Optional) true if this object is container. </param>
+        /// <param name="trackingID">   (Optional) Identifier for the tracking. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public void Error(object Obj, bool IsCont = false, string trackingID=null)
         {
             CustomLoggingPatternPayload lpp = new CustomLoggingPatternPayload() { IsCont = IsCont, MessageObject = Obj, TrackingID= trackingID };
@@ -95,12 +74,12 @@ namespace CommonUtils.Logging
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Warns. </summary>
         ///
-        /// <remarks>   Ssur, 20160301. </remarks>
+        /// <remarks>   Pdelosreyes, 4/24/2017. </remarks>
         ///
-        /// <param name="Obj">      The object. </param>
-        /// <param name="IsCont">   true if this object is container. </param>
+        /// <param name="Obj">          The object. </param>
+        /// <param name="IsCont">       (Optional) true if this object is container. </param>
+        /// <param name="trackingID">   (Optional) Identifier for the tracking. </param>
         ///-------------------------------------------------------------------------------------------------
-
         public void Warn(object Obj, bool IsCont = false, string trackingID=null)
         {
             CustomLoggingPatternPayload lpp = new CustomLoggingPatternPayload() { IsCont = IsCont, MessageObject = Obj, TrackingID= trackingID };
