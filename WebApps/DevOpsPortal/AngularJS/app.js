@@ -1,10 +1,8 @@
 ﻿'use strict'
 
 var DevOpsWebApp;
-var AppBuildTag = DevOpsWebApp.AppBuildTag;
 var ApiPath = DevOpsWebApp.ApiPath;
 var SignalRPath = DevOpsWebApp.SignalRPath;
-var TitleTag = DevOpsWebApp.TitleTag;
 
 var ConfigApp = angular.module('ConfigApp',
         ['ui.grid',
@@ -52,8 +50,8 @@ var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp']);
 //var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'dashboardApp']);
 
 app.run(['$rootScope', function ($rootScope) {
-    $rootScope.AppBuildStatus = TitleTag;
     $rootScope.APIPath = ApiPath;
+    $rootScope.SignalRPATH = SignalRPath;
     }]);
 ///  ----------------------------------------------------------- ///
 /// <summary>   The application. </summary>

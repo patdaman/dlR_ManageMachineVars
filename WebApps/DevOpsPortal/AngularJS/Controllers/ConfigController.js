@@ -206,7 +206,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     //$http.get(ApiPath + '/api/ConfigApi')
-    $http.get(apiRelPath)
+    //$http.get(apiRelPath)
+    $http.get("/Config/GetAppVar")
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
             data[i].subGridOptions = {
@@ -428,7 +429,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of environments:
     $http({
         method: 'GET',
-        //url: ApiPath + '/api/ConfigValuesApi/',
         url: 'api:/ConfigValuesApi/',
         //withCredentials: true,
         params: {
@@ -442,7 +442,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of components:
     $http({
         method: 'GET',
-        //url: ApiPath + '/api/ConfigValuesApi/',
         url: 'api:/ConfigValuesApi/',
         //withCredentials: true,
         params: {
@@ -456,7 +455,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of applications:
     $http({
         method: 'GET',
-        //url: ApiPath + '/api/ConfigValuesApi/',
         url: 'api:/ConfigValuesApi/',
         //withCredentials: true,
         params: {

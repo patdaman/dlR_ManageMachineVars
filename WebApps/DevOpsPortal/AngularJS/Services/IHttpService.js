@@ -1,9 +1,11 @@
 ﻿// register the interceptor as a service
-$provide.factory('myHttpInterceptor', function ($q, dependency1, dependency2) {
+$provide.factory('myHttpInterceptor', function ($q, relapipath, parameterstring) {
     return {
         // optional method
         'request': function (config) {
-            // do something on success
+            if (config.method === 'GET') {
+                httpConfig
+            };
             return config;
         },
 

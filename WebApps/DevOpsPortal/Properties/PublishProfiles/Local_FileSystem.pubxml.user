@@ -10,7 +10,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="AngularJS/app.js">
-      <publishTime>04/24/2017 13:57:32</publishTime>
+      <publishTime>04/24/2017 14:54:14</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigController.js">
       <publishTime>04/24/2017 13:50:16</publishTime>
@@ -47,6 +47,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="AngularJS/Services/GridRowEditService.js">
       <publishTime>04/04/2017 16:31:56</publishTime>
+    </File>
+    <File Include="AngularJS/Services/IHttpService.js">
+      <publishTime>04/24/2017 14:48:11</publishTime>
     </File>
     <File Include="AngularJS/Services/LogHubService.js">
       <publishTime>04/04/2017 11:30:05</publishTime>
@@ -130,16 +133,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
     <File Include="bin/ApiLib.dll">
-      <publishTime>04/24/2017 12:14:13</publishTime>
+      <publishTime>04/24/2017 14:55:03</publishTime>
     </File>
     <File Include="bin/ApiLib.pdb">
-      <publishTime>04/24/2017 12:14:13</publishTime>
+      <publishTime>04/24/2017 14:55:03</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>04/24/2017 13:58:51</publishTime>
+      <publishTime>04/24/2017 14:58:14</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>04/24/2017 13:58:51</publishTime>
+      <publishTime>04/24/2017 14:58:14</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
       <publishTime>04/24/2017 12:14:13</publishTime>
@@ -190,10 +193,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/18/2017 13:38:39</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.dll">
-      <publishTime>04/24/2017 13:55:20</publishTime>
+      <publishTime>04/24/2017 14:55:07</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.pdb">
-      <publishTime>04/24/2017 13:55:19</publishTime>
+      <publishTime>04/24/2017 14:55:07</publishTime>
     </File>
     <File Include="bin/EFDataModel.dll">
       <publishTime>04/24/2017 12:14:12</publishTime>
@@ -433,7 +436,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/24/2017 11:55:05</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>04/24/2017 13:58:47</publishTime>
+      <publishTime>04/24/2017 14:58:10</publishTime>
     </File>
     <File Include="Scripts/angular-animate.js">
       <publishTime>04/04/2017 14:36:39</publishTime>
@@ -1798,7 +1801,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 14:24:06</publishTime>
     </File>
     <File Include="Scripts/_references.js">
-      <publishTime>04/24/2017 09:38:46</publishTime>
+      <publishTime>04/24/2017 14:14:34</publishTime>
     </File>
     <File Include="Views/Config/Index.cshtml">
       <publishTime>04/24/2017 10:54:22</publishTime>

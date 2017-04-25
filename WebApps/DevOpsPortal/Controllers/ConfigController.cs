@@ -9,13 +9,14 @@ namespace DevOpsPortal.Controllers
     //public class ConfigController : Controller
     public class ConfigController : BaseController
     {
+        //[Authorize(Roles = "Engineers")]
         // GET: Config
         public async Task<ActionResult> Index()
         {
             return View();
         }
 
-        [AcceptVerbs(HttpVerbs.Get)]
+        //[AcceptVerbs(HttpVerbs.Get)]
         public async Task<JsonResult> GetAppVar()
         {
             IEnumerable<ViewModel.AppVar> appVars = null;
