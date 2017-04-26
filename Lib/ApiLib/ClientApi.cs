@@ -217,7 +217,24 @@ namespace ApiLib
             }
         }
 
+        public static async Task<TEntity> GetAsync(string relativeuri, object id)
+        {
+            using (HttpClient client = SetupClient())
+            {
+                HttpResponseMessage response = await client.GetAsync(("api/" + relativeuri + "?type=" + id.ToString()));
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<TEntity>(formatters);
+                }
+                else // we should have received a SignalException
+                {
+                    Exception sexp = await HandleException(response);
+                    //CustomException sexp = await HandleException(response);
+                    throw sexp;
 
+                }
+            }
+        }
 
         public static async Task<TEntity> GetAsync(Uri ObjectUri)
         {

@@ -205,9 +205,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
     };
 
-    //$http.get(ApiPath + '/api/ConfigApi')
+    $http.get(ApiPath + '/ConfigApi')
     //$http.get(apiRelPath)
-    $http.get("/Config/GetAppVar")
+    //$http.get('api:/ConfigApi/')
+        //$http.get("/Config/GetAppVar")
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
             data[i].subGridOptions = {
@@ -430,6 +431,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $http({
         method: 'GET',
         url: 'api:/ConfigValuesApi/',
+        //url: '/Config/GetDropDownValues',
         //withCredentials: true,
         params: {
             type: "environment"
@@ -443,6 +445,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $http({
         method: 'GET',
         url: 'api:/ConfigValuesApi/',
+        //url: '/Config/GetDropDownValues',
         //withCredentials: true,
         params: {
             type: "component"
@@ -456,6 +459,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $http({
         method: 'GET',
         url: 'api:/ConfigValuesApi/',
+        //url: '/Config/GetDropDownValues',
         //withCredentials: true,
         params: {
             type: "application"

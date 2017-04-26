@@ -73,5 +73,78 @@ namespace DevOpsPortal.Controllers
             }
             return Json(new[] { pp });
         }
+
+        //[AcceptVerbs(HttpVerbs.Get)]
+        public async Task<JsonResult> GetAppVarValue()
+        {
+            IEnumerable<ViewModel.ConfigVariableValue> appVars = null;
+            try
+            {
+                appVars = await ApiLib.ClientApi<ViewModel.ConfigVariableValue>.GetAsync();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("RetrieveError", ex.Message);
+            }
+            return Json(appVars.ToList<ViewModel.ConfigVariableValue>());
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public async Task<JsonResult> GetAppVarValue(int id)
+        {
+            ViewModel.ConfigVariableValue apiAppVar = null;
+            try
+            {
+                apiAppVar = await ApiLib.ClientApi<ViewModel.ConfigVariableValue>.GetAsync(id);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("RetrieveError", ex.Message);
+            }
+            return Json(apiAppVar);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public async Task<JsonResult> GetDropDownValues(string type)
+        {
+            ViewModel.NameValuePair apiAppVar = null;
+            try
+            {
+                apiAppVar = await ApiLib.ClientApi<ViewModel.NameValuePair>.GetAsync("ConfigValuesApi", type);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("RetrieveError", ex.Message);
+            }
+            return Json(apiAppVar);
+        }
+
+        [AcceptVerbs(HttpVerbs.Put)]
+        public async Task<JsonResult> UpdateAppVarValue(ViewModel.ConfigVariableValue pp)
+        {
+            try
+            {
+                pp = await ApiLib.ClientApi<ViewModel.ConfigVariableValue>.PutAsync(pp); //put is for updates
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("UpdateError", ex.Message);
+            }
+            return Json(new[] { pp });
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public async Task<JsonResult> InsertAppVarValues(ViewModel.ConfigVariableValue pp)
+        {
+            try
+            {
+                pp = await ApiLib.ClientApi<ViewModel.ConfigVariableValue>.PostAsync(pp); //post is for inserts
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("CreationError", ex.Message);
+            }
+            return Json(new[] { pp });
+        }
     }
 }

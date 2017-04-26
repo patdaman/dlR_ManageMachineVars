@@ -20,21 +20,17 @@ namespace CommonUtils.Build
             {
                 string config = "UNDEFINED"; //Should never be this.
 #if DEBUG
-                        config = "DEBUG";
+                config = "DEBUG";
 #elif STAGING
-                        config = "STAGING";
-#elif BETA
-                        config = "BETA";
+                config = "STAGING";
 #elif QA
-                        config = "QA";
+                config = "QA";
 #elif PRODUCTION_RELEASE
                 config = "PROD";
 #elif DEVAPP
                 config = "DEVAPP";
 #elif RELEASE
                 config = "RELEASE";
-#elif SIGNALCI
-                config = "SIGNALCI";   
 #endif
                 return config;
             }

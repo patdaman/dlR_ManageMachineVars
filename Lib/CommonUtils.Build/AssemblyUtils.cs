@@ -131,7 +131,7 @@ namespace CommonUtils.Build
         /// using the default constructor.
         /// </summary>
         ///
-        /// <remarks>   Ssur, 20160114. </remarks>
+        /// <remarks>   Pdelosreyes, 4/25/2017. </remarks>
         ///
         /// <param name="assy">         The assembly. </param>
         /// <param name="classname">    The classname. </param>
@@ -139,7 +139,6 @@ namespace CommonUtils.Build
         ///
         /// <returns>   The object of class with base type. </returns>
         ///-------------------------------------------------------------------------------------------------
-
         public static Object GetObjectOfClassWithBaseType(Assembly assy, string classname, Type basetype)
         {
             foreach (Type type in assy.GetTypes())
@@ -155,6 +154,17 @@ namespace CommonUtils.Build
             return null;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets object of class implementation. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/25/2017. </remarks>
+        ///
+        /// <param name="assy">         The assembly. </param>
+        /// <param name="classname">    The classname. </param>
+        /// <param name="impltype">     The impltype. </param>
+        ///
+        /// <returns>   The object of class implementation. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public static Object GetObjectOfClassImplementation(Assembly assy, string classname, Type impltype)
         {
             foreach (Type type in assy.GetTypes())
