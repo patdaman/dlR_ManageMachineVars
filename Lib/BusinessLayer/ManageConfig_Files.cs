@@ -349,7 +349,7 @@ namespace BusinessLayer
 
             configFile = new XDocument(new XElement(efRootElement.element, string.Empty))
             {
-                Declaration = new XDeclaration("1.0", "utf-8", "yes")
+                Declaration = new XDeclaration("1.0", "utf-8", "no")
             };
 
             elements.RemoveAll(x => string.IsNullOrWhiteSpace(x.parentElement));

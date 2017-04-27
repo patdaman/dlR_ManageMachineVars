@@ -246,11 +246,12 @@ namespace BusinessLayer
             EFDataModel.DevOps.Component efComp = new EFDataModel.DevOps.Component();
             EFDataModel.DevOps.Component newComp = new EFDataModel.DevOps.Component();
             EFDataModel.DevOps.ConfigFile efConfigFile = new EFDataModel.DevOps.ConfigFile();
-            EFDataModel.DevOps.Application efApp = new EFDataModel.DevOps.Application();
+            //EFDataModel.DevOps.Application efApp = new EFDataModel.DevOps.Application();
+            EFDataModel.DevOps.Application efApp = null;
             EFDataModel.DevOps.MachineComponentPathMap machinePath = new MachineComponentPathMap();
             EFDataModel.DevOps.Machine efMac = new EFDataModel.DevOps.Machine();
 
-            if (!string.IsNullOrWhiteSpace(this.appName))
+            if (!string.IsNullOrWhiteSpace(this.appName) && this.appName != @"[]")
             {
                 efApp = DevOpsContext.Applications.Where(x => x.application_name == this.appName).FirstOrDefault();
                 if (efApp == null)
@@ -283,11 +284,16 @@ namespace BusinessLayer
                 {
                     if (string.IsNullOrWhiteSpace(file_name))
                         file_name = this.componentName + ".config";
+                    string xml_dec = string.Empty;
+                    if (configFile.Declaration != null)
+                        xml_dec = configFile.Declaration.ToString();
+                    else
+                        xml_dec = new XDeclaration("1.0", "utf-8", "yes").ToString();
                     efConfigFile = new EFDataModel.DevOps.ConfigFile()
                     {
                         file_name = file_name,
                         environment = this.environment,
-                        xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
+                        xml_declaration = xml_dec,
                         root_element = configFile.Root.Name.ToString(),
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,

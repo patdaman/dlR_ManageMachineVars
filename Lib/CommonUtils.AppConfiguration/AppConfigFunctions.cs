@@ -89,9 +89,12 @@ namespace CommonUtils.AppConfiguration
                 if (element.FirstAttribute != null
                     && element.LastAttribute != null)
                 {
+                    string parentName = string.Empty;
+                    if (element.Parent != null)
+                        parentName = element.Parent.Name.ToString() ?? "";
                     keyValues.Add(new AttributeKeyValuePair()
                     {
-                        parentElement = element.Parent.Name.ToString() ?? "",
+                        parentElement = parentName,
                         element = element.Name.ToString(),
                         attribute = element.FirstAttribute.Name.ToString(),
                         key = element.FirstAttribute.Value.ToString(),
@@ -104,6 +107,9 @@ namespace CommonUtils.AppConfiguration
                     && element.FirstNode == element.LastNode
                     && element.Value != null)
                 {
+                    string parentName = string.Empty;
+                    if (element.Parent != null)
+                        parentName = element.Parent.Name.ToString() ?? "";
                     keyValues.Add(new AttributeKeyValuePair()
                     {
                         parentElement = element.Parent.Name.ToString() ?? "",

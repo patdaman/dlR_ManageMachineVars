@@ -220,6 +220,107 @@ ConfigApp.controller('AddComponent',
         }
     });
 
+
+ConfigApp.controller('AddApplication',
+    function ($rootScope, $scope, $element, $http, $timeout, close, components, applications, environments) {
+        var apiRelPath = "api:/ApplicationApi";
+
+        var vm = $scope;
+        var applicationData;
+        var applicationApplications;
+        var filePath = filePath;
+        var availableComponents = [];
+        var applicationComponents = [];
+        var applicationName;
+        var localApplication;
+        var appApplications;
+        var id;
+        var release;
+
+        vm.availableComponents = [];
+        vm.componentApplications = [];
+        vm.applicationName = "";
+        vm.release = "";
+        vm.componentEnvironment = "";
+        vm.fileName = "";
+        vm.applications = applications;
+        vm.components = components;
+        vm.environments = environments;
+        vm.localApplication = {
+            //components: vm.components,
+            //id: vm.id,
+            release: vm.release,
+            applicationName: vm.applicationName,
+        }
+
+        vm.selectApplication = function (application) {
+            $http({
+                method: 'GET',
+                //url: 'api:/ApplicationApi',
+                url: apiRelPath,
+                //withCredentials: true,
+                params: {
+                    applicationName: application.name,
+                },
+                //responseType: 'arraybuffer'
+            }).then(function (result) {
+                vm.applicationData = result.data;
+                vm.applicationName = vm.applicationData.application_name;
+                //vm.applicationName = result.application_name;
+                vm.release = vm.applicationData.release;
+                //vm.id = result.id;
+                vm.applicationComponents = [];
+                //angular.forEach(result.data.Applications, function (Applications) {
+                //    var name = Application.application_name;
+                //    var id = Application.id;
+                //    var value = Application.application_name;
+                //    vm.applicationComponents.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
+                //});
+                vm.localApplication = {
+                    //components: vm.applicationComponents,
+                    // id: vm.id,
+                    id: '',
+                    release: vm.release,
+                    applicationName: vm.applicationName,
+                }
+            });
+        };
+
+        vm.close = function () {
+            $element.modal('hide');
+            close({
+            }, 500); // close, but give 500ms for bootstrap to animate
+        };
+        vm.cancel = function () {
+            $element.modal('hide');
+
+            close({
+                publish: false,
+                save: false,
+            }, 500);
+        };
+        vm.publish = function () {
+            $element.modal('hide');
+            close({
+                save: true,
+                publish: true,
+                //componentApplications: vm.componentApplications,
+                applicationName: vm.applicationName,
+                release: vm.release,
+            }, 500);
+        }
+        vm.save = function () {
+            $element.modal('hide');
+            close({
+                save: true,
+                publish: false,
+                //componentApplications: vm.componentApplications,
+                applicationName: vm.applicationName,
+                release: vm.release,
+            }, 500);
+        }
+    });
+
 ///-------------------------------------------------------------------------------------------------
 /// <summary>   AddVar Controller </summary>
 ///

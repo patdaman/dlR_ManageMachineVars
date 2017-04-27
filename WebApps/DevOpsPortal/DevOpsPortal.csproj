@@ -149,7 +149,9 @@
     <Content Include="AngularJS\app.js" />
     <Content Include="AngularJS\Controllers\ConfigModalController.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
-    <Content Include="AngularJS\Controllers\PowershellController.js" />
+    <Content Include="AngularJS\Controllers\PowershellController.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="AngularJS\Directives\appDirectives.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
@@ -175,6 +177,7 @@
     <Content Include="Content\Templates\actionsTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Templates\addApplicationModal.html" />
     <Content Include="Content\Templates\addVariableModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

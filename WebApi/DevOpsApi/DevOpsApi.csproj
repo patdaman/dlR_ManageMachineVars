@@ -177,7 +177,8 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ApplicationApiController.cs" />
+    <Compile Include="Controllers\ApplicationInsightController.cs" />
     <Compile Include="Controllers\ComponentApiController.cs" />
     <Compile Include="Controllers\ConfigApiController.cs" />
     <Compile Include="Controllers\ConfigPublishApiController.cs" />

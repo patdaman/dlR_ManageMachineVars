@@ -1,0 +1,47 @@
+﻿<div class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title">Add / Edit Application</h2>
+            </div>
+            <div class="modal-body">
+                <form name="applicationForm">
+                    <p>
+                        <div class="form-group">
+                            <select ng-model="appApplications" ng-options="c.name for c in applications" ng-change="selectApplication(appApplications)">
+                                <option value="" style="color:red">Select Application:</option>
+                            </select>
+                        </div>
+                        <b> OR: </b>
+                        <div class="form-group">
+                            <label><b>New Application Name:</b></label>
+                            <!--<input id="application" class="form-control" type="text" ng-model="applicationName" required>-->
+                            <input id="application" class="form-control" type="text" ng-model="applicationName">
+                        </div>
+                        <div class="form-group">
+                            <label><b>Release Version:</b></label>
+                            <!--<input id="application" class="form-control" type="text" ng-model="applicationName" required>-->
+                            <input id="release" class="form-control" type="text" ng-model="release">
+                        </div>
+                    </p>
+                    <p>
+                        <div class="form-group">
+                            <label><b>Components(s):</b></label>
+                            <multi-select ng-model="applicationComponents" available="components" selected-label="Current" available-label="Available" display-attr="name"></multi-select>
+                            <div ng-if="applicationName !==''">{{applicationName}}'s Components: </div>
+                            <ul>
+                                <li ng-repeat="comp in applicationComponents">{{comp.name}}</li>
+                            </ul>
+                        </div>
+                    </p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Import</button>-->
+                <button type="button" ng-click="save()" class="btn btn-primary">Save</button>
+                <button type="button" ng-click="cancel()" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

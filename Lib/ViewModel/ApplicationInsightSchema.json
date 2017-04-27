@@ -1,0 +1,54 @@
+﻿{
+  "title": "Metrics request body",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "An identifier for this query.  Must be unique within the post body of the request.  This identifier will be the 'id' property of the response object representing this query.",
+        "required": true
+      },
+      "parameters": {
+        "type": "object",
+        "description": "The parameters for a single metrics query",
+        "required": true,
+        "properties": {
+          "metricId": {
+            "type": "string",
+            "description": "ID of the metric. This is either a standard AI metric, or an application-specific custom metric.",
+            "required": true
+          },
+          "timespan": {
+            "type": "string",
+            "description": "The timespan over which to retrieve metric values. This is an ISO8601 time period value. If timespan is omitted, a default time range of `PT12H` (\"last 12 hours\") is used. The actual timespan that is queried may be adjusted by the server based. In all cases, the actual time span used for the query is included in the response."
+          },
+          "aggregation": {
+            "type": "array",
+            "description": "The aggregation to use when computing the metric values. To retrieve more than one aggregation at a time, separate them with a comma. If no aggregation is specified, then the default aggregation for the metric is used."
+          },
+          "interval": {
+            "type": "string",
+            "description": "The time interval to use when retrieving metric values. This is an ISO8601 duration. If interval is omitted, the metric value is aggregated across the entire timespan. If interval is supplied, the server may adjust the interval to a more appropriate size based on the timespan used for the query. In all cases, the actual interval used for the query is included in the response."
+          },
+          "segment": {
+            "type": "string",
+            "description": "The name of the dimension to segment the metric values by. This dimension must be applicable to the metric you are retrieving. To segment by more than one dimension at a time, separate them with a comma (,). In this case, the metric data will be segmented in the order the dimensions are listed in the parameter."
+          },
+          "top": {
+            "type": "integer",
+            "description": "The number of segments to return.  This value is only valid when segment is specified."
+          },
+          "orderby": {
+            "type": "string",
+            "description": "The aggregation function and direction to sort the segments by.  This value is only valid when segment is specified."
+          },
+          "filter": {
+            "type": "string",
+            "description": "An expression used to filter the results.  This value should be a valid OData filter expression where the keys of each clause should be applicable dimensions for the metric you are retrieving."
+          }
+        }
+      }
+    }
+  }
+}

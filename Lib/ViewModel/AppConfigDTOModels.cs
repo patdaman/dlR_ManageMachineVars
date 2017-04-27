@@ -173,10 +173,12 @@ namespace ViewModel
         public ApplicationDto() {}
         public int? id { get; set; }
         public string name { get; set; }
+        public string release { get; set; }
         public ApplicationDto(ApplicationDto a)
         {
             id = a.id;
             name = a.name;
+            release = a.release;
         }
     }
 

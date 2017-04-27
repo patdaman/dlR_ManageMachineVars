@@ -540,6 +540,50 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         })
     };
 
+    // Bring up the Add / Edit Component Modal
+    //  including file upload
+    $scope.addApplication = function () {
+        ModalService.showModal({
+            templateUrl: "/Content/Templates/addApplicationModal.html",
+            controller: "AddApplication",
+            inputs: {
+                components: $scope.components,
+                applications: $scope.applications,
+                environments: $scope.environments,
+            }
+        })
+        .then(function (modal) {
+            modal.element.modal();
+            modal.close.then(function (result) {
+                if (result.save) {
+                    var deferred = $q.defer();
+                    //var componentNames = result.applicationComponents.map(function (item) { return item["id", "name"]; });
+                    //applicationNames = result.componentApplications;
+                    var data = JSON.stringify({
+                        //"id": result.id,
+                        "name": result.applicationName,
+                        //"components": componentNames,
+                        "release": result.release,
+                    });
+                    $http({
+                        method: 'POST',
+                        //url: ApiPath + '/api/ComponentApi/',
+                        url: 'api:/ApplicationApi/',
+                        //withCredentials: true,
+                        data: data,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).success(deferred.resolve)
+                            .error(deferred.reject);
+                    return deferred.promise;
+                };
+            });
+        }).catch(function (error) {
+            console.log(error);
+        })
+    };
+
     // Displays modal to add new config variable
     $scope.addVar = function (row) {
         var componentRow = '$$' + row.uid;
@@ -657,7 +701,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.downloadFile = function (componentName, environment) {
         $http({
             method: 'GET',
-            //url: ApiPath + '/api/ConfigPublishApi',
             url: 'api:/ConfigPublishApi',
             //withCredentials: true,
             params: {
@@ -677,7 +720,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 var url = window.URL.createObjectURL(blob);
 
                 linkElement.setAttribute('href', url);
-                linkElement.setAttribute("download", filename);
+                linkElement.setAttribute('download', filename);
                 var clickEvent;
 
                 //This is true only for IE,firefox

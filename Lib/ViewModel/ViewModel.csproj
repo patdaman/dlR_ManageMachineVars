@@ -47,6 +47,7 @@
     <Compile Include="AppConfigDTOModels.cs" />
     <Compile Include="AppConfigApiModels.cs" />
     <Compile Include="AppConfigFunctionModels.cs" />
+    <Compile Include="ApplicationInsightModels.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="LoggingModels.cs" />
     <Compile Include="PerformanceModel.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ApplicationInsightSchema.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

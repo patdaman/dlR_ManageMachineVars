@@ -31,7 +31,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        //[HttpGet]
+        [HttpGet]
         public HttpResponseMessage Download(string componentName, string environment)
         {
             BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
