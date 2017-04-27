@@ -12,6 +12,7 @@ ConfigApp.directive('multiSelect', function ($q) {
             model: "=ngModel"
         },
         template: '<div class="multiSelect">' +
+                    '<p>' +
                     '<div class="select">' +
                       '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
                           '({{ model.length }})</label>' +
@@ -19,6 +20,8 @@ ConfigApp.directive('multiSelect', function ($q) {
                           'class="pull-left" ng-options="e as e[displayAttr] for e in model">' +
                           '</select>' +
                     '</div>' +
+                    '</p>' + '<p>' +
+                    '</p>' + '<p>' +
                     '<div class="select buttons">' +
                       '<button class="btn mover left" ng-click="add()" title="Add selected" ' +
                           'ng-disabled="selected.available.length == 0">' +
@@ -27,14 +30,17 @@ ConfigApp.directive('multiSelect', function ($q) {
                       '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' +
                           'ng-disabled="selected.current.length == 0">' +
                         '<i class="icon-arrow-right"></i>' +
-                      '</button>' +
+                      '</button>' + 
                     '</div>' +
+                    '</p>' + '<p>' +
+                    '</p>' + '<p>' +
                     '<div class="select">' +
                       '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
                           '({{ available.length }})</label>' +
                       '<select id="multiSelectAvailable" ng-model="selected.available" multiple ' +
                           'ng-options="e as e[displayAttr] for e in available"></select>' +
                     '</div>' +
+                    '</p>' +
                   '</div>',
         link: function (scope, elm, attrs) {
             scope.selected = {
@@ -62,7 +68,7 @@ ConfigApp.directive('multiSelect', function ($q) {
                 angular.forEach(original, function (entity) {
                     var match = false;
                     for (var i = 0; i < toFilter.length; i++) {
-                        if (toFilter[i][attrs.displayAttr] == entity[attrs.displayAttr]) {
+                        if (toFilter[i][attrs.displayAttr] === entity[attrs.displayAttr]) {
                             match = true;
                             break;
                         }

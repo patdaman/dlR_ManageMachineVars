@@ -140,10 +140,13 @@ div.flipReverse {
 /* multi-select */
 .multiSelect {
     overflow: auto;
+    width: 90%;
 }
 .multiSelect .select {
     margin-right: 20px;
     float: left;
+    min-width: 50px;
+    width: 75%;
 }
 .multiSelect .text {
     clear: both;
@@ -171,5 +174,4 @@ div.flipReverse {
 /* demo css */
 li {
     list-style-type: disc;
-}
 }

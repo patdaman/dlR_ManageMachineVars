@@ -108,18 +108,24 @@ namespace BusinessLayer
                     relative_path = component.relative_path,
                     ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
                     ConfigVariables = new List<EFDataModel.DevOps.ConfigVariable>(),
-                    Applications = new List<EFDataModel.DevOps.Application>(),
-                    //Applications = GetEfApplication(component.Applications),
+                    //Applications = new List<EFDataModel.DevOps.Application>(),
+                    Applications = GetEfApplication(component.Applications),
                 });
             else
             {
                 efComp.component_name = component.component_name;
                 //efComp.create_date = component.create_date;
-                //efComp.modify_date = component.modify_date ?? DateTime.Now;
+                efComp.modify_date = component.modify_date ?? DateTime.Now;
                 //efComp.active = component.active;
                 efComp.relative_path = component.relative_path;
-                //efComp.Applications.AddRange(GetEfApplication(component.Applications));
+                var efApps = GetEfApplication(component.Applications);
+                var newEfApps = efApps.Where(x => !efComp.Applications.Any(y => y.id == x.id)).ToList();
+                foreach (var newApp in newEfApps)
+                {
+                    efComp.Applications.Add(newApp);
+                }
             }
+            DevOpsContext.SaveChanges();
             return GetComponent(component.component_name, true);
         }
 
@@ -190,10 +196,11 @@ namespace BusinessLayer
             List<ViewModel.Application> vmApps = new List<ViewModel.Application>();
             if (apps.Count > 0)
             {
-                List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => apps.Select(y => y.name).Contains(x.application_name)).ToList();
+                //List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => apps.Select(y => y.name).FirstOrDefault().Contains(x.application_name)).ToList();
                 foreach (var vmApp in apps)
                 {
-                    var app = efApps.Where(x => x.application_name == vmApp.name).FirstOrDefault();
+                    var app = DevOpsContext.Applications.Where(x => x.application_name.Contains(vmApp.name)).FirstOrDefault();
+                    //var app = efApps.Where(x => x.application_name == vmApp.name).FirstOrDefault();
                     if (app == null)
                     {
                         vmApps.Add(new ViewModel.Application(vmApp)
@@ -234,35 +241,68 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         public List<EFDataModel.DevOps.Application> GetEfApplication(List<ViewModel.Application> vmApps)
         {
-            List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => vmApps.Select(y => y.application_name).Contains(x.application_name)).ToList();
+            //List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => vmApps.Select(y => y.application_name).Contains(x.application_name)).ToList();
+            List<EFDataModel.DevOps.Application> efApps = new List<EFDataModel.DevOps.Application>();
             foreach (var vmApp in vmApps)
             {
-                EFDataModel.DevOps.Application app = efApps.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
-                if (app == null)
-                {
-                    if (string.IsNullOrWhiteSpace(vmApp.release))
-                        vmApp.release = ".42";
-                    efApps.Add(new EFDataModel.DevOps.Application()
-                    {
-                        application_name = vmApp.application_name,
-                        active = vmApp.active, // ?? true,
-                        create_date = vmApp.create_date, // ?? DateTime.Now,
-                        modify_date = vmApp.modify_date ?? DateTime.Now,
-                        release = vmApp.release,
-                        EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
-                    });
-                }
-                else
-                {
-                    app.id = vmApp.id;
-                    app.active = vmApp.active;
-                    app.application_name = vmApp.application_name;
-                    app.create_date = vmApp.create_date;
-                    app.modify_date = vmApp.modify_date ?? DateTime.Now;
-                    app.release = vmApp.release;
-                }
+                //EFDataModel.DevOps.Application app = efApps.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
+                //EFDataModel.DevOps.Application app = DevOpsContext.Applications.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
+                //if (app == null)
+                //{
+                //    if (string.IsNullOrWhiteSpace(vmApp.release))
+                //        vmApp.release = ".42";
+                //    efApps.Add(new EFDataModel.DevOps.Application()
+                //    {
+                //        application_name = vmApp.application_name,
+                //        active = vmApp.active, // ?? true,
+                //        create_date = vmApp.create_date, // ?? DateTime.Now,
+                //        modify_date = vmApp.modify_date ?? DateTime.Now,
+                //        release = vmApp.release,
+                //        EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
+                //    });
+                //}
+                //else
+                //{
+                //    app.id = vmApp.id;
+                //    app.active = vmApp.active;
+                //    app.application_name = vmApp.application_name;
+                //    app.create_date = vmApp.create_date;
+                //    app.modify_date = vmApp.modify_date ?? DateTime.Now;
+                //    app.release = vmApp.release;
+                //}
+                efApps.Add(GetEfApplication(vmApp));
             }
             return efApps;
+        }
+
+        public EFDataModel.DevOps.Application GetEfApplication(ViewModel.Application vmApp)
+        {
+            EFDataModel.DevOps.Application app;
+            app = DevOpsContext.Applications.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
+            if (app == null)
+            {
+                if (string.IsNullOrWhiteSpace(vmApp.release))
+                    vmApp.release = ".42";
+                app = new EFDataModel.DevOps.Application()
+                {
+                    application_name = vmApp.application_name,
+                    active = vmApp.active, // ?? true,
+                    create_date = vmApp.create_date, // ?? DateTime.Now,
+                    modify_date = vmApp.modify_date ?? DateTime.Now,
+                    release = vmApp.release,
+                    EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
+                };
+            }
+            else
+            {
+                app.id = vmApp.id;
+                app.active = vmApp.active;
+                app.application_name = vmApp.application_name;
+                app.create_date = vmApp.create_date;
+                app.modify_date = vmApp.modify_date ?? DateTime.Now;
+                app.release = vmApp.release;
+            }
+            return app;
         }
 
         ///-------------------------------------------------------------------------------------------------

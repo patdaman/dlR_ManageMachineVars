@@ -316,11 +316,16 @@ namespace BusinessLayer
 
             if (efConfigFile == null)
             {
+                string xml_dec = string.Empty;
+                if (configFile.Declaration != null)
+                    xml_dec = configFile.Declaration.ToString();
+                else
+                    xml_dec = new XDeclaration("1.0", "utf-8", "yes").ToString();
                 efConfigFile = new EFDataModel.DevOps.ConfigFile()
                 {
                     file_name = file_name,
                     environment = this.environment,
-                    xml_declaration = configFile.Declaration.ToString() ?? new XDeclaration("1.0", "utf-8", "yes").ToString(),
+                    xml_declaration = xml_dec,
                     root_element = configFile.Root.Name.ToString(),
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,

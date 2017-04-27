@@ -628,6 +628,7 @@
     <Content Include="log.config" />
     <None Include="Properties\PublishProfiles\FileSystem Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Local_FileSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\WebDeploy_HQDEV08.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Dashboard\d3.js" />
     <Content Include="Scripts\Dashboard\d3.min.js" />

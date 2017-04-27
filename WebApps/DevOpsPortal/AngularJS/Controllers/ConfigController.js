@@ -56,32 +56,41 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var selectedEnvironment;
     var environment;
 
+    /// Display current API path and link to Help page
+    //if ($scope.APIPath.Includes('/api'))
+    //if (ApiPath.Includes('/api'))
+    //    $scope.ApiBaseUrl = ApiPath.slice(0, -4);
+    //else
+        //$scope.ApiBaseUrl = $rootScope.APIPath;
     $scope.ApiBaseUrl = ApiPath;
-    $scope.ApiBaseUrlHelp = ApiPath.slice(0, -3) + 'Help';
+    //if ($scope.ApiBaseUrl.endsWith('/'))
+    //    $scope.ApiBaseUrlHelp = ApiBaseUrl(0, -1) + 'Help';
+    //else
+    $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
 
+    /// Edit Variables
     $scope.selectedRow = "";
     $scope.key = "";
     $scope.value = "";
     $scope.bypassEditCancel = true;
-
-    $scope.environment = 'development';
-    $scope.filterEnvironment = function () {
-        return $scope.environment;
-    };
-
-    $scope.application = '';
-    $scope.component = '';
-
     $scope.edit = false;
     $scope.canEdit = function () {
         return $scope.edit;
     };
-
     $scope.subEdit = false;
     $scope.subCanEdit = function () {
         return $scope.subEdit;
     };
 
+    /// Grid Filters
+    $scope.environment = 'development';
+    $scope.filterEnvironment = function () {
+        return $scope.environment;
+    };
+    $scope.application = '';
+    $scope.component = '';
+
+    /// Configure Config UI grid
     $scope.gridOptions = {
         enablePaging: true,
         paginationPageSizes: [10, 20, 50, 100],
@@ -208,7 +217,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $http.get(ApiPath + '/ConfigApi')
     //$http.get(apiRelPath)
     //$http.get('api:/ConfigApi/')
-        //$http.get("/Config/GetAppVar")
+    //$http.get("/Config/GetAppVar")
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
             data[i].subGridOptions = {
@@ -286,11 +295,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     //  note - does not refresh currently visible sub grid rows that are not the last one expanded / selected
     $scope.filterSubGrid = function (value) {
         console.log(value);
-        $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
+        if (typeof $scope.gridApi.grid.appScope.subGridApi !== 'undefined') {
+            $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
+            $scope.subGridApi.core.refresh();
+        }
         //angular.forEach($scope.gridOptions.data, function (data) {
         //    data.values.subGridOptions;
         //});
-        $scope.subGridApi.core.refresh();
     };
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
@@ -430,11 +441,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of environments:
     $http({
         method: 'GET',
-        url: 'api:/ConfigValuesApi/',
+        url: 'api:/ConfigValuesApi',
         //url: '/Config/GetDropDownValues',
         //withCredentials: true,
         params: {
             type: "environment"
+            //parameters: "type=environment"
         },
         //responseType: 'arraybuffer'
     }).then(function (result) {
@@ -444,7 +456,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of components:
     $http({
         method: 'GET',
-        url: 'api:/ConfigValuesApi/',
+        url: 'api:/ConfigValuesApi',
         //url: '/Config/GetDropDownValues',
         //withCredentials: true,
         params: {
@@ -458,7 +470,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // List of applications:
     $http({
         method: 'GET',
-        url: 'api:/ConfigValuesApi/',
+        url: 'api:/ConfigValuesApi',
         //url: '/Config/GetDropDownValues',
         //withCredentials: true,
         params: {
@@ -502,7 +514,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             modal.close.then(function (result) {
                 if (result.save) {
                     var deferred = $q.defer();
-                    var applicationNames = result.componentApplications.map(function (item) { return item["id","name"]; });
+                    var applicationNames = result.componentApplications.map(function (item) { return item["id", "name"]; });
+                    applicationNames = result.componentApplications;
                     var data = JSON.stringify({
                         "componentName": result.componentName,
                         "applications": applicationNames,
@@ -603,6 +616,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     // Displays modal window containing the currently selected Component's config elements
+    // - Note that this only applies to the first (highest) Grouped object
+    // - In our case the Component Name row 
     $scope.showFile = function (row) {
         var componentRow = '$$' + row.uid;
         var componentGroupName = row.treeNode.aggregations[0].groupVal;

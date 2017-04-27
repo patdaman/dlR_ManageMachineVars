@@ -10,13 +10,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="AngularJS/app.js">
-      <publishTime>04/25/2017 14:14:00</publishTime>
+      <publishTime>04/26/2017 10:47:51</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigController.js">
-      <publishTime>04/25/2017 16:22:09</publishTime>
+      <publishTime>04/26/2017 12:14:27</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigModalController.js">
-      <publishTime>04/24/2017 13:52:04</publishTime>
+      <publishTime>04/26/2017 11:47:59</publishTime>
     </File>
     <File Include="AngularJS/Controllers/DashboardController.js">
       <publishTime>04/04/2017 11:30:05</publishTime>
@@ -34,7 +34,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/21/2017 16:13:21</publishTime>
     </File>
     <File Include="AngularJS/Directives/ConfigDirectives.js">
-      <publishTime>04/21/2017 16:14:11</publishTime>
+      <publishTime>04/26/2017 12:48:21</publishTime>
     </File>
     <File Include="AngularJS/Services/ConfigService.js">
       <publishTime>04/11/2017 16:47:07</publishTime>
@@ -133,46 +133,46 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
     <File Include="bin/ApiLib.dll">
-      <publishTime>04/24/2017 14:55:03</publishTime>
+      <publishTime>04/26/2017 11:08:03</publishTime>
     </File>
     <File Include="bin/ApiLib.pdb">
-      <publishTime>04/24/2017 14:55:03</publishTime>
+      <publishTime>04/26/2017 11:08:03</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>04/25/2017 16:22:22</publishTime>
+      <publishTime>04/26/2017 17:24:27</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>04/25/2017 16:22:22</publishTime>
+      <publishTime>04/26/2017 17:24:26</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>04/24/2017 12:14:13</publishTime>
+      <publishTime>04/26/2017 17:08:27</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
-      <publishTime>04/24/2017 12:14:13</publishTime>
+      <publishTime>04/26/2017 17:08:27</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/CommonUtils.Exception.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/CommonUtils.Exception.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/CommonUtils.Powershell.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/CommonUtils.Powershell.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/Content/Templates/actionsTemplate.html">
       <publishTime>04/14/2017 11:11:22</publishTime>
     </File>
     <File Include="bin/Content/Templates/addComponentModal.html">
-      <publishTime>04/24/2017 12:43:38</publishTime>
+      <publishTime>04/26/2017 17:20:32</publishTime>
     </File>
     <File Include="bin/Content/Templates/addVariableModal.html">
       <publishTime>04/21/2017 14:51:06</publishTime>
@@ -193,16 +193,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/18/2017 13:38:39</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.dll">
-      <publishTime>04/25/2017 16:01:48</publishTime>
+      <publishTime>04/26/2017 17:24:18</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.pdb">
-      <publishTime>04/25/2017 16:01:48</publishTime>
+      <publishTime>04/26/2017 17:24:18</publishTime>
     </File>
     <File Include="bin/EFDataModel.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/EFDataModel.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/EntityFramework.dll">
       <publishTime>03/02/2015 09:32:26</publishTime>
@@ -259,28 +259,28 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 21:19:46</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.DataStructures.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.DataStructures.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Logging.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Logging.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Reflection.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Reflection.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/System.Management.Automation.dll">
       <publishTime>11/25/2015 22:03:02</publishTime>
@@ -316,10 +316,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2015 04:04:30</publishTime>
     </File>
     <File Include="bin/ViewModel.dll">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/ViewModel.pdb">
-      <publishTime>04/24/2017 12:14:12</publishTime>
+      <publishTime>04/25/2017 17:22:49</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>09/10/2013 18:28:38</publishTime>
@@ -361,7 +361,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 14:24:45</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>04/20/2017 12:27:38</publishTime>
+      <publishTime>04/26/2017 17:23:02</publishTime>
     </File>
     <File Include="Content/site_dashboard.css">
       <publishTime>04/04/2017 14:25:06</publishTime>
@@ -370,7 +370,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/14/2017 11:11:22</publishTime>
     </File>
     <File Include="Content/Templates/addComponentModal.html">
-      <publishTime>04/24/2017 12:43:38</publishTime>
+      <publishTime>04/26/2017 17:20:32</publishTime>
     </File>
     <File Include="Content/Templates/addVariableModal.html">
       <publishTime>04/21/2017 14:51:06</publishTime>
@@ -430,13 +430,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 11:28:40</publishTime>
     </File>
     <File Include="log.config">
-      <publishTime>04/24/2017 12:10:54</publishTime>
+      <publishTime>04/25/2017 16:31:49</publishTime>
     </File>
     <File Include="packages.config">
       <publishTime>04/24/2017 11:55:05</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>04/25/2017 16:22:18</publishTime>
+      <publishTime>04/26/2017 17:24:21</publishTime>
     </File>
     <File Include="Scripts/angular-animate.js">
       <publishTime>04/04/2017 14:36:39</publishTime>
@@ -1849,7 +1849,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 11:28:39</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/25/2017 16:01:52</publishTime>
+      <publishTime>04/26/2017 17:24:20</publishTime>
     </File>
   </ItemGroup>
 </Project>

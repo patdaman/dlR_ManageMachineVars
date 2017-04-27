@@ -117,7 +117,7 @@ namespace ApiLib
                 {
                     return await response.Content.ReadAsAsync<List<TEntity>>(formatters);
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -150,7 +150,7 @@ namespace ApiLib
                 {
                     return await response.Content.ReadAsAsync<TEntity>(formatters);
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -188,7 +188,7 @@ namespace ApiLib
                     fh.Status = FileHelper.FileHelperStatus.OK;
                     return fh;
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -207,7 +207,7 @@ namespace ApiLib
                 {
                     return await response.Content.ReadAsAsync<TEntity>(formatters);
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -217,16 +217,20 @@ namespace ApiLib
             }
         }
 
-        public static async Task<TEntity> GetAsync(string relativeuri, object id)
+        public static async Task<TEntity> GetAsync(string relativeuri, object parameters = null)
         {
             using (HttpClient client = SetupClient())
             {
-                HttpResponseMessage response = await client.GetAsync(("api/" + relativeuri + "?type=" + id.ToString()));
+                HttpResponseMessage response;
+                if (!parameters.ToString().Contains("="))
+                    response = await client.GetAsync(((relativeuri + "/").Replace(@"//", "/") + parameters.ToString()));
+                else
+                    response = await client.GetAsync((relativeuri + "?" + parameters.ToString()));
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<TEntity>(formatters);
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -245,7 +249,7 @@ namespace ApiLib
                 {
                     return await response.Content.ReadAsAsync<TEntity>(formatters);
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -270,7 +274,7 @@ namespace ApiLib
                     TEntity ret = await ClientApi<TEntity>.GetAsync(item);
                     return ret;
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);
@@ -293,7 +297,7 @@ namespace ApiLib
                     TEntity ret = await ClientApi<TEntity>.GetAsync(item);
                     return ret;
                 }
-                else // we should have received a SignalException
+                else // we should have received an Exception
                 {
                     Exception sexp = await HandleException(response);
                     //CustomException sexp = await HandleException(response);

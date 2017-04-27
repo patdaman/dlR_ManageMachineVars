@@ -9,14 +9,15 @@ namespace DevOpsPortal.Controllers
     //public class ConfigController : Controller
     public class ConfigController : BaseController
     {
-        //[Authorize(Roles = "Engineers")]
-        // GET: Config
+#if RELEASE
+        [Authorize(Roles = "Engineers")]
+#endif
         public async Task<ActionResult> Index()
         {
             return View();
         }
 
-        //[AcceptVerbs(HttpVerbs.Get)]
+        [AcceptVerbs(HttpVerbs.Get)]
         public async Task<JsonResult> GetAppVar()
         {
             IEnumerable<ViewModel.AppVar> appVars = null;
@@ -74,7 +75,7 @@ namespace DevOpsPortal.Controllers
             return Json(new[] { pp });
         }
 
-        //[AcceptVerbs(HttpVerbs.Get)]
+        [AcceptVerbs(HttpVerbs.Get)]
         public async Task<JsonResult> GetAppVarValue()
         {
             IEnumerable<ViewModel.ConfigVariableValue> appVars = null;
@@ -105,12 +106,12 @@ namespace DevOpsPortal.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get)]
-        public async Task<JsonResult> GetDropDownValues(string type)
+        public async Task<JsonResult> GetDropDownValues(string parameters)
         {
             ViewModel.NameValuePair apiAppVar = null;
             try
             {
-                apiAppVar = await ApiLib.ClientApi<ViewModel.NameValuePair>.GetAsync("ConfigValuesApi", type);
+                apiAppVar = await ApiLib.ClientApi<ViewModel.NameValuePair>.GetAsync("ConfigValuesApi", parameters);
             }
             catch (Exception ex)
             {

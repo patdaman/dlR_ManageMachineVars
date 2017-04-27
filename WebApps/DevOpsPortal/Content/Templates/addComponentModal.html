@@ -23,8 +23,8 @@
                     <p>
                         <div class="form-group">
                             <label><b>Application(s):</b></label>
-                            <multi-select ng-model="localComponent.applications" available="applications" selected-label="Current" available-label="Available" display-attr="name"></multi-select>
-                            <div>{{componentName}}'s Applications: </div>
+                            <multi-select ng-model="componentApplications" available="applications" selected-label="Current" available-label="Available" display-attr="name"></multi-select>
+                            <div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
                             <ul>
                                 <li ng-repeat="app in componentApplications">{{app.name}}</li>
                             </ul>
@@ -49,12 +49,14 @@
                              accept=".config,.xml"
                              ngf-pattern="'.config,.xml'">Drop .config or .xml files here or click to upload</div>
                         <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
-                        Files:
-                        <ul>
-                            <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}</li>
-                        </ul>
-                        Upload Log:
-                        <pre>{{log}}</pre>
+                        <div ng-if="files && files !== ''">
+                            Files:
+                            <ul>
+                                <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}</li>
+                            </ul>
+                        </div>
+                        <!--Upload Log:
+                        <pre>{{log}}</pre>-->
                     </p>
                 </form>
             </div>

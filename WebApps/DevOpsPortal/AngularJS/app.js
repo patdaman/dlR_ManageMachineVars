@@ -2,6 +2,7 @@
 
 var DevOpsWebApp;
 var ApiPath = DevOpsWebApp.ApiPath;
+//var ApiPath = DevOpsWebApp.ApiUri;
 var SignalRPath = DevOpsWebApp.SignalRPath;
 
 var ConfigApp = angular.module('ConfigApp',
