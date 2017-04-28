@@ -53,7 +53,13 @@ namespace BusinessLayer
             return allVars;
         }
 
-
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets the application. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/27/2017. </remarks>
+        ///
+        /// <returns>   The application. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<ViewModel.Application> GetApplication()
         {
             List<ViewModel.Application> applications = new List<ViewModel.Application>();
@@ -112,17 +118,11 @@ namespace BusinessLayer
             return components;
         }
 
-        public ViewModel.Component GetComponent(int componentId)
+        public ViewModel.Component GetComponent(int componentId, bool noVal = false)
         {
             var efComponent = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
-            return ReturnComponentVariable(efComponent);
+            return ReturnComponentVariable(efComponent, noVal);
         }
-
-        //public ViewModel.Component GetComponent(string componentName)
-        //{
-        //    var efComponent = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
-        //    return ReturnComponentVariable(efComponent);
-        //}
 
         public ViewModel.Component GetComponent(string componentName, bool noVal = false)
         {
@@ -130,6 +130,15 @@ namespace BusinessLayer
             return ReturnComponentVariable(efComponent, noVal);
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds an update component. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/27/2017. </remarks>
+        ///
+        /// <param name="component">    The component. </param>
+        ///
+        /// <returns>   A ViewModel.Component. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public ViewModel.Component AddUpdateComponent(ViewModel.Component component)
         {
             EFDataModel.DevOps.Component efComp;
@@ -154,9 +163,9 @@ namespace BusinessLayer
             else
             {
                 efComp.component_name = component.component_name;
-                //efComp.create_date = component.create_date;
+                efComp.create_date = component.create_date;
                 efComp.modify_date = component.modify_date ?? DateTime.Now;
-                //efComp.active = component.active;
+                efComp.active = component.active;
                 efComp.relative_path = component.relative_path;
                 var efApps = GetEfApplication(component.Applications);
                 var newEfApps = efApps.Where(x => !efComp.Applications.Any(y => y.id == x.id)).ToList();
@@ -169,6 +178,15 @@ namespace BusinessLayer
             return GetComponent(component.component_name, true);
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds an update application. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/27/2017. </remarks>
+        ///
+        /// <param name="application">  The application. </param>
+        ///
+        /// <returns>   A ViewModel.Application. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public ViewModel.Application AddUpdateApplication(ViewModel.Application application)
         {
             EFDataModel.DevOps.Application efApp;

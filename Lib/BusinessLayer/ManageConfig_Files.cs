@@ -268,7 +268,7 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration XML. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ConfigXml GetConfigXml(int? componentId = null)
+        public ConfigXml GetConfigXml(int? componentId = null, string filename = null)
         {
             EFDataModel.DevOps.Component component;
             if (string.IsNullOrWhiteSpace(this.componentName))
@@ -290,7 +290,7 @@ namespace BusinessLayer
             this.path = component.relative_path + @"\" + 
                 (component.ConfigFiles.FirstOrDefault().file_name + @".config") ?? "";
 
-            XDocument xmlDoc = GetConfigFile(this.componentId);
+            XDocument xmlDoc = GetConfigFile(this.componentId, filename);
             if (xmlDoc == null)
             {
                 throw new ArgumentNullException(string.Format("Config File for {0} not found", this.componentName));
@@ -322,7 +322,7 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration file. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public XDocument GetConfigFile(int? componentId = null)
+        public XDocument GetConfigFile(int? componentId = null, string filename = null)
         {
             if (componentId != null)
                 this.componentId = componentId;
@@ -344,7 +344,7 @@ namespace BusinessLayer
             {
                 environment = environment ?? string.Empty
             };
-            List<AttributeKeyValuePair> elements = variableProcessor.ListAllAppConfigVariablesFromDb(componentId, environment);
+            List<AttributeKeyValuePair> elements = variableProcessor.ListAllAppConfigVariablesFromDb(componentId, environment, filename);
             AttributeKeyValuePair efRootElement = elements.Where(x => string.IsNullOrWhiteSpace(x.parentElement)).FirstOrDefault();
 
             configFile = new XDocument(new XElement(efRootElement.element, string.Empty))

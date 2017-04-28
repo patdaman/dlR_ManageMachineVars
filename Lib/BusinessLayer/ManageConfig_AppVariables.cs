@@ -151,7 +151,7 @@ namespace BusinessLayer
         ///
         /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<AttributeKeyValuePair> ListAllAppConfigVariablesFromDb(int? componentId = null, string environment = null)
+        public List<AttributeKeyValuePair> ListAllAppConfigVariablesFromDb(int? componentId = null, string environment = null, string filename = null)
         {
             var keyValues = new List<AttributeKeyValuePair>();
             if (!string.IsNullOrWhiteSpace(environment))
@@ -398,10 +398,12 @@ namespace BusinessLayer
                              where n.key == x.key
                              where n.parent_element == x.parentElement
                              where n.value_name == x.valueName
+                             where n.configfile_id == efConfigFile.id || n.configfile_id == null
                              select n).FirstOrDefault();
                 if (configVar == null)
                 {
                     configVar = CreateAppConfigEntity(x);
+                    configVar.ConfigFile = efConfigFile;
                     if (efComp != null)
                         efComp.ConfigVariables.Add(configVar);
                     else
@@ -448,6 +450,13 @@ namespace BusinessLayer
             return configVars;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds a component. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 4/27/2017. </remarks>
+        ///
+        /// <param name="component">    The component. </param>
+        ///-------------------------------------------------------------------------------------------------
         public void AddComponent(ViewModel.Component component)
         {
             EFDataModel.DevOps.Component efComponent = new EFDataModel.DevOps.Component()
@@ -509,6 +518,7 @@ namespace BusinessLayer
                     modify_date = v.modify_date ?? DateTime.Now,
                     parent_element = v.parent_element,
                     value_name = v.value_name,
+                    ConfigFile = efComponent.ConfigFiles.FirstOrDefault(),
                 });
             }
 
@@ -558,7 +568,7 @@ namespace BusinessLayer
                 ConfigVariableValues = valueList,
                 create_date = DateTime.Now,
                 modify_date = DateTime.Now,
-                active = true
+                active = true,
             };
             return efConfigVar;
         }
@@ -781,7 +791,7 @@ namespace BusinessLayer
         ///
         /// <returns>   The configuration variables. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, int appId, int? machineId = null)
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, int appId, int? machineId = null, int? fileId = null)
         {
             IQueryable<EFDataModel.DevOps.Machine> machineObject = (from mac in DevOpsContext.Machines
                                                                     where mac.machine_name == machineName

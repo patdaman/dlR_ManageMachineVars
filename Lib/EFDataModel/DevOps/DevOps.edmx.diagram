@@ -42,6 +42,7 @@
         <AssociationConnector Association="DevOpsModel.MachinesServerGroupsMap" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.MachineVariablesMap" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_ConfigFile_Enum_EnvironmentType" />
+        <AssociationConnector Association="DevOpsModel.FK_ConfigVariables_ConfigFile" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
