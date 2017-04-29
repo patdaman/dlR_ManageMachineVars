@@ -161,8 +161,17 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             },
             filterCellFiltered: true
         },
+        {
+            field: 'fileName',
+            enableCellEdit: false,
+            width: '10%',
+            grouping: { groupPriority: 1 },
+            sort: { priority: 1, direction: 'asc' },
+            groupable: true
+        },
         { field: 'configvar_id', visible: false, enableCellEdit: false },
-        { field: 'configParentElement', visible: false, enableCellEdit: false },
+        //{ field: 'configParentElement', visible: false, enableCellEdit: false },
+        { field: 'configParentElement', visible: true, enableCellEdit: false },
         { field: 'configElement', visible: false, enableCellEdit: false },
         { field: 'attribute', visible: false, enableCellEdit: false },
         {
@@ -216,7 +225,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $http.get(ApiPath + '/ConfigApi')
     //$http.get(apiRelPath)
-    //$http.get('api:/ConfigApi/')
+    //$http.get('api:/ConfigApi')
     //$http.get("/Config/GetAppVar")
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
@@ -325,7 +334,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
                 $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             }
-            $scope.gridApi.cellNav.scrollToFocus($scope.rowId, 7);
+            $scope.gridApi.cellNav.scrollToFocus($scope.rowId, 8);
             $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
         }
             // For Values
@@ -663,11 +672,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // - Note that this only applies to the first (highest) Grouped object
     // - In our case the Component Name row 
     $scope.showFile = function (row) {
-        var componentRow = '$$' + row.uid;
-        var componentGroupName = row.treeNode.aggregations[0].groupVal;
+        var componentGroupName = row.grid.treeBase.tree[0].aggregations[0].groupVal;
+        var componentFileName = row.treeNode.aggregations[1].groupVal;
         var rowEntity = row.entity;
-        //$http.get(ApiPath + '/api/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
-        $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
+        if (typeof componentFileName !== 'undefined')
+            $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment + '&fileName=' + componentFileName)
+        //$http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
             .success(function (data) {
                 ModalService.showModal({
                     templateUrl: "/Content/Templates/configFileModal.html",
@@ -675,6 +685,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     inputs: {
                         title: data.componentName,
                         filePath: data.path,
+                        //fileName: data.fileName,
                         configXml: data.text,
                         publish: false,
                         download: false
@@ -684,10 +695,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         modal.element.modal();
                         modal.close.then(function (result) {
                             if (result.download) {
-                                $scope.downloadConfig(result.title)
+                                $scope.downloadConfig(result.title, result.fileName)
                             };
                             if (result.publish) {
-                                $scope.downloadConfig(result.title)
+                                $scope.downloadConfig(result.title, result.fileName)
                             };
                         });
                     })
@@ -695,17 +706,19 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     // Config File Download
-    $scope.downloadConfig = function (componentName) {
+    $scope.downloadConfig = function (componentName, fileName) {
         $scope.downloadFile(componentName, $scope.environment);
     };
-    $scope.downloadFile = function (componentName, environment) {
+
+    $scope.downloadFile = function (componentName, fileName, environment) {
         $http({
             method: 'GET',
             url: 'api:/ConfigPublishApi',
             //withCredentials: true,
             params: {
                 componentName: componentName,
-                environment: environment
+                environment: environment,
+                //fileName: fileName,
             },
             responseType: 'arraybuffer'
         }).success(function (data, status, headers) {

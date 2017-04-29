@@ -86,8 +86,67 @@ namespace CommonUtils.AppConfiguration
             var keyValues = new List<AttributeKeyValuePair>();
             foreach (var element in configFile.Descendants())
             {
-                if (element.FirstAttribute != null
-                    && element.LastAttribute != null)
+                if (element.HasAttributes)
+                {
+                    if (element.FirstAttribute == element.LastAttribute)
+                    {
+                        string parentName = string.Empty;
+                        if (element.Parent != null)
+                            parentName = element.Parent.Name.ToString() ?? "";
+                        keyValues.Add(new AttributeKeyValuePair()
+                        {
+                            parentElement = parentName,
+                            element = element.Name.ToString(),
+                            attribute = element.FirstAttribute.Name.ToString(),
+                            key = element.FirstAttribute.Name.ToString(),
+                            valueName = "",
+                            value = element.FirstAttribute.Value.ToString(),
+                            Result = new ConfigModifyResult()
+                        });
+                    }
+                    else
+                    {
+                        string parentName = string.Empty;
+                        if (element.Parent != null)
+                            parentName = element.Parent.Name.ToString() ?? "";
+                        string keys = string.Empty;
+                        string values = string.Empty;
+                        string longAttributeKeys;
+                        string longAttributeString;
+                        IEnumerable<XAttribute> longAttributes;
+                        if (element.Attributes().ToList().Count() > 2)
+                        {
+                            longAttributeKeys = string.Empty;
+                            longAttributeString = string.Empty;
+                            longAttributes = element.Attributes();
+                            foreach (var att in longAttributes.Skip(1))
+                            {
+                                longAttributeKeys = longAttributeKeys + att.Name.ToString() + ",";
+                                longAttributeString = longAttributeString + att.Name.ToString() + "=" + att.Value.ToString();
+                            }
+                            keys = longAttributeKeys;
+                            values = longAttributeString;
+                        }
+                        else
+                        {
+                            keys = element.FirstAttribute.Value.ToString();
+                            values = element.LastAttribute.Value.ToString();
+                        }
+                        keyValues.Add(new AttributeKeyValuePair()
+                        {
+                            parentElement = parentName,
+                            element = element.Name.ToString(),
+                            attribute = element.FirstAttribute.Name.ToString(),
+                            key = keys,
+                            valueName = element.LastAttribute.Name.ToString(),
+                            value = values,
+                            Result = new ConfigModifyResult()
+                        });
+                    }
+                }
+                else if (!element.HasElements
+                    // && element.FirstNode == element.LastNode
+                    && element.Value != null)
                 {
                     string parentName = string.Empty;
                     if (element.Parent != null)
@@ -96,25 +155,7 @@ namespace CommonUtils.AppConfiguration
                     {
                         parentElement = parentName,
                         element = element.Name.ToString(),
-                        attribute = element.FirstAttribute.Name.ToString(),
-                        key = element.FirstAttribute.Value.ToString(),
-                        valueName = element.LastAttribute.Name.ToString(),
-                        value = element.LastAttribute.Value.ToString(),
-                        Result = new ConfigModifyResult()
-                    });
-                }
-                else if (!element.HasElements
-                    && element.FirstNode == element.LastNode
-                    && element.Value != null)
-                {
-                    string parentName = string.Empty;
-                    if (element.Parent != null)
-                        parentName = element.Parent.Name.ToString() ?? "";
-                    keyValues.Add(new AttributeKeyValuePair()
-                    {
-                        parentElement = element.Parent.Name.ToString() ?? "",
-                        element = element.Name.ToString(),
-                        attribute = "",
+                        attribute = element.FirstNode.ToString(),
                         key = element.Name.ToString(),
                         valueName = "",
                         value = element.Value.ToString(),
@@ -123,9 +164,12 @@ namespace CommonUtils.AppConfiguration
                 }
                 else
                 {
+                    string parentName = string.Empty;
+                    if (element.Parent != null)
+                        parentName = element.Parent.Name.ToString() ?? "";
                     var keyValue = new AttributeKeyValuePair()
                     {
-                        parentElement = "",
+                        parentElement = parentName,
                         element = element.Name.ToString(),
                         attribute = "",
                         key = "",
@@ -133,8 +177,6 @@ namespace CommonUtils.AppConfiguration
                         value = "",
                         Result = new ConfigModifyResult()
                     };
-                    if (element.Parent != null)
-                        keyValue.parentElement = element.Parent.Name.ToString();
                     keyValues.Add(keyValue);
                 }
             }

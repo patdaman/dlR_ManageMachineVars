@@ -243,7 +243,7 @@ namespace ViewModel
         public bool active { get; set; }
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual ICollection<Component> Components { get; set; }
-        public virtual ICollection<ConfigFile> ConfigFiles { get; set; }
+        public virtual ConfigFile ConfigFile { get; set; }
 
         public ConfigVariable()
         { }
@@ -261,7 +261,7 @@ namespace ViewModel
             active = c.active;
             //ConfigVariableValues = c.ConfigVariableValues;
             //Components = c.Components;
-            //ConfigFile = c.CofigFiles;
+            ConfigFile = c.ConfigFile;
         }
     }
 

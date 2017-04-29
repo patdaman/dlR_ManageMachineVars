@@ -71,12 +71,15 @@ namespace DevOpsApi.Controllers
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
         [HttpGet]
-        public HttpResponseMessage Get(string componentName, string environment)
+        public HttpResponseMessage Get(string componentName, string environment, string fileName = null)
         {
+            if (string.IsNullOrWhiteSpace(fileName))
+                fileName = string.Empty;
             BusinessLayer.ManageConfig_Files configFileProcessor = new BusinessLayer.ManageConfig_Files()
             {
                 componentName = componentName,
-                environment = environment
+                environment = environment,
+                fileName = fileName,
             };
             try
             {

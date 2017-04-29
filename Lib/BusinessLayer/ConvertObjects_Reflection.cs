@@ -196,6 +196,8 @@ namespace BusinessLayer
             return vm;
         }
 
+
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Ef machine component path list to view model. </summary>
         ///
@@ -296,6 +298,20 @@ namespace BusinessLayer
         private ViewModel.EnvironmentDtoVariable EnVarEfToVm(EFDataModel.DevOps.EnvironmentVariable EF)
         {
             return CommonUtils.Reflection.ReflectionUtils.CreateNewObjectAndCopyProperties<ViewModel.EnvironmentDtoVariable>(EF);
+        }
+
+        public ViewModel.ConfigFile EfConfigFileToVm(EFDataModel.DevOps.ConfigFile configFile)
+        {
+            return new ViewModel.ConfigFile()
+            {
+                file_name = configFile.file_name,
+                create_date = configFile.create_date,
+                modify_date = configFile.modify_date,
+                component_id = configFile.component_id,
+                id = configFile.id,
+                root_element = configFile.root_element,
+                xml_declaration = configFile.xml_declaration,
+            };
         }
     }
 }

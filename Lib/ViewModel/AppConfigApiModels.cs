@@ -31,7 +31,7 @@ namespace ViewModel
         public string applicationNames { get; set; }
         public Nullable<int> componentId { get; set; }
         public string componentName { get; set; }
-        public Nullable<int> fileId { get; set; }
+        public string fileName { get; set; }
         public string configParentElement { get; set; }
         public string configElement { get; set; }
         public string attribute { get; set; }
@@ -47,7 +47,7 @@ namespace ViewModel
             applicationNames = x.applicationNames;
             componentId = x.componentId;
             componentName = x.componentName;
-            fileId = x.fileId;
+            fileName = x.fileName;
             configParentElement = x.configParentElement;
             configElement = x.configElement;
             attribute = x.attribute;
@@ -62,7 +62,7 @@ namespace ViewModel
             configParentElement = x.parent_element;
             configElement = x.element;
             attribute = x.attribute;
-            fileId = x.ConfigFiles.FirstOrDefault().id;
+            fileName = x.ConfigFile.file_name;
             if (string.IsNullOrWhiteSpace(x.key))
                 key = x.value_name;
             else

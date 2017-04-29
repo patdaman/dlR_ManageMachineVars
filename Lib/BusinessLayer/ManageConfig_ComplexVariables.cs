@@ -534,20 +534,23 @@ namespace BusinessLayer
                 foreach (var vc in varComponents)
                 {
                     ViewModel.ConfigVariable configVar = ReturnConfigVariable(appVar);
-                    AppVar appVarModel = new AppVar(configVar);
-                    appVarModel.componentId = vc.id;
-                    appVarModel.componentName = vc.component_name ?? string.Empty;
-
-                    foreach (var app in vc.Applications)
+                    if (configVar.attribute != configVar.key && !string.IsNullOrWhiteSpace(configVar.value_name))
                     {
-                        if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
-                            appVarModel.applicationNames = app.application_name;
-                        else
-                            //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
-                            appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
+                        AppVar appVarModel = new AppVar(configVar);
+                        appVarModel.componentId = vc.id;
+                        appVarModel.componentName = vc.component_name ?? string.Empty;
+
+                        foreach (var app in vc.Applications)
+                        {
+                            if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
+                                appVarModel.applicationNames = app.application_name;
+                            else
+                                //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
+                                appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
+                        }
+                        appVarModel.values.AddRange(configVar.ConfigVariableValues);
+                        allVars.Add(appVarModel);
                     }
-                    appVarModel.values.AddRange(configVar.ConfigVariableValues);
-                    allVars.Add(appVarModel);
                 }
             }
             return allVars;
@@ -820,6 +823,7 @@ namespace BusinessLayer
                 modify_date = config.modify_date,
                 value_name = config.value_name ?? "",
                 parent_element = config.parent_element,
+                ConfigFile = EfToVmConverter.EfConfigFileToVm(config.ConfigFile),
                 ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues, environments),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)
             };

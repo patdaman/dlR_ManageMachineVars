@@ -27,6 +27,7 @@ namespace BusinessLayer
         public string path { get; set; }
         public string outputPath { get; set; }
         public string environment { get; set; }
+        public string fileName { get; set; }
         public XDocument configFile { get; set; }
         private string defaultPath { get; set; }
 
@@ -279,7 +280,7 @@ namespace BusinessLayer
                 this.componentId = componentId;
                 component = DevOpsContext.Components.Where(x => x.id == this.componentId).FirstOrDefault();
             }
-            else 
+            else
             {
                 component = DevOpsContext.Components.Where(x => x.component_name.ToLower() == this.componentName.ToLower()).FirstOrDefault();
             }
@@ -287,10 +288,14 @@ namespace BusinessLayer
                 throw new KeyNotFoundException("Component not found");
             this.componentName = component.component_name;
             this.componentId = component.id;
-            this.path = component.relative_path + @"\" + 
+            if (!string.IsNullOrWhiteSpace(filename))
+                this.fileName = filename;
+            if (string.IsNullOrWhiteSpace(this.fileName))
+                this.fileName = this.componentName;
+            this.path = component.relative_path + @"\" +
                 (component.ConfigFiles.FirstOrDefault().file_name + @".config") ?? "";
 
-            XDocument xmlDoc = GetConfigFile(this.componentId, filename);
+            XDocument xmlDoc = GetConfigFile(this.componentId, this.fileName);
             if (xmlDoc == null)
             {
                 throw new ArgumentNullException(string.Format("Config File for {0} not found", this.componentName));
@@ -347,10 +352,21 @@ namespace BusinessLayer
             List<AttributeKeyValuePair> elements = variableProcessor.ListAllAppConfigVariablesFromDb(componentId, environment, filename);
             AttributeKeyValuePair efRootElement = elements.Where(x => string.IsNullOrWhiteSpace(x.parentElement)).FirstOrDefault();
 
-            configFile = new XDocument(new XElement(efRootElement.element, string.Empty))
+            if (efRootElement != null)
             {
-                Declaration = new XDeclaration("1.0", "utf-8", "no")
-            };
+                configFile = new XDocument(new XElement(efRootElement.element, string.Empty))
+                {
+                    Declaration = new XDeclaration("1.0", "utf-8", "no")
+                };
+            }
+            else
+            {
+                configFile = new XDocument()
+                {
+                    Declaration = new XDeclaration("1.0", "utf-8", "no")
+                };
+            }
+
 
             elements.RemoveAll(x => string.IsNullOrWhiteSpace(x.parentElement));
             //elements.Remove(efRootElement);
