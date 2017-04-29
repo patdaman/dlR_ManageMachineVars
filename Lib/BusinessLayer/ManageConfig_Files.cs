@@ -298,7 +298,7 @@ namespace BusinessLayer
             XDocument xmlDoc = GetConfigFile(this.componentId, this.fileName);
             if (xmlDoc == null)
             {
-                throw new ArgumentNullException(string.Format("Config File for {0} not found", this.componentName));
+                throw new ArgumentNullException(string.Format("Config File {0} for {1} not found", this.fileName, this.componentName));
             }
             string xmlText = xmlDoc.Declaration + Environment.NewLine + xmlDoc.ToString();
             ConfigXml configXml = new ConfigXml()

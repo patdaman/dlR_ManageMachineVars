@@ -156,7 +156,7 @@ namespace BusinessLayer
             var keyValues = new List<AttributeKeyValuePair>();
             if (!string.IsNullOrWhiteSpace(environment))
                 this.environment = environment;
-            ICollection<EFDataModel.DevOps.ConfigVariable> configVars = QueryConfigVariables(componentId ?? 0);
+            ICollection<EFDataModel.DevOps.ConfigVariable> configVars = QueryConfigVariables(componentId ?? 0, this.environment, filename);
             foreach (var cvar in configVars.ToList())
             {
                 foreach (var val in cvar.ConfigVariableValues)
@@ -782,6 +782,12 @@ namespace BusinessLayer
             return QueryConfigVariables(componentId, 0);
         }
 
+        private ICollection<EFDataModel.DevOps.ConfigVariable> QueryConfigVariables(int componentId, string environment, string fileName)
+        {
+            this.environment = environment;
+            return QueryConfigVariables(componentId, 0, 0, fileName);
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Queries configuration variables. </summary>
         ///
@@ -808,18 +814,20 @@ namespace BusinessLayer
             ICollection<EFDataModel.DevOps.ConfigVariable> configVars;
 
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = string.Empty;
+                fileName = "";
             if (componentId != 0)
             {
                 if (!string.IsNullOrWhiteSpace(this.environment))
                     configVars = (from cvar in DevOpsContext.ConfigVariables
                                   where cvar.Components.FirstOrDefault().id == componentId
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where environmentObjects.Contains(cvar)
                                   select cvar).ToList();
                 else
                     configVars = (from cvar in DevOpsContext.ConfigVariables
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where cvar.Components.FirstOrDefault().id == componentId
                                   select cvar).ToList();
             }
@@ -827,13 +835,15 @@ namespace BusinessLayer
             {
                 if (!string.IsNullOrWhiteSpace(this.environment))
                     configVars = (from cvar in DevOpsContext.ConfigVariables
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
                                   select cvar).ToList();
                 else
                     configVars = (from cvar in DevOpsContext.ConfigVariables
                                   where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where environmentObjects.Contains(cvar)
                                   select cvar).ToList();
             }
@@ -842,7 +852,6 @@ namespace BusinessLayer
                 if (!string.IsNullOrWhiteSpace(this.environment))
                     configVars = (from cvar in DevOpsContext.ConfigVariables
                                   where environmentObjects.Contains(cvar)
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
                                   where cvar.Components.Select(x => x.id).Intersect(
                                   machineObject.FirstOrDefault().MachineComponentPathMaps.Select(ci => ci.component_id)
                                   ).Any()
@@ -852,7 +861,8 @@ namespace BusinessLayer
                                   where cvar.Components.Select(x => x.id).Intersect(
                                       machineObject.FirstOrDefault().MachineComponentPathMaps.Select(ci => ci.component_id)
                                       ).Any()
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   select cvar).ToList();
             }
             else

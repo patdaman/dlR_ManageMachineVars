@@ -1,4 +1,4 @@
-﻿<div ng-if="row.groupHeader">
+﻿<div ng-if="row.groupHeader&&row.treeLevel>0">
     <div class="ui-grid-cell-contents">
         <button value="Edit" class="btn btn-xs btn-default" ng-click="grid.appScope.showFile(row)">View File</button>
         <button value="AddVar" class="btn btn-xs btn-info" ng-click="grid.appScope.addVar(row)">Add Var</button>

@@ -718,7 +718,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             params: {
                 componentName: componentName,
                 environment: environment,
-                //fileName: fileName,
+                fileName: fileName,
             },
             responseType: 'arraybuffer'
         }).success(function (data, status, headers) {
