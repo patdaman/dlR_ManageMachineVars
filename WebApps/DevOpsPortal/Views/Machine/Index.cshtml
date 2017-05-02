@@ -3,47 +3,39 @@
     ViewBag.Title = "Machine Editor";
 }
 
+@Scripts.Render("~/bundles/app")
+
+<script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap-tpls.js")"></script>
+<script src="@Url.Content("~/Scripts/ui-grid.js")"></script>
+<script src="@Url.Content("~/Scripts/ng-file-upload.js")"></script>
+<script src="@Url.Content("~/Scripts/ng-file-upload-shim.js")"></script>
+<script src="@Url.Content("~/AngularJS/Services/GridRowEditService.js")"></script>
+<script src="@Url.Content("~/AngularJS/app.js")"></script>
+<script src="@Url.Content("~/AngularJS/Controllers/MachineController.js")"></script>
+
 <h2>Machine Editor</h2>
-<script>
-    $(document).ready(function () {
-        $(".flip").click(function () {
-            $(".panel").slideToggle("slow");
-        });
-    });
-</script>
 
-<div ng-app="app" ng-controller="MachineController as vm">
-    <form class="input" ng-submit="submit()" role="form">
-        <div style="border: 0px solid gray;width:500px;">
-            <div class="flip">
-                <labl> <b> Add a New Machine: Marcom Central </b></labl>
-            </div>
-            <div class="panel">
-                <div class="form-group">
-                    <label><b>Machine:</b></label>
-                    <input id="inputs" class="form-control" type="text" ng-model="vm.machine_name">
-                </div>
-                <div class="form-group">
-                    <label><b>Location:</b></label>
-                    <input id="Number1" class="form-control" type="text" ng-model="vm.location">
-                </div>
-                <div class="form-group">
-                    <label>Usage:</label>
-                    <input id="Date1" class="form-control" type="number" ng-model="vm.usage">
-                </div>
-                <div class="form-group">
-                    <label>Active:</label>
-                    <input id="Number2" class="form-control" type="number" ng-model="vm.active">
-                </div>
+@Html.AntiForgeryToken()
+<div ng-app="app">
+    <div ng-controller="MachineController as vm">
+        <div class="control-group">
+            <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">
+                <option value="all" style="color:red">Environment</option>
+            </select>
+            <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
+                <option value="" style="color:red">Application</option>
+            </select>
+            <select ng-model="selectedComponent" ng-options="c.name for c in components" ng-change="updateComponent()">
+                <option value="" style="color:red">Component</option>
+            </select>
 
-                <div class="form-group">
-                    <input type="submit" value="submit" id="but" class="btn btn-success">
-                </div>
-            </div>
+            <input type="button" class="btn btn-small" ng-click="addMachine()" value="Add / Edit Machine" />
+            <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
+
+            <div id="machineGrid" class="gridStyle" ui-grid="gridOptions"
+                 ui-grid-grouping ui-grid-exporter ui-grid-move-columns
+                 ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
+                 ui-grid-pagination ui-grid-cellNav ui-grid-expandable></div>
         </div>
-    </form>
-    <div id="machineGrid" class="gridStyle" ui-grid="gridOptions" 
-         ui-grid-grouping ui-grid-exporter ui-grid-move-columns
-         ui-grid-resize-columns ui-grid-edit ui-grid-row-edit 
-         ui-grid-pagination ui-grid-cellNav ui-grid-expandable></div>
+    </div>
 </div>

@@ -224,9 +224,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $http.get(ApiPath + '/ConfigApi')
-    //$http.get(apiRelPath)
     //$http.get('api:/ConfigApi')
-    //$http.get("/Config/GetAppVar")
     .success(function (data) {
         for (i = 0; i < data.length; i++) {
             data[i].subGridOptions = {
@@ -532,7 +530,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     });
                     $http({
                         method: 'POST',
-                        //url: ApiPath + '/api/ComponentApi/',
                         url: 'api:/ComponentApi/',
                         //withCredentials: true,
                         data: data,

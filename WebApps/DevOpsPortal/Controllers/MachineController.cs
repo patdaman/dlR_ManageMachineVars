@@ -6,8 +6,11 @@ using System.Web.Mvc;
 
 namespace DevOpsPortal.Controllers
 {
-    public class MachineController : Controller
+    public class MachineController : BaseController
     {
+        #if RELEASE
+        [Authorize(Roles = "Engineers")]
+#endif
         // GET: Machine
         public ActionResult Index()
         {

@@ -1,65 +1,104 @@
-﻿<script src="@Url.Content("~/Scripts/codemirror/lib/codemirror.js")"></script>
+﻿@{
+    ViewBag.Title = "DevOps Powershell";
+}
+
+@Scripts.Render("~/bundles/app")
+
+<script src="@Url.Content("~/Scripts/codemirror/lib/codemirror.js")"></script>
+<script src="@Url.Content("~/Scripts/codemirror/ui-codemirror.min.js")"></script>
 <script src="@Url.Content("~/Scripts/codemirror/mode/powershell/powershell.js")"></script>
+<script src="@Url.Content("~/Scripts/codemirror/mode/matchbrackets.js")"></script>
 <script src="@Url.Content("~/Scripts/codemirror/addon/hint/show-hint.js")"></script>
 <link href="~/Scripts/codemirror/addon/hint/show-hint.css" rel="stylesheet" type="text/css" />
 <link href="~/Scripts/codemirror/lib/codemirror.css" rel="stylesheet" type="text/css" />
 <link href="~/Scripts/codemirror/theme/midnight.css" rel="stylesheet" type="text/css" />
-<script src="@Url.Content("~/AngularJS/Services/PowershellService.js")"></script>
+<link href="~/Scripts/codemirror/theme/eclipse.css" rel="stylesheet" type="text/css" />
+<link href="~/Scripts/codemirror/theme/abcdef.css" rel="stylesheet" type="text/css" />
+<link href="~/Scripts/codemirror/theme/rubyblue.css" rel="stylesheet" type="text/css" />
+<link href="~/Scripts/codemirror/theme/solarized.css" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap-tpls.js")"></script>
+<script src="@Url.Content("~/Scripts/ui-grid.js")"></script>
+<script src="@Url.Content("~/Scripts/ng-file-upload.js")"></script>
+<script src="@Url.Content("~/Scripts/ng-file-upload-shim.js")"></script>
+<script src="@Url.Content("~/AngularJS/app.js")"></script>
 <script src="@Url.Content("~/AngularJS/Controllers/PowershellController.js")"></script>
+<script src="@Url.Content("~/AngularJS/Directives/powershellCodeMirror.js")"></script>
 <link href="~/Content/site.css" rel="stylesheet" type="text/css" />
 
-@{
-    ViewBag.Title = "DevOps Powershell";
-}
+<script src="@Url.Content("~/AngularJS/Controllers/ConfigModalController.js")"></script>
+<script src="@Url.Content("~/AngularJS/Directives/ConfigDirectives.js")"></script>
+<script src="@Url.Content("~/AngularJS/Controllers/ConfigController.js")"></script>
+<script src="@Url.Content("~/AngularJS/Services/ConfigService.js")"></script>
+
 <h2>Powershell Scripts</h2>
 
 @Html.AntiForgeryToken()
 <hr />
-<div ng-app="PowershellApp">
-    <div ng-controller="Script as vm">
+
+<div ng-app="app">
+    <div ng-controller="PowershellController as vm">
         <div class="form-group">
-            @Html.DropDownList("scriptList", String.Empty)
+            @*@Html.DropDownList("scriptList", String.Empty)*@
+            <select ng-model="selectedScript" ng-options="s.ScriptName for s in scripts" ng-change="updateScript()">
+                <option value="" style="color:red">Script</option>
+            </select>
         </div>
         <p />
         <div class="form-group">
-            <input type="button" class="btn btn-info" ng-click="editScript()" value="Edit Script" />
-            <select ng-model="selectedEnvironment" ng-options="x for x in environments">
+
+            <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment())">
                 <option value="" style="color:red">Environment</option>
             </select>
-            <select ng-model="selectedComponent" ng-options="c for c in components">
-                <option value="" style="color:red">Component</option>
-            </select>
-            <select ng-model="selectedMachine" ng-options="m for m in machines">
+            @*<select ng-model="selectedComponent" ng-options="c.name for c in components" ng-change="updateComponent()">
+                    <option value="" style="color:red">Component</option>
+                </select>*@
+            <select ng-model="selectedMachine" ng-options="m.name for m in machines" ng-change="updateMachine()">
                 <option value="" style="color:red">Server</option>
             </select>
-                <input type="button" class="btn btn-small" ng-click="addScript()" value="Add Script" />
+            <input type="button" class="btn btn-info" ng-click="editScript()" value="Edit Script" />
+            <input type="button" class="btn btn-small" ng-click="addScript()" value="Add Script" />
+        </div>
+        <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
+        <div class="form-group">
+            <div class="CodeMirror">
+                <h5>{{scriptName}}</h5>
+                Theme : <select ng-model="theme" ng-options="t for t in themes" ng-change="updateTheme()"></select>
+              
+                <div ui-codemirror="cmOptions" ng-model="scriptText" ></div>
+                 @*<div ui-codemirror="{
+                        lineNumbers: true,
+                        theme:'midnight',
+                        readOnly: 'nocursor',
+                        lineWrapping: false,
+                        tabMode: 'shift',
+                        matchBrackets: true,
+                        mode: 'powershell'
+                      }" ng-model="scriptText">
+                </div>*@
+
+
+                @*<code-mirror
+                    container="codeMirror"
+                    line-numbers="true"
+                    theme="twilight"
+                    tabMode="shift"
+                    read-only="nocursor"
+                    indentUnit: 4,
+                    matchBrackets="true"
+                    mode="powershell"
+                    content="scriptText"
+                    >
+                </code-mirror>
+                <div class="contents">
+                    <h2>Contents of the editor (for takeaway)</h2>
+                    <pre>{{codeMirror.content}}</pre>
+                </div>*@
+            </div>
         </div>
         <div class="form-group">
-        <div class="CodeMirror">
-            <textarea id="code" name="code">
-                @HttpUtility.HtmlDecode(ViewBag.scriptText)
-            </textarea>
-        </div>
-        </div>
-        <div class="form-group">
-            <input type="button" value="Update" ng-click="updateScript()" class="btn btn-warning" />
-            &nbsp;
+            @*<input type="button" value="Update" ng-click="updateScript()" class="btn btn-warning" />
+                &nbsp;*@
             <input type="button" value="Execute" ng-click="executeScript()" class="btn btn-danger" />
         </div>
     </div>
 </div>
-
-@section scripts
-{
-    <script type="text/javascript">
-        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-            mode: "powershell",
-            lineNumbers: true,
-            indentUnit: 4,
-            tabMode: "shift",
-            matchBrackets: true,
-        });
-    </script>
-
-    @Scripts.Render("~/bundles/jqueryval")
-}

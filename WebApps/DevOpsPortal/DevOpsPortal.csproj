@@ -153,6 +153,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="AngularJS\Directives\appDirectives.js" />
+    <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
@@ -178,6 +179,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\addApplicationModal.html" />
+    <Content Include="Content\Templates\addMachineModal.html" />
     <Content Include="Content\Templates\addVariableModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -194,6 +196,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\expandableRowTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\machineActionsTemplate.html" />
+    <Content Include="Content\Templates\codeMirror.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\subGridActionsTemplate.html">
@@ -297,6 +303,7 @@
     <Content Include="Scripts\CodeMirror\keymap\vim.js" />
     <Content Include="Scripts\CodeMirror\lib\codemirror.css" />
     <Content Include="Scripts\CodeMirror\lib\codemirror.js" />
+    <Content Include="Scripts\CodeMirror\mode\matchbrackets.js" />
     <Content Include="Scripts\CodeMirror\mode\apl\apl.js" />
     <Content Include="Scripts\CodeMirror\mode\apl\index.html" />
     <Content Include="Scripts\CodeMirror\mode\asciiarmor\asciiarmor.js" />
@@ -620,6 +627,8 @@
     <Content Include="Scripts\CodeMirror\theme\xq-light.css" />
     <Content Include="Scripts\CodeMirror\theme\yeti.css" />
     <Content Include="Scripts\CodeMirror\theme\zenburn.css" />
+    <Content Include="Scripts\CodeMirror\ui-codemirror.js" />
+    <Content Include="Scripts\CodeMirror\ui-codemirror.min.js" />
     <Content Include="Scripts\csv.js" />
     <Content Include="Scripts\Dashboard\errors.json" />
     <Content Include="Scripts\angular-animate.min.js.map" />

@@ -271,6 +271,20 @@ namespace BusinessLayer
                         active = a.active
                     });
             }
+            else if (type.ToLower().StartsWith("machine"))
+            {
+                var machines = DevOpsContext.Machines.ToList();
+                foreach (var m in machines)
+                {
+                    values.Add(new NameValuePair()
+                    {
+                        id = m.id,
+                        name = m.machine_name,
+                        value = m.machine_name,
+                        active = m.active,
+                    });
+                }
+            }
             else
                 throw new ArgumentException("Invalid value type requested.");
             return values;

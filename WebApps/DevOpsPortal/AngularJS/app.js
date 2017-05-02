@@ -25,35 +25,61 @@ var ConfigApp = angular.module('ConfigApp',
             'angularModalService',
             'ngAnimate',
             'ui.bootstrap',
-            'ngClickCopy',
+            //'ngClickCopy',
             'ngFileUpload'
         ])
 
-var machineApp = angular.module('machineApp',
-    ['ui.grid', 'ui.grid.edit',
-    'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
+var MachineApp = angular.module('MachineApp',
+        [
+            'ui.grid', 
+            'ui.grid.edit',
+            'ui.grid.pagination',
+            'ui.grid.expandable',
+            'ui.grid.cellNav',
+            'ui.grid.grouping',
+            'ui.grid.selection', 
+            'ui.grid.rowEdit',
+            'ui.grid.pinning', 
+            'ui.grid.exporter'
+        ]);
 
-var logApp = angular.module('logApp',
-    ['ui.grid',
-    'ui.grid.pagination', 'ui.grid.expandable',
-    'ui.grid.selection', 'ui.grid.pinning']);
+var LogApp = angular.module('LogApp',
+        [
+            'ui.grid',
+            'ui.grid.pagination',
+            'ui.grid.expandable',
+            'ui.grid.selection',
+            'ui.bootstrap',
+            'ui.grid.pinning'
+        ]);
+
+var PowershellApp = angular.module('PowershellApp',
+        [
+            'angularModalService',
+            'ui.bootstrap',
+            'ngAnimate',
+            'ngFileUpload',
+            'ui.codemirror'
+        ]);
 
 //var dashboardApp = angular.module('dashboardApp',
-//    ['ng.epoch', 'n3-pie-chart']);
+//      [
+//          'ng.epoch',
+//          'n3-pie-chart'
+//      ]);
 
 
 ///  ----------------------------------------------------------- ///
 /// <summary>   The application. </summary>
 ///
 ///  ----------------------------------------------------------- ///
-var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp']);
-//var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'dashboardApp']);
+var app = angular.module('app', ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp']);
+//var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'PowershellApp', 'dashboardApp']);
 
 app.run(['$rootScope', function ($rootScope) {
     $rootScope.APIPath = ApiPath;
     $rootScope.SignalRPATH = SignalRPath;
-    }]);
+}]);
 ///  ----------------------------------------------------------- ///
 /// <summary>   The application. </summary>
 ///

@@ -111,16 +111,39 @@ div.flipReverse {
     resize: both;
 }
 
-.CodeMirror {
+/*.CodeMirror {
     max-width: 1800px;
     max-height: 1200px;
     height: 800px;
     width: 100%;
     align-content: center;
-}
+}*/
 
 .CodeMirror textarea {
     resize: both;
+}
+
+.contents {
+  border: 1px solid #aaa;
+  background-color: #d9e2ea;
+}
+
+.contents pre {
+  min-height: 20px;
+  padding: 1em;
+}
+
+.codeMirror__container {
+  margin: 20px 0;
+}
+
+.codeMirror__syntax {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.CodeMirror {
+  font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New", monospace !important;
 }
 
 /* for drag and drop file upload */ 

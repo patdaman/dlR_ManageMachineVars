@@ -6,30 +6,30 @@ using System.Web.Mvc;
 
 namespace DevOpsPortal.Controllers
 {
-    public class PowershellController : Controller
+    public class PowershellController : BaseController
     {
         BusinessLayer.ManagePowershell_Scripts scriptProcessor = new BusinessLayer.ManagePowershell_Scripts();
 
-        // GET: Powershell
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
+        //GET: Powershell
         public ActionResult Index()
         {
-            List<ViewModel.PowershellScript> scripts = new List<ViewModel.PowershellScript>();
-            scripts.AddRange(scriptProcessor.GetAllScripts());
-            //PopulateScriptsDropDown(scripts);
-            //ViewBag.scriptList = new SelectList(scripts, "id", "ScriptName", null);
-            //return View(scripts);
-
-            ViewModel.PowershellScript script = new ViewModel.PowershellScript();
-            script = scriptProcessor.GetAllScripts().FirstOrDefault();
-            ViewBag.scriptText = HttpUtility.HtmlEncode(script.ScriptText).ToString();
-            ViewBag.scriptList = new SelectList(scripts, "ScriptId", "ScriptName", script.ScriptId);
-            return View(script);
+            return View();
         }
+
+        //public ActionResult Index()
+        //{
+        //    List<ViewModel.PowershellScript> scripts = new List<ViewModel.PowershellScript>();
+        //    scripts.AddRange(scriptProcessor.GetAllScripts());
+        //    //PopulateScriptsDropDown(scripts);
+        //    //ViewBag.scriptList = new SelectList(scripts, "id", "ScriptName", null);
+        //    //return View(scripts);
+
+        //    ViewModel.PowershellScript script = new ViewModel.PowershellScript();
+        //    script = scriptProcessor.GetAllScripts().FirstOrDefault();
+        //    ViewBag.scriptText = HttpUtility.HtmlEncode(script.ScriptText).ToString();
+        //    ViewBag.scriptList = new SelectList(scripts, "ScriptId", "ScriptName", script.ScriptId);
+        //    return View(script);
+        //}
 
         public ActionResult Execute(ViewModel.PowershellScript execScript)
         {

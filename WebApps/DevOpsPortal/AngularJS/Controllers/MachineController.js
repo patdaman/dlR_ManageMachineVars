@@ -1,14 +1,20 @@
 ﻿'use strict'
 
-var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
-    'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
-    'ui.grid.grouping', 'ui.grid.selection', 'ui.grid.rowEdit',
-    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
+//var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
+//    'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
+//    'ui.grid.grouping', 'ui.grid.selection', 'ui.grid.rowEdit',
+//    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
 
-app.controller('MachineController', function ($scope, $http, uiGridGroupingConstants) {
+app.controller('MachineController', function ($scope, $http, uiGridConstants,
+    $log, $timeout, $q, $interval, ModalService) {
     $scope.title = "Machine Configuration ";
 
     var vm = $scope;
+
+    var apiRelPath = "api:/MachineApi";
+
+    var rowIndex;
+    var rowId;
 
     var data = [];
     var id;
@@ -19,30 +25,42 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
     var modify_date;
     var active;
 
-    $scope.submit = function () {
-        id = $scope.id;
-        machine_name = $scope.machine_name;
-        location = $scope.location;
-        usage = $scope.usage;
-        create_date = $scope.create_date;
-        modify_date = $scope.modify_date;
-        active = $scope.active;
-        $scope.myData.push({
-            id: id,
-            machine_name: machine_name,
-            location: location,
-            usage: usage,
-            create_date: create_date,
-            modify_date: modify_date,
-            active: active
-        });
+    var environments = [];
+    var components = [];
+    var applications = [];
+
+    var componentId;
+    var componentName;
+
+    var selectedComponent;
+    var component;
+    var selectedApplication;
+    var application;
+    var selectedEnvironment;
+    var environment;
+
+    /// Display current API path and link to Help page
+    $scope.ApiBaseUrl = ApiPath;
+    $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
+
+    /// Grid Filters
+    //$scope.environment = 'development';
+    $scope.environment = 'all';
+    $scope.filterEnvironment = function () {
+        return $scope.environment;
     };
+    $scope.application = '';
+    $scope.component = '';
+    $scope.dateTimeString = function () {
+        date: 'yyyy-MM-dd_HH:mm(Z)'
+        return date;
+    }
 
     $scope.gridOptions = {
         enablePaging: true,
-        //paginationPageSizes: [10, 25, 50, 75],
-        //paginationPageSize: 10,
-        pagingOptions: $scope.pagingOptions,
+        paginationPageSizes: [10, 20, 50, 100],
+        paginationPageSize: 25,
+        //enableHorizontalScrollbar: 0,
 
         enablePinning: true,
         showGridFooter: true,
@@ -52,11 +70,11 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
         enableGridMenu: true,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
-        exporterCsvFilename: 'Machines.csv',
+        exporterCsvFilename: 'Machines' + $scope.dateTimeString + '.csv',
         exporterPdfDefaultStyle: { fontSize: 9 },
-        exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
+        exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
         exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
-        exporterPdfHeader: { text: "Marcom Central Servers", style: 'headerStyle' },
+        exporterPdfHeader: { text: "Marcom Central - Component Configuration", style: 'headerStyle' },
         exporterPdfFooter: function (currentPage, pageCount) {
             return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
@@ -70,32 +88,56 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
         exporterPdfMaxGridWidth: 500,
         exporterSuppressColumns: ['Action'],
 
-        treeRowHeaderAlwaysVisible: false,
+        //treeRowHeaderAlwaysVisible: false,
 
-        enableSelectAll: true,
-        enableEditing: true,
-        enableColumnResize: false,
-        enableCellSelection: false,
+        //enableCellSelection: true,
+        //enableCellEditOnFocus: true,
         enableRowSelection: true,
-
-        //expandableRowTemplate: 'expandableRowTemplate.html',
-        //expandableRowHeight: 150,
-        ////subGridVariable will be available in subGrid scope
-        //expandableRowScope: {
-        //    subGridVariable: 'subGridScopeVariable'
-        //},
+        enableRowHeaderSelection: true,
+        enableMultiselect: true,
 
         //column definitions
         columnDefs: [
-            //{ displayName: '#', cellTemplate: '{{rowRenderIndex + 1}}' },
             { field: 'id', visible: false },
-            { field: 'machine_name', cellTemplate: basicCellTemplate, width: '20%' },
-            { field: 'ip_address', cellTemplate: basicCellTemplate, width: '10%' },
-            { field: 'location', cellTemplate: basicCellTemplate, groupable: true, width: '15%' },
-            { field: 'usage', width: '15%' },
-            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: '15%' },
-            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: '15%'},
-            { field: 'active', enableEditing: true, type: 'boolean', width: '8%' },
+            {
+                field: 'usage',
+                width: '10%',
+                visible: true,
+                enableFiltering: false,
+                filter: {
+                    noTerm: true,
+                    condition: function (searchTerm, cellValue) {
+                        return $scope.filterEnvironment() === cellValue
+                            || $scope.environment === 'all';
+                    }
+                },
+                grouping: { groupPriority: 0 },
+                sort: { priority: 0, direction: 'asc' },
+                groupable: true,
+            },
+            {
+                field: 'location',
+                grouping: { groupPriority: 1 },
+                sort: { priority: 1, direction: 'asc' },
+                groupable: true,
+                width: '15%'
+            },
+            { field: 'machine_name', width: '20%' },
+            { field: 'uri', width: '20%' },
+            { field: 'ip_address', width: '10%' },
+            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
+            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
+            {
+                field: 'active',
+                type: 'boolean',
+                enableFiltering: false,
+                width: 80
+            },
+            //{ field: 'ConfigVariableValues', visible: false },
+            //{ field: 'Enum_Locations', visible: false },
+            //{ field: 'MachineComponentPaths', visible: false },
+            //{ field: 'EnvironmentVariables', visible: true },
+
             {
                 field: "Action",
                 width: 80,
@@ -103,31 +145,11 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
                 filterable: false,
                 sortable: false,
                 enableCellEdit: false,
-                cellTemplate: '<button id="editBtn" type="button" class="btn btn-xs btn-info"  ng-click="updateCell()" >Edit Row </button>'
+                enableFiltering: false,
+                cellTemplate: '/Content/Templates/machineActionsTemplate.html'
             }
         ],
-        data: data,
-        onRegisterApi: function (gridApi) {
-            $scope.gridApi = gridApi;
-        }
     };
-
-    $scope.selectedCell;
-    $scope.selectedRow;
-    $scope.selectedColumn;
-
-    $scope.editCell = function (row, cell, column) {
-        $scope.selectedCell = cell;
-        $scope.selectedRow = row;
-        $scope.selectedColumn = column;
-    };
-
-    $scope.updateCell = function () {
-        //   alert("checking");  
-        $scope.selectedRow[$scope.selectedColumn] = $scope.selectedCell;
-    };
-
-    var basicCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()" ng-click="editCell(row.entity, row.getProperty(col.field), col.field)"><span class="ui-disableSelection hover">{{row.getProperty(col.field)}}</span></div>';
 
     $scope.filterOptions = {
         filterText: "",
@@ -138,12 +160,6 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
         fields: ['machine_name', 'usage'],
         directions: ['asc'],
         columns: [0, 1]
-    };
-
-    $scope.pagingOptions = {
-        pageSizes: [5, 10, 20],
-        pageSize: 5,
-        currentPage: 1
     };
 
     $scope.changeGroupBy = function (group1, group2) {
@@ -163,22 +179,141 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
         $scope.gridApi = gridApi;
     }
 
-    //Loads all Machine records when page loads
-    loadMachines();
-    function loadMachines() {
-        var MachineRecords = $http.get("/api/MachineApi");
-        MachineRecords.then(function (d) {     //success
-            $scope.gridOptions = { data: d.data };
-            //$scope.gridOptions.data = d.data;
+    // List of environments:
+    $http({
+        method: 'GET',
+        url: 'api:/ConfigValuesApi',
+        //withCredentials: true,
+        params: {
+            type: "environment"
+            //parameters: "type=environment"
         },
-            function () {
-                //swal("Oops..", "Error occured while loading", "error"); //fail
-            });
-    }
+        //responseType: 'arraybuffer'
+    }).then(function (result) {
+        $scope.environments = result.data;
+    });
 
-    $scope.get = function () {
-        return $http.get("/api/MachineApi");
-    }
+    // List of components:
+    $http({
+        method: 'GET',
+        url: 'api:/ConfigValuesApi',
+        //withCredentials: true,
+        params: {
+            type: "component"
+        },
+        //responseType: 'arraybuffer'
+    }).then(function (result) {
+        $scope.components = result.data;
+    });
+
+    // List of applications:
+    $http({
+        method: 'GET',
+        url: 'api:/ConfigValuesApi',
+        //withCredentials: true,
+        params: {
+            type: "application"
+        },
+        //responseType: 'arraybuffer'
+    }).then(function (result) {
+        $scope.applications = result.data;
+    });
+
+    // Function call from Index page dropdown OnChange
+    $scope.updateEnvironment = function () {
+        $scope.environment = $scope.selectedEnvironment.value;
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        //$scope.filterSubGrid($scope.environment);
+    };
+    // Function call from Index page dropdown OnChange
+    $scope.updateComponent = function () {
+        $scope.component = $scope.selectedComponent;
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        //$scope.gridApi.grid.refresh();
+    };
+    // Function call from Index page dropdown OnChange
+    $scope.updateApplication = function () {
+        $scope.application = $scope.selectedApplication;
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+    };
+
+    $http.get(ApiPath + '/MachineApi')
+    //$http.get('api:/ConfigApi')
+        .success(function (data) {
+            //for (i = 0; i < data.length; i++) {
+            //    data[i].subGridOptions = {
+            //        enableHorizontalScrollbar: 0,
+            //        enableVerticalScrollbar: 0,
+            //        appScopeProvider: $scope,
+            //        enableFiltering: true,
+            //        enableCellSelection: true,
+            //        enableCellEditOnFocus: true,
+            //        enableRowSelection: false,
+            //        enableRowHeaderSelection: false,
+            //        enableMultiselect: false,
+            //        treeRowHeaderAlwaysVisible: false,
+            //        columnDefs: [
+            //            { displayName: "id", field: "id", visible: false },
+            //            { displayName: "Variable id", field: "configvar_id", visible: false },
+            //            {
+            //                field: "environment",
+            //                visible: true,
+            //                enableFiltering: false,
+            //                filter: {
+            //                    noTerm: true,
+            //                    condition: function (searchTerm, cellValue) {
+            //                        return $scope.filterEnvironment() === cellValue;
+            //                    }
+            //                },
+            //                filterCellFiltered: true,
+            //                enableCellEdit: false
+            //            },
+            //            {
+            //                displayName: "Value",
+            //                field: "value",
+            //                visible: true,
+            //                cellEditableCondition: $scope.subCanEdit,
+            //                enableFiltering: false, width: "70%"
+            //            },
+            //            { displayName: "Create Date", field: "create_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+            //            { displayName: "Modify Date", field: "modify_date", visible: true, enableCellEdit: false, type: 'date', enableFiltering: false, cellFilter: 'date:"MM-dd-yyyy"' },
+            //            { displayName: "Last Publish Date", field: "publish_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
+            //            { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' },
+            //            {
+            //                name: "Actions",
+            //                cellTemplate: '/Content/Templates/subGridActionsTemplate.html',
+            //                enableCellEdit: false,
+            //                width: 149,
+            //                visible: true,
+            //                enableFiltering: false
+            //            },
+            //        ],
+            //        data: data[i].values,
+            //        onRegisterApi: function (api) {
+            //            $scope.subGridApi = api;
+            //            api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+            //                if ($scope.bypassEditCancel === false) {
+            //                    if (newRowCol.row.entity.environment !== $scope.environment || newRowCol.row.entity.configvar_id !== $scope.var_id || $scope.edit === true) {
+            //                        $scope.cancelEdit();
+            //                        if (oldRowCol !== null && oldRowCol !== "undefined") {
+            //                            oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+            //                        }
+            //                    }
+            //                }
+            //                $scope.var_id = newRowCol.row.entity.configvar_id;
+            //            });
+            //            api.rowEdit.on.saveRow($scope, $scope.cancelEdit());
+            //        }
+            //    };
+            //}
+            $scope.gridOptions.data = data;
+            angular.forEach(data, function (data, index) {
+                data["index"] = index;
+            });
+        });
+    //        function () {
+    //            //swal("Oops..", "Error occured while loading", "error"); //fail
+    //        });
 
     //save form data
     $scope.save = function () {
@@ -195,7 +330,7 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
 
         var saverecords = $http({
             method: 'post',
-            url: '/api/MachineApi/',
+            url: 'api:/MachineApi',
             data: Machine
         });
         saverecords.then(function (d) {
@@ -209,10 +344,9 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
     }
 
     //get single record by ID
-
     $scope.get = function (Machine) {
         //debugger;
-        var singlerecord = $http.get("/api/MachineApi/" + Machine.id);
+        var singlerecord = $http.get("api:/MachineApi" + Machine.id);
         singlerecord.then(function (d) {
             // debugger;
             var record = d.data;
@@ -244,7 +378,7 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
         debugger;
         var updaterecords = $http({
             method: 'put',
-            url: "/api/MachineApi/" + Machine.id,
+            url: "api:/MachineApi" + Machine.id,
             data: Machine
         });
         updaterecords.then(function (d) {
@@ -261,7 +395,7 @@ app.controller('MachineController', function ($scope, $http, uiGridGroupingConst
         debugger;
         var deleterecord = $http({
             method: 'delete',
-            url: "/api/MachineApi/" + updateId
+            url: "api:/MachineApi" + updateId
         });
         deleterecord.then(function (d) {
             var Machine = {

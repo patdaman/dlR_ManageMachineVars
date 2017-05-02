@@ -66,7 +66,7 @@ namespace BusinessLayer
                     ScriptText = script.script_text,
                     CreateDate = script.create_date,
                     LastModified = script.modify_date,
-                    IsActive = script.is_active
+                    IsActive = script.is_active,
                 });
             }
             return scripts;
