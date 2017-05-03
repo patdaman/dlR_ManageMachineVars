@@ -61,7 +61,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     //if (ApiPath.Includes('/api'))
     //    $scope.ApiBaseUrl = ApiPath.slice(0, -4);
     //else
-        //$scope.ApiBaseUrl = $rootScope.APIPath;
+    //$scope.ApiBaseUrl = $rootScope.APIPath;
     $scope.ApiBaseUrl = ApiPath;
     //if ($scope.ApiBaseUrl.endsWith('/'))
     //    $scope.ApiBaseUrlHelp = ApiBaseUrl(0, -1) + 'Help';
@@ -669,9 +669,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // - Note that this only applies to the first (highest) Grouped object
     // - In our case the Component Name row 
     $scope.showFile = function (row) {
-        var componentGroupName = row.grid.treeBase.tree[0].aggregations[0].groupVal;
+        var treeLevel = row.treeLevel;
+        //var componentGroupName = row.entity.$$uiGrid-000A.groupVal;
+        var componentGroup = row.treeNode.parentRow.entity['$$uiGrid-0009'];
+        var componentGroupName = componentGroup.groupVal;
         var componentFileName = row.treeNode.aggregations[1].groupVal;
-        var rowEntity = row.entity;
+        //var def = $q.defer();
         if (typeof componentFileName !== 'undefined')
             $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment + '&fileName=' + componentFileName)
         //$http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
@@ -682,7 +685,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     inputs: {
                         title: data.componentName,
                         filePath: data.path,
-                        //fileName: data.fileName,
+                        fileName: data.fileName,
                         configXml: data.text,
                         publish: false,
                         download: false
@@ -699,18 +702,24 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                             };
                         });
                     })
+                //def.resolve(data);
             })
+        //.error(function () {
+        //    def.reject("Failed to get Config File.")
+        //});
+        //return def.promise;
     };
 
     // Config File Download
     $scope.downloadConfig = function (componentName, fileName) {
-        $scope.downloadFile(componentName, $scope.environment);
+        $scope.downloadFile(componentName, fileName, $scope.environment);
     };
 
     $scope.downloadFile = function (componentName, fileName, environment) {
         $http({
             method: 'GET',
             url: 'api:/ConfigPublishApi',
+            //url: apiPath + '/ConfigPublishApi',
             //withCredentials: true,
             params: {
                 componentName: componentName,

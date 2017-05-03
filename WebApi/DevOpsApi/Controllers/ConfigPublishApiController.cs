@@ -32,17 +32,22 @@ namespace DevOpsApi.Controllers
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
         [HttpGet]
-        public HttpResponseMessage Download(string componentName, string environment)
+        public HttpResponseMessage Download(string componentName, string environment, string fileName = null)
         {
             BusinessLayer.ManageConfig_Files fileProcessor = new BusinessLayer.ManageConfig_Files()
             {
                 componentName = componentName,
                 environment = environment,
+                fileName = fileName ?? "",
             };
             try
             {
                 ConfigXml configFile = fileProcessor.GetConfigXml();
-                string fileName = Path.GetFileName(configFile.path);
+                fileName = configFile.fileName;
+                if (string.IsNullOrWhiteSpace(fileName))
+                    fileName = Path.GetFileName(configFile.path);
+                if (!fileName.EndsWith(".config") && (!fileName.EndsWith(".xml")))
+                    fileName = fileName + ".config";
                 if (configFile != null)
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
@@ -57,6 +62,7 @@ namespace DevOpsApi.Controllers
                             httpResponseMessage.Content.Headers.Add("x-filename", fileName);
                             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
                             httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                            //httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
                             httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
                             httpResponseMessage.StatusCode = HttpStatusCode.OK;
                             return httpResponseMessage;

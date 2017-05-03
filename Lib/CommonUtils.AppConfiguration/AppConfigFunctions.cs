@@ -419,6 +419,8 @@ namespace CommonUtils.AppConfiguration
                     valuePair.parentElement
                     ));
             }
+            var orphans = keyValuePairs.Where(x => x.attribute == "").ToList();
+            var incompleteParents = keyValuePairs.Where(x => orphans.Contains(x)).ToList();
             return results;
         }
 
@@ -445,7 +447,8 @@ namespace CommonUtils.AppConfiguration
                 {
                     if (string.IsNullOrWhiteSpace(attribute))
                     {
-                        if (string.IsNullOrWhiteSpace(valueName))
+                        //if (string.IsNullOrWhiteSpace(valueName))
+                        if (string.IsNullOrWhiteSpace(value))
                             configFile.Add(new XElement(element, string.Empty));
                         else
                             configFile.Add(new XElement(element, value));
@@ -453,9 +456,13 @@ namespace CommonUtils.AppConfiguration
                     }
                     else
                     {
-                        configFile.Add(new XElement(element,
-                              new XAttribute(attribute, appKey),
-                              new XAttribute(valueName, value)));
+                        if (string.IsNullOrWhiteSpace(valueName))
+                            configFile.Add(new XElement(element,
+                                new XAttribute(attribute, appKey)));
+                        else
+                            configFile.Add(new XElement(element,
+                                  new XAttribute(attribute, appKey),
+                                  new XAttribute(valueName, value)));
                         return Enums.ModifyResult.Created;
                     }
                 }
@@ -496,18 +503,21 @@ namespace CommonUtils.AppConfiguration
                 {
                     if (x.Name == element)
                     {
-                        if (x.FirstAttribute.Name.ToString() == attribute &&
-                            x.FirstAttribute.Value.ToString() == appKey)
+                        if (x.HasAttributes)
                         {
-                            try
+                            if (x.FirstAttribute.Name.ToString() == attribute &&
+                                x.FirstAttribute.Value.ToString() == appKey)
                             {
-                                x.Attribute(valueName).Value = value;
-                                return Enums.ModifyResult.Updated;
-                            }
-                            catch (Exception ex)
-                            {
-                                // this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
-                                return Enums.ModifyResult.Failed;
+                                try
+                                {
+                                    x.Attribute(valueName).Value = value;
+                                    return Enums.ModifyResult.Updated;
+                                }
+                                catch (Exception ex)
+                                {
+                                    // this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
+                                    return Enums.ModifyResult.Failed;
+                                }
                             }
                         }
                     }
@@ -515,9 +525,23 @@ namespace CommonUtils.AppConfiguration
             }
             try
             {
-                parentElement.FirstOrDefault().Add(new XElement(element,
+                if (!string.IsNullOrWhiteSpace(attribute))
+                {
+                    if (string.IsNullOrWhiteSpace(valueName))
+                        parentElement.FirstOrDefault().Add(new XElement(element,
+                                                new XAttribute(attribute, appKey)));
+                    else
+                        parentElement.FirstOrDefault().Add(new XElement(element,
                                               new XAttribute(attribute, appKey),
                                               new XAttribute(valueName, value)));
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(valueName))
+                        parentElement.FirstOrDefault().Add(new XElement(element, string.Empty));
+                    else
+                        parentElement.FirstOrDefault().Add(new XElement(element, value));
+                }
                 return Enums.ModifyResult.Created;
             }
             catch (Exception ex)

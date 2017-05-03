@@ -161,7 +161,12 @@ namespace CommonUtils.Powershell
             {
                 WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
                 connectionInfo.ComputerName = machineAddress;
+                //connectionInfo.Port = 5986;
+                connectionInfo.NoEncryption = false;
+                connectionInfo.Port = 5985;
+                //connectionInfo.NoEncryption = true;
                 Runspace runspace = RunspaceFactory.CreateRunspace(connectionInfo);
+                //Runspace runspace = RunspaceFactory.CreateRunspace(psConn);
                 runspace.Open();
                 _runspaceCache.Add(machineAddress, runspace);
             }

@@ -78,6 +78,7 @@ namespace ViewModel
         public string componentName { get; set; }
         public string title { get; set; }
         public string path { get; set; }
+        public string fileName { get; set; }
         public string text { get; set; }
         public ConfigXml()
         { }
@@ -87,6 +88,7 @@ namespace ViewModel
             componentName = x.componentName;
             title = x.title;
             path = x.path;
+            fileName = x.fileName;
             text = x.text;
         }
     }

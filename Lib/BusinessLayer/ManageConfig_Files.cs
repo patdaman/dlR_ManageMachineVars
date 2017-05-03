@@ -274,7 +274,6 @@ namespace BusinessLayer
             EFDataModel.DevOps.Component component;
             if (string.IsNullOrWhiteSpace(this.componentName))
                 this.componentName = "";
-            component = DevOpsContext.Components.Where(x => x.component_name.ToLower() == this.componentName.ToLower()).FirstOrDefault();
             if (componentId != null)
             {
                 this.componentId = componentId;
@@ -290,15 +289,13 @@ namespace BusinessLayer
             this.componentId = component.id;
             if (!string.IsNullOrWhiteSpace(filename))
                 this.fileName = filename;
-            if (string.IsNullOrWhiteSpace(this.fileName))
-                this.fileName = this.componentName;
             this.path = component.relative_path + @"\" +
-                (component.ConfigFiles.FirstOrDefault().file_name + @".config") ?? "";
+            (component.ConfigFiles.FirstOrDefault().file_name + @".config") ?? "";
 
             XDocument xmlDoc = GetConfigFile(this.componentId, this.fileName);
             if (xmlDoc == null)
             {
-                throw new ArgumentNullException(string.Format("Config File {0} for {1} not found", this.fileName, this.componentName));
+                throw new ArgumentNullException(string.Format("Config File {0} for {1} not found", this.fileName ?? @"(File not Returned)", this.componentName ?? "(No Component Returned)"));
             }
             string xmlText = xmlDoc.Declaration + Environment.NewLine + xmlDoc.ToString();
             ConfigXml configXml = new ConfigXml()
@@ -306,6 +303,7 @@ namespace BusinessLayer
                 title = component.component_name,
                 componentId = this.componentId,
                 componentName = this.componentName,
+                fileName = this.fileName ?? "",
                 path = this.path,
                 text = xmlText,
             };

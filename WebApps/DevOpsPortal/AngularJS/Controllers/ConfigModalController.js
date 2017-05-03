@@ -19,10 +19,11 @@
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigViewer',
-    function ($rootScope, $scope, $element, title, filePath, configXml, close, publish, download) {
+    function ($rootScope, $scope, $element, title, filePath, fileName, configXml, close, publish, download) {
         //var vm = this;
         var vm = $scope;
         vm.filePath = filePath;
+        vm.fileName = fileName;
         vm.configXml = configXml;
         vm.title = title;
         vm.close = function () {
@@ -44,6 +45,7 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: true,
                 download: false,
+                fileName: vm.fileName,
                 title: vm.title
             }, 500);
         }
@@ -52,6 +54,7 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: false,
                 download: true,
+                fileName: vm.fileName,
                 title: vm.title
             }, 500);
         }

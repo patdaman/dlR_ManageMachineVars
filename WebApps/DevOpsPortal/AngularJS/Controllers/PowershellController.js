@@ -218,8 +218,8 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
             url: 'api:/PowershellApi',
             //withCredentials: true,
             params: {
-                //machineName: machineName,
-                machineName: 'HAL9000',
+                machineName: machineName,
+                //machineName: 'HAL9000',
                 scriptText: scriptText
             },
             //data: data,
@@ -233,7 +233,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
                 templateUrl: "/Content/Templates/powershellExecuteModal.html",
                 controller: "ScriptResults",
                 inputs: {
-                    //machineName: machineName,
+                    machineName: machineName,
                     //executionLogs: data,
                     executionLogs: data.list,
                 }
@@ -270,5 +270,9 @@ PowershellApp.controller('ScriptResults',
             $element.modal('hide');
             close({
             }, 500);
+        }
+        vm.ngClickCopy = function () {
+            vm.ngClickCopy;
+            //$rootscope.ngClickCopy;
         }
     });

@@ -820,14 +820,14 @@ namespace BusinessLayer
                 if (!string.IsNullOrWhiteSpace(this.environment))
                     configVars = (from cvar in DevOpsContext.ConfigVariables
                                   where cvar.Components.FirstOrDefault().id == componentId
-                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where environmentObjects.Contains(cvar)
                                   select cvar).ToList();
                 else
                     configVars = (from cvar in DevOpsContext.ConfigVariables
-                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where cvar.Components.FirstOrDefault().id == componentId
                                   select cvar).ToList();
             }

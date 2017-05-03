@@ -92,7 +92,10 @@ app.factory('httpAPIPathAdder', [function () {
             if (config.url.search("api:") === 0)
                 config.url = ApiPath + config.url.slice(4);
             return config;
-        }
+        },
+        //responseError: function (response) {
+        //    return $q.reject(response);
+        //}
     }
 }]);
 
