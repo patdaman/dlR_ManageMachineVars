@@ -8,6 +8,31 @@ namespace CommonUtils.Powershell
 {
     public class PowershellTools
     {
+
+        ///// <summary>   The remote machine credentials. </summary>
+        //PSCredential remoteMachineCredentials = new PSCredential(domainAndUserName, securePassword);
+
+        /////-------------------------------------------------------------------------------------------------
+        ///// <summary>   PS object constructor for remote execution. </summary>
+        /////
+        ///// <remarks>   Patman, 5/3/2017. </remarks>
+        /////
+        ///// <param name="useSsl">       True to use ssl. </param>
+        ///// <param name="computerName"> Name of the computer. </param>
+        ///// <param name="port">         The port. </param>
+        ///// <param name="appName">      Name of the application. </param>
+        ///// <param name="shellUri">     URI of the shell. </param>
+        ///// <param name="credential">   The credential. </param>
+        /////-------------------------------------------------------------------------------------------------
+        //public WSManConnectionInfo(
+        //        bool useSsl,
+        //        string computerName,
+        //         int port,
+        //        string appName,
+        //        string shellUri,
+        //        PSCredential credential
+        //        )
+
         public string machineName { get; set; }
 
         ///-------------------------------------------------------------------------------------------------

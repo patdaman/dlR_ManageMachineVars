@@ -58,7 +58,9 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
     $scope.themes = ['midnight', 'eclipse', 'abcdef', 'rubyblue', 'solarized'];
     $scope.theme = $scope.themes[0];
 
+    //$scope.readOnly = 'nocursor';
     $scope.readOnly = false;
+    $scope.mode = 'powershell';
 
     // The ui-codemirror option
     $scope.cmOptions = {
@@ -69,19 +71,17 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
         lineWrapping: false,
         tabMode: 'shift',
         matchBrackets: true,
-        mode: 'powershell',
+        mode: $scope.mode,
         onLoad: function (_cm) {
-
-            // HACK to have the codemirror instance in the scope...
             $scope.updateTheme = function () {
                 _cm.setOption("theme", $scope.theme.toLowerCase());
                 //_cm.setOption("lineNumbers", true);
                 //_cm.setOption("indentWithTabs", true);
-                //_cm.setOption("readOnly", "nocursor");
+                _cm.setOption("readOnly", $scope.readOnly);
                 //_cm.setOption("lineWrapping", false);
                 //_cm.setOption("tabMode", "shift");
                 //_cm.setOption("matchBrackets", true);
-                //_cm.setOption("mode", "powershell");
+                _cm.setOption("mode", $scope.mode);
             };
         }
     };
@@ -218,7 +218,8 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
             url: 'api:/PowershellApi',
             //withCredentials: true,
             params: {
-                machineName: machineName,
+                //machineName: machineName,
+                machineName: 'HAL9000',
                 scriptText: scriptText
             },
             //data: data,
@@ -232,7 +233,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
                 templateUrl: "/Content/Templates/powershellExecuteModal.html",
                 controller: "ScriptResults",
                 inputs: {
-                    machineName: machineName,
+                    //machineName: machineName,
                     //executionLogs: data,
                     executionLogs: data.list,
                 }

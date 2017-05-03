@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,10 +13,32 @@ namespace CommonUtils.Powershell
 {
     public class PowerShellEngine : IDisposable
     {
+        public string machineName { get; set; }
+        public PSCredential credential { get; set; }
+
         private Dictionary<string, Runspace> _runspaceCache = new Dictionary<string, Runspace>();
+        private int portNumber = 5986;
+        private WSManConnectionInfo psConn;
+
+
 
         ~PowerShellEngine()
         {
+
+            psConn = new WSManConnectionInfo(
+            //useSsl
+            true,
+            //computerName,
+            this.machineName,
+            //port,
+            this.portNumber,
+            //appName,
+            "/wsman",
+            //shellUri,
+            "http://schemas.microsoft.com/powershell/Microsoft.PowerShell",
+            //credential
+            new PSCredential("", new SecureString())
+            );
             Clean();
         }
 
@@ -37,9 +60,18 @@ namespace CommonUtils.Powershell
         ///-------------------------------------------------------------------------------------------------
         public Collection<PSObject> ExecuteScript(string script, IEnumerable<object> arguments = null, string machineAddress = null)
         {
+            //string password = string.Empty;
+            //var secure = new SecureString();
+            //foreach (char c in password)
+            //{
+            //    secure.AppendChar(c);
+            //}
+            //PSCredential remoteMachineCredentials = new PSCredential("", secure);
+            int? portNumber = 5986;
             Runspace runspace = GetOrCreateRunspace(machineAddress);
             using (PowerShell ps = PowerShell.Create())
             {
+
                 ps.Runspace = runspace;
                 ps.AddScript(script);
                 if (arguments != null)
