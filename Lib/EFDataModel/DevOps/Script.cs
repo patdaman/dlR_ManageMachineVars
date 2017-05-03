@@ -14,20 +14,11 @@ namespace EFDataModel.DevOps
     
     public partial class Script
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Script()
-        {
-            this.ExecutionHistories = new HashSet<ExecutionHistory>();
-        }
-    
         public int id { get; set; }
         public string script_name { get; set; }
         public string script_text { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool is_active { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ExecutionHistory> ExecutionHistories { get; set; }
     }
 }

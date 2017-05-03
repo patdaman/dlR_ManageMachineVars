@@ -8,7 +8,7 @@ namespace CommonUtils.Powershell
 {
     public class PowershellTools
     {
-        public string machine { get; set; }
+        public string machineName { get; set; }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Default constructor. </summary>
@@ -20,7 +20,7 @@ namespace CommonUtils.Powershell
 
         public PowershellTools(string machineName)
         {
-            machine = machineName;
+            this.machineName = machineName;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ namespace CommonUtils.Powershell
         {
             using (var execScript = new PowerShellEngine())
             {
-                Collection<PSObject> runScript = execScript.ExecuteScript(script, parameters, machine);
+                Collection<PSObject> runScript = execScript.ExecuteScript(script, parameters, machineName);
                 return FormatPSOutput(runScript);
             }
 
@@ -114,25 +114,26 @@ namespace CommonUtils.Powershell
         ///-------------------------------------------------------------------------------------------------
         private static string FormatOutputObject(PSObject psoutLine)
         {
-            List<string> output = new List<string>();
+            string psResultLine;
             {
                 try
                 {
-                    output.Add(
-                            String.Join("|", psoutLine.Members["Id"].Value.ToString()
-                                            , psoutLine.Members["ProcessName"].Value.ToString()
-                                            , psoutLine.Members["PrivateMemorySize64"].Value.ToString()
-                                            ));
+                    psResultLine = psoutLine.ToString();
+                    //psResultLine = String.Join("|", psoutLine.Members["Id"].Value.ToString()
+                    //                        , psoutLine.Members["ProcessName"].Value.ToString()
+                    //                        , psoutLine.Members["PrivateMemorySize64"].Value.ToString()
+                    //                        );
                 }
                 catch (Exception e)
                 {
-                    return String.Join("|",
-                        "Output line could not be returned.",                        
+                    psResultLine = String.Join("|",
+                        "Output line could not be returned.",
                         "Exception:",
                         e.Message);
                 }
+                //output.Add(psoutLine.ToString());
             }
-            return string.Empty;
+            return psResultLine;
         }
     }
 }

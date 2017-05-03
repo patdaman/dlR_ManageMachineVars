@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-logApp.controller('logController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
+LogApp.controller('logController', ['$scope', '$http', 'uiGridConstants', 'logBackendHubProxy',
     function ($scope, $http, uiGridConstants, logBackendHubProxy) {
         $scope.title = "RollingLogs ";
         var loggingDataHub = logBackendHubProxy(logBackendHubProxy.defaultServer, 'EventHub');

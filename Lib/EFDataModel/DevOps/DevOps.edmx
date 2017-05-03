@@ -228,7 +228,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="script_id" Type="int" Nullable="false" />
+          <Property Name="script_id" Type="int" />
           <Property Name="script_name" Type="varchar" MaxLength="256" />
           <Property Name="user_name" Type="varchar" MaxLength="256" />
           <Property Name="execution_dt" Type="datetime" Nullable="false" />
@@ -259,6 +259,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="config_id" Type="int" Nullable="false" />
           <Property Name="component_id" Type="int" Nullable="false" />
           <Property Name="component_name" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="file_name" Type="varchar" MaxLength="256" />
           <Property Name="environment_type" Type="varchar" MaxLength="128" />
           <Property Name="parent_element" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="element" Type="varchar" MaxLength="256" />
@@ -451,18 +452,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ExecutionHistory_Scripts">
-          <End Role="Scripts" Type="Self.Scripts" Multiplicity="1" />
-          <End Role="ExecutionHistory" Type="Self.ExecutionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Scripts">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ExecutionHistory">
-              <PropertyRef Name="script_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_MachineComponentPath_Components">
           <End Role="Components" Type="Self.Components" Multiplicity="1" />
           <End Role="MachineComponentPathMap" Type="Self.MachineComponentPathMap" Multiplicity="*" />
@@ -588,6 +577,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
     [vi_ConfigVariables].[config_id] AS [config_id], 
     [vi_ConfigVariables].[component_id] AS [component_id], 
     [vi_ConfigVariables].[component_name] AS [component_name], 
+    [vi_ConfigVariables].[file_name] AS [file_name], 
     [vi_ConfigVariables].[environment_type] AS [environment_type], 
     [vi_ConfigVariables].[parent_element] AS [parent_element], 
     [vi_ConfigVariables].[element] AS [element], 
@@ -660,10 +650,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <AssociationSet Name="FK_Events_Devices" Association="Self.FK_Events_Devices">
             <End Role="Devices" EntitySet="Devices" />
             <End Role="Events" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExecutionHistory_Scripts" Association="Self.FK_ExecutionHistory_Scripts">
-            <End Role="Scripts" EntitySet="Scripts" />
-            <End Role="ExecutionHistory" EntitySet="ExecutionHistory" />
           </AssociationSet>
           <AssociationSet Name="FK_MachineComponentPath_Components" Association="Self.FK_MachineComponentPath_Components">
             <End Role="Components" EntitySet="Components" />
@@ -921,13 +907,12 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="script_id" Type="Int32" Nullable="false" />
+          <Property Name="script_id" Type="Int32" />
           <Property Name="script_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
           <Property Name="user_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
           <Property Name="execution_dt" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="contains_errors" Type="Boolean" Nullable="false" />
           <Property Name="output" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Script" Relationship="Self.FK_ExecutionHistory_Scripts" FromRole="ExecutionHistory" ToRole="Scripts" />
         </EntityType>
         <EntityType Name="Script">
           <Key>
@@ -939,7 +924,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="modify_date" Type="DateTime" Precision="3" />
           <Property Name="is_active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ExecutionHistories" Relationship="Self.FK_ExecutionHistory_Scripts" FromRole="Scripts" ToRole="ExecutionHistory" />
         </EntityType>
         <EntityType Name="vi_ConfigVariables">
           <Key>
@@ -963,6 +947,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="modify_date" Type="DateTime" Precision="3" />
           <Property Name="published_date" Type="DateTime" Precision="3" />
           <Property Name="published" Type="Boolean" />
+          <Property Name="file_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_ConfigFile_Components">
           <End Role="Components" Type="Self.Component" Multiplicity="1" />
@@ -1096,18 +1081,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ExecutionHistory_Scripts">
-          <End Role="Scripts" Type="Self.Script" Multiplicity="1" />
-          <End Role="ExecutionHistory" Type="Self.ExecutionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Scripts">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ExecutionHistory">
-              <PropertyRef Name="script_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="AppComponents">
           <End Role="Applications" Type="Self.Application" Multiplicity="*" />
           <End Role="Components" Type="Self.Component" Multiplicity="*" />
@@ -1191,10 +1164,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <AssociationSet Name="FK_Events_Devices" Association="Self.FK_Events_Devices">
             <End Role="Devices" EntitySet="Devices" />
             <End Role="Events" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExecutionHistory_Scripts" Association="Self.FK_ExecutionHistory_Scripts">
-            <End Role="Scripts" EntitySet="Scripts" />
-            <End Role="ExecutionHistory" EntitySet="ExecutionHistories" />
           </AssociationSet>
           <AssociationSet Name="AppComponents" Association="Self.AppComponents">
             <End Role="Applications" EntitySet="Applications" />
@@ -1475,6 +1444,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="vi_ConfigVariables">
             <EntityTypeMapping TypeName="DevOpsModel.vi_ConfigVariables">
               <MappingFragment StoreEntitySet="vi_ConfigVariables">
+                <ScalarProperty Name="file_name" ColumnName="file_name" />
                 <ScalarProperty Name="config_id" ColumnName="config_id" />
                 <ScalarProperty Name="component_id" ColumnName="component_id" />
                 <ScalarProperty Name="component_name" ColumnName="component_name" />

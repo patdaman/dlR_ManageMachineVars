@@ -28,7 +28,14 @@
                     <p>
                         <div class="form-group">
                             <label><b>Components(s):</b></label>
-                            <multi-select ng-model="applicationComponents" available="components" selected-label="Current" available-label="Available" display-attr="name"></multi-select>
+                            <multi-select 
+                                          ng-model="applicationComponents" 
+                                          available="components" 
+                                          selected-label="Current" 
+                                          available-label="Available" 
+                                          display-attr="name">
+
+                            </multi-select>
                             <div ng-if="applicationName !==''">{{applicationName}}'s Components: </div>
                             <ul>
                                 <li ng-repeat="comp in applicationComponents">{{comp.name}}</li>

@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-logApp.factory('logBackendHubProxy', ['$rootScope', 'logBackendServerUrl', function ($rootScope, logBackendServerUrl) {
+LogApp.factory('logBackendHubProxy', ['$rootScope', 'logBackendServerUrl', function ($rootScope, logBackendServerUrl) {
     function backendHubProxyFactory(serverUrl, hubName, startOptions) {
         var connection = $.hubConnection(logBackendServerUrl);
         var proxy = connection.createHubProxy(hubName);

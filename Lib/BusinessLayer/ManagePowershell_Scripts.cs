@@ -85,14 +85,14 @@ namespace BusinessLayer
         {
             Script efScript = devOpsContext.Scripts.Where(x => x.id == id).FirstOrDefault();
             return new PowershellScript()
-                {
-                    ScriptId = efScript.id,
-                    ScriptName = efScript.script_name,
-                    ScriptText = efScript.script_text,
-                    CreateDate = efScript.create_date,
-                    LastModified = efScript.modify_date,
-                    IsActive = efScript.is_active
-                };
+            {
+                ScriptId = efScript.id,
+                ScriptName = efScript.script_name,
+                ScriptText = efScript.script_text,
+                CreateDate = efScript.create_date,
+                LastModified = efScript.modify_date,
+                IsActive = efScript.is_active
+            };
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ namespace BusinessLayer
             Script efScript = devOpsContext.Scripts.Where(x => x.id == scriptId).FirstOrDefault();
             bool errors = false;
             List<string> scriptOutput = scriptManager.ExecuteScript(efScript.script_text);
-            if (String.Join(",",scriptOutput).Contains("FullyQualifiedErrorId"))
+            if (String.Join(",", scriptOutput).Contains("FullyQualifiedErrorId"))
             {
                 errors = true;
             }
@@ -192,7 +192,12 @@ namespace BusinessLayer
         public List<string> ExecuteScript(string scriptText, string machineName = null)
         {
             bool errors = false;
-            if (!String.IsNullOrWhiteSpace(machineName) && !String.IsNullOrWhiteSpace(scriptManager.machine))
+            if (string.IsNullOrWhiteSpace(machineName))
+                if (!string.IsNullOrWhiteSpace(scriptManager.machineName))
+                    machineName = scriptManager.machineName;
+                else
+                    machineName = System.Environment.MachineName.ToString();
+            if (String.IsNullOrWhiteSpace(scriptManager.machineName))
                 scriptManager = new PowershellTools(machineName);
             List<string> scriptOutput = scriptManager.ExecuteScript(scriptText);
             if (String.Join(",", scriptOutput).Contains("FullyQualifiedErrorId"))

@@ -59,6 +59,19 @@ namespace DevOpsApi.Controllers
         }
 
         // POST: api/ScriptApi
+        public HttpResponseMessage Post(string machineName, string scriptText)
+        {
+            try
+            {
+                return Request.CreateResponse<List<String>>(HttpStatusCode.OK, scriptProcessor.ExecuteScript(scriptText, machineName));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        // POST: api/ScriptApi
         public HttpResponseMessage Post([FromBody]PowershellScriptExecution execScript)
         {
             try

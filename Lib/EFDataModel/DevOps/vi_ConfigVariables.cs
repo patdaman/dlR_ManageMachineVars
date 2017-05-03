@@ -28,5 +28,6 @@ namespace EFDataModel.DevOps
         public Nullable<System.DateTime> modify_date { get; set; }
         public Nullable<System.DateTime> published_date { get; set; }
         public Nullable<bool> published { get; set; }
+        public string file_name { get; set; }
     }
 }

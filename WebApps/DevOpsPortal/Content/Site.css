@@ -119,32 +119,19 @@ div.flipReverse {
     align-content: center;
 }*/
 
+.CodeMirror {
+    max-width: 1200px;
+    max-height: 800px;
+    align-content: center;
+}
+
 .CodeMirror textarea {
     resize: both;
 }
 
-.contents {
-  border: 1px solid #aaa;
-  background-color: #d9e2ea;
-}
-
-.contents pre {
-  min-height: 20px;
-  padding: 1em;
-}
-
-.codeMirror__container {
-  margin: 20px 0;
-}
-
-.codeMirror__syntax {
-  text-align: right;
-  margin-top: 5px;
-}
-
-.CodeMirror {
+/*.CodeMirror {
   font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New", monospace !important;
-}
+}*/
 
 /* for drag and drop file upload */ 
 .drop-box {
@@ -161,16 +148,71 @@ div.flipReverse {
 }
 
 /* multi-select */
-.multiSelect {
-    overflow: auto;
-    width: 90%;
+
+.multiSelect select,textarea,input[type="text"],.uneditable-input{
+    display:inline-block;
+    height:20px;
+    padding:4px 6px;
+    margin-bottom:10px;
+    font-size:14px;
+    line-height:20px;
+    color:#555555;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    vertical-align:middle;
 }
-.multiSelect .select {
-    margin-right: 20px;
-    float: left;
-    min-width: 50px;
-    width: 75%;
+.multiSelect select {
+    width: 420px;
+    height: 100px;
+    border: 1px solid #cccccc;
+    background-color:#ffffff;
 }
+.multiSelect .select .buttons {
+    display: inline-block;
+}
+/*.multiSelect .btn {
+    display:inline-block;
+    *display:inline;
+    *zoom:1;
+    padding:4px 12px;
+    margin-bottom:0;
+    font-size:14px;
+    line-height:20px;
+    text-align:center;
+    vertical-align:middle;
+    cursor:pointer;
+    color:#333333;
+    text-shadow:0 1px 1px rgba(255, 255, 255, 0.75);
+    background-color:#f5f5f5;
+    background-image:-moz-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+    background-image:-webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image:-o-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image:linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+    border-color:#e6e6e6 #e6e6e6 #bfbfbf;
+    border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    *background-color:#e6e6e6;
+    filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    border:1px solid #cccccc;
+    *border:0;
+    border-bottom-color:#b3b3b3;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    *margin-left:.3em;
+    -webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+}*/
+.multiSelect .btn:hover,.btn:focus,.btn:active,.btn.active,.btn.disabled,.btn[disabled] {
+    color:#333333;
+    background-color:#e6e6e6;
+    *background-color:#d9d9d9;
+}
+
 .multiSelect .text {
     clear: both;
     font-size: 11px;
@@ -178,23 +220,77 @@ div.flipReverse {
 .multiSelect label::after {
     content: ":";
 }
-.btn.mover {
-    display: block;
+.multiSelect .btn.mover {
+    display: inline-block;
     margin-top: 25px;
     vertical-align: top;
 }
-.btn.mover.left {
+.multiSelect .btn.mover.left {
     padding: 3px 8px 2px 6px;
 }
-.btn.mover.right {
+.multiSelect .btn.mover.right {
     margin-top: 24px;
     padding: 3px 7px 2px;
 }
-.btn.mover i {
+.multiSelect .btn.mover i {
     margin: 0;
 }
+.btn.disabled,.btn[disabled]{
+    cursor:default;
+    background-image:none;
+    opacity:0.65;
+    filter:alpha(opacity=65);
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+}
+.multiSelect .btn:first-child{*margin-left:0;}
 
 /* demo css */
 li {
     list-style-type: disc;
+}
+
+.multiSelect {
+    overflow: auto;
+    padding-bottom: 10px;
+}
+.multiSelect ul {
+  list-style: none;
+}
+.multiSelect .select {
+    margin-right: 20px;
+    float: left;
+}
+.multiSelect .text {
+    clear: both;
+    font-size: 11px;
+}
+.multiSelect label.control-label::after {
+    content: ":";
+}
+.multiSelect label.checkbox {
+    margin-bottom: 0;
+}
+/*.btn.mover {
+    display: block;
+    margin-top: 25px;
+    vertical-align: top;
+}*/
+.btn.mover {
+    display: block;
+    margin-top: 25px;
+}
+.btn.mover.left {
+    padding: 6px 8px 6px 6px;
+}
+.btn.mover.right {
+    margin-top: 5px;
+    padding: 6px 7px;
+}
+.buttons.stacked .btn.mover {
+    margin: 0 0 10px 0;
+}
+.btn.mover.left i, .btn.mover.right i {
+    margin: 0;
 }

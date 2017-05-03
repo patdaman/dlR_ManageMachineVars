@@ -5,6 +5,8 @@
 
 
 
+
+
 -- =============================================
 -- Author:		Patrick de los Reyes
 -- Create date: 2017-03-01
@@ -18,6 +20,7 @@ AS
 		ConfigVar.id					AS config_id
 		, Com.id						AS component_id
 		, Com.component_name
+		, ConFile.[file_name]
 		, ConVal.environment_type
 		, ConfigVar.parent_element
 		, ConfigVar.element
@@ -36,3 +39,5 @@ AS
 			ON AppVar.component_id = Com.id
 		LEFT OUTER JOIN [config].[ConfigVariableValue] AS ConVal
 			ON ConfigVar.id = ConVal.configvar_id
+		LEFT OUTER JOIN [config].[ConfigFile] AS ConFile
+			ON ConfigVar.configfile_id = ConFile.id

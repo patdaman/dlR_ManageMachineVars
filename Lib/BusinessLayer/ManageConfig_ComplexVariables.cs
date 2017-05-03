@@ -316,7 +316,7 @@ namespace BusinessLayer
                             active = true,
                             create_date = DateTime.Now,
                             modify_date = DateTime.Now,
-                            release = ".42",
+                            release = vmApp.release ?? ".42",
                             EnvironmentVariables = new List<EnvironmentDtoVariable>(),
                         });
                     }

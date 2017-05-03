@@ -2,33 +2,8 @@
     ViewBag.Title = "DevOps Powershell";
 }
 
-@Scripts.Render("~/bundles/app")
-
-<script src="@Url.Content("~/Scripts/codemirror/lib/codemirror.js")"></script>
-<script src="@Url.Content("~/Scripts/codemirror/ui-codemirror.min.js")"></script>
-<script src="@Url.Content("~/Scripts/codemirror/mode/powershell/powershell.js")"></script>
-<script src="@Url.Content("~/Scripts/codemirror/mode/matchbrackets.js")"></script>
-<script src="@Url.Content("~/Scripts/codemirror/addon/hint/show-hint.js")"></script>
-<link href="~/Scripts/codemirror/addon/hint/show-hint.css" rel="stylesheet" type="text/css" />
-<link href="~/Scripts/codemirror/lib/codemirror.css" rel="stylesheet" type="text/css" />
-<link href="~/Scripts/codemirror/theme/midnight.css" rel="stylesheet" type="text/css" />
-<link href="~/Scripts/codemirror/theme/eclipse.css" rel="stylesheet" type="text/css" />
-<link href="~/Scripts/codemirror/theme/abcdef.css" rel="stylesheet" type="text/css" />
-<link href="~/Scripts/codemirror/theme/rubyblue.css" rel="stylesheet" type="text/css" />
-<link href="~/Scripts/codemirror/theme/solarized.css" rel="stylesheet" type="text/css" />
-<script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap-tpls.js")"></script>
-<script src="@Url.Content("~/Scripts/ui-grid.js")"></script>
-<script src="@Url.Content("~/Scripts/ng-file-upload.js")"></script>
-<script src="@Url.Content("~/Scripts/ng-file-upload-shim.js")"></script>
-<script src="@Url.Content("~/AngularJS/app.js")"></script>
-<script src="@Url.Content("~/AngularJS/Controllers/PowershellController.js")"></script>
-<script src="@Url.Content("~/AngularJS/Directives/powershellCodeMirror.js")"></script>
-<link href="~/Content/site.css" rel="stylesheet" type="text/css" />
-
-<script src="@Url.Content("~/AngularJS/Controllers/ConfigModalController.js")"></script>
-<script src="@Url.Content("~/AngularJS/Directives/ConfigDirectives.js")"></script>
-<script src="@Url.Content("~/AngularJS/Controllers/ConfigController.js")"></script>
-<script src="@Url.Content("~/AngularJS/Services/ConfigService.js")"></script>
+@Scripts.Render("~/bundles/codemirror")
+@Styles.Render("~/Content/codemirror")
 
 <h2>Powershell Scripts</h2>
 
@@ -42,6 +17,8 @@
             <select ng-model="selectedScript" ng-options="s.ScriptName for s in scripts" ng-change="updateScript()">
                 <option value="" style="color:red">Script</option>
             </select>
+            <input type="button" class="btn btn-info" ng-click="editScript()" value="Edit Script" />
+            <input type="button" class="btn btn-small" ng-click="addScript()" value="Add Script" />
         </div>
         <p />
         <div class="form-group">
@@ -55,50 +32,19 @@
             <select ng-model="selectedMachine" ng-options="m.name for m in machines" ng-change="updateMachine()">
                 <option value="" style="color:red">Server</option>
             </select>
-            <input type="button" class="btn btn-info" ng-click="editScript()" value="Edit Script" />
-            <input type="button" class="btn btn-small" ng-click="addScript()" value="Add Script" />
         </div>
         <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
         <div class="form-group">
             <div class="CodeMirror">
                 <h5>{{scriptName}}</h5>
                 Theme : <select ng-model="theme" ng-options="t for t in themes" ng-change="updateTheme()"></select>
-              
                 <div ui-codemirror="cmOptions" ng-model="scriptText" ></div>
-                 @*<div ui-codemirror="{
-                        lineNumbers: true,
-                        theme:'midnight',
-                        readOnly: 'nocursor',
-                        lineWrapping: false,
-                        tabMode: 'shift',
-                        matchBrackets: true,
-                        mode: 'powershell'
-                      }" ng-model="scriptText">
-                </div>*@
-
-
-                @*<code-mirror
-                    container="codeMirror"
-                    line-numbers="true"
-                    theme="twilight"
-                    tabMode="shift"
-                    read-only="nocursor"
-                    indentUnit: 4,
-                    matchBrackets="true"
-                    mode="powershell"
-                    content="scriptText"
-                    >
-                </code-mirror>
-                <div class="contents">
-                    <h2>Contents of the editor (for takeaway)</h2>
-                    <pre>{{codeMirror.content}}</pre>
-                </div>*@
             </div>
         </div>
         <div class="form-group">
-            @*<input type="button" value="Update" ng-click="updateScript()" class="btn btn-warning" />
-                &nbsp;*@
-            <input type="button" value="Execute" ng-click="executeScript()" class="btn btn-danger" />
+            <input type="button" value="Save" ng-click="updateScript()" class="btn btn-warning" />
+                &nbsp;
+            <input type="button" value="Execute" ng-click="executeScript(scriptText)" class="btn btn-danger" />
         </div>
     </div>
 </div>

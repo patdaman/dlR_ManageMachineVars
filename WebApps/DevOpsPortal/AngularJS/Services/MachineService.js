@@ -1,5 +1,5 @@
 ﻿//Service to get data from service..
-machineApp.service('machinecrudservice', function ($http) {
+MachineApp.service('machinecrudservice', function ($http) {
 
     this.getAllMachines = function () {
         return $http.get("/api/MachineApi");

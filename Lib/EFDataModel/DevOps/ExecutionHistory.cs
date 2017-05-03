@@ -15,13 +15,11 @@ namespace EFDataModel.DevOps
     public partial class ExecutionHistory
     {
         public int id { get; set; }
-        public int script_id { get; set; }
+        public Nullable<int> script_id { get; set; }
         public string script_name { get; set; }
         public string user_name { get; set; }
         public System.DateTime execution_dt { get; set; }
         public bool contains_errors { get; set; }
         public string output { get; set; }
-    
-        public virtual Script Script { get; set; }
     }
 }

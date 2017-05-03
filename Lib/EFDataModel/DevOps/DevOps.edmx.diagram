@@ -35,7 +35,6 @@
         <AssociationConnector Association="DevOpsModel.FK_Machines_Enum_Locations" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_MachineComponentPath_Machines" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_Events_Devices" ManuallyRouted="false" />
-        <AssociationConnector Association="DevOpsModel.FK_ExecutionHistory_Scripts" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.AppComponents" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.ApplicationEnvironmentVariables" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.ComponentConfigVariablesMap" ManuallyRouted="false" />

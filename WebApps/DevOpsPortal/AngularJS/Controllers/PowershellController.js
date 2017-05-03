@@ -64,7 +64,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
     $scope.cmOptions = {
         lineNumbers: true,
         indentWithTabs: true,
-        theme:'midnight',
+        theme: 'midnight',
         readOnly: $scope.readOnly,
         lineWrapping: false,
         tabMode: 'shift',
@@ -197,4 +197,77 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
         $scope.scriptName = $scope.selectedScript.ScriptName;
         $scope.scriptText = $scope.selectedScript.ScriptText;
     };
+
+    $scope.editScript = function () {
+
+    };
+    $scope.addScript = function () {
+
+    };
+    $scope.updateScript = function () {
+
+    };
+    $scope.executeScript = function (scriptText) {
+        var machineName = $scope.selectedMachine.name;
+        var deferred = $q.defer();
+        var data = JSON.stringify({
+            "scriptText": scriptText,
+        });
+        $http({
+            method: 'POST',
+            url: 'api:/PowershellApi',
+            //withCredentials: true,
+            params: {
+                machineName: machineName,
+                scriptText: scriptText
+            },
+            //data: data,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            transformResponse: function (data) {return {list: angular.fromJson(data)} }
+        })
+        .success(function (data) {
+            ModalService.showModal({
+                templateUrl: "/Content/Templates/powershellExecuteModal.html",
+                controller: "ScriptResults",
+                inputs: {
+                    machineName: machineName,
+                    //executionLogs: data,
+                    executionLogs: data.list,
+                }
+            })
+                .then(function (modal) {
+                    modal.element.modal();
+                    modal.close.then(function (result) {
+                        if (result.download) {
+                            $scope.downloadConfig(result.title, result.fileName)
+                        };
+                        if (result.publish) {
+                            $scope.downloadConfig(result.title, result.fileName)
+                        };
+                    });
+                })
+        });
+    }
 });
+
+PowershellApp.controller('ScriptResults',
+    function ($rootScope, $scope, $element, machineName, executionLogs) {
+        //var vm = this;
+        var vm = $scope;
+        var title;
+        vm.machineName = machineName;
+        vm.executionLogs = executionLogs;
+        vm.title = machineName;
+        vm.cancel = function () {
+            $element.modal('hide');
+            close({
+            }, 500);
+        };
+        vm.save = function () {
+            $element.modal('hide');
+            close({
+            }, 500);
+        }
+    });
