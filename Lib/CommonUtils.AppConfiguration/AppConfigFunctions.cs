@@ -86,16 +86,27 @@ namespace CommonUtils.AppConfiguration
             var keyValues = new List<AttributeKeyValuePair>();
             foreach (var element in configFile.Descendants())
             {
+                string parentName = string.Empty;
+                string parentFullElement = string.Empty;
+                if (element.Parent != null)
+                {
+                    parentName = element.Parent.Name.ToString() ?? "";
+                    XElement res = new XElement(parentName);
+                    res.Add(element.Parent.Attributes().ToArray());
+                    parentFullElement = res.ToString();
+                }
+                XElement selfRes = new XElement(element.Name);
+                selfRes.Add(element.Attributes().ToArray());
+                string selfFullElement = selfRes.ToString();
                 if (element.HasAttributes)
                 {
                     if (element.FirstAttribute == element.LastAttribute)
                     {
-                        string parentName = string.Empty;
-                        if (element.Parent != null)
-                            parentName = element.Parent.Name.ToString() ?? "";
                         keyValues.Add(new AttributeKeyValuePair()
                         {
-                            parentElement = parentName,
+                            //parentElement = parentName,
+                            parentElement = parentFullElement,
+                            fullElement = selfFullElement,
                             element = element.Name.ToString(),
                             attribute = element.FirstAttribute.Name.ToString(),
                             key = element.FirstAttribute.Name.ToString(),
@@ -106,9 +117,6 @@ namespace CommonUtils.AppConfiguration
                     }
                     else
                     {
-                        string parentName = string.Empty;
-                        if (element.Parent != null)
-                            parentName = element.Parent.Name.ToString() ?? "";
                         string keys = string.Empty;
                         string values = string.Empty;
                         string longAttributeKeys;
@@ -134,7 +142,9 @@ namespace CommonUtils.AppConfiguration
                         }
                         keyValues.Add(new AttributeKeyValuePair()
                         {
-                            parentElement = parentName,
+                            //parentElement = parentName,
+                            parentElement = parentFullElement,
+                            fullElement = selfFullElement,
                             element = element.Name.ToString(),
                             attribute = element.FirstAttribute.Name.ToString(),
                             key = keys,
@@ -148,12 +158,11 @@ namespace CommonUtils.AppConfiguration
                     // && element.FirstNode == element.LastNode
                     && element.Value != null)
                 {
-                    string parentName = string.Empty;
-                    if (element.Parent != null)
-                        parentName = element.Parent.Name.ToString() ?? "";
                     keyValues.Add(new AttributeKeyValuePair()
                     {
-                        parentElement = parentName,
+                        //parentElement = parentName,
+                        parentElement = parentFullElement,
+                        fullElement = selfFullElement,
                         element = element.Name.ToString(),
                         attribute = element.FirstNode.ToString(),
                         key = element.Name.ToString(),
@@ -164,12 +173,11 @@ namespace CommonUtils.AppConfiguration
                 }
                 else
                 {
-                    string parentName = string.Empty;
-                    if (element.Parent != null)
-                        parentName = element.Parent.Name.ToString() ?? "";
                     var keyValue = new AttributeKeyValuePair()
                     {
-                        parentElement = parentName,
+                        //parentElement = parentName,
+                        parentElement = parentFullElement,
+                        fullElement = selfFullElement,
                         element = element.Name.ToString(),
                         attribute = "",
                         key = "",
@@ -256,7 +264,15 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public AttributeKeyValuePair GetKeyValue(string appKey, string parent_element = null)
         {
+            string parentElementName = string.Empty;
             if (!string.IsNullOrWhiteSpace(parent_element))
+            {
+                char[] chars = { ' ', '=' };
+                int index = parent_element.IndexOfAny(chars);
+                if (index > 0)
+                    parentElementName = parent_element.Substring(0, index).Replace("<", "").Replace(">", "");
+                else
+                    parentElementName = parent_element.Replace("<", "").Replace(">", "");
                 foreach (XElement y in configFile.Descendants(parent_element))
                 {
                     foreach (var x in y.Elements())
@@ -264,7 +280,9 @@ namespace CommonUtils.AppConfiguration
                         if (x.FirstAttribute.Value.ToString() == null)
                             return new AttributeKeyValuePair()
                             {
-                                parentElement = x.Parent.Name.ToString(),
+                                //parentElement = x.Parent.Name.ToString(),
+                                parentElement = x.Parent.ToString(),
+                                fullElement = x.ToString(),
                                 element = x.Name.ToString(),
                                 attribute = "",
                                 key = x.Name.ToString(),
@@ -274,7 +292,9 @@ namespace CommonUtils.AppConfiguration
                         if (x.FirstAttribute.Value.ToString() == appKey)
                             return new AttributeKeyValuePair()
                             {
-                                parentElement = x.Parent.Name.ToString(),
+                                //parentElement = x.Parent.Name.ToString(),
+                                parentElement = x.Parent.ToString(),
+                                fullElement = x.ToString(),
                                 element = x.Name.ToString(),
                                 attribute = x.FirstAttribute.Name.ToString(),
                                 key = x.FirstAttribute.Value.ToString(),
@@ -283,16 +303,22 @@ namespace CommonUtils.AppConfiguration
                             };
                     }
                 }
+            }
             else
             {
                 foreach (XElement y in configFile.Descendants())
                 {
                     foreach (var x in y.Elements())
                     {
+                        string parentElement = string.Empty;
+                        if (x.Parent != null)
+                            parentElement = x.Parent.ToString();
                         if (x.FirstAttribute.Value.ToString() == appKey)
                             return new AttributeKeyValuePair()
                             {
-                                parentElement = x.Parent.Name.ToString(),
+                                //parentElement = x.Parent.Name.ToString(),
+                                parentElement = parentElement,
+                                fullElement = x.ToString(),
                                 element = x.Name.ToString(),
                                 attribute = "",
                                 key = "",
@@ -389,7 +415,8 @@ namespace CommonUtils.AppConfiguration
             {
                 parent_element = "appSettings";
             }
-            return AddKeyValue("add", appKey, "value", value, "key", parent_element);
+            string full_element = "<add key=\"" + appKey + "\" value=\"" + value + "\">";
+            return AddKeyValue("add", appKey, "value", value, "key", full_element, parent_element);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -416,6 +443,7 @@ namespace CommonUtils.AppConfiguration
                     valuePair.valueName,
                     valuePair.value,
                     valuePair.element,
+                    valuePair.fullElement,
                     valuePair.parentElement
                     ));
             }
@@ -438,8 +466,9 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult AddKeyValue(string attribute, string appKey, string valueName, string value, string element, string parent_element = null)
+        public Enums.ModifyResult AddKeyValue(string attribute, string appKey, string valueName, string value, string element, string full_element, string parent_element = null)
         {
+            string parentElementName = string.Empty;
             if (string.IsNullOrWhiteSpace(parent_element))
             {
                 var rootElement = configFile.Elements().Where(x => x.Name == element).FirstOrDefault();
@@ -471,11 +500,20 @@ namespace CommonUtils.AppConfiguration
             List<XElement> parentElement = new List<XElement>();
             if (!string.IsNullOrWhiteSpace(parent_element))
             {
-                if (configFile.Descendants(parent_element) != null)
-                    parentElement.AddRange(configFile.Descendants(parent_element).ToList());
+                char[] chars = { ' ', '=' };
+                int index = parent_element.IndexOfAny(chars);
+                if (index > 0)
+                    parentElementName = parent_element.Substring(0, index).Replace("<", "").Replace(">", "");
+                else
+                    parentElementName = parent_element.Replace("<", "").Replace(">", "");
+                if (configFile.Descendants(parentElementName) != null)
+                {
+                    parentElement.AddRange(configFile.Descendants(parentElementName).ToList());
+                    parentElement.RemoveAll(x => new XElement(x.Name, x.Attributes().ToArray()).ToString() != parent_element);
+                }
                 if (parentElement == null || parentElement.Count == 0)
                 {
-                    configFile.Root.Add(new XElement(parent_element, string.Empty));
+                    configFile.Root.Add(XElement.Parse(parent_element));
                 }
             }
 
@@ -523,33 +561,25 @@ namespace CommonUtils.AppConfiguration
                     }
                 }
             }
-            try
+            if (!string.IsNullOrWhiteSpace(attribute))
             {
-                if (!string.IsNullOrWhiteSpace(attribute))
-                {
-                    if (string.IsNullOrWhiteSpace(valueName))
-                        parentElement.FirstOrDefault().Add(new XElement(element,
-                                                new XAttribute(attribute, appKey)));
-                    else
-                        parentElement.FirstOrDefault().Add(new XElement(element,
-                                              new XAttribute(attribute, appKey),
-                                              new XAttribute(valueName, value)));
-                }
+                if (string.IsNullOrWhiteSpace(valueName))
+                    parentElement.FirstOrDefault().Add(new XElement(element,
+                                            new XAttribute(attribute, value)));
                 else
-                {
-                    if (string.IsNullOrWhiteSpace(valueName))
-                        parentElement.FirstOrDefault().Add(new XElement(element, string.Empty));
-                    else
-                        parentElement.FirstOrDefault().Add(new XElement(element, value));
-                }
-                return Enums.ModifyResult.Created;
+                    parentElement.FirstOrDefault().Add(new XElement(element,
+                                          new XAttribute(attribute, appKey),
+                                          new XAttribute(valueName, value)));
             }
-            catch (Exception ex)
+            else
             {
-                //this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
-                return Enums.ModifyResult.Failed;
+                if (string.IsNullOrWhiteSpace(valueName))
+                    parentElement.FirstOrDefault().Add(new XElement(element, string.Empty));
+                else
+                    parentElement.FirstOrDefault().Add(new XElement(element, value));
             }
-            return Enums.ModifyResult.Unknown;
+            return Enums.ModifyResult.Created;
+            return Enums.ModifyResult.Failed;
         }
     }
 }

@@ -164,6 +164,7 @@ namespace BusinessLayer
                     keyValues.Add(new AttributeKeyValuePair()
                     {
                         parentElement = cvar.parent_element,
+                        fullElement = cvar.full_element,
                         element = cvar.element,
                         attribute = cvar.attribute,
                         key = cvar.key,
@@ -393,11 +394,12 @@ namespace BusinessLayer
                 EFDataModel.DevOps.ConfigVariable configVar;
                 EFDataModel.DevOps.ConfigVariableValue efValue;
                 configVar = (from n in DevOpsContext.ConfigVariables
-                             where n.element == x.element
-                             where n.attribute == x.attribute
-                             where n.key == x.key
+                             //where n.element == x.element
+                             //where n.attribute == x.attribute
+                             //where n.key == x.key
                              where n.parent_element == x.parentElement
-                             where n.value_name == x.valueName
+                             where n.full_element == x.fullElement
+                             //where n.value_name == x.valueName
                              where n.configfile_id == efConfigFile.id || n.configfile_id == 0
                              select n).FirstOrDefault();
                 if (configVar == null)
@@ -517,6 +519,7 @@ namespace BusinessLayer
                     key = v.key,
                     modify_date = v.modify_date ?? DateTime.Now,
                     parent_element = v.parent_element,
+                    full_element = v.full_element,
                     value_name = v.value_name,
                     ConfigFile = efComponent.ConfigFiles.FirstOrDefault(),
                 });
@@ -561,6 +564,7 @@ namespace BusinessLayer
             EFDataModel.DevOps.ConfigVariable efConfigVar = new EFDataModel.DevOps.ConfigVariable()
             {
                 parent_element = vars.parentElement,
+                full_element = vars.fullElement,
                 element = vars.element,
                 attribute = vars.attribute,
                 key = vars.key,
@@ -621,21 +625,23 @@ namespace BusinessLayer
                                       on new
                                       {
                                           JoinProperty1 = keys.parentElement,
-                                          JoinProperty2 = keys.element.Replace("Config File: ", ""),
-                                          JoinProperty3 = keys.attribute,
-                                          JoinProperty4 = keys.key,
-                                          JoinProperty5 = keys.valueName,
-                                          JoinProperty6 = keys.value
+                                          JoinProperty2 = keys.fullElement,
+                                          JoinProperty3 = keys.element.Replace("Config File: ", ""),
+                                          JoinProperty4 = keys.attribute,
+                                          JoinProperty5 = keys.key,
+                                          JoinProperty6 = keys.valueName,
+                                          JoinProperty7 = keys.value
                                       }
                                       equals
                                       new
                                       {
                                           JoinProperty1 = db.parentElement,
-                                          JoinProperty2 = db.element.Replace("DB: ", ""),
-                                          JoinProperty3 = db.attribute,
-                                          JoinProperty4 = db.key,
-                                          JoinProperty5 = db.valueName,
-                                          JoinProperty6 = db.value
+                                          JoinProperty2 = db.fullElement,
+                                          JoinProperty3 = db.element.Replace("DB: ", ""),
+                                          JoinProperty4 = db.attribute,
+                                          JoinProperty5 = db.key,
+                                          JoinProperty6 = db.valueName,
+                                          JoinProperty7 = db.value
                                       }
                                      into combined
                          from both in combined.DefaultIfEmpty()
@@ -648,20 +654,22 @@ namespace BusinessLayer
                              on new
                              {
                                  JoinProperty1 = db.parentElement,
-                                 JoinProperty2 = db.element.Replace("DB: ", ""),
-                                 JoinProperty3 = db.attribute,
-                                 JoinProperty4 = db.key,
-                                 JoinProperty5 = db.valueName,
-                                 JoinProperty6 = db.value
+                                 JoinProperty2 = db.fullElement,
+                                 JoinProperty3 = db.element.Replace("DB: ", ""),
+                                 JoinProperty4 = db.attribute,
+                                 JoinProperty5 = db.key,
+                                 JoinProperty6 = db.valueName,
+                                 JoinProperty7 = db.value
                              }
                              equals new
                              {
                                  JoinProperty1 = keys.parentElement,
-                                 JoinProperty2 = keys.element.Replace("Config File: ", ""),
-                                 JoinProperty3 = keys.attribute,
-                                 JoinProperty4 = keys.key,
-                                 JoinProperty5 = keys.valueName,
-                                 JoinProperty6 = keys.value
+                                 JoinProperty2 = keys.fullElement,
+                                 JoinProperty3 = keys.element.Replace("Config File: ", ""),
+                                 JoinProperty4 = keys.attribute,
+                                 JoinProperty5 = keys.key,
+                                 JoinProperty6 = keys.valueName,
+                                 JoinProperty7 = keys.value
                              }
                              into combined
                          from both in combined.DefaultIfEmpty()
@@ -835,15 +843,15 @@ namespace BusinessLayer
             {
                 if (!string.IsNullOrWhiteSpace(this.environment))
                     configVars = (from cvar in DevOpsContext.ConfigVariables
-                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
                                   select cvar).ToList();
                 else
                     configVars = (from cvar in DevOpsContext.ConfigVariables
                                   where appObject.FirstOrDefault().Components.Contains(cvar.Components.FirstOrDefault())
-                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   where environmentObjects.Contains(cvar)
                                   select cvar).ToList();
             }
@@ -861,8 +869,8 @@ namespace BusinessLayer
                                   where cvar.Components.Select(x => x.id).Intersect(
                                       machineObject.FirstOrDefault().MachineComponentPathMaps.Select(ci => ci.component_id)
                                       ).Any()
-                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
-                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
+                                  where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower() || cvar.ConfigFile == null
+                                  //where cvar.ConfigFile.file_name.ToLower() == fileName.ToLower()
                                   select cvar).ToList();
             }
             else

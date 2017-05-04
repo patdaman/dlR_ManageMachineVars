@@ -136,7 +136,7 @@ ConfigApp.controller('AddComponent',
                     var name = Applications.application_name;
                     var id = Applications.id;
                     var value = Applications.application_name;
-                    vm.componentApplications.push({ id: id, name: name.replace('/','').replace('"','').replace("'","").replace('[','').replace(']',''), value: value });
+                    vm.componentApplications.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
                 });
                 vm.localComponent = {
                     componentName: vm.componentName,
@@ -159,7 +159,7 @@ ConfigApp.controller('AddComponent',
         vm.upload = function (file) {
             if (file) {
                 if (!file.$error) {
-                    var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) { return item["name"].replace('/','').replace('"','').replace("'",""); }));
+                    var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) { return item["name"].replace('/', '').replace('"', '').replace("'", ""); }));
                     Upload.upload({
                         url: 'api:/ConfigPublishApi',
                         params: {

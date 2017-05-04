@@ -11,6 +11,7 @@ namespace ViewModel
     public class AttributeKeyValuePair
     {
         public string parentElement;
+        public string fullElement;
         public string element;
         public string attribute;
         public string key;
@@ -24,6 +25,7 @@ namespace ViewModel
         public AttributeKeyValuePair(AttributeKeyValuePair a)
         {
             parentElement = a.parentElement;
+            fullElement = a.fullElement;
             element = a.element;
             attribute = a.attribute;
             key = a.key;

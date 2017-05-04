@@ -22,7 +22,9 @@ namespace EFDataModel.DevOps
         }
     
         public int id { get; set; }
+        public string full_element { get; set; }
         public string parent_element { get; set; }
+        public Nullable<int> configfile_id { get; set; }
         public string element { get; set; }
         public string attribute { get; set; }
         public string key { get; set; }
@@ -30,12 +32,11 @@ namespace EFDataModel.DevOps
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
         public bool active { get; set; }
-        public Nullable<int> configfile_id { get; set; }
     
+        public virtual ConfigFile ConfigFile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Component> Components { get; set; }
-        public virtual ConfigFile ConfigFile { get; set; }
     }
 }

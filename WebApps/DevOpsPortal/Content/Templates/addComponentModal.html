@@ -22,31 +22,25 @@
                     </p>
                     <p>
                         <div class="form-group">
-                                <label><b>Application(s):</b></label>
-                                <multi-select ng-model="componentApplications"
-                                              available="applications"
-                                              selected-label="Current"
-                                              available-label="Available"
-                                              display-attr="name">
-                                </multi-select>
-                                <!--<multi-select ng-model="componentApplications"
-                                              available="applications"
-                                              selected-label="Current"
-                                              available-label="Available"
-                                              display-attr="name">
-                                </multi-select>-->
-                                <!--<multi-select ng-model="componentApplications"
-                                              available="applications"
-                                              selected-label="Current Applications"
-                                              available-label="Available Applications"
-                                              display="a as a.name"
-                                              title="a as a.name"
-                                              config="selectConfig">
-                                </multi-select>-->
-                                <div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
-                                <ul class="detail">
-                                    <li ng-repeat="app in componentApplications">{{app.name}}</li>
-                                </ul>
+                            <label><b>Application(s):</b></label>
+                            <multi-select ng-model="componentApplications"
+                                          available="applications"
+                                          selected-label="Current"
+                                          available-label="Available"
+                                          display-attr="name">
+                            </multi-select>
+                            <!--<multi-select ng-model="componentApplications"
+                                          available="applications"
+                                          selected-label="Current Applications"
+                                          available-label="Available Applications"
+                                          display="a as a.name"
+                                          title="a as a.name"
+                                          config="selectConfig">
+                            </multi-select>-->
+                            <div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
+                            <ul class="detail">
+                                <li ng-repeat="app in componentApplications">{{app.name}}</li>
+                            </ul>
                         </div>
                         <div class="form-group">
                             <label>Relative File Path:</label>

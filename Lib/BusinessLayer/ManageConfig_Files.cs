@@ -352,7 +352,7 @@ namespace BusinessLayer
 
             if (efRootElement != null)
             {
-                configFile = new XDocument(new XElement(efRootElement.element, string.Empty))
+                configFile = new XDocument(XElement.Parse(efRootElement.fullElement))
                 {
                     Declaration = new XDeclaration("1.0", "utf-8", "no")
                 };
@@ -366,8 +366,8 @@ namespace BusinessLayer
             }
 
 
-            elements.RemoveAll(x => string.IsNullOrWhiteSpace(x.parentElement));
-            //elements.Remove(efRootElement);
+            //elements.RemoveAll(x => string.IsNullOrWhiteSpace(x.parentElement));
+            elements.Remove(efRootElement);
             AppConfigFunctions configProcessor = new AppConfigFunctions(configFile);
             var results = configProcessor.AddKeyValue(elements);
             return configFile;

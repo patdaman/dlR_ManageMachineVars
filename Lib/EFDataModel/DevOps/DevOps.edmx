@@ -91,7 +91,8 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="parent_element" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="full_element" Type="varchar" MaxLength="4000" />
+          <Property Name="parent_element" Type="varchar" MaxLength="4000" Nullable="false" />
           <Property Name="configfile_id" Type="int" />
           <Property Name="element" Type="varchar" MaxLength="256" />
           <Property Name="attribute" Type="varchar" MaxLength="256" />
@@ -714,7 +715,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="ConfigFiles" Relationship="Self.FK_ConfigFile_Components" FromRole="Components" ToRole="ConfigFile" />
           <NavigationProperty Name="MachineComponentPathMaps" Relationship="Self.FK_MachineComponentPath_Components" FromRole="Components" ToRole="MachineComponentPathMap" />
           <NavigationProperty Name="Applications" Relationship="Self.AppComponents" FromRole="Components" ToRole="Applications" />
-          <NavigationProperty Name="ConfigVariables" Relationship="Self.ComponentConfigVariablesMap" FromRole="Components" ToRole="ConfigVariables" />
+          <NavigationProperty Name="ConfigVariables" Relationship="DevOpsModel.ComponentConfigVariablesMap" FromRole="Component" ToRole="ConfigVariable" />
         </EntityType>
         <EntityType Name="ConfigFile">
           <Key>
@@ -758,24 +759,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="ConfigFile" Relationship="Self.FK_ConfigFileElements_ConfigFile" FromRole="ConfigFileElements" ToRole="ConfigFile" />
           <NavigationProperty Name="ConfigFileAttributes" Relationship="Self.FK_ConfigFileAttributes_ConfigFileElements" FromRole="ConfigFileElements" ToRole="ConfigFileAttributes" />
         </EntityType>
-        <EntityType Name="ConfigVariable">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="parent_element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="attribute" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="value_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ConfigVariableValues" Relationship="Self.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariables" ToRole="ConfigVariableValue" />
-          <NavigationProperty Name="Components" Relationship="Self.ComponentConfigVariablesMap" FromRole="ConfigVariables" ToRole="Components" />
-          <Property Name="configfile_id" Type="Int32" />
-          <NavigationProperty Name="ConfigFile" Relationship="DevOpsModel.FK_ConfigVariables_ConfigFile" FromRole="ConfigVariable" ToRole="ConfigFile" />
-        </EntityType>
         <EntityType Name="ConfigVariableValue">
           <Key>
             <PropertyRef Name="id" />
@@ -788,8 +771,8 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="published_date" Type="DateTime" Precision="3" />
           <Property Name="published" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="ConfigVariable" Relationship="Self.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariableValue" ToRole="ConfigVariables" />
           <NavigationProperty Name="Enum_EnvironmentType" Relationship="Self.FK_ConfigVariableValue_Enum_EnvironmentType" FromRole="ConfigVariableValue" ToRole="Enum_EnvironmentType" />
+          <NavigationProperty Name="ConfigVariable" Relationship="DevOpsModel.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariableValue" ToRole="ConfigVariable" />
         </EntityType>
         <EntityType Name="Enum_EnvironmentType">
           <Key>
@@ -997,18 +980,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ConfigVariableValue_ConfigVariables">
-          <End Role="ConfigVariables" Type="Self.ConfigVariable" Multiplicity="1" />
-          <End Role="ConfigVariableValue" Type="Self.ConfigVariableValue" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ConfigVariables">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ConfigVariableValue">
-              <PropertyRef Name="configvar_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ConfigVariableValue_Enum_EnvironmentType">
           <End Role="Enum_EnvironmentType" Type="Self.Enum_EnvironmentType" Multiplicity="1" />
           <End Role="ConfigVariableValue" Type="Self.ConfigVariableValue" Multiplicity="*" />
@@ -1089,10 +1060,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <End Role="Applications" Type="Self.Application" Multiplicity="*" />
           <End Role="EnvironmentVariables" Type="Self.EnvironmentVariable" Multiplicity="*" />
         </Association>
-        <Association Name="ComponentConfigVariablesMap">
-          <End Role="ConfigVariables" Type="Self.ConfigVariable" Multiplicity="*" />
-          <End Role="Components" Type="Self.Component" Multiplicity="*" />
-        </Association>
         <Association Name="MachinesServerGroupsMap">
           <End Role="Machines" Type="Self.Machine" Multiplicity="*" />
           <End Role="ServerGroups" Type="Self.ServerGroup" Multiplicity="*" />
@@ -1107,7 +1074,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="ConfigFiles" EntityType="Self.ConfigFile" />
           <EntitySet Name="ConfigFileAttributes" EntityType="Self.ConfigFileAttribute" />
           <EntitySet Name="ConfigFileElements" EntityType="Self.ConfigFileElement" />
-          <EntitySet Name="ConfigVariables" EntityType="Self.ConfigVariable" />
           <EntitySet Name="ConfigVariableValues" EntityType="Self.ConfigVariableValue" />
           <EntitySet Name="Enum_EnvironmentType" EntityType="Self.Enum_EnvironmentType" />
           <EntitySet Name="Enum_EnvironmentVariableType" EntityType="Self.Enum_EnvironmentVariableType" />
@@ -1136,10 +1102,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <AssociationSet Name="FK_ConfigFileAttributes_ConfigFileElements" Association="Self.FK_ConfigFileAttributes_ConfigFileElements">
             <End Role="ConfigFileElements" EntitySet="ConfigFileElements" />
             <End Role="ConfigFileAttributes" EntitySet="ConfigFileAttributes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ConfigVariableValue_ConfigVariables" Association="Self.FK_ConfigVariableValue_ConfigVariables">
-            <End Role="ConfigVariables" EntitySet="ConfigVariables" />
-            <End Role="ConfigVariableValue" EntitySet="ConfigVariableValues" />
           </AssociationSet>
           <AssociationSet Name="FK_ConfigVariableValue_Enum_EnvironmentType" Association="Self.FK_ConfigVariableValue_Enum_EnvironmentType">
             <End Role="Enum_EnvironmentType" EntitySet="Enum_EnvironmentType" />
@@ -1173,10 +1135,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="Applications" EntitySet="Applications" />
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
           </AssociationSet>
-          <AssociationSet Name="ComponentConfigVariablesMap" Association="Self.ComponentConfigVariablesMap">
-            <End Role="ConfigVariables" EntitySet="ConfigVariables" />
-            <End Role="Components" EntitySet="Components" />
-          </AssociationSet>
           <AssociationSet Name="MachinesServerGroupsMap" Association="Self.MachinesServerGroupsMap">
             <End Role="Machines" EntitySet="Machines" />
             <End Role="ServerGroups" EntitySet="ServerGroups" />
@@ -1189,9 +1147,18 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="Enum_EnvironmentType" EntitySet="Enum_EnvironmentType" />
             <End Role="ConfigFile" EntitySet="ConfigFiles" />
           </AssociationSet>
+          <EntitySet Name="ConfigVariables" EntityType="DevOpsModel.ConfigVariable" />
           <AssociationSet Name="FK_ConfigVariables_ConfigFile" Association="DevOpsModel.FK_ConfigVariables_ConfigFile">
             <End Role="ConfigFile" EntitySet="ConfigFiles" />
             <End Role="ConfigVariable" EntitySet="ConfigVariables" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigVariableValue_ConfigVariables" Association="DevOpsModel.FK_ConfigVariableValue_ConfigVariables">
+            <End Role="ConfigVariable" EntitySet="ConfigVariables" />
+            <End Role="ConfigVariableValue" EntitySet="ConfigVariableValues" />
+          </AssociationSet>
+          <AssociationSet Name="ComponentConfigVariablesMap" Association="DevOpsModel.ComponentConfigVariablesMap">
+            <End Role="ConfigVariable" EntitySet="ConfigVariables" />
+            <End Role="Component" EntitySet="Components" />
           </AssociationSet>
         </EntityContainer>
         <Association Name="FK_ConfigFile_Enum_EnvironmentType">
@@ -1206,6 +1173,25 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ConfigVariable">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="full_element" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="parent_element" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="configfile_id" Type="Int32" />
+          <Property Name="element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="attribute" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="value_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ConfigFile" Relationship="DevOpsModel.FK_ConfigVariables_ConfigFile" FromRole="ConfigVariable" ToRole="ConfigFile" />
+          <NavigationProperty Name="ConfigVariableValues" Relationship="DevOpsModel.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariable" ToRole="ConfigVariableValue" />
+          <NavigationProperty Name="Components" Relationship="DevOpsModel.ComponentConfigVariablesMap" FromRole="ConfigVariable" ToRole="Component" />
+        </EntityType>
         <Association Name="FK_ConfigVariables_ConfigFile">
           <End Type="DevOpsModel.ConfigFile" Role="ConfigFile" Multiplicity="0..1" />
           <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="*" />
@@ -1217,6 +1203,22 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
               <PropertyRef Name="configfile_id" />
             </Dependent>
           </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigVariableValue_ConfigVariables">
+          <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="1" />
+          <End Type="DevOpsModel.ConfigVariableValue" Role="ConfigVariableValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConfigVariable">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ConfigVariableValue">
+              <PropertyRef Name="configvar_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ComponentConfigVariablesMap">
+          <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="*" />
+          <End Type="DevOpsModel.Component" Role="Component" Multiplicity="*" />
         </Association>
       </Schema>
     </edmx:ConceptualModels>
@@ -1283,22 +1285,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
                 <ScalarProperty Name="parent_element" ColumnName="parent_element" />
                 <ScalarProperty Name="create_date" ColumnName="create_date" />
                 <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ConfigVariables">
-            <EntityTypeMapping TypeName="DevOpsModel.ConfigVariable">
-              <MappingFragment StoreEntitySet="ConfigVariables">
-                <ScalarProperty Name="configfile_id" ColumnName="configfile_id" />
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
-                <ScalarProperty Name="element" ColumnName="element" />
-                <ScalarProperty Name="attribute" ColumnName="attribute" />
-                <ScalarProperty Name="key" ColumnName="key" />
-                <ScalarProperty Name="value_name" ColumnName="value_name" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="active" ColumnName="active" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1478,14 +1464,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
               <ScalarProperty Name="id" ColumnName="environmentvariable_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="ComponentConfigVariablesMap" TypeName="DevOpsModel.ComponentConfigVariablesMap" StoreEntitySet="ComponentConfigVariablesMap">
-            <EndProperty Name="ConfigVariables">
-              <ScalarProperty Name="id" ColumnName="configvariable_id" />
-            </EndProperty>
-            <EndProperty Name="Components">
-              <ScalarProperty Name="id" ColumnName="component_id" />
-            </EndProperty>
-          </AssociationSetMapping>
           <AssociationSetMapping Name="MachinesServerGroupsMap" TypeName="DevOpsModel.MachinesServerGroupsMap" StoreEntitySet="MachinesServerGroupsMap">
             <EndProperty Name="Machines">
               <ScalarProperty Name="id" ColumnName="machine_id" />
@@ -1500,6 +1478,31 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </EndProperty>
             <EndProperty Name="Machines">
               <ScalarProperty Name="id" ColumnName="machine_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="ConfigVariables">
+            <EntityTypeMapping TypeName="DevOpsModel.ConfigVariable">
+              <MappingFragment StoreEntitySet="ConfigVariables">
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="value_name" ColumnName="value_name" />
+                <ScalarProperty Name="key" ColumnName="key" />
+                <ScalarProperty Name="attribute" ColumnName="attribute" />
+                <ScalarProperty Name="element" ColumnName="element" />
+                <ScalarProperty Name="configfile_id" ColumnName="configfile_id" />
+                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
+                <ScalarProperty Name="full_element" ColumnName="full_element" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="ComponentConfigVariablesMap" TypeName="DevOpsModel.ComponentConfigVariablesMap" StoreEntitySet="ComponentConfigVariablesMap">
+            <EndProperty Name="Component">
+              <ScalarProperty Name="id" ColumnName="component_id" />
+            </EndProperty>
+            <EndProperty Name="ConfigVariable">
+              <ScalarProperty Name="id" ColumnName="configvariable_id" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

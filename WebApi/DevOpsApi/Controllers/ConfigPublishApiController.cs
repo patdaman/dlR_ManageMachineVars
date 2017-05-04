@@ -104,6 +104,8 @@ namespace DevOpsApi.Controllers
                 var fileName = sections[sections.Length - 1];
                 var fileExt = fileName.Split('.')[1];
                 var buffer = await file.ReadAsStreamAsync();
+                if (string.IsNullOrWhiteSpace(componentName))
+                    componentName = fileName.Split('.')[0];
                 var saveFilePath = ConfigFilePath + @"\" + componentName + @"\" + environment + @"\";
                 Directory.CreateDirectory(saveFilePath);
                 saveFilePath = saveFilePath + fileName;

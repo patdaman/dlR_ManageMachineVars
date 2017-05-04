@@ -232,6 +232,8 @@ namespace ViewModel
 
     public class ConfigVariable
     {
+        public string full_element;
+
         public int id { get; set; }
         public string parent_element { get; set; }
         public string element { get; set; }
