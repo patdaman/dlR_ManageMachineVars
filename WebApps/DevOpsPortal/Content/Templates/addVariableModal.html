@@ -22,13 +22,6 @@
                     <br />
                 </div>
                 <div ng-if="show || new">
-                    <script>
-                        $(document).ready(function () {
-                            $(".flip").click(function () {
-                                $(".panel").slideToggle("slow");
-                            });
-                        });
-                    </script>
                     <div ng-if="new">
                         <div class="flip">
                             <!--<h5><b>Add fields required for XML formatting with attributes</b></h5>-->
@@ -96,3 +89,13 @@
         </div>
     </div>
 </div>
+<script>
+    $('.modal-content').resizable({
+    });
+    $('.modal-dialog').draggable();
+    $(document).ready(function () {
+        $(".flip").click(function () {
+            $(".panel").slideToggle("slow");
+        });
+    });
+</script>

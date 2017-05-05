@@ -62,7 +62,8 @@
                              accept=".config,.xml"
                              ngf-pattern="'.config,.xml'">Drop .config or .xml files here or click to upload</div>
                         <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
-                        <div ng-if="files && files !== ''">
+                        <!--<div ng-if="files && files !== ''">-->
+                        <div ng-if="file">
                             Files:
                             <ul>
                                 <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}</li>
@@ -81,3 +82,8 @@
         </div>
     </div>
 </div>
+<script>
+    $('.modal-content').resizable({
+    });
+    $('.modal-dialog').draggable();
+</script>

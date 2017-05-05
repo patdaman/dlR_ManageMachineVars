@@ -546,12 +546,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         })
     };
 
-    // Bring up the Add / Edit Component Modal
-    //  including file upload
+    // Bring up the Add / Edit Application Modal
     $scope.addApplication = function () {
         ModalService.showModal({
             templateUrl: "/Content/Templates/addApplicationModal.html",
             controller: "AddApplication",
+            bodyClass: "modal-body",
             inputs: {
                 components: $scope.components,
                 applications: $scope.applications,

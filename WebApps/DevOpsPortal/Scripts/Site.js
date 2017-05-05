@@ -10,3 +10,6 @@ $(document).ready(function () {
     });
 });
 
+$('.modal-content').resizable({
+});
+$('.modal-dialog').draggable();

@@ -16,7 +16,7 @@ ConfigApp.directive('multiSelect', function ($q) {
                      '<div class="select">' +
                       '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
                           '({{ model.length }})</label>' + '<br />' +
-                      '<select id="currentRoles" ng-model="selected.current" multiple ' +
+                      '<select class="multiSelectBox" id="currentRoles" ng-model="selected.current" multiple ' +
                           'class="pull-left" ng-options="e as e[displayAttr] for e in model">' +
                       '</select>' +
                       '</div>' +
@@ -37,7 +37,7 @@ ConfigApp.directive('multiSelect', function ($q) {
                     '<div class="select">' +
                       '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
                           '({{ available.length }})</label>' + '<br />' +
-                      '<select id="multiSelectAvailable" ng-model="selected.available" multiple ' +
+                      '<select class="multiSelectBox" id="multiSelectAvailable" ng-model="selected.available" multiple ' +
                           'ng-options="e as e[displayAttr] for e in available"></select>' +
                     '</div>' +
                     '</div>' +
@@ -102,3 +102,48 @@ ConfigApp.directive('multiSelect', function ($q) {
         }
     };
 })
+
+//ConfigApp.directive('angularModalService', function () {
+//    var definition = {
+//        restrict: 'AC',
+//        link: function ($scope, element) {
+//            var draggableStr = "draggableModal";
+//            var header = $(".modal-header", element);
+//            var modalDialog = element;
+
+//            var clickPosition = null;
+//            var clickOffset = null;
+
+//            header[0].addEventListener('mousedown', function (position) {
+
+//                clickPosition = position;
+//                clickOffset = position;
+
+//                window.addEventListener('mouseup', mouseUpEvent);
+//                window.addEventListener('mousemove', mouseMoveEvent);
+//            });
+
+//            function mouseUpEvent() {
+//                clickPosition = null;
+//                window.removeEventListener('mouseup', mouseUpEvent);
+//                window.removeEventListener('mousemove', mouseMoveEvent);
+//            }
+
+//            function mouseMoveEvent(position) {
+
+//                var offset = modalDialog.parents().offset();
+
+//                $("." + draggableStr, modalDialog.parents()).offset({
+//                    left: clickPosition.pageX + (position.pageX - clickPosition.pageX) - clickOffset.offsetX,
+//                    top: clickPosition.pageY + (position.pageY - clickPosition.pageY) - clickOffset.offsetY,
+//                });
+
+//                clickPosition = position;
+//            }
+
+
+//        }
+//    };
+
+//    return definition;
+//});

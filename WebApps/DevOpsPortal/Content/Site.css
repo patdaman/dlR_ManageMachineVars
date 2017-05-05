@@ -150,11 +150,18 @@ div.flipReverse {
     height: 600px;
 }
 
+.modal-body .form-control {
+    max-width: 500px;
+}
 .multiSelect .select {
     width: 420px;
     margin-left: 20px;
     margin-right: 20px;
     float: left;
+}
+
+.multiSelect .multiSelectBox {
+    min-width: 200px;
 }
 
 .multiSelect .text {
@@ -166,6 +173,7 @@ div.flipReverse {
 }
 .btn.mover {
     display: inline-block;
+    margin-bottom: 25px;
     /*margin-top: 25px;*/
 }
 .btn.mover.down {

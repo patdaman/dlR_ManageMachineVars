@@ -120,11 +120,9 @@ ConfigApp.controller('AddComponent',
             $http({
                 method: 'GET',
                 url: 'api:/ComponentApi',
-                //withCredentials: true,
                 params: {
                     componentName: component.name,
                 },
-                //responseType: 'arraybuffer'
             }).then(function (result) {
                 vm.componentData = result.data;
                 if (typeof vm.componentData.ConfigFile !== "undefined")
@@ -191,7 +189,7 @@ ConfigApp.controller('AddComponent',
         vm.close = function () {
             $element.modal('hide');
             close({
-            }, 500); // close, but give 500ms for bootstrap to animate
+            }, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
@@ -259,13 +257,11 @@ ConfigApp.controller('AddApplication',
         vm.selectApplication = function (application) {
             $http({
                 method: 'GET',
-                //url: 'api:/ApplicationApi',
-                url: apiRelPath,
-                //withCredentials: true,
+                url: 'api:/ApplicationApi',
+                //url: apiRelPath,
                 params: {
                     applicationName: application.name,
                 },
-                //responseType: 'arraybuffer'
             }).then(function (result) {
                 vm.applicationData = result.data;
                 vm.applicationName = vm.applicationData.application_name;
@@ -292,7 +288,7 @@ ConfigApp.controller('AddApplication',
         vm.close = function () {
             $element.modal('hide');
             close({
-            }, 500); // close, but give 500ms for bootstrap to animate
+            }, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
