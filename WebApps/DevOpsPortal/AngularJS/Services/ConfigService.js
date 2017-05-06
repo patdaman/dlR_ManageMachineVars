@@ -1,60 +1,20 @@
-﻿
-//Service to get data from service..
-ConfigApp.service('configcrudservice', function ($http) {
+﻿//get object lists
+ConfigApp.service('getObjectService', function ($http) {
+    this.getConfigObjects = function (type) {
+        return $http({
+            method: 'get',
+            url: ('api:/ConfigValuesApi'),
+            params: {
+                type: type,
+            },
+        }).then(function (result) {
+            return result.data;
+        })
+    };
+})
 
-    this.getAllConfigVars = function () {
-        return $http.get("/api/ConfigApi");
-    }
-
-    //save
-    this.save = function (AppVar) {
-        var request = $http({
-            method: 'post',
-            withCredentials: true,
-            url: '/api/ConfigApi/',
-            data: AppVar
-        });
-        return request;
-    }
-
-    //get single record by Id
-    this.get = function (id) {
-        //debugger;
-        var request = $http({
-            method: 'post',
-            withCredentials: true,
-            url: ('/api/ConfigApi/' + id),
-            data: AppVar
-        });
-        return request;
-    }
-
-    //update Config record
-    this.update = function (UpdateId, AppVar) {
-        //debugger;
-        var updaterequest = $http({
-            method: 'put',
-            withCredentials: true,
-            url: "/api/ConfigApi/" + UpdateId,
-            data: AppVar
-        });
-        return updaterequest;
-    }
-
-    //delete record
-    this.delete = function (UpdateId) {
-        debugger;
-        var deleterecord = $http({
-            method: 'delete',
-            withCredentials: true,
-            url: "/api/ConfigApi/" + UpdateId
-        });
-        return deleterecord;
-    }
-});
-
-angular.module('ngClickCopy',  [])
-    .service('ngCopy', ['$window', function ($window) {
+//angular.module('ngClickCopy',  [])
+.service('ngCopy', ['$window', function ($window) {
     var body = angular.element($window.document.body);
     var textarea = angular.element('<textarea/>');
     textarea.css({
@@ -87,4 +47,4 @@ angular.module('ngClickCopy',  [])
             });
         }
     }
-}])
+}]);

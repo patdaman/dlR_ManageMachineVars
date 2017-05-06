@@ -22,9 +22,10 @@
             </div>
         </div>
     </div>
+    <script>
+        $('.modal-content').resizable({
+            alsoResize: ".modal-header, .modal-body, .modal-footer"
+        });
+        $('.modal-dialog').draggable();
+    </script>
 </div>
-<script>
-    $('.modal-content').resizable({
-    });
-    $('.modal-dialog').draggable();
-</script>

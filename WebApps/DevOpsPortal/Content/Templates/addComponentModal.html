@@ -1,5 +1,5 @@
 ﻿<div class="modal fade">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-md" id="componentModal" tabindex="-1" role="dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -38,7 +38,8 @@
                                           config="selectConfig">
                             </multi-select>-->
                             <div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
-                            <ul class="detail">
+                            <!--<ul class="detail">-->
+                            <ul>
                                 <li ng-repeat="app in componentApplications">{{app.name}}</li>
                             </ul>
                         </div>
@@ -81,9 +82,8 @@
             </div>
         </div>
     </div>
+    <script>
+        $('.modal-content').resizable();
+        $('.modal-dialog').draggable();
+    </script>
 </div>
-<script>
-    $('.modal-content').resizable({
-    });
-    $('.modal-dialog').draggable();
-</script>

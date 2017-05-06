@@ -96,6 +96,7 @@ namespace BusinessLayer
                 modify_date = efApplication.modify_date,
                 id = efApplication.id,
                 release = efApplication.release,
+                Components = EfToVmConverter.EfComponentListToVm(efApplication.Components).ToList(),
             };
         }
 
@@ -1062,6 +1063,7 @@ namespace BusinessLayer
                 id = a.id,
                 modify_date = a.modify_date,
                 release = a.release,
+                Components = EfToVmConverter.EfComponentListToVm(a.Components).ToList(),
             };
         }
     }

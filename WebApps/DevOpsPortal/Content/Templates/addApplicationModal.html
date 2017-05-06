@@ -1,5 +1,5 @@
 ﻿<div class="modal fade">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -9,7 +9,7 @@
                 <form name="applicationForm">
                     <p>
                         <div class="form-group">
-                            <select ng-model="appApplications" ng-options="c.name for c in applications" ng-change="selectApplication(appApplications)">
+                            <select ng-model="applicationApplications" ng-options="c.name for c in applications" ng-change="selectApplication(applicationApplications)">
                                 <option value="" style="color:red">Select Application:</option>
                             </select>
                         </div>
@@ -28,11 +28,10 @@
                     <p>
                         <div class="form-group">
                             <label><b>Components(s):</b></label>
-                            <multi-select 
-                                          ng-model="applicationComponents" 
-                                          available="components" 
-                                          selected-label="Current" 
-                                          available-label="Available" 
+                            <multi-select ng-model="applicationComponents"
+                                          available="components"
+                                          selected-label="Current"
+                                          available-label="Available"
                                           display-attr="name">
 
                             </multi-select>
@@ -51,9 +50,10 @@
             </div>
         </div>
     </div>
+    <script>
+        $('.modal-content').resizable({
+            alsoResize: ".modal-header, .modal-body, .modal-footer"
+        });
+        $('.modal-dialog').draggable();
+    </script>
 </div>
-<script>
-    $('.modal-content').resizable({
-    });
-    $('.modal-dialog').draggable();
-</script>

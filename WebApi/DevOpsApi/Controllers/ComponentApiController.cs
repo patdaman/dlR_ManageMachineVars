@@ -63,14 +63,15 @@ namespace DevOpsApi.Controllers
         /// <remarks>   Patman, 4/14/2017. </remarks>
         ///
         /// <param name="componentName">    The component name to get. </param>
+        /// <param name="excludeValues">    (Optional) True to exclude, false to include the values. </param>
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Get(string componentName)
+        public HttpResponseMessage Get(string componentName, bool excludeValues = true)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.GetComponent(componentName, true));
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.GetComponent(componentName, excludeValues));
             }
             catch (Exception ex)
             {

@@ -19,7 +19,7 @@
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $log, $timeout,
-    uiGridConstants, $q, $interval, ModalService) {
+    uiGridConstants, $q, $interval, ModalService, getObjectService) {
     $scope.title = "Application Configuration";
 
     var apiRelPath = "api:/ConfigApi";
@@ -57,15 +57,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var environment;
 
     /// Display current API path and link to Help page
-    //if ($scope.APIPath.Includes('/api'))
-    //if (ApiPath.Includes('/api'))
-    //    $scope.ApiBaseUrl = ApiPath.slice(0, -4);
-    //else
-    //$scope.ApiBaseUrl = $rootScope.APIPath;
     $scope.ApiBaseUrl = ApiPath;
-    //if ($scope.ApiBaseUrl.endsWith('/'))
-    //    $scope.ApiBaseUrlHelp = ApiBaseUrl(0, -1) + 'Help';
-    //else
     $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
 
     /// Edit Variables
@@ -440,53 +432,40 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the value Save Promise
     $scope.saveSubGridRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        //$http.post(ApiPath + '/api/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         $http.post('api:/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
     // List of environments:
-    $http({
-        method: 'GET',
-        url: 'api:/ConfigValuesApi',
-        //url: '/Config/GetDropDownValues',
-        //withCredentials: true,
-        params: {
-            type: "environment"
-            //parameters: "type=environment"
-        },
-        //responseType: 'arraybuffer'
-    }).then(function (result) {
-        $scope.environments = result.data;
-    });
+    $scope.GetEnvironments = function () {
+        getObjectService.getConfigObjects('environment')
+        .then(function (result) {
+            $scope.environments = result;
+        })
+    };
 
     // List of components:
-    $http({
-        method: 'GET',
-        url: 'api:/ConfigValuesApi',
-        //url: '/Config/GetDropDownValues',
-        //withCredentials: true,
-        params: {
-            type: "component"
-        },
-        //responseType: 'arraybuffer'
-    }).then(function (result) {
-        $scope.components = result.data;
-    });
+    $scope.GetComponents = function () {
+        getObjectService.getConfigObjects('component')
+        .then(function (result) {
+            $scope.components = result;
+        })
+    };
 
     // List of applications:
-    $http({
-        method: 'GET',
-        url: 'api:/ConfigValuesApi',
-        //url: '/Config/GetDropDownValues',
-        //withCredentials: true,
-        params: {
-            type: "application"
-        },
-        //responseType: 'arraybuffer'
-    }).then(function (result) {
-        $scope.applications = result.data;
-    });
+    $scope.GetApplications = function () {
+        getObjectService.getConfigObjects('application')
+        .then(function (result) {
+            $scope.applications = result;
+        })
+    };
+
+    $scope.loadConfigObjects = function () {
+        $scope.GetApplications();
+        $scope.GetComponents();
+        $scope.GetEnvironments();
+    };
+    $scope.loadConfigObjects();
 
     // Function call from Index page dropdown OnChange
     $scope.updateEnvironment = function () {
@@ -531,14 +510,18 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     $http({
                         method: 'POST',
                         url: 'api:/ComponentApi/',
-                        //withCredentials: true,
                         data: data,
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     }).success(deferred.resolve)
-                            .error(deferred.reject);
+                      .success($scope.loadConfigObjects)
+                      .success($scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL))
+                      .error(deferred.reject);
                     return deferred.promise;
+                }
+                else {
+                    $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                 };
             });
         }).catch(function (error) {
@@ -563,26 +546,29 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             modal.close.then(function (result) {
                 if (result.save) {
                     var deferred = $q.defer();
-                    //var componentNames = result.applicationComponents.map(function (item) { return item["id", "name"]; });
-                    //applicationNames = result.componentApplications;
+                    var componentNames = result.applicationComponents.map(function (item) { return item["id", "name"]; });
+                    var componentNames = result.applicationComponents;
                     var data = JSON.stringify({
                         //"id": result.id,
-                        "name": result.applicationName,
-                        //"components": componentNames,
+                        "applicationName": result.applicationName,
+                        "components": componentNames,
                         "release": result.release,
                     });
                     $http({
                         method: 'POST',
-                        //url: ApiPath + '/api/ComponentApi/',
                         url: 'api:/ApplicationApi/',
-                        //withCredentials: true,
                         data: data,
                         headers: {
                             'Content-Type': 'application/json'
                         }
-                    }).success(deferred.resolve)
-                            .error(deferred.reject);
+                    })//.success(deferred.resolve)
+                      .success($scope.loadConfigObjects)
+                      .success($scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL))
+                      .error(deferred.reject);
                     return deferred.promise;
+                }
+                else {
+                    $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                 };
             });
         }).catch(function (error) {
@@ -656,9 +642,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                                 'Content-Type': 'application/json'
                             }
                         }).success(deferred.resolve)
-                                .error(deferred.reject);
+                          .success($scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL))
+                          .error(deferred.reject);
                         return deferred.promise;
-                    };
+                    }
+                    else {
+                        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                    }
                 });
             }).catch(function (error) {
                 console.log(error);
@@ -674,10 +664,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentGroup = row.treeNode.parentRow.entity['$$uiGrid-0009'];
         var componentGroupName = componentGroup.groupVal;
         var componentFileName = row.treeNode.aggregations[1].groupVal;
-        //var def = $q.defer();
         if (typeof componentFileName !== 'undefined')
-            $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment + '&fileName=' + componentFileName)
-        //$http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment)
+            var def = $q.defer();
+        $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment + '&fileName=' + componentFileName)
+            .success(def.resolve)
             .success(function (data) {
                 ModalService.showModal({
                     templateUrl: "/Content/Templates/configFileModal.html",
@@ -702,12 +692,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                             };
                         });
                     })
-                //def.resolve(data);
-            })
-        //.error(function () {
-        //    def.reject("Failed to get Config File.")
-        //});
-        //return def.promise;
+            .error(def.reject("Failed to get Config File."))
+         return def.promise;
+         })
+        .catch(function (error) {
+            console.log(error);
+        })
     };
 
     // Config File Download
@@ -719,8 +709,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $http({
             method: 'GET',
             url: 'api:/ConfigPublishApi',
-            //url: apiPath + '/ConfigPublishApi',
-            //withCredentials: true,
             params: {
                 componentName: componentName,
                 environment: environment,
@@ -764,4 +752,3 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         });
     }
 });
-

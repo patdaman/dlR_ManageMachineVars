@@ -11,9 +11,9 @@
             <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">
                 <option value="" style="color:red">Environment</option>
             </select>
-            <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
+            @*<select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
-            </select>
+            </select>*@
 
             <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add / Edit Component" />
 

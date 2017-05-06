@@ -133,10 +133,10 @@ div.flipReverse {
 .drop-box {
     background: #F8F8F8;
     border: 5px dashed #DDD;
-    width: 200px;
-    height: 75px;
+    width: 300px;
+    height: 125px;
     text-align: center;
-    padding-top: 15px;
+    padding-top: 35px;
     margin: 0px;
 }
 .dragover {
@@ -177,7 +177,7 @@ div.flipReverse {
     /*margin-top: 25px;*/
 }
 .btn.mover.down {
-    margin-left: 10px;
+    margin-left: 3px;
     margin-right: 2px;
     padding: 3px 8px 2px 6px;*/
 }
@@ -190,7 +190,13 @@ div.flipReverse {
     margin: 0;
 }
 
-/* demo css */
 li {
     list-style-type: disc;
+}
+.modal-content.ui-resizable {
+    overflow-y: scroll;
+    position: static;
+}
+.modal-dialog {
+  position: relative;
 }

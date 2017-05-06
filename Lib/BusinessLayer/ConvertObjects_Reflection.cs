@@ -236,7 +236,22 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         private ViewModel.ConfigVariable ConfigEfToVm(EFDataModel.DevOps.ConfigVariable EF)
         {
-            return CommonUtils.Reflection.ReflectionUtils.CreateNewObjectAndCopyProperties<ViewModel.ConfigVariable>(EF);
+            ViewModel.ConfigVariable vmConfigVar = new ViewModel.ConfigVariable();
+            return new ViewModel.ConfigVariable()
+            {
+                active = EF.active,
+                attribute = EF.attribute,
+                create_date = EF.create_date,
+                element = EF.element,
+                full_element = EF.full_element,
+                id = EF.id,
+                key = EF.key,
+                modify_date = EF.modify_date,
+                parent_element = EF.parent_element,
+                value_name = EF.value_name,
+                ConfigVariableValues = EfConfigValueListToVm(EF.ConfigVariableValues),
+            };
+            //return CommonUtils.Reflection.ReflectionUtils.CreateNewObjectAndCopyProperties<ViewModel.ConfigVariable>(EF);
         }
 
         ///-------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: false,
                 download: false,
-            }, 500); // close, but give 500ms for bootstrap to animate
+            }, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
@@ -122,6 +122,7 @@ ConfigApp.controller('AddComponent',
                 url: 'api:/ComponentApi',
                 params: {
                     componentName: component.name,
+
                 },
             }).then(function (result) {
                 vm.componentData = result.data;
@@ -181,7 +182,8 @@ ConfigApp.controller('AddComponent',
                         $scope.log = 'progress: ' + progressPercentage +
                             '% ' + evt.config.data.file.name + '\n' +
                           $scope.log;
-                    });
+                    })
+                    .then(vm.save);
                 }
             }
         }
@@ -221,7 +223,27 @@ ConfigApp.controller('AddComponent',
         }
     });
 
-
+///-------------------------------------------------------------------------------------------------
+/// <summary>   Add Application Controller </summary>
+///
+/// <remarks>   Pdelosreyes, 5/5/2017. </remarks>
+///
+/// <param name="'AddApplication'"> The add application'. </param>
+/// <param name="($rootScope">      The $root scope. </param>
+/// <param name="$scope">           The $scope. </param>
+/// <param name="$element">         The $element. </param>
+/// <param name="$http">            The $http. </param>
+/// <param name="$timeout">         The $timeout. </param>
+/// <param name="close">            The close. </param>
+/// <param name="components">       The components. </param>
+/// <param name="applications">     The applications. </param>
+/// <param name="environments">     The environments. </param>
+///
+/// <returns>
+/// A /ApplicationApi"; var vm = $scope; var applicationData; var applicationApplications; var
+/// filePath = filePath; var availableComponents = []; var applicationComponents = [];
+/// </returns>
+///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddApplication',
     function ($rootScope, $scope, $element, $http, $timeout, close, components, applications, environments) {
         var apiRelPath = "api:/ApplicationApi";
@@ -229,56 +251,47 @@ ConfigApp.controller('AddApplication',
         var vm = $scope;
         var applicationData;
         var applicationApplications;
-        var filePath = filePath;
         var availableComponents = [];
         var applicationComponents = [];
         var applicationName;
         var localApplication;
-        var appApplications;
-        var id;
         var release;
 
         vm.availableComponents = [];
-        vm.componentApplications = [];
+        vm.applicationComponents = [];
         vm.applicationName = "";
         vm.release = "";
-        vm.componentEnvironment = "";
-        vm.fileName = "";
         vm.applications = applications;
         vm.components = components;
         vm.environments = environments;
         vm.localApplication = {
-            //components: vm.components,
-            //id: vm.id,
-            release: vm.release,
             applicationName: vm.applicationName,
+            release: vm.release,
+            components: vm.applicationComponents,
         }
 
         vm.selectApplication = function (application) {
             $http({
                 method: 'GET',
                 url: 'api:/ApplicationApi',
-                //url: apiRelPath,
                 params: {
                     applicationName: application.name,
                 },
             }).then(function (result) {
                 vm.applicationData = result.data;
-                vm.applicationName = vm.applicationData.application_name;
-                //vm.applicationName = result.application_name;
+                vm.applicationName = vm.applicationApplications.name;
+                    //vm.applicationData.application_name;
                 vm.release = vm.applicationData.release;
-                //vm.id = result.id;
                 vm.applicationComponents = [];
-                //angular.forEach(result.data.Applications, function (Applications) {
-                //    var name = Application.application_name;
-                //    var id = Application.id;
-                //    var value = Application.application_name;
-                //    vm.applicationComponents.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
-                //});
+                angular.forEach(vm.applicationData.Components, function (Components) {
+                    var name = Components.component_name;
+                    var id = Components.id;
+                    var value = Components.component_name;
+                    vm.applicationComponents.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
+                });
                 vm.localApplication = {
-                    //components: vm.applicationComponents,
-                    // id: vm.id,
-                    id: '',
+                    components: vm.applicationComponents,
+                    //id: vm.applicationData.id,
                     release: vm.release,
                     applicationName: vm.applicationName,
                 }
@@ -303,7 +316,7 @@ ConfigApp.controller('AddApplication',
             close({
                 save: true,
                 publish: true,
-                //componentApplications: vm.componentApplications,
+                applicationComponents: vm.applicationComponents,
                 applicationName: vm.applicationName,
                 release: vm.release,
             }, 500);
@@ -313,7 +326,7 @@ ConfigApp.controller('AddApplication',
             close({
                 save: true,
                 publish: false,
-                //componentApplications: vm.componentApplications,
+                applicationComponents: vm.applicationComponents,
                 applicationName: vm.applicationName,
                 release: vm.release,
             }, 500);

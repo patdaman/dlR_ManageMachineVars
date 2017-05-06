@@ -88,14 +88,10 @@
             </div>
         </div>
     </div>
-</div>
-<script>
-    $('.modal-content').resizable({
-    });
-    $('.modal-dialog').draggable();
-    $(document).ready(function () {
-        $(".flip").click(function () {
-            $(".panel").slideToggle("slow");
+    <script>
+        $('.modal-content').resizable({
+            alsoResize: ".modal-header, .modal-body, .modal-footer"
         });
-    });
-</script>
+        $('.modal-dialog').draggable();
+    </script>
+</div>
