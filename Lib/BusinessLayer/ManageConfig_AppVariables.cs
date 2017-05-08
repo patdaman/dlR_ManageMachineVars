@@ -277,8 +277,8 @@ namespace BusinessLayer
                              select Comp);
             efComp = CompQuery.FirstOrDefault();
 
-            string file_name = Path.GetFileNameWithoutExtension(this.path);
-
+            //string file_name = Path.GetFileNameWithoutExtension(this.path);
+            string file_name = Path.GetFileName(this.path);
             if (efComp == null)
             {
                 if (!string.IsNullOrWhiteSpace(this.componentName))

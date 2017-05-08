@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Xml.Linq;
 using ViewModel;
@@ -38,7 +39,7 @@ namespace DevOpsApi.Controllers
             {
                 componentName = componentName,
                 environment = environment,
-                fileName = fileName ?? "",
+                fileName = fileName.Replace(".config", "").Replace(".xml", ""),
             };
             try
             {
@@ -61,9 +62,12 @@ namespace DevOpsApi.Controllers
                             httpResponseMessage.Content = new ByteArrayContent(memoryStream.ToArray());
                             httpResponseMessage.Content.Headers.Add("x-filename", fileName);
                             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
-                            httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                            httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                            {
+                                FileName = fileName,
+                                CreationDate = DateTime.Now,
+                            };
                             //httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
-                            httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
                             httpResponseMessage.StatusCode = HttpStatusCode.OK;
                             return httpResponseMessage;
                         }

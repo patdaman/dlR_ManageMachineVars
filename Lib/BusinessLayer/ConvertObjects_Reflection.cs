@@ -319,6 +319,9 @@ namespace BusinessLayer
         {
             return new ViewModel.ConfigFile()
             {
+                //
+                // The following is ghetto, refactor someday!!
+                // 
                 file_name = configFile.file_name,
                 create_date = configFile.create_date,
                 modify_date = configFile.modify_date,

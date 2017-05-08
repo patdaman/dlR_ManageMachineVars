@@ -1,5 +1,5 @@
 ﻿//get object lists
-ConfigApp.service('getObjectService', function ($http) {
+ConfigApp.service('getObjectService', ['$http', function ($http) {
     this.getConfigObjects = function (type) {
         return $http({
             method: 'get',
@@ -11,9 +11,9 @@ ConfigApp.service('getObjectService', function ($http) {
             return result.data;
         })
     };
-})
+}]);
 
-//angular.module('ngClickCopy',  [])
+angular.module('ngClickCopy',  [])
 .service('ngCopy', ['$window', function ($window) {
     var body = angular.element($window.document.body);
     var textarea = angular.element('<textarea/>');

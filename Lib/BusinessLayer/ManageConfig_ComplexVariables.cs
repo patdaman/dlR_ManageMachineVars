@@ -549,7 +549,8 @@ namespace BusinessLayer
                 foreach (var vc in varComponents)
                 {
                     ViewModel.ConfigVariable configVar = ReturnConfigVariable(appVar);
-                    if (configVar.attribute != configVar.key && !string.IsNullOrWhiteSpace(configVar.value_name))
+                    //if (configVar.attribute != configVar.key && !string.IsNullOrWhiteSpace(configVar.value_name))
+                    if (!string.IsNullOrWhiteSpace(configVar.parent_element))
                     {
                         AppVar appVarModel = new AppVar(configVar);
                         appVarModel.componentId = vc.id;

@@ -564,8 +564,11 @@ namespace CommonUtils.AppConfiguration
             if (!string.IsNullOrWhiteSpace(attribute))
             {
                 if (string.IsNullOrWhiteSpace(valueName))
-                    parentElement.FirstOrDefault().Add(new XElement(element,
-                                            new XAttribute(attribute, value)));
+                    if (attribute == value)
+                        parentElement.FirstOrDefault().Add(new XElement(element, value));
+                    else
+                        parentElement.FirstOrDefault().Add(new XElement(element,
+                                                new XAttribute(attribute, value)));
                 else
                     parentElement.FirstOrDefault().Add(new XElement(element,
                                           new XAttribute(attribute, appKey),

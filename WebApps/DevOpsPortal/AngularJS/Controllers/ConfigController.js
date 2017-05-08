@@ -407,7 +407,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the key data save promise
     $scope.saveRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        //$http.post(ApiPath + '/api/ConfigApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         $http.post(apiRelPath, rowEntity).success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
@@ -483,6 +482,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
     };
 
+    $scope.updateGrid = function () {
+
+        $scope.gridApi.core.refresh();
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        $scope.gridApi.core.queueGridRefresh();
+    };
+
     // Bring up the Add / Edit Component Modal
     //  including file upload
     $scope.addComponent = function () {
@@ -516,7 +522,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         }
                     }).success(deferred.resolve)
                       .success($scope.loadConfigObjects)
-                      .success($scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL))
+                      .success($scope.updateGrid)
                       .error(deferred.reject);
                     return deferred.promise;
                 }
@@ -563,7 +569,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         }
                     })//.success(deferred.resolve)
                       .success($scope.loadConfigObjects)
-                      .success($scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL))
+                      .success($scope.updateGrid)
                       .error(deferred.reject);
                     return deferred.promise;
                 }
@@ -642,7 +648,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                                 'Content-Type': 'application/json'
                             }
                         }).success(deferred.resolve)
-                          .success($scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL))
+                          .success($scope.updateGrid)
                           .error(deferred.reject);
                         return deferred.promise;
                     }
@@ -692,7 +698,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                             };
                         });
                     })
-            .error(def.reject("Failed to get Config File."))
+            //.error(def.reject("Failed to get Config File."))
          return def.promise;
          })
         .catch(function (error) {
@@ -706,6 +712,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.downloadFile = function (componentName, fileName, environment) {
+        var def = $q.defer();
         $http({
             method: 'GET',
             url: 'api:/ConfigPublishApi',
@@ -715,7 +722,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 fileName: fileName,
             },
             responseType: 'arraybuffer'
-        }).success(function (data, status, headers) {
+        })
+            .success(def.resolve)
+            .success(function (data, status, headers) {
             headers = headers();
 
             var filename = headers['x-filename'];
@@ -731,19 +740,19 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 var clickEvent;
 
                 //This is true only for IE,firefox
-                if (document.createEvent) {
-                    // To create a mouse event , first we need to create an event and then initialize it.
-                    clickEvent = document.createEvent("MouseEvent");
-                    clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                }
-                else {
+                //if (document.createEvent) {
+                //    // To create a mouse event , first we need to create an event and then initialize it.
+                //    clickEvent = document.createEvent("MouseEvent");
+                //    clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                //}
+                //else {
                     clickEvent = new MouseEvent('click', {
                         'view': window,
                         'bubbles': true,
                         'cancelable': true
                     });
-                }
-                linkElement.dispatchEvent(clickEvent);
+                //}
+                linkElement.dispatchEvent(clickEvent)
             } catch (ex) {
                 console.log(ex);
             }

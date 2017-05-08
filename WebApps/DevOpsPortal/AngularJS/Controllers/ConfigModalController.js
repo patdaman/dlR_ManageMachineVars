@@ -26,6 +26,11 @@ ConfigApp.controller('ConfigViewer',
         vm.fileName = fileName;
         vm.configXml = configXml;
         vm.title = title;
+
+        vm.Copy = function () {
+
+        };
+
         vm.close = function () {
             $element.modal('hide');
             close({

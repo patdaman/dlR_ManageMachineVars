@@ -35,7 +35,8 @@ namespace DevOpsPortal
                       "~/Scripts/ui-grid.js",
                       "~/Scripts/ng-file-upload.js",
                       "~/Scripts/ng-file-upload-shim.js",
-                      "~/Scripts/angular-multi-select.min.js"
+                      "~/Scripts/angular-multi-select.min.js",
+                      "~/Scripts/ngclipboard.min.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
@@ -46,7 +47,7 @@ namespace DevOpsPortal
                       "~/AngularJS/Controllers/MachineController.js",
                       "~/AngularJS/Controllers/PowershellController.js",
                       "~/AngularJS/Controllers/LogController.js",
-
+                      "~/Scripts/ngclipboard.min.js",
                       "~/AngularJS/Directives/appDirectives.js",
                       "~/AngularJS/Directives/ConfigDirectives.js",
                       "~/AngularJS/Directives/powershellCodeMirror.js",

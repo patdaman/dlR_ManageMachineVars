@@ -24,7 +24,7 @@ var ConfigApp = angular.module('ConfigApp',
             'angularModalService',
             'ngAnimate',
             'ui.bootstrap',
-            //'ngClickCopy',
+            //'ngclipboard',
             'ngFileUpload'
         ])
 
