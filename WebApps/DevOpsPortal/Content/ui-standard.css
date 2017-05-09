@@ -1,0 +1,195 @@
+﻿/* 
+   Override General Html Widget Settings.
+   This is a CSS reset which is done to normalize differences 
+   across browsers and start with a known baseline) 
+*/
+body{padding: 0px 0px; margin: 0px 0px; color: #000000; font-size: 12px; }
+body, p, h1, h2, h3, h4, h5, h6, div, span, td, li, ol, bl, input, select, textarea{ font-family: Arial, Helvetica, sans-serif; }
+p{ margin: 0px 0px; } 
+tr{ vertical-align: top; } 
+td{ border: 0px; } 
+img{ margin: 0px 0px; padding: 0px 0px; border: none; } 
+table{ empty-cells: hide; border: none; border-collapse: collapse; margin: 0px 0px; padding: 0px 0px; } 
+ol, ul {list-style: none;}
+hr{margin: 2px auto;width: 99%;height: 1px; border-top: 1px solid #BBBBBB;border-bottom: 0px none;} 
+textfield, textarea{ padding: 0px 0px 0px 0px; font-size: 12px; } 
+select{ font-family: arial; font-size: 11px; } 
+input{ font-size: 12px; } 
+input.ButtonLarge{ font-size: 13px;} 
+input.ButtonSmall{ font-size: 11px;} 
+
+/* Let's put hacks here used to fix buttons. */
+.pbtn-container-vertical-fix{position:relative;zoom:normal; vertical-align:top !important; _zoom:1;}
+/* Begin Styled Buttons */
+*:focus {outline: none;}
+A.pbtn {DISPLAY: inline-block; TEXT-DECORATION: none !important;TEXT-ALIGN: center; OUTLINE-WIDTH: 0px; PADDING-RIGHT: 10px;}
+A.pbtn SPAN {DISPLAY: inline-block; color:#666;position:relative;TEXT-DECORATION: none !important;}
+A.pbtn:hover,A.pbtn:active,A.pbtn:focus,A.pbtn:visited {CURSOR: pointer;text-decoration:none !important;}
+A.pbtn:hover SPAN { color:#000;text-decoration:none !important; }
+A.pbtn.primary SPAN { color:#000;}
+A.pbtn.btn-s-green SPAN,A.pbtn.btn-s-green:hover SPAN {color:white;font-weight:bold;}
+A.pbtn.btn-m-green SPAN,A.pbtn.btn-m-green:hover SPAN {color:white;font-weight:bold;}
+A.pbtn.btn-l-green SPAN,A.pbtn.btn-l-green:hover SPAN {color:white;font-weight:bold;}
+A.pbtn.btn-s-disabled SPAN,A.pbtn.btn-s-disabled:hover SPAN { color:#666;font-weight:normal;cursor:default; }
+A.pbtn.btn-m-disabled SPAN,A.pbtn.btn-m-disabled:hover SPAN { color:#666;font-weight:normal;cursor:default;}
+A.pbtn.btn-l-disabled SPAN,A.pbtn.btn-l-disabled:hover SPAN { color:#666;font-weight:normal;cursor:default;}
+* HTML A.pbtn.btn-s-disabled SPAN,* HTML A.pbtn.btn-s-disabled:hover SPAN  { color:#666;font-weight:normal;cursor:default;}
+* + HTML A.pbtn.btn-s-disabled SPAN,* + HTML A.pbtn.btn-s-disabled:hover SPAN { color:#666; font-weight:normal;cursor:default;}
+* HTML A.pbtn.btn-m-disabled SPAN,* HTML A.pbtn.btn-m-disabled:hover SPAN  { color:#666;font-weight:normal;cursor:default; }
+* + HTML A.pbtn.btn-m-disabled SPAN,* + HTML A.pbtn.btn-m-disabled:hover SPAN { color:#666;font-weight:normal;cursor:default; }
+* HTML A.pbtn.btn-l-disabled SPAN,* HTML A.pbtn.btn-l-disabled:hover SPAN  { color:#666;font-weight:normal;cursor:default; }
+* + HTML A.pbtn.btn-l-disabled SPAN,* + HTML A.pbtn.btn-l-disabled:hover SPAN { color:#666;font-weight:normal;cursor:default; }
+.pbtn {LINE-HEIGHT: 2; BACKGROUND: url(../images/ui-standard_buttons.gif) no-repeat right top;}
+.pbtn SPAN {LINE-HEIGHT: 2; BACKGROUND: url(../images/ui-standard_buttons.gif) no-repeat right top;PADDING-LEFT: 10px;}
+/* Large Buttons */
+.btn-l {LINE-HEIGHT: 27px; BACKGROUND-POSITION: right -402px;HEIGHT: 29px; FONT-SIZE: 14px !important;}
+.btn-l SPAN {LINE-HEIGHT: 27px; BACKGROUND-POSITION: left -370px; HEIGHT: 29px;FONT-SIZE: 14px !important;}
+* HTML .btn-l SPAN {LINE-HEIGHT: 27px;}
+* + HTML .btn-l SPAN {LINE-HEIGHT: 27px;}
+.btn-l:hover {BACKGROUND-POSITION: right -338px;}
+.btn-l:hover SPAN {	BACKGROUND-POSITION: left -306px;}
+.btn-l-green,.btn-l-green:hover {BACKGROUND-POSITION: right -880px;}
+.btn-l-green SPAN,.btn-l-green:hover SPAN {BACKGROUND-POSITION: left -848px;}	
+.btn-l-disabled,.btn-l-disabled:hover  {BACKGROUND-POSITION: right -466px;}
+.btn-l-disabled SPAN,.btn-l-disabled:hover SPAN {BACKGROUND-POSITION: left -434px;}
+/* Medium Buttons */
+.btn-m {LINE-HEIGHT: 23px; BACKGROUND-POSITION: right -222px; HEIGHT: 25px; FONT-SIZE: 12px !important;}
+.btn-m SPAN {LINE-HEIGHT: 23px; BACKGROUND-POSITION: left -194px; HEIGHT: 25px; FONT-SIZE: 12px !important;}
+* HTML .btn-m SPAN {LINE-HEIGHT: 23px;}
+* + HTML .btn-m SPAN {LINE-HEIGHT: 23px;}
+.btn-m:hover {BACKGROUND-POSITION: right -166px;}
+.btn-m:hover SPAN {BACKGROUND-POSITION: left -138px;}
+.btn-m-green,.btn-m-green:hover {BACKGROUND-POSITION: right -820px;}
+.btn-m-green SPAN,.btn-m-green:hover SPAN {BACKGROUND-POSITION: left -792px;}	
+.btn-m-disabled,.btn-m-disabled:hover  {BACKGROUND-POSITION: right -278px;}
+.btn-m-disabled SPAN,.btn-m-disabled:hover SPAN {BACKGROUND-POSITION: left -250px;}
+/* Small Buttons */
+.btn-s {LINE-HEIGHT: 20px; BACKGROUND-POSITION: right -69px;HEIGHT: 20px; FONT-SIZE: 11px !important;}
+.btn-s SPAN {LINE-HEIGHT: 20px; BACKGROUND-POSITION: left -46px;HEIGHT: 20px; FONT-SIZE: 11px !important;}
+* HTML .btn-s SPAN {LINE-HEIGHT: 20px;}
+* + HTML .btn-s SPAN {LINE-HEIGHT: 20px;}
+.btn-s:hover {BACKGROUND-POSITION: right -23px;}
+.btn-s:hover SPAN {BACKGROUND-POSITION: left 0px;}	
+.btn-s-green,.btn-s-green:hover {BACKGROUND-POSITION: right -769px;}
+.btn-s-green SPAN,.btn-s-green:hover SPAN {BACKGROUND-POSITION: left -746px;}	
+.btn-s-disabled,.btn-s-disabled:hover  {BACKGROUND-POSITION: right -115px;}
+.btn-s-disabled SPAN,.btn-s-disabled:hover SPAN {BACKGROUND-POSITION: left -92px;}
+/* Begin Button Icons */
+.pbtn SPAN.pbtn-icon {PADDING-LEFT: 0px !important; DISPLAY: block; BACKGROUND: url(../images/ui-standard_icons.gif) no-repeat right top; FLOAT: left; MARGIN-RIGHT: 4px; MARGIN-TOP: 5px !important; margin-left:-3px !important; _margin-left: -1px !important; _MARGIN-RIGHT: 2px !important; } 
+.pbtn SPAN.pbtn-icon-after {padding-left:0px !important;padding-right:0px !important; display: block; BACKGROUND: url(../images/ui-standard_icons.gif) no-repeat right top; }
+.pbtn SPAN.pbtn-icon-before {padding-left:0px !important;padding-right:0px !important;margin-left:0px !important;margin-right:0px !important; display: block; BACKGROUND: url(../images/ui-standard_icons.gif) no-repeat right top; }
+.pbtn-icon-after-wrapper {PADDING-RIGHT:2.1em !important;}
+.pbtn-icon-after-wrapper span {}
+.pbtn SPAN.pbtn-icon-after {position: absolute;right:-19px; margin-right:4px;top: 0px; }
+.pbtn-icon-before-wrapper {}
+.pbtn-icon-before-wrapper span {PADDING-LEFT:2.1em !important;}
+.pbtn SPAN.pbtn-icon-before  {position: absolute;left:7px; top: 0px;}
+.btn-s SPAN.pbtn-icon,.btn-s SPAN.pbtn-icon-after,.btn-s SPAN.pbtn-icon-before {WIDTH:12px;HEIGHT: 12px; }
+.btn-m SPAN.pbtn-icon,.btn-m SPAN.pbtn-icon-after,.btn-m SPAN.pbtn-icon-before {WIDTH:15px;HEIGHT: 15px; }
+.btn-l SPAN.pbtn-icon,.btn-l SPAN.pbtn-icon-after,.btn-l SPAN.pbtn-icon-before {WIDTH:18px;HEIGHT: 18px; }
+.btn-s SPAN.img-save { BACKGROUND-POSITION:0px -117px; }
+.btn-s:hover SPAN.img-save {BACKGROUND-POSITION: 0px -100px;}
+.btn-s-primary SPAN.img-save,.btn-s-primary:hover SPAN.img-save { BACKGROUND-POSITION:0px -100px; }
+.btn-s-disabled SPAN.img-save,.btn-s-disabled:hover SPAN.img-save {BACKGROUND-POSITION: left -134px;}
+.btn-m SPAN.img-save { BACKGROUND-POSITION:-18px -147px; }
+.btn-m:hover SPAN.img-save {BACKGROUND-POSITION: -18px -126px;}
+.btn-m-disabled SPAN.img-save,.btn-m-disabled:hover SPAN.img-save {BACKGROUND-POSITION: -18px -168px;}
+.btn-l SPAN.img-save { BACKGROUND-POSITION:-40px -159px; }
+.btn-l:hover SPAN.img-save {BACKGROUND-POSITION: -40px -185px;}
+.btn-l-disabled SPAN.img-save,.btn-l-disabled:hover SPAN.img-save {BACKGROUND-POSITION: -40px -211px;}
+.btn-s SPAN.img-cancel {BACKGROUND-POSITION:0px -167px;}
+.btn-s:hover SPAN.img-cancel {BACKGROUND-POSITION: left -150px;}
+.btn-s-disabled SPAN.img-cancel,.btn-s-disabled:hover SPAN.img-cancel {BACKGROUND-POSITION: left -184px;}
+.btn-m SPAN.img-cancel {BACKGROUND-POSITION:-18px -210px;}
+.btn-m:hover SPAN.img-cancel {BACKGROUND-POSITION: -18px -189px;}
+.btn-m-disabled SPAN.img-cancel,.btn-m-disabled:hover SPAN.img-cancel {BACKGROUND-POSITION: -18px -231px;}
+.btn-l SPAN.img-cancel {BACKGROUND-POSITION:-40px -235px;}
+.btn-l:hover SPAN.img-cancel {BACKGROUND-POSITION: -40px -261px;}
+.btn-l-disabled SPAN.img-cancel,.btn-l-disabled:hover SPAN.img-cancel {BACKGROUND-POSITION: -40px -287px;}
+.btn-s SPAN.img-upload { BACKGROUND-POSITION:0px -316px;MARGIN-TOP: 4px !important; }
+.btn-s:hover SPAN.img-upload { BACKGROUND-POSITION:0px -299px; } 
+.btn-s-primary SPAN.img-upload,.btn-s-primary:hover SPAN.img-upload { BACKGROUND-POSITION:0px -299px; } 
+.btn-s-disabled SPAN.img-upload,.btn-s-disabled:hover SPAN.img-upload {BACKGROUND-POSITION: 0px -333px;}
+.btn-s SPAN.img-gallery { BACKGROUND-POSITION:0px -66px; MARGIN-TOP: 4px !important;}
+.btn-s:hover SPAN.img-gallery { BACKGROUND-POSITION:0px -49px; }
+.btn-s SPAN.img-pencil { BACKGROUND-POSITION:0px -17px; MARGIN-TOP: 5px !important;}
+.btn-s:hover SPAN.img-pencil { BACKGROUND-POSITION:0px 0px; }
+.btn-s SPAN.img-next { BACKGROUND-POSITION:0px -216px; MARGIN-TOP: 4px !important;}
+.btn-s:hover SPAN.img-next { BACKGROUND-POSITION:0px -199px; } 
+.btn-m SPAN.img-next { BACKGROUND-POSITION:-18px -273px; MARGIN-TOP: 4px !important;margin-right:0px;}
+.btn-m:hover SPAN.img-next { BACKGROUND-POSITION:-18px -252px; } 
+.btn-s SPAN.img-refresh {BACKGROUND-POSITION:0px -465px;MARGIN-TOP: 4px !important; }
+.btn-s:hover SPAN.img-refresh {BACKGROUND-POSITION:0px -448px; }
+.btn-m SPAN.img-refresh,.btn-m:hover SPAN.img-refresh  {BACKGROUND-POSITION:-18px -566px;MARGIN-TOP: 4px !important;}
+.btn-s-green SPAN.img-refresh,.btn-s-green:hover SPAN.img-refresh {BACKGROUND-POSITION:0px -565px;}
+.btn-m-green SPAN.img-refresh,.btn-m-green:hover SPAN.img-refresh {BACKGROUND-POSITION:-18px -714px;MARGIN-TOP: 5px !important;}
+.btn-s-disabled SPAN.img-refresh,.btn-s-disabled:hover SPAN.img-refresh {BACKGROUND-POSITION: left -482px;}
+.btn-s SPAN.img-plus,.btn-s:hover SPAN.img-plus {BACKGROUND-POSITION:0px -249px;MARGIN-TOP: 4px !important; }
+.btn-m SPAN.img-plus,.btn-m:hover SPAN.img-plus {BACKGROUND-POSITION:-18px -314px;MARGIN-TOP: 4px !important;}
+.btn-l SPAN.img-plus,.btn-l:hover SPAN.img-plus {BACKGROUND-POSITION:-40px -391px;}
+.btn-m-disabled SPAN.img-plus,.btn-m-disabled:hover SPAN.img-plus {BACKGROUND-POSITION:-18px -357px;MARGIN-TOP: 4px !important;}
+.btn-s-green SPAN.img-plus,.btn-s-green:hover SPAN.img-plus {BACKGROUND-POSITION:-1px -582px;WIDTH:11px;HEIGHT: 13px !important;MARGIN-TOP: 4px !important; }
+.btn-m-green SPAN.img-plus,.btn-m-green:hover SPAN.img-plus {BACKGROUND-POSITION:-18px -734px;}
+.btn-l-green SPAN.img-plus,.btn-l-green:hover SPAN.img-plus {BACKGROUND-POSITION:-40px -911px;}
+.btn-l-disabled SPAN.img-plus,.btn-l-disabled:hover SPAN.img-plus {BACKGROUND-POSITION:-40px -443px;}
+.btn-s SPAN.img-savefloppy {BACKGROUND-POSITION:0px -516px;MARGIN-TOP: 4px !important; }
+.btn-s:hover SPAN.img-savefloppy {BACKGROUND-POSITION:0px -499px; }
+.btn-s-disabled SPAN.img-savefloppy,.btn-s-disabled:hover SPAN.img-savefloppy {BACKGROUND-POSITION: left -533px;}
+.btn-m SPAN.img-savefloppy { BACKGROUND-POSITION:-18px -650px; MARGIN-TOP: 4px !important;}
+.btn-m:hover SPAN.img-savefloppy { BACKGROUND-POSITION:-18px -629px; } 
+.btn-m-disabled SPAN.img-savefloppy,.btn-m-disabled:hover SPAN.img-savefloppy {BACKGROUND-POSITION: -18px -671px;}
+.btn-l SPAN.img-savefloppy {BACKGROUND-POSITION:-40px -806px;MARGIN-TOP: 4px !important; }
+.btn-l:hover SPAN.img-savefloppy {BACKGROUND-POSITION:-40px -780px; }
+.btn-l-disabled SPAN.img-savefloppy,.btn-l-disabled:hover SPAN.img-savefloppy {BACKGROUND-POSITION: -40px -832px;}
+.btn-s SPAN.img-previous { BACKGROUND-POSITION:0px -366px; MARGIN-TOP: 4px !important;}
+.btn-s:hover SPAN.img-previous { BACKGROUND-POSITION:0px -349px; } 
+.btn-s-disabled SPAN.img-previous,.btn-s-disabled:hover SPAN.img-previous {BACKGROUND-POSITION: left -383px;}
+.btn-m SPAN.img-previous { BACKGROUND-POSITION:-18px -461px; MARGIN-TOP: 4px !important;}
+.btn-m:hover SPAN.img-previous { BACKGROUND-POSITION:-18px -440px; } 
+.btn-m-disabled SPAN.img-previous,.btn-m-disabled:hover SPAN.img-previous {BACKGROUND-POSITION: -18px -482px;}
+.btn-l SPAN.img-previous { BACKGROUND-POSITION:-40px -573px; }
+.btn-l:hover SPAN.img-previous { BACKGROUND-POSITION:-40px -547px; } 
+.btn-l-disabled SPAN.img-previous,.btn-l-disabled:hover SPAN.img-previous {BACKGROUND-POSITION: -40px -599px;}
+.btn-s SPAN.img-download { BACKGROUND-POSITION:0px -416px; MARGIN-TOP: 4px !important;}
+.btn-s:hover SPAN.img-download { BACKGROUND-POSITION:0px -399px; } 
+.btn-s-disabled SPAN.img-download,.btn-s-disabled:hover SPAN.img-download {BACKGROUND-POSITION: left -433px;}
+.btn-m SPAN.img-download { BACKGROUND-POSITION:-18px -524px; MARGIN-TOP: 4px !important;}
+.btn-m:hover SPAN.img-download { BACKGROUND-POSITION:-18px -503px; } 
+.btn-m-disabled SPAN.img-download,.btn-m-disabled:hover SPAN.img-download {BACKGROUND-POSITION: -18px -545px;}
+/* End Button Icons */
+/* End Styled Buttons */
+
+/* Begin Styled DropDown and Link Selection Tool Menu */
+div.cbx {cursor: pointer;position: relative;text-align:left;}
+div.zIndex10{z-index: 10;}
+div.inline{display:inline-block;*display:inline;zoom: 1;}
+div.overflowed .cbx-options ul{height: 221px;overflow-x: hidden;overflow-y: scroll;}
+div.overflowed .cbx-options li{padding-right: 0;}
+.cbx-options{left: 0;margin: 0;position: absolute;width: 100%;z-index: 100;zoom: 1;}
+* HTML .cbx-options {top:19px;}
+* + HTML .cbx-options {top:19px;}
+/* This styles the link dropdown */
+div.cbx-link .cbx-options {top:0 !important;}
+div.cbx-link .cbx-options {top:0 !important;}
+div.cbx-link .cbx-options li{padding: 2px 12px 2px 22px !important;}
+.cbx-options ul{background: #EAEAEA;border: 1px solid #D8D8D8;display: block;margin: 0;padding:0;z-index: 100;zoom: 1;list-style: none !important;}
+.cbx-options li{cursor: pointer;display: block;font-size: 11px;font-weight: normal;line-height: 150%;overflow: hidden;padding: 0 10px 0 20px;text-align: left;z-index: 100;zoom: 1;text-decoration:none;list-style: none !important;}
+.cbx-options li.cbxhover{background-color: #808080;color: white;text-decoration:underline;}
+.cbx-options li.selected{background: #EAEAEA url(../images/icon-check-F5F5F5.gif) no-repeat 2px 0;}
+.cbx-options li.selected-hover{	background: #808080 url(../images/icon-check-5588BB.gif) no-repeat 2px 0;}
+/* This styles the combobox dropdown button */
+A.cbx-btn {DISPLAY: inline-block; TEXT-DECORATION: none;TEXT-ALIGN: left; OUTLINE-WIDTH: 0px; PADDING-RIGHT: 22px;}
+A.cbx-btn SPAN {DISPLAY: inline-block;  color:#000;}
+A.cbx-btn:hover {CURSOR: pointer;text-decoration:none; }
+A.cbx-btn:hover SPAN { color:#000;text-decoration:none; }
+A.cbx-btn.primary SPAN { color:#000;}
+A.cbx-btn-disabled SPAN,A.cbx-btn-disabled:hover SPAN { color:#666;}
+.cbx-btn {LINE-HEIGHT: 20px; BACKGROUND: url(../images/ui-standard_buttons.gif) no-repeat right top;BACKGROUND-POSITION: right -521px;HEIGHT: 20px;  FONT-SIZE: 11px;}
+.cbx-btn SPAN {LINE-HEIGHT: 20px; BACKGROUND: url(../images/ui-standard_buttons.gif) no-repeat right top;PADDING-LEFT: 10px;BACKGROUND-POSITION: left -46px;HEIGHT: 20px; FONT-SIZE: 11px;}
+* HTML .cbx-btn SPAN {LINE-HEIGHT: 20px;}
+* + HTML .cbx-btn SPAN {LINE-HEIGHT: 20px;}
+.cbx-btn:hover {BACKGROUND-POSITION: right -498px;}
+.cbx-btn:hover SPAN {BACKGROUND-POSITION: left 0px;}	
+.cbx-btn-disabled,.cbx-btn-disabled:hover {BACKGROUND-POSITION: right -544px;}
+.cbx-btn-disabled SPAN,.cbx-btn-disabled:hover SPAN {BACKGROUND-POSITION: left -92px;}
+/* End Styled DropDown and Link Selection Tool Menu */

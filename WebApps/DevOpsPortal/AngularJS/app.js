@@ -24,7 +24,7 @@ var ConfigApp = angular.module('ConfigApp',
             'angularModalService',
             'ngAnimate',
             'ui.bootstrap',
-            //'ngclipboard',
+            'ngclipboard',
             'ngFileUpload'
         ])
 
@@ -72,7 +72,7 @@ var PowershellApp = angular.module('PowershellApp',
 /// <summary>   The application. </summary>
 ///
 ///  ----------------------------------------------------------- ///
-var app = angular.module('app', ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp']);
+var app = angular.module('app', ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp', 'ngclipboard']);
 //var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'PowershellApp', 'dashboardApp']);
 
 app.run(['$rootScope', function ($rootScope) {

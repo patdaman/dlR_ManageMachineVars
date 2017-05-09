@@ -36,6 +36,7 @@ namespace DevOpsPortal
                       "~/Scripts/ng-file-upload.js",
                       "~/Scripts/ng-file-upload-shim.js",
                       "~/Scripts/angular-multi-select.min.js",
+                      "~/Scripts/clipboard.min.js",
                       "~/Scripts/ngclipboard.min.js"
                     ));
 
@@ -67,6 +68,9 @@ namespace DevOpsPortal
                      "~/Content/bootstrap.css",
                      "~/Content/angular-multi-select.css",
                      "~/Content/ui-grid.css",
+                     // Marcom Specific
+                     "~/Content/ui-standard.css",
+                     //
                      "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/codemirror").Include(

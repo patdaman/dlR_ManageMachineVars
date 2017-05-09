@@ -177,6 +177,7 @@
     <Content Include="Content\Dashboard\sb-admin.css" />
     <Content Include="Content\Dashboard\site.css" />
     <Content Include="Content\Dashboard\timeline.css" />
+    <Content Include="Content\MarcomSite.css" />
     <Content Include="Content\site_dashboard.css" />
     <Content Include="Content\Templates\actionsTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -257,6 +258,7 @@
     <Content Include="Content\ui-grid.css" />
     <Content Include="Content\ui-grid.min.css" />
     <Content Include="Content\ui-grid.svg" />
+    <Content Include="Content\ui-standard.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -278,7 +280,7 @@
     <Content Include="Content\bootstrap-combined.min.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\ngclipboard.min.js" />
+    <Content Include="Scripts\clipboard.min.js" />
     <Content Include="Scripts\CodeMirror\addon\comment\comment.js" />
     <Content Include="Scripts\CodeMirror\addon\comment\continuecomment.js" />
     <Content Include="Scripts\CodeMirror\addon\dialog\dialog.css" />
@@ -692,6 +694,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\jquery-ui-1.7.2.smoothness.css" />
     <None Include="Properties\PublishProfiles\FileSystem Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Local_FileSystem.pubxml" />
     <None Include="Properties\PublishProfiles\WebDeploy_HQDEV08.pubxml" />
@@ -722,6 +725,7 @@
     <Content Include="Scripts\ng-file-upload-shim.min.js" />
     <Content Include="Scripts\ng-file-upload.js" />
     <Content Include="Scripts\ng-file-upload.min.js" />
+    <Content Include="Scripts\ngclipboard.min.js" />
     <Content Include="Scripts\pdfmake.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />

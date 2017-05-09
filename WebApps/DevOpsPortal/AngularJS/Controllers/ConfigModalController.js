@@ -63,10 +63,6 @@ ConfigApp.controller('ConfigViewer',
                 title: vm.title
             }, 500);
         }
-        vm.ngClickCopy = function () {
-            vm.ngClickCopy;
-            //$rootscope.ngClickCopy;
-        }
     });
 
 ///-------------------------------------------------------------------------------------------------
@@ -163,7 +159,7 @@ ConfigApp.controller('AddComponent',
         vm.upload = function (file) {
             if (file) {
                 if (!file.$error) {
-                    var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) { return item["name"].replace('/', '').replace('"', '').replace("'", ""); }));
+                    var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) { return item["name"].replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''); }));
                     Upload.upload({
                         url: 'api:/ConfigPublishApi',
                         params: {
@@ -188,7 +184,7 @@ ConfigApp.controller('AddComponent',
                             '% ' + evt.config.data.file.name + '\n' +
                           $scope.log;
                     })
-                    .then(vm.save);
+                    .then(vm.close);
                 }
             }
         }
@@ -258,6 +254,7 @@ ConfigApp.controller('AddApplication',
         var applicationApplications;
         var availableComponents = [];
         var applicationComponents = [];
+        var id;
         var applicationName;
         var localApplication;
         var release;
@@ -270,6 +267,7 @@ ConfigApp.controller('AddApplication',
         vm.components = components;
         vm.environments = environments;
         vm.localApplication = {
+            id: vm.id,
             applicationName: vm.applicationName,
             release: vm.release,
             components: vm.applicationComponents,
@@ -292,11 +290,11 @@ ConfigApp.controller('AddApplication',
                     var name = Components.component_name;
                     var id = Components.id;
                     var value = Components.component_name;
-                    vm.applicationComponents.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
+                    vm.applicationComponents.push({ id: id, name: name.replace('[' / g, '').replace('"' / g, '').replace("'" / g, "").replace(']' / g, ''), value: value });
                 });
                 vm.localApplication = {
                     components: vm.applicationComponents,
-                    //id: vm.applicationData.id,
+                    id: vm.applicationData.id,
                     release: vm.release,
                     applicationName: vm.applicationName,
                 }
@@ -317,12 +315,19 @@ ConfigApp.controller('AddApplication',
             }, 500);
         };
         vm.publish = function () {
+            vm.localApplication = {
+                components: vm.applicationComponents,
+                id: vm.id,
+                release: vm.release,
+                applicationName: vm.applicationName,
+            }
             $element.modal('hide');
             close({
                 save: true,
                 publish: true,
-                applicationComponents: vm.applicationComponents,
+                applicationComponents: vm.localApplication.applicationComponents,
                 applicationName: vm.applicationName,
+                id: vm.localApplication.id,
                 release: vm.release,
             }, 500);
         }
@@ -333,6 +338,7 @@ ConfigApp.controller('AddApplication',
                 publish: false,
                 applicationComponents: vm.applicationComponents,
                 applicationName: vm.applicationName,
+                id: vm.localApplication.id,
                 release: vm.release,
             }, 500);
         }
