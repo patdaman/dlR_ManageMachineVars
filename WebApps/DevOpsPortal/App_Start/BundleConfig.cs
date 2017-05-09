@@ -37,7 +37,8 @@ namespace DevOpsPortal
                       "~/Scripts/ng-file-upload-shim.js",
                       "~/Scripts/angular-multi-select.min.js",
                       "~/Scripts/clipboard.min.js",
-                      "~/Scripts/ngclipboard.min.js"
+                      "~/Scripts/ngclipboard.min.js",
+                      "~/Scripts/sweetalert.min.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
@@ -66,12 +67,15 @@ namespace DevOpsPortal
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      //"~/Content/bootstrap-combined.min.css",
                      "~/Content/bootstrap.css",
+                     "~/Content/sweetalert.css",
                      "~/Content/angular-multi-select.css",
                      "~/Content/ui-grid.css",
+                     "~/Content/site.css",
                      // Marcom Specific
-                     "~/Content/ui-standard.css",
+                     "~/Content/ui-standard.css"
                      //
-                     "~/Content/site.css"));
+                     //"~/Content/site.css"
+                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/codemirror").Include(
                       "~/Scripts/codemirror/lib/codemirror.js",

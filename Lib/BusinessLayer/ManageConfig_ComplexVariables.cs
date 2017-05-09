@@ -158,7 +158,6 @@ namespace BusinessLayer
                     relative_path = component.relative_path,
                     ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
                     ConfigVariables = new List<EFDataModel.DevOps.ConfigVariable>(),
-                    //Applications = new List<EFDataModel.DevOps.Application>(),
                     Applications = GetEfApplication(component.Applications),
                 });
             else
@@ -169,6 +168,11 @@ namespace BusinessLayer
                 efComp.active = component.active;
                 efComp.relative_path = component.relative_path;
                 var efApps = GetEfApplication(component.Applications);
+                var oldEfApps = efComp.Applications.Where(x => !efApps.Any(y => y.id == x.id)).ToList();
+                foreach (var oldApp in oldEfApps)
+                {
+                    efComp.Applications.Remove(oldApp);
+                }
                 var newEfApps = efApps.Where(x => !efComp.Applications.Any(y => y.id == x.id)).ToList();
                 foreach (var newApp in newEfApps)
                 {
@@ -203,7 +207,6 @@ namespace BusinessLayer
                     modify_date = application.modify_date ?? DateTime.Now,
                     active = application.active,
                     release = application.release,
-                    //Components = new List<EFDataModel.DevOps.Component>(),
                     Components = GetEfComponent(application.Components),
                 });
             else
@@ -214,6 +217,11 @@ namespace BusinessLayer
                 efApp.active = application.active;
                 efApp.release = application.release;
                 var efComps = GetEfComponent(application.Components);
+                var oldEfComps = efApp.Components.Where(x => !efComps.Any(y => y.id == x.id)).ToList();
+                foreach (var oldComp in oldEfComps)
+                {
+                    efApp.Components.Remove(oldComp);
+                }
                 var newEfComps = efComps.Where(x => !efApp.Components.Any(y => y.id == x.id)).ToList();
                 foreach (var newComp in newEfComps)
                 {
@@ -306,6 +314,8 @@ namespace BusinessLayer
             if (apps.Count > 0)
             {
                 //List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => apps.Select(y => y.name).FirstOrDefault().Contains(x.application_name)).ToList();
+                List<string> appList = new List<string>();
+
                 foreach (var vmApp in apps)
                 {
                     var app = DevOpsContext.Applications.Where(x => x.application_name.Contains(vmApp.name)).FirstOrDefault();
@@ -434,6 +444,49 @@ namespace BusinessLayer
         ///
         /// <returns>   The component. </returns>
         ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.Component> GetComponentsFromCsv(string comps)
+        {
+            List<string> compList = new List<string>();
+            List<ViewModel.Component> vmCompList = new List<ViewModel.Component>();
+            if (!string.IsNullOrWhiteSpace(comps))
+            {
+                compList = comps.Split(',').ToList();
+            }
+            foreach (string comp in compList)
+            {
+                vmCompList.Add(GetComponent(comp));
+            }
+            return vmCompList;
+        }
+
+        public ViewModel.Component GetComponent(string compName)
+        {
+            var comp = DevOpsContext.Components.Where(x => x.component_name.Contains(compName)).FirstOrDefault();
+            if (comp == null)
+            {
+                return new ViewModel.Component()
+                {
+                    component_name = compName,
+                    active = true,
+                    create_date = DateTime.Now,
+                    modify_date = DateTime.Now,
+                    relative_path = "",
+                };
+            }
+            else
+            {
+                return new ViewModel.Component()
+                {
+                    id = comp.id,
+                    active = comp.active,
+                    component_name = comp.component_name,
+                    create_date = comp.create_date,
+                    modify_date = comp.modify_date,
+                    relative_path = comp.relative_path,
+                };
+            }
+        }
+
         public List<ViewModel.Component> GetComponent(List<ComponentDto> comps)
         {
             List<ViewModel.Component> vmComps = new List<ViewModel.Component>();
@@ -441,33 +494,12 @@ namespace BusinessLayer
             {
                 foreach (var vmComp in comps)
                 {
-                    var comp = DevOpsContext.Components.Where(x => x.component_name.Contains(vmComp.componentName)).FirstOrDefault();
-                    if (comp == null)
-                    {
-                        vmComps.Add(new ViewModel.Component(vmComp)
-                        {
-                            active = true,
-                            create_date = DateTime.Now,
-                            modify_date = DateTime.Now,
-                            relative_path = "",
-                        });
-                    }
-                    else
-                    {
-                        vmComps.Add(new ViewModel.Component()
-                        {
-                            id = comp.id,
-                            active = comp.active,
-                            component_name = comp.component_name,
-                            create_date = comp.create_date,
-                            modify_date = comp.modify_date,
-                            relative_path = comp.relative_path,
-                        });
-                    }
+                    vmComps.Add(GetComponent(vmComp.componentName));
                 }
             }
             return vmComps;
         }
+
         public ViewModel.Component GetComponent(ComponentDto comp)
         {
             var component = DevOpsContext.Components.Where(x => x.component_name.Contains(comp.componentName)).FirstOrDefault();

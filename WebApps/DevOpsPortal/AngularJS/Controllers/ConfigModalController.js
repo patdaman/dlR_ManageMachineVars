@@ -19,7 +19,10 @@
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigViewer',
-    function ($rootScope, $scope, $element, title, filePath, fileName, configXml, close, publish, download) {
+    function ($rootScope, $scope, $element,
+        title, filePath, fileName, configXml,
+        close, publish, download) {
+
         //var vm = this;
         var vm = $scope;
         vm.filePath = filePath;
@@ -89,9 +92,10 @@ ConfigApp.controller('ConfigViewer',
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddComponent',
-    function ($rootScope, $scope, $element, $http, $timeout, Upload, close, components, applications, environments) {
-        var apiRelPath = "api:/ConfigApi";
+    function ($rootScope, $scope, $element, $http, $timeout,
+        Upload, close, components, applications, environments) {
 
+        var apiRelPath = "api:/ComponentApi";
         var vm = $scope;
         var componentData;
         var componentComponents;
@@ -103,7 +107,7 @@ ConfigApp.controller('AddComponent',
         var fileName;
         var localComponent;
 
-        vm.availableApplications = [];
+        vm.availableApplications = applications;
         vm.componentApplications = [];
         vm.componentName = "";
         vm.componentEnvironment = "";
@@ -120,13 +124,14 @@ ConfigApp.controller('AddComponent',
         vm.selectComponent = function (component) {
             $http({
                 method: 'GET',
-                url: 'api:/ComponentApi',
+                url: apiRelPath,
                 params: {
                     componentName: component.name,
 
                 },
             }).then(function (result) {
                 vm.componentData = result.data;
+                vm.availableApplications = vm.applications;
                 if (typeof vm.componentData.ConfigFile !== "undefined")
                     vm.fileName = vm.componentData.ConfigFiles.file_name;
                 vm.filePath = vm.componentData.relative_path;
@@ -136,8 +141,25 @@ ConfigApp.controller('AddComponent',
                     var name = Applications.application_name;
                     var id = Applications.id;
                     var value = Applications.application_name;
-                    vm.componentApplications.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
+                    vm.componentApplications.push({
+                        id: id,
+                        name: name.replace(/"/g, '').replace(/'/g, '')
+                            .replace(/\[/g, '').replace(/]/g, ''),
+                        value: value.replace(/"/g, '').replace(/'/g, '')
+                            .replace(/\[/g, '').replace(/]/g, ''),
+                    });
                 });
+                vm.applicationNames = JSON.stringify(vm.componentApplications.map(function (item) {
+                    return item['name'].replace(/"/g, '').replace(/'/g, '')
+                        .replace(/\[/g, '').replace(/]/g, '');
+                }));
+                for (var i = vm.availableApplications.length - 1; i >= 0; i--) {
+                    for (var j = 0; j < vm.componentApplications.length; j++) {
+                        if (vm.availableApplications[i] && (vm.availableApplications[i].name === vm.componentApplications[j].name)) {
+                            vm.availableApplications.splice(i, 1);
+                        }
+                    }
+                }
                 vm.localComponent = {
                     componentName: vm.componentName,
                     filePath: vm.filePath,
@@ -157,34 +179,55 @@ ConfigApp.controller('AddComponent',
         vm.log = '';
 
         vm.upload = function (file) {
-            if (file) {
-                if (!file.$error) {
-                    var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) { return item["name"].replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''); }));
-                    Upload.upload({
-                        url: 'api:/ConfigPublishApi',
-                        params: {
-                            componentName: vm.componentName,
-                            environment: vm.componentEnvironment.name,
-                            applications: jsonApps,
-                        },
-                        data: {
-                            file: file
-                        }
-                    }).then(function (resp) {
-                        $timeout(function () {
-                            $scope.log = 'file: ' +
-                            resp.config.data.file.name +
-                            ', Response: ' + JSON.stringify(resp.data) +
-                            '\n' + $scope.log;
+            if (typeof file !== 'undefined') {
+                if (!file.$error && typeof file.name !== 'undefined') {
+                    if (vm.componentName === '') {
+                        swal({
+                            title: "Add Component",
+                            text: "No Component Name / Environment Supplied",
+                            type: "error",
+                            confirmButtonText: "Cool"
                         });
-                    }, null, function (evt) {
-                        var progressPercentage = parseInt(100.0 *
-                                evt.loaded / evt.total);
-                        $scope.log = 'progress: ' + progressPercentage +
-                            '% ' + evt.config.data.file.name + '\n' +
-                          $scope.log;
-                    })
-                    .then(vm.close);
+                    }
+                    else {
+                        var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) {
+                            return item['name'].replace(/"/g, '').replace(/'/g, '')
+                                .replace(/\[/g, '').replace(/]/g, '');
+                        }));
+                        Upload.upload({
+                            url: 'api:/ConfigPublishApi',
+                            params: {
+                                componentName: vm.componentName,
+                                environment: vm.componentEnvironment.name,
+                                applications: jsonApps,
+                                //applications: vm.componentApplications,
+                            },
+                            data: {
+                                file: file
+                            }
+                        }).then(function (resp) {
+                            $timeout(function () {
+                                $scope.log = 'file: ' +
+                                resp.config.data.file.name +
+                                ', Response: ' + JSON.stringify(resp.data) +
+                                '\n' + $scope.log;
+                            });
+                        }, null, function (evt) {
+                            var progressPercentage = parseInt(100.0 *
+                                    evt.loaded / evt.total);
+                            $scope.log = 'progress: ' + progressPercentage +
+                                '% ' + evt.config.data.file.name + '\n' +
+                              $scope.log;
+                        })
+                        .then(
+                            swal({
+                                title: vm.componentName,
+                                text: "Config File Added",
+                                type: "success",
+                                confirmButtonText: "Cool"
+                            }))
+                        .then(vm.close);
+                    }
                 }
             }
         }
@@ -246,27 +289,34 @@ ConfigApp.controller('AddComponent',
 /// </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddApplication',
-    function ($rootScope, $scope, $element, $http, $timeout, close, components, applications, environments) {
-        var apiRelPath = "api:/ApplicationApi";
+    function ($rootScope, $scope, $element, $http, $timeout,
+        close, components, applications, environments) {
 
+        var apiRelPath = "api:/ApplicationApi";
         var vm = $scope;
         var applicationData;
         var applicationApplications;
         var availableComponents = [];
         var applicationComponents = [];
+        var filteredApplicationComponents = [];
+        var componentNames;
         var id;
         var applicationName;
         var localApplication;
         var release;
 
-        vm.availableComponents = [];
+        vm.availableComponents = components;
         vm.applicationComponents = [];
+        vm.filteredApplicationComponents = [];
+        vm.id = "";
         vm.applicationName = "";
         vm.release = "";
         vm.applications = applications;
+        vm.componentNames = "";
         vm.components = components;
         vm.environments = environments;
         vm.localApplication = {
+            componentData: vm.applicationComponents,
             id: vm.id,
             applicationName: vm.applicationName,
             release: vm.release,
@@ -276,24 +326,42 @@ ConfigApp.controller('AddApplication',
         vm.selectApplication = function (application) {
             $http({
                 method: 'GET',
-                url: 'api:/ApplicationApi',
+                url: apiRelPath,
                 params: {
                     applicationName: application.name,
                 },
             }).then(function (result) {
+                vm.availableComponents = vm.components;
                 vm.applicationData = result.data;
                 vm.applicationName = vm.applicationApplications.name;
-                    //vm.applicationData.application_name;
                 vm.release = vm.applicationData.release;
                 vm.applicationComponents = [];
                 angular.forEach(vm.applicationData.Components, function (Components) {
                     var name = Components.component_name;
                     var id = Components.id;
                     var value = Components.component_name;
-                    vm.applicationComponents.push({ id: id, name: name.replace('[' / g, '').replace('"' / g, '').replace("'" / g, "").replace(']' / g, ''), value: value });
+                    vm.applicationComponents.push({
+                        id: id,
+                        name: name.replace(/\[/g, '').replace(/]/g, '')
+                            .replace(/"/g, '').replace(/'/g, ''),
+                        value: value.replace(/\[/g, '').replace(/]/g, '')
+                            .replace(/"/g, '').replace(/'/g, ''),
+                    });
                 });
+                vm.componentNames = JSON.stringify(vm.applicationComponents.map(function (item) {
+                    return item['name'].replace(/"/g, '').replace(/'/g, '')
+                        .replace(/\[/g, '').replace(/]/g, '');
+                }));
+                for (var i = vm.availableComponents.length - 1; i >= 0; i--) {
+                    for (var j = 0; j < vm.applicationComponents.length; j++) {
+                        if (vm.availableComponents[i] && (vm.availableComponents[i].name === vm.applicationComponents[j].name)) {
+                            vm.availableComponents.splice(i, 1);
+                        }
+                    }
+                }
                 vm.localApplication = {
-                    components: vm.applicationComponents,
+                    componentData: vm.applicationComponents,
+                    componentNames: vm.componentNames,
                     id: vm.applicationData.id,
                     release: vm.release,
                     applicationName: vm.applicationName,
@@ -315,28 +383,32 @@ ConfigApp.controller('AddApplication',
             }, 500);
         };
         vm.publish = function () {
-            vm.localApplication = {
-                components: vm.applicationComponents,
-                id: vm.id,
-                release: vm.release,
-                applicationName: vm.applicationName,
-            }
+            vm.componentNames = JSON.stringify(vm.applicationComponents.map(function (item) {
+                return item['name'].replace(/"/g, '').replace(/'/g, '')
+                    .replace(/\[/g, '').replace(/]/g, '');
+            }));
             $element.modal('hide');
             close({
                 save: true,
                 publish: true,
                 applicationComponents: vm.localApplication.applicationComponents,
                 applicationName: vm.applicationName,
+                componentNames: vm.componentNames,
                 id: vm.localApplication.id,
                 release: vm.release,
             }, 500);
         }
         vm.save = function () {
+            vm.componentNames = JSON.stringify(vm.applicationComponents.map(function (item) {
+                return item['name'].replace(/"/g, '').replace(/'/g, '')
+                    .replace(/\[/g, '').replace(/]/g, '');
+            }));
             $element.modal('hide');
             close({
                 save: true,
                 publish: false,
-                applicationComponents: vm.applicationComponents,
+                applicationComponents: vm.filteredApplicationComponents,
+                componentNames: vm.componentNames,
                 applicationName: vm.applicationName,
                 id: vm.localApplication.id,
                 release: vm.release,
@@ -360,7 +432,10 @@ ConfigApp.controller('AddApplication',
 /// <param name="publish">          The publish. </param>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddVar',
-    function ($rootScope, $scope, $element, close, componentName, parentElement, element, keyName, key, valueName, show, isNew, save) {
+    function ($rootScope, $scope, $element,
+        close, componentName, parentElement, element,
+        keyName, key, valueName, show, isNew, save) {
+
         var vm = $scope;
         var additionalParentElements = [];
         vm.componentName = componentName;

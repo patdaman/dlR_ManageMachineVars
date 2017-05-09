@@ -162,6 +162,7 @@ div.flipReverse {
 
 .multiSelect .multiSelectBox {
     min-width: 200px;
+    min-height: 80px;
 }
 
 .multiSelect .text {

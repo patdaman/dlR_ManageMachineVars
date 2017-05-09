@@ -9,7 +9,7 @@ MachineApp.service('machinecrudservice', function ($http) {
     this.save = function (Machine) {
         var request = $http({
             method: 'post',
-            url: '/api/MachineApi/',
+            url: 'api:/MachineApi',
             data: Machine
         });
         return request;
@@ -18,7 +18,7 @@ MachineApp.service('machinecrudservice', function ($http) {
     //get single record by Id
     this.get = function (id) {
         //debugger;
-        return $http.get("/api/MachineApi/" + id);
+        return $http.get("api:/MachineApi" + id);
     }
 
     //update Machine records
@@ -26,7 +26,7 @@ MachineApp.service('machinecrudservice', function ($http) {
         //debugger;
         var updaterequest = $http({
             method: 'put',
-            url: "/api/MachineApi/" + UpdateId,
+            url: "api:/MachineApi" + UpdateId,
             data: Machine
         });
         return updaterequest;
@@ -37,7 +37,7 @@ MachineApp.service('machinecrudservice', function ($http) {
         debugger;
         var deleterecord = $http({
             method: 'delete',
-            url: "/api/MachineApi/" + UpdateId
+            url: "api:/MachineApi" + UpdateId
         });
         return deleterecord;
     }

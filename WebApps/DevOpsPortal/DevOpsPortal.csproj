@@ -160,8 +160,6 @@
     <Content Include="AngularJS\Services\IHttpService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
     <Content Include="AngularJS\Services\MachineService.js" />
-    <Content Include="AngularJS\Services\ngClickCopy.js" />
-    <Content Include="AngularJS\Services\Utils.js" />
     <Content Include="Content\angular-multi-select.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -179,6 +177,7 @@
     <Content Include="Content\Dashboard\timeline.css" />
     <Content Include="Content\MarcomSite.css" />
     <Content Include="Content\site_dashboard.css" />
+    <Content Include="Content\sweetalert.css" />
     <Content Include="Content\Templates\actionsTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -730,6 +729,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Site.js" />
+    <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\ui-grid.js" />
     <Content Include="Scripts\ui-grid.min.js" />
     <Content Include="Scripts\vfs_fonts.js" />

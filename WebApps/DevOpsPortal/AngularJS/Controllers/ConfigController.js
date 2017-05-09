@@ -216,7 +216,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.loadGrid = function () {
-        $http.get('api:/ConfigApi')
+        $http({
+            method: 'GET',
+            url: apiRelPath,
+        })
         .success(function (data) {
             for (i = 0; i < data.length; i++) {
                 data[i].subGridOptions = {
@@ -434,7 +437,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the value Save Promise
     $scope.saveSubGridRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        $http.post('api:/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        //$http.post('api:/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
+        $http({
+            method: 'POST',
+            url: 'api:/ConfigValuesApi/',
+            data: rowEntity,
+        })
+        .success(deferred.resolve).error(deferred.reject);
         return deferred.promise;
     };
 
@@ -512,14 +521,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 if (result.save) {
                     var deferred = $q.defer();
                     var applicationNames = [];
-                    var applicationNames = result.componentApplications.map(function (item) { return item["id", "name"]; });
-                    //applicationNames = result.componentApplications;
-                    //angular.forEach(result.componantApplications, function (Applications) {
-                    //    var name = Applications.application_name;
-                    //    var id = Applications.id;
-                    //    var value = Applications.application_name;
-                    //    vm.applicationNamess.push({ id: id, name: name.replace('/', '').replace('"', '').replace("'", "").replace('[', '').replace(']', ''), value: value });
-                    //});
+                    applicationNames = result.componentApplications;
                     var data = JSON.stringify({
                         "componentName": result.componentName,
                         "applications": applicationNames,
@@ -536,7 +538,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                       .success(function () {
                           $scope.refreshGrid()
                       })
-                      .error(deferred.reject);
+                      .error(deferred.reject)
+                      .error(
+                        swal({
+                            title: "Add Component",
+                            text: "Unable to add component",
+                            type: "error",
+                            confirmButtonText: "Cool"
+                      }));
                     return deferred.promise;
                 }
                 else {
@@ -545,8 +554,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             })
         })
             .catch(function (error) {
-            console.log(error);
-        })
+                console.log(error);
+            })
     };
 
     // Bring up the Add / Edit Application Modal
@@ -566,10 +575,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             modal.close.then(function (result) {
                 if (result.save) {
                     var deferred = $q.defer();
-                    var componentNames = [];
-                    //componentNames = result.applicationComponents.map(function (item) { return item["id", "name"]; });
-                    //componentNames = result.applicationComponents.map(function (item) { return item["name"]; });
-                    componentNames = result.applicationComponents;
+                    var componentNames;
+                    componentNames = result.componentNames
+                        .replace(/"/g, '').replace(/'/g, '')
+                        .replace(/\[/g, '').replace(/]/g, '');
                     if (typeof result.id === 'undefined')
                         result.id = '';
                     var data = JSON.stringify({
@@ -589,7 +598,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                       .success(function () {
                           $scope.refreshGrid()
                       })
-                      .error(deferred.reject);
+                      .error(deferred.reject)
+                                          .error(
+                        swal({
+                            title: "Add Application",
+                            text: "Unable to add application",
+                            type: "error",
+                            confirmButtonText: "Cool"
+                        }));
                     return deferred.promise;
                 }
                 else {
@@ -661,9 +677,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         });
                         $http({
                             method: 'POST',
-                            //url: ApiPath + '/api/ComponentApi/',
                             url: 'api:/ComponentApi/',
-                            //withCredentials: true,
                             data: data,
                             headers: {
                                 'Content-Type': 'application/json'
@@ -694,35 +708,43 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentFileName = row.treeNode.aggregations[1].groupVal;
         if (typeof componentFileName !== 'undefined')
             var def = $q.defer();
-        $http.get('api:/ConfigApi?componentName=' + componentGroupName + '&environment=' + $scope.environment + '&fileName=' + componentFileName)
-            .success(def.resolve)
-            .success(function (data) {
-                ModalService.showModal({
-                    templateUrl: "/Content/Templates/configFileModal.html",
-                    controller: "ConfigViewer",
-                    inputs: {
-                        title: data.componentName,
-                        filePath: data.path,
-                        fileName: data.fileName,
-                        configXml: data.text,
-                        publish: false,
-                        download: false
-                    }
+        $http({
+            method: 'GET',
+            url: 'api:/ConfigApi',
+            params: {
+                componentName: componentGroupName,
+                environment: $scope.environment,
+                fileName: componentFileName,
+            }
+        })
+        .success(def.resolve)
+        .success(function (data) {
+            ModalService.showModal({
+                templateUrl: "/Content/Templates/configFileModal.html",
+                controller: "ConfigViewer",
+                inputs: {
+                    title: data.componentName,
+                    filePath: data.path,
+                    fileName: data.fileName,
+                    configXml: data.text,
+                    publish: false,
+                    download: false
+                }
+            })
+                .then(function (modal) {
+                    modal.element.modal();
+                    modal.close.then(function (result) {
+                        if (result.download) {
+                            $scope.downloadConfig(result.title, result.fileName)
+                        };
+                        if (result.publish) {
+                            $scope.downloadConfig(result.title, result.fileName)
+                        };
+                    });
                 })
-                    .then(function (modal) {
-                        modal.element.modal();
-                        modal.close.then(function (result) {
-                            if (result.download) {
-                                $scope.downloadConfig(result.title, result.fileName)
-                            };
-                            if (result.publish) {
-                                $scope.downloadConfig(result.title, result.fileName)
-                            };
-                        });
-                    })
             //.error(def.reject("Failed to get Config File."))
-         return def.promise;
-         })
+            return def.promise;
+        })
         .catch(function (error) {
             console.log(error);
         })
@@ -747,39 +769,39 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         })
             .success(def.resolve)
             .success(function (data, status, headers) {
-            headers = headers();
+                headers = headers();
 
-            var filename = headers['x-filename'];
-            var contentType = headers['content-type'];
+                var filename = headers['x-filename'];
+                var contentType = headers['content-type'];
 
-            var linkElement = document.createElement('a');
-            try {
-                var blob = new Blob([data], { type: contentType });
-                var url = window.URL.createObjectURL(blob);
+                var linkElement = document.createElement('a');
+                try {
+                    var blob = new Blob([data], { type: contentType });
+                    var url = window.URL.createObjectURL(blob);
 
-                linkElement.setAttribute('href', url);
-                linkElement.setAttribute('download', filename);
-                var clickEvent;
+                    linkElement.setAttribute('href', url);
+                    linkElement.setAttribute('download', filename);
+                    var clickEvent;
 
-                //This is true only for IE,firefox
-                if (document.createEvent) {
-                    // To create a mouse event , first we need to create an event and then initialize it.
-                    clickEvent = document.createEvent("MouseEvent");
-                    clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    //This is true only for IE,firefox
+                    if (document.createEvent) {
+                        // To create a mouse event , first we need to create an event and then initialize it.
+                        clickEvent = document.createEvent("MouseEvent");
+                        clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    }
+                    else {
+                        clickEvent = new MouseEvent('click', {
+                            'view': window,
+                            'bubbles': true,
+                            'cancelable': true
+                        });
+                    }
+                    linkElement.dispatchEvent(clickEvent)
+                } catch (ex) {
+                    console.log(ex);
                 }
-                else {
-                    clickEvent = new MouseEvent('click', {
-                        'view': window,
-                        'bubbles': true,
-                        'cancelable': true
-                    });
-                }
-                linkElement.dispatchEvent(clickEvent)
-            } catch (ex) {
-                console.log(ex);
-            }
-        }).error(function (data) {
-            console.log(data);
-        });
+            }).error(function (data) {
+                console.log(data);
+            });
     }
 });
