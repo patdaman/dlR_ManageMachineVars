@@ -258,6 +258,57 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets configuration file names. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/10/2017. </remarks>
+        ///
+        /// <exception cref="NullReferenceException">   Thrown when a value was unexpectedly null. </exception>
+        ///
+        /// <returns>   The configuration file names. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.ConfigFiles> GetConfigFileNames()
+        {
+            if (string.IsNullOrWhiteSpace(this.componentName))
+                throw new NullReferenceException("No Component Provided");
+            return GetConfigFileNames(this.componentName, this.environment);
+        }
+
+        public List<ViewModel.ConfigFiles> GetConfigFileNames(string componentName, string environment = null)
+        {
+            List<EFDataModel.DevOps.ConfigFile> files = new List<EFDataModel.DevOps.ConfigFile>();
+            List<ViewModel.ConfigFiles> vmFiles = new List<ConfigFiles>();
+
+            if (!string.IsNullOrWhiteSpace(componentName))
+                this.componentName = componentName;
+            if (string.IsNullOrWhiteSpace(this.componentName))
+                throw new NullReferenceException("No Component Provided");
+            if (!string.IsNullOrWhiteSpace(environment))
+                this.environment = environment;
+
+            if (string.IsNullOrWhiteSpace(this.environment))
+                files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
+                                     .ConfigFiles.ToList();
+            //Select(y => y.file_name).ToList();
+            else
+                files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
+                                    .ConfigFiles.Where(y => y.environment == this.environment).ToList();
+            //.Select(z => z.file_name).ToList();
+            foreach (var file in files)
+            {
+                vmFiles.Add(new ViewModel.ConfigFiles()
+                {
+                    fileId = file.id,
+                    fileName = file.file_name,
+                    environment = file.environment,
+                    path = file.Component.relative_path,
+                    createDate = file.create_date,
+                    modifyDate = file.modify_date,
+                });
+            }
+            return vmFiles;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets configuration XML. </summary>
         ///
         /// <remarks>   Pdelosreyes, 4/6/2017. </remarks>

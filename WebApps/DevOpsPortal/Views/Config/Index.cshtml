@@ -14,9 +14,9 @@
             <select ng-model="selectedComponent" ng-options="c.name for c in components" ng-change="updateComponent()">
                 <option value="" style="color:red">Component</option>
             </select>
-            @*<select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
+            <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
-            </select>*@
+            </select>
 
             <input type="button" class="btn btn-small" ng-click="addComponent()" value="Add / Edit Component" />
 

@@ -19,19 +19,60 @@
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigViewer',
-    function ($rootScope, $scope, $element,
-        title, filePath, fileName, configXml,
-        close, publish, download) {
+    function ($rootScope, $scope, $element, $http, $q,
+        component, files, environments, environment, close) {
 
         //var vm = this;
         var vm = $scope;
-        vm.filePath = filePath;
-        vm.fileName = fileName;
-        vm.configXml = configXml;
-        vm.title = title;
+        var selectedEnvironment;
+        var selectedFile;
+        var files;
+        var environment;
+        var environments;
+        var filePath;
+        var fileName;
+        var configXml;
+        var component;
+        var modalSize;
 
-        vm.Copy = function () {
+        vm.environments = environments;
+        vm.environment = environment;
+        vm.files = files;
+        vm.filePath = '';
+        vm.fileName = '';
+        vm.configXml = '';
+        vm.component = component;
+        vm.modalSize = "modal-dialog modal-sm";
 
+        vm.updateFile = function (selectedFile) {
+            vm.fileName = selectedFile.fileName;
+        };
+        vm.updateEnvironment = function (selectedEnvironment) {
+            vm.environment = selectedEnvironment.name;
+        };
+
+        vm.modalSize = function () {
+            if (vm.selectedEnvironment.name != '' && vm.selectedFile.fileName != '')
+                modalSize = "modal-dialog modal-lg";
+        };
+
+        vm.getFile = function () {
+            var def = $q.defer();
+            $http({
+                method: 'GET',
+                url: 'api:/ConfigApi',
+                params: {
+                    componentName: vm.component,
+                    environment: vm.environment,
+                    fileName: vm.fileName,
+                }
+            })
+            .success(def.resolve)
+            .success(function (data) {
+                vm.configXml = data.text,
+                vm.filePath = data.path,
+                vm.modalSize()
+            })
         };
 
         vm.close = function () {
@@ -53,8 +94,9 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: true,
                 download: false,
-                fileName: vm.fileName,
-                title: vm.title
+                fileName: vm.selectedFile,
+                environment: vm.environment,
+                component: vm.component
             }, 500);
         }
         vm.download = function () {
@@ -62,8 +104,9 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: false,
                 download: true,
-                fileName: vm.fileName,
-                title: vm.title
+                fileName: vm.selectedFile,
+                environment: vm.environment,
+                component: vm.component
             }, 500);
         }
     });
@@ -184,7 +227,15 @@ ConfigApp.controller('AddComponent',
                     if (vm.componentName === '') {
                         swal({
                             title: "Add Component",
-                            text: "No Component Name / Environment Supplied",
+                            text: "No Component Name Supplied",
+                            type: "error",
+                            confirmButtonText: "Cool"
+                        });
+                    }
+                    else if (vm.environment === '') {
+                        swal({
+                            title: "Add Component",
+                            text: "No Environment Supplied",
                             type: "error",
                             confirmButtonText: "Cool"
                         });
@@ -451,7 +502,7 @@ ConfigApp.controller('AddVar',
             $element.modal('hide');
             close({
                 save: false,
-            }, 500); // close, but give 500ms for bootstrap to animate
+            }, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');

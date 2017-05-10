@@ -562,14 +562,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                       .success(function () {
                           $scope.refreshGrid()
                       })
-                      .error(deferred.reject)
-                      .error(
-                        swal({
-                            title: "Add Component",
-                            text: "Unable to add component",
-                            type: "error",
-                            confirmButtonText: "Cool"
-                      }));
                     return deferred.promise;
                 }
                 else {
@@ -577,9 +569,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 };
             })
         })
-            .catch(function (error) {
-                console.log(error);
-            })
     };
 
     // Bring up the Add / Edit Application Modal
@@ -622,14 +611,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                       .success(function () {
                           $scope.refreshGrid()
                       })
-                      .error(deferred.reject)
-                                          .error(
-                        swal({
-                            title: "Add Application",
-                            text: "Unable to add application",
-                            type: "error",
-                            confirmButtonText: "Cool"
-                        }));
                     return deferred.promise;
                 }
                 else {
@@ -687,12 +668,24 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 modal.close.then(function (result) {
                     if (result.save) {
                         var deferred = $q.defer();
+                        var fullElement;
+                        if (result.value_name === "")
+                            fullElement = "<" + result.element + ">"
+                                            + "{value}</"
+                                            + result.element + ">";
+                        else
+                            fullElement = "<" + result.element + " "
+                                            + result.attribute + "=\""
+                                            + result.key + "\" "
+                                            + result.valueName + "=\""
+                                            + "{value}\" />";
                         var data = JSON.stringify({
                             "componentId": firstChild.componentId,
                             "componentName": result.componentName,
                             "applicationNames": '',
                             "fileName": firstChild.fileName,
                             "configParentElement": result.parentElement,
+                            "fullElement": fullElement,
                             "configElement": result.element,
                             "attribute": result.attribute,
                             "key": result.key,
@@ -710,7 +703,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                           .success(function () {
                               $scope.refreshGrid()
                           })
-                          .error(deferred.reject);
                         return deferred.promise;
                     }
                     else {
@@ -730,15 +722,15 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentGroup = row.treeNode.parentRow.entity['$$uiGrid-0009'];
         var componentGroupName = componentGroup.groupVal;
         var componentFileName = row.treeNode.aggregations[1].groupVal;
-        if (typeof componentFileName !== 'undefined')
+        if (typeof componentFileName != 'undefined')
             var def = $q.defer();
         $http({
             method: 'GET',
             url: 'api:/ConfigApi',
             params: {
                 componentName: componentGroupName,
-                environment: $scope.environment,
-                fileName: componentFileName,
+                //environment: $scope.environment,
+                //fileName: componentFileName,
             }
         })
         .success(def.resolve)
@@ -747,29 +739,34 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 templateUrl: "/Content/Templates/configFileModal.html",
                 controller: "ConfigViewer",
                 inputs: {
-                    title: data.componentName,
-                    filePath: data.path,
-                    fileName: data.fileName,
-                    configXml: data.text,
-                    publish: false,
-                    download: false
+                    component: componentGroupName,
+                    //filePath: data.path,
+                    files: data,
+                    environments: $scope.environments,
+                    environment: $scope.environment,
+                    //fileName: data.fileName,
+                    //configXml: data.text,
                 }
             })
                 .then(function (modal) {
                     modal.element.modal();
                     modal.close.then(function (result) {
+                        var fileEnvironment;
+                        if (result.environment === '')
+                            fileEnvironment = $scope.environment;
+                        else
+                            fileEnvironment = result.environment;
                         if (result.download) {
-                            $scope.downloadConfig(result.title, result.fileName)
+                            $scope.downloadConfig(result.component, result.fileName, fileEnvironment)
                         };
                         if (result.publish) {
-                            $scope.downloadConfig(result.title, result.fileName)
+                            $scope.downloadConfig(result.component, result.fileName, fileEnvironment)
                         };
                     });
                 })
-            //.error(def.reject("Failed to get Config File."))
             return def.promise;
         })
-        .catch(function (error) {
+        .error(function (error) {
             console.log(error);
         })
     };
@@ -824,8 +821,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 } catch (ex) {
                     console.log(ex);
                 }
-            }).error(function (data) {
-                console.log(data);
             });
     }
 });

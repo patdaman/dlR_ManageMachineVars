@@ -62,16 +62,42 @@ namespace DevOpsApi.Controllers
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   (An Action that handles HTTP GET requests) gets. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/10/2017. </remarks>
+        ///
+        /// <param name="componentName">    The component name to get. </param>
+        /// <param name="environment">      The environment. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        [HttpGet]
+        public HttpResponseMessage Get(string componentName, string environment = null)
+        {
+            BusinessLayer.ManageConfig_Files configFileProcessor = new BusinessLayer.ManageConfig_Files();
+            try
+            {
+                return Request.CreateResponse<List<ViewModel.ConfigFiles>>(HttpStatusCode.OK, configFileProcessor.GetConfigFileNames(componentName, environment));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets a HTTP response message using the given component name. </summary>
         ///
         /// <remarks>   Pdelosreyes, 4/3/2017. </remarks>
         ///
         /// <param name="componentName">    The component name to get. </param>
+        /// <param name="environment">      The environment. </param>
+        /// <param name="fileName">         Filename of the file. </param>
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
         [HttpGet]
-        public HttpResponseMessage Get(string componentName, string environment, string fileName = null)
+        public HttpResponseMessage Get(string componentName, string environment, string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
                 fileName = string.Empty;

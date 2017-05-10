@@ -73,6 +73,27 @@ namespace ViewModel
         }
     }
 
+    public class ConfigFiles
+    {
+        public Nullable<int> fileId { get; set; }
+        public string fileName { get; set; }
+        public string environment { get; set; }
+        public string path { get; set; }
+        public Nullable<DateTime> createDate { get; set; }
+        public Nullable<DateTime> modifyDate { get; set; }
+        public ConfigFiles()
+        { }
+        public ConfigFiles(ConfigFiles c)
+        {
+            fileId = c.fileId;
+            fileName = c.fileName;
+            environment = c.environment;
+            path = c.path;
+            createDate = c.createDate;
+            modifyDate = c.modifyDate;
+        }
+    }
+
     public class ConfigXml
     {
         public Nullable<int> componentId { get; set; }

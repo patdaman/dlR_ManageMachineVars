@@ -71,7 +71,7 @@ namespace DevOpsPortal
                      "~/Content/angular-multi-select.css",
                      "~/Content/ui-grid.css",
                      // Marcom Specific
-                     "~/Content/ui-standard.css",
+                     //"~/Content/ui-standard.css",
                      //
                      "~/Content/site.css"
                      ));

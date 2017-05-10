@@ -24,7 +24,7 @@ var ConfigApp = angular.module('ConfigApp',
             'angularModalService',
             'ngAnimate',
             'ui.bootstrap',
-            'ngclipboard',
+            //'ngclipboard',
             'ngFileUpload'
         ])
 
@@ -93,9 +93,9 @@ app.factory('httpAPIPathAdder', [function () {
                 config.url = ApiPath + config.url.slice(4);
             return config;
         },
-        //responseError: function (response) {
-        //    return $q.reject(response);
-        //}
+        responseError: function (rejection) {
+            return $q.reject(rejection);
+        }
     }
 }]);
 
@@ -114,15 +114,14 @@ app.factory('$exceptionHandler', [function () {
                 var showstr = exception.message;
                 if (cause)
                     showstr = showstr + "\nCause: " + cause;
+                swal({
+                    title: "Application Error",
+                    text: showstr,
+                    type: "error",
+                    confirmButtonText: "Cool"
+                });
                 console.log(showstr);
-                alert(showstr);
-            }
-            else if (exception.Message) {
-                var Showstr = exception.Message;
-                if (cause)
-                    Showstr = Showstr + "\nCause: " + cause;
-                console.log(Showstr);
-                alert(Showstr);
+                //alert(showstr);
             }
             else {
                 console.log(exception);
@@ -132,11 +131,23 @@ app.factory('$exceptionHandler', [function () {
         else {
             if (cause) {
                 console.log(cause);
-                alert(cause);
+                swal({
+                    title: "Application Error",
+                    text: cause,
+                    type: "error",
+                    confirmButtonText: "Cool"
+                });
+                //alert(cause);
             }
             else {
                 console.log("Unknown Exception");
-                alert("Unknown Exception");
+                swal({
+                    title: "Application Error",
+                    text: "Unknown Exception",
+                    type: "error",
+                    confirmButtonText: "Cool"
+                });
+                //alert("Unknown Exception");
             }
             alert("Unknown Exception")
         }
