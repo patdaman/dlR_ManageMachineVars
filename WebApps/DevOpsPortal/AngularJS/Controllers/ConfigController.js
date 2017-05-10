@@ -79,8 +79,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     $scope.filterEnvironment = function () {
         return $scope.environment;
     };
+
     $scope.application = '';
+    $scope.filterApplication = function () {
+        return $scope.application;
+    };
+
     $scope.component = '';
+    $scope.filterComponent = function () {
+        return $scope.component;
+    };
 
     /// Configure Config UI grid
     $scope.gridOptions = {
@@ -147,23 +155,30 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             grouping: { groupPriority: 0 },
             sort: { priority: 0, direction: 'asc' },
             groupable: true,
+            enableFiltering: false,
             filter: {
-                condition: uiGridConstants.filter.CONTAINS,
-                term: $scope.component
+                noTerm: true,
+                condition: function (searchTerm, cellValue) {
+                    if ($scope.component !== '')
+                        return $scope.filterComponent() === cellValue;
+                    else
+                        return cellValue;
+                }
             },
-            filterCellFiltered: true
+            filterCellFiltered: true,
         },
         {
             field: 'fileName',
             enableCellEdit: false,
             width: '10%',
+            //visible: false,
             grouping: { groupPriority: 1 },
             sort: { priority: 1, direction: 'asc' },
             groupable: true
         },
         { field: 'configvar_id', visible: false, enableCellEdit: false },
-        //{ field: 'configParentElement', visible: false, enableCellEdit: false },
-        { field: 'configParentElement', visible: true, enableCellEdit: false },
+        { field: 'configParentElement', visible: false, enableCellEdit: false },
+        //{ field: 'configParentElement', visible: true, enableCellEdit: false },
         { field: 'configElement', visible: false, enableCellEdit: false },
         { field: 'attribute', visible: false, enableCellEdit: false },
         {
@@ -307,6 +322,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         //angular.forEach($scope.gridOptions.data, function (data) {
         //    data.values.subGridOptions;
         //});
+    };
+
+    $scope.filterGrid = function (value) {
+        console.log(value);
+        if (typeof $scope.gridApi.grid.appScope.subGridApi !== 'undefined') {
+            $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
+            $scope.subGridApi.core.refresh();
+        }
     };
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
@@ -486,7 +509,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
         $scope.component = $scope.selectedComponent;
-        $scope.gridApi.grid.refresh();
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+
     };
     // Function call from Index page dropdown OnChange
     $scope.updateApplication = function () {
@@ -649,11 +673,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             inputs: {
                 componentName: componentName,
                 parentElement: firstChildParentElement,
-                applicationNames: firstChild.applicationNames,
-                element: "",
-                keyName: "",
+                element: firstChild.configElement,
+                attribute: firstChild.attribute,
                 key: "",
-                valueName: "",
+                valueName: firstChild.valueName,
                 save: false,
                 show: show,
                 isNew: isNew,
@@ -667,17 +690,18 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         var data = JSON.stringify({
                             "componentId": firstChild.componentId,
                             "componentName": result.componentName,
-                            "applicationNames": firstChild.applicationNames,
+                            "applicationNames": '',
+                            "fileName": firstChild.fileName,
                             "configParentElement": result.parentElement,
                             "configElement": result.element,
-                            "attribute": result.keyName,
+                            "attribute": result.attribute,
                             "key": result.key,
                             "valueName": result.valueName,
                             "values": []
                         });
                         $http({
                             method: 'POST',
-                            url: 'api:/ComponentApi/',
+                            url: 'api:/ConfigApi/',
                             data: data,
                             headers: {
                                 'Content-Type': 'application/json'

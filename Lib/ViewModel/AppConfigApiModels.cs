@@ -33,6 +33,7 @@ namespace ViewModel
         public string componentName { get; set; }
         public string fileName { get; set; }
         public string configParentElement { get; set; }
+        public string fullElement { get; set; }
         public string configElement { get; set; }
         public string attribute { get; set; }
         public string key { get; set; }

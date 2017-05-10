@@ -434,14 +434,15 @@ ConfigApp.controller('AddApplication',
 ConfigApp.controller('AddVar',
     function ($rootScope, $scope, $element,
         close, componentName, parentElement, element,
-        keyName, key, valueName, show, isNew, save) {
+        attribute, key, valueName, show, isNew, save) {
 
         var vm = $scope;
         var additionalParentElements = [];
+        var noAttributeKey = key;
         vm.componentName = componentName;
         vm.element = element;
         vm.parentElement = parentElement;
-        vm.keyName = keyName;
+        vm.attribute = attribute;
         vm.key = key;
         vm.valueName = valueName;
         vm.show = show;
@@ -459,16 +460,19 @@ ConfigApp.controller('AddVar',
             }, 500);
         };
         vm.save = function () {
+            if (vm.valueName === '') {
+                vm.element = vm.key;
+                vm.attribute = '';
+            }
             $element.modal('hide');
             close({
                 save: true,
                 componentName: vm.componentName,
                 element: vm.element,
                 parentElement: vm.parentElement,
-                keyName: vm.keyName,
+                attribute: vm.attribute,
                 key: vm.key,
-                valueName: valueName,
-                additionalParentElements: vm.additionalParentElements
+                valueName: vm.valueName,
             }, 500);
         };
     });

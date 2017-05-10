@@ -951,8 +951,20 @@ namespace BusinessLayer
         private AppVar AddUpdateVariable(AppVar appValue)
         {
             EFDataModel.DevOps.ConfigVariable efConfig = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.configvar_id).FirstOrDefault();
+            if (efConfig == null)
+            {
+                efConfig = DevOpsContext.ConfigVariables.Where(x => x.attribute == appValue.attribute
+                                                                        && x.ConfigFile.file_name == appValue.fileName
+                                                                        && x.element == appValue.configElement
+                                                                        && x.key == appValue.key
+                                                                        && x.value_name == appValue.valueName
+                                                                        && x.parent_element == appValue.configParentElement).FirstOrDefault();
+            }
+
             List<EFDataModel.DevOps.ConfigVariableValue> efConfigValueList = new List<EFDataModel.DevOps.ConfigVariableValue>();
             EFDataModel.DevOps.Component efComponent;
+            EFDataModel.DevOps.ConfigFile efConfigFile = new EFDataModel.DevOps.ConfigFile();
+
             if (appValue.componentId != null)
             {
                 efComponent = DevOpsContext.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
@@ -963,7 +975,8 @@ namespace BusinessLayer
             }
             else
                 throw new ArgumentNullException("No Component provided to add variable.");
-
+            if (!string.IsNullOrWhiteSpace(appValue.fileName))
+                efConfigFile = DevOpsContext.ConfigFiles.Where(x => x.file_name == appValue.fileName).FirstOrDefault();
             if (efConfig == null)
             {
                 if (string.IsNullOrWhiteSpace(appValue.configElement))
@@ -972,10 +985,16 @@ namespace BusinessLayer
                 {
                     active = true,
                     element = appValue.configElement,
-                    key = appValue.key,
-                    attribute = appValue.attribute ?? "key",
-                    parent_element = appValue.configParentElement,
-                    value_name = appValue.valueName ?? "value",
+
+                    // ToDo: Create XML element based on AppVar
+                    // full_element = appValue.fullElement,
+                    // full_element = getFullElement(appValue),
+
+                    key = appValue.key ?? appValue.configElement,
+                    attribute = appValue.attribute ?? "",
+                    parent_element = appValue.configParentElement ?? "",
+                    value_name = appValue.valueName ?? "",
+                    ConfigFile = efConfigFile ?? new EFDataModel.DevOps.ConfigFile(),
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
                 };
@@ -995,11 +1014,24 @@ namespace BusinessLayer
                         });
                     }
                 }
+                else
+                {
+                    efConfig.ConfigVariableValues.Add(new EFDataModel.DevOps.ConfigVariableValue()
+                    {
+                        create_date = DateTime.Now,
+                        modify_date = DateTime.Now,
+                        environment_type = "development",
+                        published = false,
+                        value = "",
+                    });
+                }
                 efConfig.Components.Add(efComponent);
                 DevOpsContext.ConfigVariables.Add(efConfig);
             }
             else
             {
+                if (string.IsNullOrWhiteSpace(appValue.fileName))
+                    efConfigFile = efConfig.ConfigFile;
                 efConfigValueList = efConfig.ConfigVariableValues.ToList();
                 if (!(efConfig.element == appValue.configElement &&
                     efConfig.key == appValue.key &&
@@ -1007,44 +1039,38 @@ namespace BusinessLayer
                     efConfig.parent_element == appValue.configParentElement &&
                     efConfig.value_name == appValue.valueName))
                 {
-
                     efConfig.element = appValue.configElement;
-                    efConfig.key = appValue.key;
-                    efConfig.attribute = appValue.attribute;
-                    efConfig.parent_element = appValue.configParentElement;
-                    efConfig.value_name = appValue.valueName;
+                    efConfig.key = appValue.key ?? appValue.configElement;
+                    efConfig.attribute = appValue.attribute ?? "";
+                    efConfig.parent_element = appValue.configParentElement ?? "";
+                    efConfig.value_name = appValue.valueName ?? "";
+
+                    // ToDo: Create XML element based on AppVar
+                    // efConfig.full_element = getFullElement(appValue),
+
+                    efConfig.ConfigFile = efConfigFile = new EFDataModel.DevOps.ConfigFile();
                     //efConfig.create_date = efConfig.create_date;
                     efConfig.modify_date = DateTime.Now;
                 }
-            }
-            foreach (var val in appValue.values)
-            {
-                var efConfigValue = efConfigValueList.Where(x => x.configvar_id == val.configvar_id
-                    && x.environment_type == val.environment).FirstOrDefault();
-                if (efConfigValue == null)
+                foreach (var val in appValue.values)
                 {
-                    efConfigValue = new EFDataModel.DevOps.ConfigVariableValue()
+                    var efConfigValue = efConfigValueList.Where(x => x.configvar_id == val.configvar_id
+                        && x.environment_type == val.environment).FirstOrDefault();
+                    if (efConfigValue == null)
                     {
-                        configvar_id = appValue.configvar_id.Value,
-                        environment_type = val.environment,
-                        value = val.value,
-                        create_date = DateTime.Now,
-                        modify_date = DateTime.Now,
-                        published_date = val.publish_date
-                    };
-                    DevOpsContext.ConfigVariableValues.Add(efConfigValue);
-                }
-                else
-                {
-                    if (efConfigValue.value != val.value)
-                    {
-                        efConfigValue.value = val.value;
-                        efConfigValue.modify_date = DateTime.Now;
-                        efConfigValue.published_date = val.publish_date;
+                        efConfigValue = new EFDataModel.DevOps.ConfigVariableValue()
+                        {
+                            configvar_id = appValue.configvar_id.Value,
+                            environment_type = val.environment,
+                            value = val.value,
+                            create_date = DateTime.Now,
+                            modify_date = DateTime.Now,
+                            published_date = val.publish_date
+                        };
+                        DevOpsContext.ConfigVariableValues.Add(efConfigValue);
                     }
                 }
             }
-
             try
             {
                 DevOpsContext.SaveChanges();
@@ -1067,8 +1093,19 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         private AppVar GetVariable(AppVar appValue)
         {
-            EFDataModel.DevOps.ConfigVariable efConfigVar = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.configvar_id).FirstOrDefault();
-            EFDataModel.DevOps.Component varComponent = efConfigVar.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
+            EFDataModel.DevOps.ConfigVariable efConfigVar;
+            if (appValue.configvar_id != null)
+                efConfigVar = DevOpsContext.ConfigVariables.Where(x => x.id == appValue.configvar_id).FirstOrDefault();
+            else
+                efConfigVar = DevOpsContext.ConfigVariables.Where(x => x.attribute == appValue.attribute
+                                                                        && x.ConfigFile.file_name == appValue.fileName
+                                                                        && x.element == appValue.configElement
+                                                                        && x.key == appValue.key
+                                                                        && x.value_name == appValue.valueName
+                                                                        && x.parent_element == appValue.configParentElement)
+                                                           .FirstOrDefault();
+            //EFDataModel.DevOps.Component varComponent = efConfigVar.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
+            var varComponent = efConfigVar.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
             ViewModel.ConfigVariable configVar = ReturnConfigVariable(efConfigVar);
             AppVar appVar = new AppVar(configVar);
             appVar.componentId = varComponent.id;

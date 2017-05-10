@@ -22,13 +22,13 @@
                     <br />
                 </div>
                 <div ng-if="show || new">
-                    <div ng-if="new">
-                        <div class="flip">
+                    <!--<div ng-if="new">
+                        <div class="flip">-->
                             <!--<h5><b>Add fields required for XML formatting with attributes</b></h5>-->
-                            <button type="button" class="btn btn-primary">Add fields required for XML formatting with attributes</button>
+                            <!--<button type="button" class="btn btn-primary">Add fields required for XML formatting with attributes</button>
                         </div>
-                    </div>
-                    <div ng-if="new" class="panel">
+                    </div>-->
+                    <!--<div ng-if="new" class="panel">
                         <div class="form-group">
                             <h4><b>The following are required for XML formatting with attributes</b></h4>
                             <h6>&lt;{Parent Element}&gt;</h6>
@@ -52,7 +52,7 @@
                         <h5>&lt;{{parentElement}}&gt;</h5>
                         <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{keyName}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
                         <h5>&lt;/{{parentElement}}&gt;</h5>
-                    </div>
+                    </div>-->
                     <div ng-if="!new">
                         <div class="form-group">
                             <h4><b>The following are required for XML formatting with attributes</b></h4>
@@ -68,14 +68,14 @@
                         </div>
                         <div class="form-group">
                             <label>Key Name / Attribute:</label>
-                            <input id="keyName" class="form-control" type="text" ng-model="keyName">
+                            <input id="keyName" class="form-control" type="text" ng-model="attribute">
                         </div>
                         <div class="form-group">
                             <label>Value Name:</label>
                             <input id="valueName" class="form-control" type="text" ng-model="valueName">
                         </div>
                         <h5>{{parentElement}}</h5>
-                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{keyName}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{attribute}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
                         <h5>/{{parentElement}}</h5>
                     </div>
                 </div>

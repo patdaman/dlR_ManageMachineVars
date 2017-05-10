@@ -70,11 +70,10 @@ namespace DevOpsPortal
                      "~/Content/sweetalert.css",
                      "~/Content/angular-multi-select.css",
                      "~/Content/ui-grid.css",
-                     "~/Content/site.css",
                      // Marcom Specific
-                     "~/Content/ui-standard.css"
+                     "~/Content/ui-standard.css",
                      //
-                     //"~/Content/site.css"
+                     "~/Content/site.css"
                      ));
 
             bundles.Add(new ScriptBundle("~/bundles/codemirror").Include(

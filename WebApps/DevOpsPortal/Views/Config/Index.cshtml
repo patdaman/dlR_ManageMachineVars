@@ -11,6 +11,9 @@
             <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">
                 <option value="" style="color:red">Environment</option>
             </select>
+            <select ng-model="selectedComponent" ng-options="c.name for c in components" ng-change="updateComponent()">
+                <option value="" style="color:red">Component</option>
+            </select>
             @*<select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
             </select>*@
