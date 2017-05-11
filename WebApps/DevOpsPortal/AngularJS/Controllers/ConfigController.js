@@ -55,6 +55,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var application;
     var selectedEnvironment;
     var environment;
+    var environmentIndex;
 
     /// Display current API path and link to Help page
     $scope.ApiBaseUrl = ApiPath;
@@ -76,8 +77,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     /// Grid Filters
     $scope.environment = 'development';
+    $scope.environmentIndex = 0;
     $scope.filterEnvironment = function () {
         return $scope.environment;
+    };
+    $scope.filterEnvironmentIndex = function () {
+        return $scope.environmentIndex;
     };
 
     $scope.application = '';
@@ -160,6 +165,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         {
             field: 'componentName',
             enableCellEdit: false,
+            width: 250,
             grouping: { groupPriority: 0 },
             sort: { priority: 0, direction: 'asc' },
             groupable: true,
@@ -178,11 +184,11 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         {
             field: 'fileName',
             enableCellEdit: false,
-            width: '10%',
+            //width: '10%',
             visible: false,
             //grouping: { groupPriority: 1 },
             //sort: { priority: 1, direction: 'asc' },
-            groupable: true
+            //groupable: true
         },
         { field: 'configvar_id', visible: false, enableCellEdit: false },
         { field: 'configParentElement', visible: false, enableCellEdit: false },
@@ -192,16 +198,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         {
             field: 'key',
             cellEditableCondition: $scope.canEdit,
-            width: "50%",
-            //filter: {
-            //    condition: function (searchTerm, cellValue) {
-            //        let result = true;
-            //        result = '' !== cellValue;
-            //        return result;
-            //    },
-            //    noTerm: true
-            //},
-            //filterCellFiltered: true,
+            width: "40%",
             enableFiltering: true,
             cellToolTip: function (row, col) {
                 if (grid.appScope.isBlank(row.entity.attribute)) {
@@ -213,6 +210,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             }
         },
         { field: 'valueName', visible: false, enableCellEdit: 'false' },
+        //{
+        //    field: 'values[0].value',
+        //    displayName: 'value',
+        //    visible: true,
+        //    width: "35%",
+        //    cellEditableCondition: $scope.canEdit,
+        //    enableFiltering: true,
+        //},
         {
             name: "Actions",
             width: 150,
@@ -333,14 +338,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         //angular.forEach($scope.gridOptions.data, function (data) {
         //    data.values.subGridOptions;
         //});
-    };
-
-    $scope.filterGrid = function (value) {
-        console.log(value);
-        if (typeof $scope.gridApi.grid.appScope.subGridApi !== 'undefined') {
-            $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
-            $scope.subGridApi.core.refresh();
-        }
     };
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
@@ -472,7 +469,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             }
         })
             .success(deferred.resolve)
-            //.error(deferred.reject);
+        //.error(deferred.reject);
         return deferred.promise;
     };
 
@@ -539,7 +536,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     // Function call from Index page dropdown OnChange
     $scope.updateEnvironment = function () {
-        if (typeof $scope.selectedEnvironment == 'undefined')
+        if (!$scope.selectedEnvironment)
             $scope.environment = 'development';
         else
             $scope.environment = $scope.selectedEnvironment.value;
@@ -547,16 +544,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
     // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
-        if (typeof $scope.selectedComponent == 'undefined')
+        if (!$scope.selectedComponent)
             $scope.component = '';
-        else 
+        else
             $scope.component = $scope.selectedComponent.value;
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-
+        $scope.expandValues();
     };
     // Function call from Index page dropdown OnChange
     $scope.updateApplication = function () {
-        if (typeof $scope.selectedApplication == 'undefined')
+        if (!$scope.selectedApplication)
             $scope.application = '';
         else
             $scope.application = $scope.selectedApplication.value;
@@ -569,6 +566,15 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         $timeout(function () {
             $scope.gridOptions.data = $scope.loadGrid();
             $scope.$apply();
+        });
+    };
+
+    $scope.expandValues = function () {
+        $scope.gridApi.treeBase.collapseAllRows();
+        var groupRow;
+        angular.forEach($scope.gridApi.grid.treeBase.tree, function (value, key) {
+            if (value.aggregations[0].groupVal == $scope.component)
+                $scope.gridApi.treeBase.expandRowChildren(value.row);
         });
     };
 
@@ -801,7 +807,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         }
         var componentGroupName = componentGroup.groupVal;
         //if (typeof componentFileName !== 'undefined')
-            var def = $q.defer();
+        var def = $q.defer();
         $http({
             method: 'GET',
             url: 'api:/ConfigApi',
