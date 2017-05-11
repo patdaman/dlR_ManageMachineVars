@@ -77,7 +77,6 @@ namespace ViewModel
     {
         public Nullable<int> fileId { get; set; }
         public string fileName { get; set; }
-        public string environment { get; set; }
         public string path { get; set; }
         public Nullable<DateTime> createDate { get; set; }
         public Nullable<DateTime> modifyDate { get; set; }
@@ -87,7 +86,6 @@ namespace ViewModel
         {
             fileId = c.fileId;
             fileName = c.fileName;
-            environment = c.environment;
             path = c.path;
             createDate = c.createDate;
             modifyDate = c.modifyDate;

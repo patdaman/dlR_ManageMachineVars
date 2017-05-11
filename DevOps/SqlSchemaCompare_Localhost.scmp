@@ -286,7 +286,7 @@
       </PropertyElementName>
       <PropertyElementName>
         <Name>ScriptNewConstraintValidation</Name>
-        <Value>True</Value>
+        <Value>False</Value>
       </PropertyElementName>
       <PropertyElementName>
         <Name>ScriptRefreshModule</Name>

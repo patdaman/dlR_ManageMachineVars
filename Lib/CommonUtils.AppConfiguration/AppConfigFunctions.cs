@@ -102,11 +102,15 @@ namespace CommonUtils.AppConfiguration
                 {
                     if (element.FirstAttribute == element.LastAttribute)
                     {
+                        if (!string.IsNullOrWhiteSpace(element.FirstAttribute.Value.ToString()))
+                            selfFullElement = selfFullElement.Replace(element.FirstAttribute.Value.ToString(), "{value}");
+                        else
+                            selfFullElement = selfFullElement.Replace("\"\"", "{value}");
                         keyValues.Add(new AttributeKeyValuePair()
                         {
                             //parentElement = parentName,
                             parentElement = parentFullElement,
-                            fullElement = selfFullElement.Replace(element.FirstAttribute.Value.ToString(), "{value}"),
+                            fullElement = selfFullElement,
                             element = element.Name.ToString(),
                             attribute = element.FirstAttribute.Name.ToString(),
                             key = element.FirstAttribute.Name.ToString(),
@@ -140,11 +144,15 @@ namespace CommonUtils.AppConfiguration
                             keys = element.FirstAttribute.Value.ToString();
                             values = element.LastAttribute.Value.ToString();
                         }
+                        if (!string.IsNullOrWhiteSpace(values))
+                            selfFullElement = selfFullElement.Replace(values, "{value}");
+                        else
+                            selfFullElement = selfFullElement.Replace("\"\"", "{value}");
                         keyValues.Add(new AttributeKeyValuePair()
                         {
                             //parentElement = parentName,
                             parentElement = parentFullElement,
-                            fullElement = selfFullElement.Replace(values, "{value}"),
+                            fullElement = selfFullElement,
                             element = element.Name.ToString(),
                             attribute = element.FirstAttribute.Name.ToString(),
                             key = keys,
@@ -158,11 +166,15 @@ namespace CommonUtils.AppConfiguration
                     // && element.FirstNode == element.LastNode
                     && element.Value != null)
                 {
+                    if (!string.IsNullOrWhiteSpace(element.Value))
+                        selfFullElement = selfFullElement.Replace(element.Value, "{value}");
+                    else
+                        selfFullElement = selfFullElement.Replace("></", ">{value}</");
                     keyValues.Add(new AttributeKeyValuePair()
                     {
                         //parentElement = parentName,
                         parentElement = parentFullElement,
-                        fullElement = selfFullElement.Replace(element.Value.ToString(), "{value}"),
+                        fullElement = selfFullElement,
                         element = element.Name.ToString(),
                         //attribute = element.FirstNode.ToString(),
                         attribute = string.Empty,

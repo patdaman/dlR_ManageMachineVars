@@ -6,6 +6,11 @@
                 <h2 class="modal-title">{{componentName}}</h2>
             </div>
             <div class="modal-body">
+                <div class="form-group"><b>File Name:</b>
+                    <select ng-model="selectedFile" ng-options="f.fileName for f in files" ng-change="updateFile(selectedFile)">
+                        <option value="" style="color:red">File</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label><b>Parent Element:</b></label>
                     <input id="parent" class="form-control" type="text" ng-model="parentElement">

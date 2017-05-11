@@ -285,19 +285,14 @@ namespace BusinessLayer
             if (!string.IsNullOrWhiteSpace(environment))
                 this.environment = environment;
 
-            //if (string.IsNullOrWhiteSpace(this.environment))
-                files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
+            files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
                                      .ConfigFiles.ToList();
-            //else
-            //    files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
-            //                        .ConfigFiles.Where(y => y.environment == this.environment).ToList();
             foreach (var file in files)
             {
                 vmFiles.Add(new ViewModel.ConfigFiles()
                 {
                     fileId = file.id,
                     fileName = file.file_name,
-                    //environment = file.environment,
                     path = file.Component.relative_path,
                     createDate = file.create_date,
                     modifyDate = file.modify_date,
@@ -339,7 +334,7 @@ namespace BusinessLayer
             if (!string.IsNullOrWhiteSpace(filename))
                 this.fileName = filename;
             this.path = component.relative_path + @"\" +
-            (component.ConfigFiles.FirstOrDefault().file_name + @".config") ?? "";
+            (component.ConfigFiles.FirstOrDefault().file_name) ?? "";
 
             XDocument xmlDoc = GetConfigFile(this.componentId, this.fileName);
             if (xmlDoc == null)

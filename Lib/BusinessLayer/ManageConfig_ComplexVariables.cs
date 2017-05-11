@@ -860,6 +860,12 @@ namespace BusinessLayer
         private ViewModel.ConfigVariable ReturnConfigVariable(EFDataModel.DevOps.ConfigVariable config)
         {
             var environments = DevOpsContext.Enum_EnvironmentType.ToList();
+            var file = config.ConfigFile;
+            if (file == null)
+                file = new EFDataModel.DevOps.ConfigFile();
+            var configVars = config.ConfigVariableValues;
+            if (configVars == null)
+                configVars = new List<EFDataModel.DevOps.ConfigVariableValue>();
             return new ViewModel.ConfigVariable()
             {
                 id = config.id,
@@ -871,8 +877,8 @@ namespace BusinessLayer
                 modify_date = config.modify_date,
                 value_name = config.value_name ?? "",
                 parent_element = config.parent_element,
-                ConfigFile = EfToVmConverter.EfConfigFileToVm(config.ConfigFile),
-                ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues, environments),
+                ConfigFile = EfToVmConverter.EfConfigFileToVm(file),
+                ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(configVars, environments),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)
             };
         }
@@ -1124,6 +1130,16 @@ namespace BusinessLayer
             appVar.values.AddRange(configVar.ConfigVariableValues);
             return appVar;
         }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Returns application variable. </summary>
+        ///
+        /// <remarks>   Patman, 5/10/2017. </remarks>
+        ///
+        /// <param name="a">    The Application to process. </param>
+        ///
+        /// <returns>   The application variable. </returns>
+        ///-------------------------------------------------------------------------------------------------
 
         private ViewModel.Application ReturnApplicationVariable(EFDataModel.DevOps.Application a)
         {

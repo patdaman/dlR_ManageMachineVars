@@ -42,7 +42,11 @@ ConfigApp.controller('ConfigViewer',
         vm.fileName = '';
         vm.configXml = '';
         vm.component = component;
-        vm.modalSize = "modal-dialog modal-sm";
+        vm.modalSize = "modal-dialog modal-md";
+
+        if (vm.files.length === 1) {
+            vm.selectedFile = vm.files[0];
+        };
 
         vm.updateFile = function (selectedFile) {
             vm.fileName = selectedFile.fileName;
@@ -64,7 +68,7 @@ ConfigApp.controller('ConfigViewer',
                 params: {
                     componentName: vm.component,
                     environment: vm.environment,
-                    fileName: vm.fileName,
+                    fileName: vm.selectedFile.fileName,
                 }
             })
             .success(def.resolve)
@@ -94,7 +98,7 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: true,
                 download: false,
-                fileName: vm.selectedFile,
+                fileName: vm.selectedFile.fileName,
                 environment: vm.environment,
                 component: vm.component
             }, 500);
@@ -104,7 +108,7 @@ ConfigApp.controller('ConfigViewer',
             close({
                 publish: false,
                 download: true,
-                fileName: vm.selectedFile,
+                fileName: vm.selectedFile.fileName,
                 environment: vm.environment,
                 component: vm.component
             }, 500);
@@ -270,19 +274,24 @@ ConfigApp.controller('AddComponent',
                                 '% ' + evt.config.data.file.name + '\n' +
                               $scope.log;
                         })
-                        .then(
-                            swal({
-                                title: vm.componentName,
-                                text: "Config File Added",
-                                type: "success",
-                                confirmButtonText: "Cool"
-                            }))
-                        .then(vm.close);
+                        .then(vm.uploadFile);
                     }
                 }
             }
         }
 
+        vm.uploadFile = function () {
+            swal({
+                title: vm.componentName,
+                text: "Config File Added",
+                type: "success",
+                confirmButtonText: "Cool"
+            });
+            $element.modal('hide');
+            close({
+                upload: true,
+            }, 500);
+        };
         vm.close = function () {
             $element.modal('hide');
             close({
@@ -485,11 +494,15 @@ ConfigApp.controller('AddApplication',
 ConfigApp.controller('AddVar',
     function ($rootScope, $scope, $element,
         close, componentName, parentElement, element,
-        attribute, key, valueName, show, isNew, save) {
+        attribute, key, valueName, show, isNew, files) {
 
         var vm = $scope;
         var additionalParentElements = [];
         var noAttributeKey = key;
+        var selectedFile;
+        var fileName;
+
+        vm.files = files;
         vm.componentName = componentName;
         vm.element = element;
         vm.parentElement = parentElement;
@@ -498,6 +511,15 @@ ConfigApp.controller('AddVar',
         vm.valueName = valueName;
         vm.show = show;
         vm.isNew = isNew;
+        vm.fileName = '';
+
+        if (vm.files.length === 1) {
+            vm.selectedFile = vm.files[0];
+        };
+
+        vm.updateFile = function (selectedFile) {
+            vm.fileName = selectedFile.fileName;
+        };
         vm.close = function () {
             $element.modal('hide');
             close({
@@ -524,6 +546,7 @@ ConfigApp.controller('AddVar',
                 attribute: vm.attribute,
                 key: vm.key,
                 valueName: vm.valueName,
+                fileName: vm.selectedFile.fileName,
             }, 500);
         };
     });

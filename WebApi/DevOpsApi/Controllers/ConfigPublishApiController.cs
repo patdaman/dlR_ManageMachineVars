@@ -39,7 +39,7 @@ namespace DevOpsApi.Controllers
             {
                 componentName = componentName,
                 environment = environment,
-                fileName = fileName.Replace(".config", "").Replace(".xml", ""),
+                fileName = fileName,
             };
             try
             {

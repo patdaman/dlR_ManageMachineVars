@@ -179,6 +179,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         { field: 'configvar_id', visible: false, enableCellEdit: false },
         { field: 'configParentElement', visible: false, enableCellEdit: false },
         //{ field: 'configParentElement', visible: true, enableCellEdit: false },
+        { field: 'fullElement', visible: false, enableCellEdit: false },
         { field: 'configElement', visible: false, enableCellEdit: false },
         { field: 'attribute', visible: false, enableCellEdit: false },
         {
@@ -231,10 +232,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.loadGrid = function () {
+        var def = $q.defer();
         $http({
             method: 'GET',
             url: apiRelPath,
         })
+        .success(def.resolve)
         .success(function (data) {
             for (i = 0; i < data.length; i++) {
                 data[i].subGridOptions = {
@@ -436,7 +439,31 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the key data save promise
     $scope.saveRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        $http.post(apiRelPath, rowEntity).success(deferred.resolve).error(deferred.reject);
+        //var data = JSON.stringify({
+        //    "configvar_id": rowEntity.,
+        //    "applicationNames": rowEntity.,
+        //    "componentId": rowEntity.,
+        //    "componentName": rowEntity.,
+        //    "fileName": rowEntity.,
+        //    "configParentElement": rowEntity.,
+        //    "fullElement": rowEntity.,
+        //    "configElement": rowEntity.,
+        //    "attribute": rowEntity.,
+        //    "key": rowEntity.,
+        //    "valueName": rowEntity.,
+        //    "values": rowEntity.,
+        //});
+        $http({
+            method: 'POST',
+            url: apiRelPath,
+            //data: data,
+            data: rowEntity,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .success(deferred.resolve)
+            //.error(deferred.reject);
         return deferred.promise;
     };
 
@@ -460,7 +487,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Requests the value Save Promise
     $scope.saveSubGridRowFunction = function (rowEntity) {
         var deferred = $q.defer();
-        //$http.post('api:/ConfigValuesApi/', rowEntity).success(deferred.resolve).error(deferred.reject);
         $http({
             method: 'POST',
             url: 'api:/ConfigValuesApi/',
@@ -520,7 +546,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     $scope.refreshGrid = function () {
         $scope.gridOptions.data.length = 0;
-        $scope.loadConfigObjects;
+        $scope.loadConfigObjects();
         $timeout(function () {
             $scope.gridOptions.data = $scope.loadGrid();
             $scope.$apply();
@@ -564,6 +590,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                       })
                     return deferred.promise;
                 }
+                    //else if (result.upload) {
+                    //    swal({
+                    //        title: vm.componentName,
+                    //        text: "Config File Added",
+                    //        type: "success",
+                    //        confirmButtonText: "Cool"
+                    //    })
+                    //}
                 else {
                     $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                 };
@@ -609,7 +643,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         }
                     }).success(deferred.resolve)
                       .success(function () {
-                          $scope.refreshGrid()
+                          $scope.refreshGrid();
                       })
                     return deferred.promise;
                 }
@@ -647,71 +681,86 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 show = 0;
             }
         }
-
-        ModalService.showModal({
-            templateUrl: "/Content/Templates/addVariableModal.html",
-            controller: "AddVar",
-            inputs: {
-                componentName: componentName,
-                parentElement: firstChildParentElement,
-                element: firstChild.configElement,
-                attribute: firstChild.attribute,
-                key: "",
-                valueName: firstChild.valueName,
-                save: false,
-                show: show,
-                isNew: isNew,
-            }
-        })
-            .then(function (modal) {
-                modal.element.modal();
-                modal.close.then(function (result) {
-                    if (result.save) {
-                        var deferred = $q.defer();
-                        var fullElement;
-                        if (result.value_name === "")
-                            fullElement = "<" + result.element + ">"
-                                            + "{value}</"
-                                            + result.element + ">";
-                        else
-                            fullElement = "<" + result.element + " "
-                                            + result.attribute + "=\""
-                                            + result.key + "\" "
-                                            + result.valueName + "=\""
-                                            + "{value}\" />";
-                        var data = JSON.stringify({
-                            "componentId": firstChild.componentId,
-                            "componentName": result.componentName,
-                            "applicationNames": '',
-                            "fileName": firstChild.fileName,
-                            "configParentElement": result.parentElement,
-                            "fullElement": fullElement,
-                            "configElement": result.element,
-                            "attribute": result.attribute,
-                            "key": result.key,
-                            "valueName": result.valueName,
-                            "values": []
-                        });
-                        $http({
-                            method: 'POST',
-                            url: 'api:/ConfigApi/',
-                            data: data,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        }).success(deferred.resolve)
-                          .success(function () {
-                              $scope.refreshGrid()
-                          })
-                        return deferred.promise;
-                    }
-                    else {
-                        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-                    }
-                });
-            }).catch(function (error) {
-                console.log(error);
+        if (typeof componentName !== 'undefined') {
+            var def = $q.defer();
+            $http({
+                method: 'GET',
+                url: 'api:/ConfigApi',
+                params: {
+                    componentName: componentName,
+                }
             })
+            .success(def.resolve)
+            .success(function (data) {
+                ModalService.showModal({
+                    templateUrl: "/Content/Templates/addVariableModal.html",
+                    controller: "AddVar",
+                    inputs: {
+                        componentName: componentName,
+                        parentElement: firstChildParentElement,
+                        element: firstChild.configElement,
+                        attribute: firstChild.attribute,
+                        key: "",
+                        valueName: firstChild.valueName,
+                        show: show,
+                        isNew: isNew,
+                        files: data,
+                    }
+                })
+                    .then(function (modal) {
+                        modal.element.modal();
+                        modal.close.then(function (result) {
+                            if (result.save) {
+                                var deferred = $q.defer();
+                                var fullElement;
+                                if (result.value_name === "")
+                                    fullElement = "<" + result.element + ">"
+                                                    + "{value}</"
+                                                    + result.element + ">";
+                                else if (result.attribute == result.key)
+                                    fullElement = "<" + result.element + " "
+                                                    + result.attribute + "=\""
+                                                    + "{value}\" />";
+                                else
+                                    fullElement = "<" + result.element + " "
+                                                    + result.attribute + "=\""
+                                                    + result.key + "\" "
+                                                    + result.valueName + "=\""
+                                                    + "{value}\" />";
+                                var data = JSON.stringify({
+                                    "componentId": firstChild.componentId,
+                                    "componentName": result.componentName,
+                                    "applicationNames": '',
+                                    "fileName": result.fileName,
+                                    "configParentElement": result.parentElement,
+                                    "fullElement": fullElement,
+                                    "configElement": result.element,
+                                    "attribute": result.attribute,
+                                    "key": result.key,
+                                    "valueName": result.valueName,
+                                    "values": []
+                                });
+                                $http({
+                                    method: 'POST',
+                                    url: 'api:/ConfigApi/',
+                                    data: data,
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                }).success(deferred.resolve)
+                                  .success(function () {
+                                      $scope.refreshGrid()
+                                  })
+                                return deferred.promise;
+                            }
+                            else {
+                                $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                            }
+                        });
+                        return def.promise;
+                    })
+            })
+        }
     };
 
     // Displays modal window containing the currently selected Component's config elements
