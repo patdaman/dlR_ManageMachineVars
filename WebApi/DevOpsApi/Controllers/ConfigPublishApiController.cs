@@ -117,7 +117,7 @@ namespace DevOpsApi.Controllers
                 {
                     componentName = componentName,
                     environment = environment,
-                    appName = applications.ToString(),
+                    appName = applications.ToString().Replace("\"","").Replace("\'","").Replace("[","").Replace("]",""),
                     outputPath = saveFilePath,
                 };
                 try

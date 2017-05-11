@@ -255,7 +255,6 @@ ConfigApp.controller('AddComponent',
                                 componentName: vm.componentName,
                                 environment: vm.componentEnvironment.name,
                                 applications: jsonApps,
-                                //applications: vm.componentApplications,
                             },
                             data: {
                                 file: file

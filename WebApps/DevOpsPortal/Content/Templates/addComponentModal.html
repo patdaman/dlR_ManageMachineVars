@@ -29,19 +29,10 @@
                                           available-label="Available"
                                           display-attr="name">
                             </multi-select>
-                            <!--<multi-select ng-model="componentApplications"
-                                          available="applications"
-                                          selected-label="Current Applications"
-                                          available-label="Available Applications"
-                                          display="a as a.name"
-                                          title="a as a.name"
-                                          config="selectConfig">
-                            </multi-select>-->
-                            <div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
-                            <!--<ul class="detail">-->
+                            <!--<div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
                             <ul>
                                 <li ng-repeat="app in componentApplications">{{app.name}}</li>
-                            </ul>
+                            </ul>-->
                         </div>
                         <div class="form-group">
                             <label>Relative File Path:</label>
@@ -58,7 +49,7 @@
                         </div>
                     </p>
                     <p>
-                        <div ng-disabled="componentEnvironment === 'Select Environment:'" ngf-drop ngf-select ng-model="files" class="drop-box"
+                        <div ng-disabled="componentEnvironment == ''" ngf-drop ngf-select ng-model="files" class="drop-box"
                              ngf-drag-over-class="'dragover'" ngf-multiple="false" ngf-allow-dir="false"
                              accept=".config,.xml"
                              ngf-pattern="'.config,.xml'">Drop .config or .xml files here or click to upload</div>

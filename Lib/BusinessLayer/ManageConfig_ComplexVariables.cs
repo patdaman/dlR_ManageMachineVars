@@ -1038,7 +1038,8 @@ namespace BusinessLayer
             else
             {
                 if (string.IsNullOrWhiteSpace(appValue.fileName))
-                    efConfigFile = efConfig.ConfigFile;
+                    //efConfigFile = efConfig.ConfigFile;
+                    efConfigFile = null;
                 efConfigValueList = efConfig.ConfigVariableValues.ToList();
                 if (!(efConfig.element == appValue.configElement &&
                     efConfig.key == appValue.key &&
@@ -1056,7 +1057,7 @@ namespace BusinessLayer
                     // ToDo: Create XML element based on AppVar
                     // efConfig.full_element = getFullElement(appValue),
 
-                    efConfig.ConfigFile = efConfigFile = new EFDataModel.DevOps.ConfigFile();
+                    efConfig.ConfigFile = efConfigFile;
                     //efConfig.create_date = efConfig.create_date;
                     efConfig.modify_date = DateTime.Now;
                 }
