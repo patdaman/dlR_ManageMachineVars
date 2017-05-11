@@ -7,6 +7,7 @@
 
 
 
+
 -- =============================================
 -- Author:		Patrick de los Reyes
 -- Create date: 2017-03-01
@@ -23,6 +24,7 @@ AS
 		, ConFile.[file_name]
 		, ConVal.environment_type
 		, ConfigVar.parent_element
+		, ConfigVar.full_element
 		, ConfigVar.element
 		, ConfigVar.attribute
 		, ConfigVar.[key]

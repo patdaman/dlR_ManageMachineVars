@@ -17,10 +17,10 @@ namespace EFDataModel.DevOps
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Component()
         {
-            this.ConfigFiles = new HashSet<ConfigFile>();
             this.MachineComponentPathMaps = new HashSet<MachineComponentPathMap>();
             this.Applications = new HashSet<Application>();
             this.ConfigVariables = new HashSet<ConfigVariable>();
+            this.ConfigFiles = new HashSet<ConfigFile>();
         }
     
         public int id { get; set; }
@@ -31,12 +31,12 @@ namespace EFDataModel.DevOps
         public bool active { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ConfigFile> ConfigFiles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MachineComponentPathMap> MachineComponentPathMaps { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Application> Applications { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariable> ConfigVariables { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConfigFile> ConfigFiles { get; set; }
     }
 }

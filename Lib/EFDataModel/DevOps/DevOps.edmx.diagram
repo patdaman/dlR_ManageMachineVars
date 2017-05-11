@@ -7,7 +7,6 @@
       <Diagram DiagramId="ab33ef66ff11476698a0a3dee5bd5134" Name="Diagram1">
         <EntityTypeShape EntityType="DevOpsModel.Application" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.Component" Width="1.5" PointX="3" PointY="4.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="DevOpsModel.ConfigFile" Width="1.5" PointX="5.25" PointY="9" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.ConfigFileAttribute" Width="1.5" PointX="9.75" PointY="9.125" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.ConfigFileElement" Width="1.5" PointX="7.5" PointY="9" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.ConfigVariableValue" Width="2.25" PointX="11.25" PointY="0.875" IsExpanded="true" />
@@ -23,9 +22,7 @@
         <EntityTypeShape EntityType="DevOpsModel.ExecutionHistory" Width="1.5" PointX="14" PointY="9.25" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.Script" Width="1.5" PointX="11.75" PointY="9.25" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.vi_ConfigVariables" Width="1.5" PointX="5.75" PointY="13" IsExpanded="true" />
-        <AssociationConnector Association="DevOpsModel.FK_ConfigFile_Components" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_MachineComponentPath_Components" ManuallyRouted="false" />
-        <AssociationConnector Association="DevOpsModel.FK_ConfigFileElements_ConfigFile" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_ConfigFileAttributes_ConfigFileElements" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_ConfigVariableValue_Enum_EnvironmentType" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.FK_Machines_Enum_EnvironmentType" ManuallyRouted="false" />
@@ -37,11 +34,13 @@
         <AssociationConnector Association="DevOpsModel.ApplicationEnvironmentVariables" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.MachinesServerGroupsMap" ManuallyRouted="false" />
         <AssociationConnector Association="DevOpsModel.MachineVariablesMap" ManuallyRouted="false" />
-        <AssociationConnector Association="DevOpsModel.FK_ConfigFile_Enum_EnvironmentType" />
         <EntityTypeShape EntityType="DevOpsModel.ConfigVariable" Width="1.5" PointX="7.5" PointY="17.75" />
-        <AssociationConnector Association="DevOpsModel.FK_ConfigVariables_ConfigFile" />
         <AssociationConnector Association="DevOpsModel.FK_ConfigVariableValue_ConfigVariables" />
         <AssociationConnector Association="DevOpsModel.ComponentConfigVariablesMap" />
+        <EntityTypeShape EntityType="DevOpsModel.ConfigFile" Width="1.5" PointX="5.25" PointY="8.875" />
+        <AssociationConnector Association="DevOpsModel.FK_ConfigFile_Components" />
+        <AssociationConnector Association="DevOpsModel.FK_ConfigFileElements_ConfigFile" />
+        <AssociationConnector Association="DevOpsModel.FK_ConfigVariables_ConfigFile" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

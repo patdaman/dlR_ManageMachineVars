@@ -29,5 +29,6 @@ namespace EFDataModel.DevOps
         public Nullable<System.DateTime> published_date { get; set; }
         public Nullable<bool> published { get; set; }
         public string file_name { get; set; }
+        public string full_element { get; set; }
     }
 }

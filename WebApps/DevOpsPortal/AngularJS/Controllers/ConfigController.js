@@ -722,7 +722,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         var componentGroup = row.treeNode.parentRow.entity['$$uiGrid-0009'];
         var componentGroupName = componentGroup.groupVal;
         var componentFileName = row.treeNode.aggregations[1].groupVal;
-        if (typeof componentFileName != 'undefined')
+        if (typeof componentFileName !== 'undefined')
             var def = $q.defer();
         $http({
             method: 'GET',

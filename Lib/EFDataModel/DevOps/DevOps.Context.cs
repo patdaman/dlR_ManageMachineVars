@@ -27,7 +27,6 @@ namespace EFDataModel.DevOps
     
         public virtual DbSet<Application> Applications { get; set; }
         public virtual DbSet<Component> Components { get; set; }
-        public virtual DbSet<ConfigFile> ConfigFiles { get; set; }
         public virtual DbSet<ConfigFileAttribute> ConfigFileAttributes { get; set; }
         public virtual DbSet<ConfigFileElement> ConfigFileElements { get; set; }
         public virtual DbSet<ConfigVariableValue> ConfigVariableValues { get; set; }
@@ -44,5 +43,6 @@ namespace EFDataModel.DevOps
         public virtual DbSet<Script> Scripts { get; set; }
         public virtual DbSet<vi_ConfigVariables> vi_ConfigVariables { get; set; }
         public virtual DbSet<ConfigVariable> ConfigVariables { get; set; }
+        public virtual DbSet<ConfigFile> ConfigFiles { get; set; }
     }
 }

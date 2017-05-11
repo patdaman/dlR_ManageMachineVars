@@ -101,6 +101,7 @@
     <Build Include="Tables\ConfigFileAttributes.sql" />
     <Build Include="Tables\ConfigFile.sql" />
     <Build Include="Tables\ComponentConfigVariablesMap.sql" />
+    <Build Include="Stored Procedures\pdlr_DeleteAllConfig.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

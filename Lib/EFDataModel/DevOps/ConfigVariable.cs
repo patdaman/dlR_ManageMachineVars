@@ -33,10 +33,10 @@ namespace EFDataModel.DevOps
         public System.DateTime modify_date { get; set; }
         public bool active { get; set; }
     
-        public virtual ConfigFile ConfigFile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Component> Components { get; set; }
+        public virtual ConfigFile ConfigFile { get; set; }
     }
 }

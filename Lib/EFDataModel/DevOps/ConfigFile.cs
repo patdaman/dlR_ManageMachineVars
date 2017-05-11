@@ -25,15 +25,13 @@ namespace EFDataModel.DevOps
         public int component_id { get; set; }
         public string file_name { get; set; }
         public string xml_declaration { get; set; }
+        public string root_element { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
-        public string root_element { get; set; }
-        public string environment { get; set; }
     
         public virtual Component Component { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigFileElement> ConfigFileElements { get; set; }
-        public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConfigVariable> ConfigVariables { get; set; }
     }
