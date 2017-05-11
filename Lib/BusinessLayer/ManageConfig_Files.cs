@@ -285,21 +285,19 @@ namespace BusinessLayer
             if (!string.IsNullOrWhiteSpace(environment))
                 this.environment = environment;
 
-            if (string.IsNullOrWhiteSpace(this.environment))
+            //if (string.IsNullOrWhiteSpace(this.environment))
                 files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
                                      .ConfigFiles.ToList();
-            //Select(y => y.file_name).ToList();
-            else
-                files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
-                                    .ConfigFiles.Where(y => y.environment == this.environment).ToList();
-            //.Select(z => z.file_name).ToList();
+            //else
+            //    files = DevOpsContext.Components.Where(x => x.component_name == this.componentName).FirstOrDefault()
+            //                        .ConfigFiles.Where(y => y.environment == this.environment).ToList();
             foreach (var file in files)
             {
                 vmFiles.Add(new ViewModel.ConfigFiles()
                 {
                     fileId = file.id,
                     fileName = file.file_name,
-                    environment = file.environment,
+                    //environment = file.environment,
                     path = file.Component.relative_path,
                     createDate = file.create_date,
                     modifyDate = file.modify_date,

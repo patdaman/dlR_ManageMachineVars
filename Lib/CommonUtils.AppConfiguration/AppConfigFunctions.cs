@@ -106,7 +106,7 @@ namespace CommonUtils.AppConfiguration
                         {
                             //parentElement = parentName,
                             parentElement = parentFullElement,
-                            fullElement = selfFullElement,
+                            fullElement = selfFullElement.Replace(element.FirstAttribute.Value.ToString(), "{value}"),
                             element = element.Name.ToString(),
                             attribute = element.FirstAttribute.Name.ToString(),
                             key = element.FirstAttribute.Name.ToString(),
@@ -144,7 +144,7 @@ namespace CommonUtils.AppConfiguration
                         {
                             //parentElement = parentName,
                             parentElement = parentFullElement,
-                            fullElement = selfFullElement,
+                            fullElement = selfFullElement.Replace(values, "{value}"),
                             element = element.Name.ToString(),
                             attribute = element.FirstAttribute.Name.ToString(),
                             key = keys,
@@ -162,7 +162,7 @@ namespace CommonUtils.AppConfiguration
                     {
                         //parentElement = parentName,
                         parentElement = parentFullElement,
-                        fullElement = selfFullElement,
+                        fullElement = selfFullElement.Replace(element.Value.ToString(), "{value}"),
                         element = element.Name.ToString(),
                         //attribute = element.FirstNode.ToString(),
                         attribute = string.Empty,
@@ -283,7 +283,7 @@ namespace CommonUtils.AppConfiguration
                             {
                                 //parentElement = x.Parent.Name.ToString(),
                                 parentElement = x.Parent.ToString(),
-                                fullElement = x.ToString(),
+                                fullElement = x.ToString().Replace(x.Value.ToString(), "{value}"),
                                 element = x.Name.ToString(),
                                 attribute = "",
                                 key = x.Name.ToString(),
@@ -295,7 +295,7 @@ namespace CommonUtils.AppConfiguration
                             {
                                 //parentElement = x.Parent.Name.ToString(),
                                 parentElement = x.Parent.ToString(),
-                                fullElement = x.ToString(),
+                                fullElement = x.ToString().Replace(x.FirstAttribute.NextAttribute.Value.ToString(), "{value}"),
                                 element = x.Name.ToString(),
                                 attribute = x.FirstAttribute.Name.ToString(),
                                 key = x.FirstAttribute.Value.ToString(),
@@ -319,7 +319,7 @@ namespace CommonUtils.AppConfiguration
                             {
                                 //parentElement = x.Parent.Name.ToString(),
                                 parentElement = parentElement,
-                                fullElement = x.ToString(),
+                                fullElement = x.ToString().Replace(x.FirstAttribute.NextAttribute.Value.ToString(), "{value}"),
                                 element = x.Name.ToString(),
                                 attribute = "",
                                 key = "",
@@ -416,7 +416,7 @@ namespace CommonUtils.AppConfiguration
             {
                 parent_element = "appSettings";
             }
-            string full_element = "<add key=\"" + appKey + "\" value=\"" + value + "\">";
+            string full_element = "<add key=\"" + appKey + "\" value=\"{value}\">";
             return AddKeyValue("add", appKey, "value", value, "key", full_element, parent_element);
         }
 

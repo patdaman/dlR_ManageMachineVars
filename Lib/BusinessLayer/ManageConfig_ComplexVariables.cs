@@ -994,6 +994,7 @@ namespace BusinessLayer
                     attribute = appValue.attribute ?? "",
                     parent_element = appValue.configParentElement ?? "",
                     value_name = appValue.valueName ?? "",
+                    full_element = appValue.fullElement ?? "",
                     ConfigFile = efConfigFile ?? new EFDataModel.DevOps.ConfigFile(),
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
@@ -1043,6 +1044,7 @@ namespace BusinessLayer
                     efConfig.key = appValue.key ?? appValue.configElement;
                     efConfig.attribute = appValue.attribute ?? "";
                     efConfig.parent_element = appValue.configParentElement ?? "";
+                    efConfig.full_element = appValue.fullElement ?? "";
                     efConfig.value_name = appValue.valueName ?? "";
 
                     // ToDo: Create XML element based on AppVar

@@ -30,15 +30,15 @@ var ConfigApp = angular.module('ConfigApp',
 
 var MachineApp = angular.module('MachineApp',
         [
-            'ui.grid', 
+            'ui.grid',
             'ui.grid.edit',
             'ui.grid.pagination',
             'ui.grid.expandable',
             'ui.grid.cellNav',
             'ui.grid.grouping',
-            'ui.grid.selection', 
+            'ui.grid.selection',
             'ui.grid.rowEdit',
-            'ui.grid.pinning', 
+            'ui.grid.pinning',
             'ui.grid.exporter'
         ]);
 
@@ -87,6 +87,7 @@ app.run(['$rootScope', function ($rootScope) {
 
 // http interceptor to add hostname [] are for minification safety
 app.factory('httpAPIPathAdder', [function () {
+    //var def = $q.defer();
     return {
         request: function (config) {
             if (config.url.search("api:") === 0)
@@ -94,7 +95,7 @@ app.factory('httpAPIPathAdder', [function () {
             return config;
         },
         responseError: function (rejection) {
-            return $q.reject(rejection);
+            return rejection;
         }
     }
 }]);

@@ -293,7 +293,7 @@ namespace BusinessLayer
                     efConfigFile = new EFDataModel.DevOps.ConfigFile()
                     {
                         file_name = file_name,
-                        environment = this.environment,
+                        //environment = this.environment,
                         xml_declaration = xml_dec,
                         root_element = configFile.Root.Name.ToString(),
                         create_date = DateTime.Now,
@@ -318,7 +318,10 @@ namespace BusinessLayer
             {
                 this.componentId = efComp.id;
                 this.componentName = efComp.component_name;
-                efConfigFile = efComp.ConfigFiles.Where(x => x.file_name == file_name && x.component_id == this.componentId && x.environment == this.environment).FirstOrDefault();
+                efConfigFile = efComp.ConfigFiles.Where(x => x.file_name == file_name 
+                                                            && x.component_id == this.componentId 
+                                                            //&& x.environment == this.environment
+                                                        ).FirstOrDefault();
             }
 
             if (efConfigFile == null)
@@ -331,7 +334,7 @@ namespace BusinessLayer
                 efConfigFile = new EFDataModel.DevOps.ConfigFile()
                 {
                     file_name = file_name,
-                    environment = this.environment,
+                    //environment = this.environment,
                     xml_declaration = xml_dec,
                     root_element = configFile.Root.Name.ToString(),
                     create_date = DateTime.Now,
@@ -394,12 +397,15 @@ namespace BusinessLayer
                 EFDataModel.DevOps.ConfigVariable configVar;
                 EFDataModel.DevOps.ConfigVariableValue efValue;
                 configVar = (from n in DevOpsContext.ConfigVariables
-                             //where n.element == x.element
-                             //where n.attribute == x.attribute
-                             //where n.key == x.key
+                             where n.element == x.element
+                             where n.attribute == x.attribute
+                             where n.key == x.key
                              where n.parent_element == x.parentElement
-                             where n.full_element == x.fullElement
-                             //where n.value_name == x.valueName
+                             //where n.full_element == x.fullElement
+                             where n.value_name == x.valueName
+                             //
+                             // Is this required??
+                             // 
                              where n.configfile_id == efConfigFile.id || n.configfile_id == 0
                              select n).FirstOrDefault();
                 if (configVar == null)
