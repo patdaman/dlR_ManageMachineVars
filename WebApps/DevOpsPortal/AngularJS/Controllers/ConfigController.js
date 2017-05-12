@@ -140,7 +140,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         enableMultiselect: false,
 
         expandableRowTemplate: '/Content/Templates/expandableRowTemplate.html',
-        expandableRowHeight: 64,
+        expandableRowHeight: 157,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
         },
@@ -152,6 +152,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         return [{
             field: 'applicationNames',
             enableCellEdit: false,
+            width: 225,
+            visible: false,
             //filter: {
             //    condition: uiGridConstants.filter.CONTAINS,
             //    term: $scope.application
@@ -170,7 +172,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         {
             field: 'componentName',
             enableCellEdit: false,
-            width: 250,
+            width: 200,
             grouping: { groupPriority: 0 },
             sort: { priority: 0, direction: 'asc' },
             groupable: true,
@@ -203,7 +205,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         {
             field: 'key',
             cellEditableCondition: $scope.canEdit,
-            width: "40%",
+            width: 200,
             enableFiltering: true,
             cellToolTip: function (row, col) {
                 if (grid.appScope.isBlank(row.entity.attribute)) {
@@ -220,7 +222,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             //field: 'values[0].value',
             displayName: 'value',
             visible: true,
-            width: "35%",
+            //width: "35%",
             cellEditableCondition: $scope.canEdit,
             enableFiltering: true,
         },
@@ -284,34 +286,37 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                             field: "environment",
                             visible: true,
                             enableFiltering: false,
-                            filter: {
-                                noTerm: true,
-                                condition: function (searchTerm, cellValue) {
-                                    return $scope.filterEnvironment() === cellValue;
-                                }
-                            },
-                            filterCellFiltered: true,
+                            width: 201,
+                            //filter: {
+                            //    noTerm: true,
+                            //    condition: function (searchTerm, cellValue) {
+                            //        return $scope.filterEnvironment() === cellValue;
+                            //    }
+                            //},
+                            //filterCellFiltered: true,
                             enableCellEdit: false
                         },
                         {
                             displayName: "Value",
                             field: "value",
                             visible: true,
-                            cellEditableCondition: $scope.subCanEdit,
-                            enableFiltering: false, width: "70%"
+                            //cellEditableCondition: $scope.subCanEdit,
+                            enableCellEdit: false,
+                            enableFiltering: false,
+                            //width: "70%"
                         },
                         { displayName: "Create Date", field: "create_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Modify Date", field: "modify_date", visible: true, width: 149, enableCellEdit: false, type: 'date', enableFiltering: false, cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Last Publish Date", field: "publish_date", visible: false, enableCellEdit: false, type: 'date', cellFilter: 'date:"MM-dd-yyyy"' },
                         { displayName: "Is Published", field: "published", visible: false, enableCellEdit: false, type: 'boolean' },
-                        {
-                            name: "Actions",
-                            cellTemplate: '/Content/Templates/subGridActionsTemplate.html',
-                            enableCellEdit: false,
-                            width: 149,
-                            visible: true,
-                            enableFiltering: false
-                        },
+                        //{
+                        //    name: "Actions",
+                        //    cellTemplate: '/Content/Templates/subGridActionsTemplate.html',
+                        //    enableCellEdit: false,
+                        //    width: 149,
+                        //    visible: true,
+                        //    enableFiltering: false
+                        //},
                     ],
                     data: data[i].values,
                     onRegisterApi: function (api) {
@@ -342,16 +347,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     // Filters the subgrid based on the Selected Environment
     //  note - does not refresh currently visible sub grid rows that are not the last one expanded / selected
-    $scope.filterSubGrid = function (value) {
-        console.log(value);
-        if (typeof $scope.gridApi.grid.appScope.subGridApi !== 'undefined') {
-            $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
-            $scope.subGridApi.core.refresh();
-        }
-        //angular.forEach($scope.gridOptions.data, function (data) {
-        //    data.values.subGridOptions;
-        //});
-    };
+    //$scope.filterSubGrid = function (value) {
+    //    console.log(value);
+    //    if (typeof $scope.gridApi.grid.appScope.subGridApi !== 'undefined') {
+    //        $scope.gridApi.grid.appScope.subGridApi.grid.columns[2].filters[0].term = value;
+    //        $scope.subGridApi.core.refresh();
+    //    }
+    //};
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
     $scope.editCell = function (row, column) {
@@ -564,7 +566,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             $scope.filterEnvironment();
             $scope.filterEnvironmentIndex();
         };
-        $scope.filterSubGrid($scope.environment);
+        //$scope.filterSubGrid($scope.environment);
         $scope.loadGridColumns();
     };
 
