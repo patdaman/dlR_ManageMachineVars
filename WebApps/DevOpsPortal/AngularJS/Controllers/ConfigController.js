@@ -77,9 +77,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     /// Grid Filters
     $scope.environment = 'development';
-    $scope.environmentIndex = 0;
     $scope.filterEnvironment = function () {
         return $scope.environment;
+    };
+    $scope.environmentIndex = 0;
+    $scope.filterEnvironmentIndex = function () {
+        return $scope.environmentIndex;
     };
     $scope.filterEnvironmentIndex = function () {
         return $scope.environmentIndex;
@@ -143,8 +146,10 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         },
     };
 
-    $scope.gridOptions.columnDefs = [
-        {
+    //$scope.gridOptions.columnDefs = [
+    $scope.columnDefinition = function (valueOrdinal) {
+        var valueColumn = "values[" + valueOrdinal + "].value";
+        return [{
             field: 'applicationNames',
             enableCellEdit: false,
             //filter: {
@@ -210,14 +215,15 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             }
         },
         { field: 'valueName', visible: false, enableCellEdit: 'false' },
-        //{
-        //    field: 'values[0].value',
-        //    displayName: 'value',
-        //    visible: true,
-        //    width: "35%",
-        //    cellEditableCondition: $scope.canEdit,
-        //    enableFiltering: true,
-        //},
+        {
+            field: valueColumn,
+            //field: 'values[0].value',
+            displayName: 'value',
+            visible: true,
+            width: "35%",
+            cellEditableCondition: $scope.canEdit,
+            enableFiltering: true,
+        },
         {
             name: "Actions",
             width: 150,
@@ -226,7 +232,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             visible: true,
             enableFiltering: false
         }
-    ];
+        ];
+    };
+
+    $scope.loadGridColumns = function () {
+        $scope.gridOptions.columnDefs = new Array();
+        $scope.gridOptions.columnDefs = $scope.columnDefinition($scope.environmentIndex);
+    };
+    $scope.loadGridColumns();
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
@@ -536,12 +549,25 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     // Function call from Index page dropdown OnChange
     $scope.updateEnvironment = function () {
-        if (!$scope.selectedEnvironment)
+        if (!$scope.selectedEnvironment) {
             $scope.environment = 'development';
-        else
+            $scope.environmentIndex = 0;
+            $scope.filterEnvironment();
+            $scope.filterEnvironmentIndex();
+        }
+        else {
             $scope.environment = $scope.selectedEnvironment.value;
+            angular.forEach($scope.environments, function (values, index) {
+                if (values.name === $scope.environment)
+                    $scope.environmentIndex = index;
+            });
+            $scope.filterEnvironment();
+            $scope.filterEnvironmentIndex();
+        };
         $scope.filterSubGrid($scope.environment);
+        $scope.loadGridColumns();
     };
+
     // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
         if (!$scope.selectedComponent)
