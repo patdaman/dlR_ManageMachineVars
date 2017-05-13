@@ -10,24 +10,23 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <div ng-if="selectedFile.fileName==''">
+                    <div ng-if="!selectedFile.fileName">
                         <b>Select a File: </b>
                     </div>
                     <select ng-model="selectedFile" ng-options="f.fileName for f in files" ng-change="updateFile(selectedFile)">
                         <option value="" style="color:red">File</option>
                     </select>
-                    <div ng-if="selectedEnvironment.name==''">
+                    <div ng-if="!selectedEnvironment">
                         <b>Select an Environment: </b>
                     </div>
                     <!--<select ng-model="selectedEnvironment" ng-options="e for e in files.environment" ng-change="updateEnvironment(selectedEnvironment)">-->
                     <select ng-model="selectedEnvironment" ng-options="e.name for e in environments" ng-change="updateEnvironment(selectedEnvironment)">
-                        <option value="" style="color:red">Environment</option>
                     </select>
                     <button ng-if="!selectedFile.fileName==''&&!selectedEnvironment.name==''" type="button" class="btn btn-dark btn-primary" ng-click="getFile()">Get File</button>
                     <!--<button ng-disabled="!selectedFile.fileName=='' && !selectedEnvironment.name==''" type="button" class="btn btn-dark btn-primary" ng-click="getFile()">Get File</button>-->
                     <!--<button type="button" class="btn btn-dark btn-primary" ng-click="getFile()">Get File</button>-->
                 </div>
-                <div ng-if="configXml!=''">
+                <div ng-if="!configXml==''">
                     <p>
                         {{filePath}}
                     </p>
@@ -35,17 +34,17 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button ng-if="!configXml==''" ngclipboard data-clipboard-target="#config" class="btn btn-default" style="float:left;">Copy To Clipboard</button>
-                <!--<a href="#" type="button" class="btn btn-dark btn-primary" ng-click="download()">Download</a>-->
-                <button ng-if="!configXml==''" type="button" class="btn btn-dark btn-primary" ng-click="download()">Download</button>
-                <!--<button type="button" ng-click="publish()" class="btn btn-warning">Publish</button>-->
-                <button type="button" ng-click="close()" class="btn">Close</button>
+                <button ng-if="!configXml==''" ngclipboard data-clipboard-target="#config" class="btn btn-md btn-info" style="float:left;">Copy To Clipboard</button>
+                <!--<a href="#" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</a>-->
+                <button ng-if="!configXml==''" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</button>
+                <!--<button type="button" ng-click="publish()" class="btn btn-danger">Publish</button>-->
+                <button type="button" ng-click="close()" class="btn btn-md btn-danger">Close</button>
             </div>
         </div>
     </div>
     <script>
         $('.modal-content').resizable({
-            alsoResize: ".modal-header, .modal-body, .modal-footer"
+            alsoResize: ".modal-dialog"
         });
         $('.modal-dialog').draggable();
     </script>

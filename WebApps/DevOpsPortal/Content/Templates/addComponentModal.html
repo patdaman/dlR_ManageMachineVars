@@ -7,7 +7,6 @@
             </div>
             <div class="modal-body">
                 <form name="componentForm">
-                    <p>
                         <div class="form-group">
                             <select ng-model="componentComponents" ng-options="c.name for c in components" ng-change="selectComponent(componentComponents)">
                                 <option value="" style="color:red">Select Component:</option>
@@ -19,8 +18,6 @@
                             <!--<input id="component" class="form-control" type="text" ng-model="componentName" required>-->
                             <input id="component" class="form-control" type="text" ng-model="componentName">
                         </div>
-                    </p>
-                    <p>
                         <div class="form-group">
                             <label><b>Application(s):</b></label>
                             <multi-select ng-model="componentApplications"
@@ -29,47 +26,28 @@
                                           available-label="Available"
                                           display-attr="name">
                             </multi-select>
-                            <!--<div ng-if="componentName !==''">{{componentName}}'s Applications: </div>
-                            <ul>
-                                <li ng-repeat="app in componentApplications">{{app.name}}</li>
-                            </ul>-->
                         </div>
                         <div class="form-group">
                             <label>Relative File Path:</label>
                             <!--<input id="path" class="form-control" type="text" ng-model="filePath" required>-->
                             <input id="path" class="form-control" type="text" ng-model="filePath">
                         </div>
-                    </p>
                     <br />
-                    <p>
-                        <div class="form-group">
+                         <div class="form-group">
                             <select name="selectEnvironment" ng-model="componentEnvironment" ng-options="c.name for c in environments">
-                                <option value="" style="color:red">Select Environment:</option>
                             </select>
                         </div>
-                    </p>
-                    <p>
-                        <div ng-disabled="componentEnvironment == ''" ngf-drop ngf-select ng-model="files" class="drop-box"
+                        <div ng-disabled="componentEnvironment == '' || componentName == ''" ngf-drop ngf-select ng-model="files" class="drop-box"
                              ngf-drag-over-class="'dragover'" ngf-multiple="false" ngf-allow-dir="false"
                              accept=".config,.xml"
                              ngf-pattern="'.config,.xml'">Drop .config or .xml files here or click to upload</div>
                         <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
-                        <!--<div ng-if="files && files !== ''">-->
-                        <div ng-if="file">
-                            Files:
-                            <ul>
-                                <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}</li>
-                            </ul>
-                        </div>
-                        <!--Upload Log:
-                        <pre>{{log}}</pre>-->
-                    </p>
                 </form>
             </div>
             <div class="modal-footer">
                 <!--<button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Import</button>-->
-                <button type="button" ng-click="save()" class="btn btn-primary">Save</button>
-                <button type="button" ng-click="cancel()" class="btn">Cancel</button>
+                <button type="button" ng-click="save()" class="btn btn-md btn-primary">Save</button>
+                <button type="button" ng-click="cancel()" class="btn btn-md btn-danger">Cancel</button>
             </div>
         </div>
     </div>

@@ -616,6 +616,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 components: $scope.components,
                 applications: $scope.applications,
                 environments: $scope.environments,
+                environment: $scope.environment,
             }
         })
         .then(function (modal) {
@@ -708,21 +709,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // Displays modal to add new config variable
     $scope.addVar = function (row) {
         var componentRow = '$$' + row.uid;
+        var parentRows = [];
         var rowEntity = row.entity;
         var treeLevel = row.treeLevel;
-        var componentGroup;
-        if (treeLevel === 1) {
-            componentGroup = row.treeNode.parentRow.entity['$$uiGrid-0009'];
-            componentFileName = row.treeNode.aggregations[treeLevel].groupVal;
-        }
-        else {
-            componentGroup = row.entity['$$uiGrid-0009'];
-        }
-        var componentName = componentGroup.groupVal;
+        var componentName;
+        var componentFileName;
         var firstChild = row.treeNode.children[0].row.entity;
         var firstChildParentElement = firstChild.configParentElement;
         var show;
         var isNew;
+
         if (typeof firstChild === "undefined") {
             isNew = 1;
             show = 0;
@@ -737,7 +733,17 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 show = 0;
             }
         }
-        if (typeof componentName !== 'undefined') {
+        angular.forEach(row.treeNode.children, function (child) {
+            if (parentRows.indexOf(child.row.entity.configParentElement) == -1)
+                parentRows.push(child.row.entity.configParentElement);
+        });
+        angular.forEach(row.treeNode.aggregations, function (aggregation) {
+            if (aggregation.col.field === 'componentName')
+                componentName = aggregation.groupVal;
+            if (aggregation.col.field === 'fileName')
+                componentFileName === aggregation.groupVal;
+        });
+        if (componentName) {
             var def = $q.defer();
             $http({
                 method: 'GET',
@@ -753,6 +759,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                     controller: "AddVar",
                     inputs: {
                         componentName: componentName,
+                        parentRows: parentRows,
                         parentElement: firstChildParentElement,
                         element: firstChild.configElement,
                         attribute: firstChild.attribute,
@@ -824,25 +831,20 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     // - In our case the Component Name row 
     $scope.showFile = function (row) {
         var treeLevel = row.treeLevel;
-        var componentGroup;
+        var componentGroupName;
         var componentFileName;
-        if (treeLevel === 1) {
-            componentGroup = row.treeNode.parentRow.entity['$$uiGrid-0009'];
-            componentFileName = row.treeNode.aggregations[treeLevel].groupVal;
-        }
-        else {
-            componentGroup = row.entity['$$uiGrid-0009'];
-        }
-        var componentGroupName = componentGroup.groupVal;
-        //if (typeof componentFileName !== 'undefined')
+        angular.forEach(row.treeNode.aggregations, function (aggregation) {
+            if (aggregation.col.field === 'componentName')
+                componentGroupName = aggregation.groupVal;
+            if (aggregation.col.field === 'fileName')
+                componentFileName === aggregation.groupVal;
+        });
         var def = $q.defer();
         $http({
             method: 'GET',
             url: 'api:/ConfigApi',
             params: {
                 componentName: componentGroupName,
-                //environment: $scope.environment,
-                //fileName: componentFileName,
             }
         })
         .success(def.resolve)
@@ -852,12 +854,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 controller: "ConfigViewer",
                 inputs: {
                     component: componentGroupName,
-                    //filePath: data.path,
                     files: data,
                     environments: $scope.environments,
                     environment: $scope.environment,
-                    //fileName: data.fileName,
-                    //configXml: data.text,
                 }
             })
                 .then(function (modal) {

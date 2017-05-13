@@ -8,6 +8,61 @@
     padding-left: 15px;
     padding-right: 15px;
 }
+body {
+    font-family: "Segoe UI", Helvetica, Verdana;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #525252;
+    background-color: #fff;
+}
+/* Bootstrap overrides */
+.navbar {
+    background: #F0F0F0 !important;
+    box-shadow: 0px 3px 5px #DDD !important;
+    border-width: 0 0 0px !important;
+    border: 0px solid transparent !important;
+}
+.navbar .container {
+    margin-left: 0px !important;
+}
+
+.navbar-brand {
+    background: url(../Assets/MCC_Logo_158x18.png) no-repeat top left !important;
+     display: block !important;
+     width: 250px !important;
+     height: 18px !important;
+     margin-left: 0px !important;
+     margin-top: 15px !important;
+     color: #7D7D7D !important;
+     text-indent: -9999px !important; /* hides the link text */
+}
+
+.navbar-toggle {
+    position: relative;
+    float: left !important;
+    padding: 9px 10px;
+    margin-top: 15px !important;
+    margin-left: 15px !important;
+    margin-bottom: 8px !important;
+    background-color: transparent !important;
+    background-image: url(../Assets/Home_20x20.png) !important;
+    border: 0px solid transparent !important;
+    border-radius: 4px;
+}
+
+.navbar-logout {
+    position: relative;
+    font-family: "Segoe UI", Helvetica, Verdana;
+    font-weight: bold;
+    color: #525252;
+    float: right !important;
+    padding: 9px 10px;
+    margin-top: 5px !important;
+    margin-right: 15px !important;
+    background-color: transparent !important;
+    border: 0px solid transparent !important;
+    border-radius: 4px;
+}
 
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
@@ -15,6 +70,131 @@
 .dl-horizontal dt {
     white-space: normal;
 }
+select, select[size="0"], select[size="1"] {
+    border-radius: 5px;
+    border-color: #f57c21;
+    font-family: "Segoe UI", Helvetica, Verdana;
+    /*font-size: 12px;*/
+    font-weight: bold;
+    /*padding: 0px 6px!important;*/
+    border-width: thin;
+}
+select:not(:-internal-list-box) {
+    border-radius: 5px;
+    border-color: #f57c21;
+}
+select::-ms-expand { 
+    display: none; 
+}
+
+select {
+    display: inline-block;
+    padding: 0px 3px!important;
+    border-color: #f57c21;
+    background-color: #fbc69b;
+    /*-webkit-appearance: none;*/
+    background: url(assets/selectArrow.png) no-repeat right #fbc69b;
+}
+select.inpSelect {
+    -webkit-appearance: none;
+    background: url(assets/selectArrow.png) no-repeat right #fbc69b;
+}
+.btn {
+    font-family: "Segoe UI", Helvetica, Verdana;
+    font-weight: bold;
+    text-align: center;
+    padding: 1px 6px!important;
+    margin-bottom: 4px;
+    border-width: thin;
+    border-radius: 5px;
+}
+.btn:hover {
+    padding: 0px 7px!important;
+}
+.btn.btn-info {
+    background: #fbc69b;
+    color: #525252;
+    border-color: #f57c21;
+    border-width: thin;
+}
+.btn.btn-xs {
+    padding: 0px 6px!important;
+}
+.btn.btn-info:hover, .btn:active {
+    color: #ffffff;
+    background: #f57c21;
+    border-color: #f47c20;
+}
+.btn.btn-primary {
+    background: #75cff1;
+    color: #525252;
+}
+.btn.btn-primary:hover {
+    background: #2d8aad;
+    color: #ffffff;
+}
+.btn.btn-danger {
+    background: #f88181;
+    color: #ffffff;
+}
+.btn.btn-danger:hover {
+    background: #f88181;
+    color: #525252;
+}
+.navbar-inverse .navbar-nav>li>a {
+    color: #525252;
+    font-family: "Segoe UI", Helvetica, Verdana;
+}
+.navbar-inverse .navbar-nav>li>a:hover {
+    color: #525252;
+    font-family: "Segoe UI", Helvetica, Verdana;
+    font-weight: bold;
+}
+
+/* Force bootstrap to always be in 'mobile' collapsed mode with List menu */
+@media (max-width: 2991px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        background: #F0F0F0 !important;
+        box-shadow: 0px 3px 5px #DDD !important;
+        border-width: 0 0 0px !important;
+        border: 0px solid transparent !important;
+        max-width: none;
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        color: #525252;
+    }
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+}
+/* End Bootstrap overrides */
 
 /* Set width on the form input elements since they're 100% wide by default */
 input,
@@ -106,18 +286,10 @@ div.flipReverse {
     max-width: 100%;
 }
 
-/*.CodeMirror {
-    max-width: 1800px;
-    max-height: 1200px;
-    height: 800px;
-    width: 100%;
-    align-content: center;
-}*/
-
 .CodeMirror {
     max-width: 1200px;
     max-height: 800px;
-    min-height: 50px;
+    min-height: 230px;
     align-content: center;
 }
 
@@ -143,15 +315,26 @@ div.flipReverse {
     border: 5px dashed blue;
 }
 
+/* Modal Service Dialogs */
+@media (min-width: 768px) {
+    .modal-dialog.modal-lg {
+        min-width: 1000px;
+    }
+}
+.modal-header {
+    background: #F0F0F0 !important;
+    box-shadow: 0px 3px 5px #DDD !important;
+    border-width: 0 0 0px !important;
+    border: 0px solid transparent !important;
+}
 .modal-body .file-view {
     min-width: 60%;
     min-height: 60%;
     width: 800px;
     height: 600px;
 }
-
 .modal-body .form-control {
-    max-width: 500px;
+    /*max-width: 500px;*/
 }
 .multiSelect .select {
     width: 420px;
@@ -180,12 +363,12 @@ div.flipReverse {
 .btn.mover.down {
     margin-left: 3px;
     margin-right: 2px;
-    padding: 3px 8px 2px 6px;*/
+    padding: 3px 8px 2px 6px;
 }
 .btn.mover.up {
     margin-right: 10px;
     margin-left: 2px;
-    padding: 3px 8px 2px 6px;*/
+    padding: 3px 8px 2px 6px;
 }
 .btn.mover i {
     margin: 0;

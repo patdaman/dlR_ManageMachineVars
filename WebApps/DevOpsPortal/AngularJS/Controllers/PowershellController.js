@@ -53,7 +53,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
 
     $scope.scripts = [];
     $scope.scriptName = '';
-    $scope.scriptText = 'Code goes here';
+    $scope.scriptText = '#Code goes here\n\n\n\n\n\n\n\n\n\n';
 
     $scope.themes = ['midnight', 'eclipse', 'abcdef', 'rubyblue', 'solarized'];
     $scope.theme = $scope.themes[0];

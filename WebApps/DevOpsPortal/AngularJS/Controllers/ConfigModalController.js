@@ -37,16 +37,16 @@ ConfigApp.controller('ConfigViewer',
 
         vm.environments = environments;
         vm.environment = environment;
+        angular.forEach(vm.environments, function (value) {
+            if (value.name === vm.environment)
+                vm.selectedEnvironment = value;
+        });
         vm.files = files;
         vm.filePath = '';
         vm.fileName = '';
         vm.configXml = '';
         vm.component = component;
         vm.modalSize = "modal-dialog modal-md";
-
-        if (vm.files.length === 1) {
-            vm.selectedFile = vm.files[0];
-        };
 
         vm.updateFile = function (selectedFile) {
             vm.fileName = selectedFile.fileName;
@@ -77,6 +77,11 @@ ConfigApp.controller('ConfigViewer',
                 vm.filePath = data.path,
                 vm.modalSize()
             })
+        };
+
+        if (vm.files.length === 1) {
+            vm.selectedFile = vm.files[0];
+            vm.getFile();
         };
 
         vm.close = function () {
@@ -140,7 +145,7 @@ ConfigApp.controller('ConfigViewer',
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddComponent',
     function ($rootScope, $scope, $element, $http, $timeout,
-        Upload, close, components, applications, environments) {
+        Upload, close, components, applications, environments, environment) {
 
         var apiRelPath = "api:/ComponentApi";
         var vm = $scope;
@@ -157,11 +162,16 @@ ConfigApp.controller('AddComponent',
         vm.availableApplications = applications;
         vm.componentApplications = [];
         vm.componentName = "";
-        vm.componentEnvironment = "";
+        vm.componentEnvironment = environment;
         vm.fileName = "";
         vm.applications = applications;
         vm.components = components;
         vm.environments = environments;
+        vm.environment = environment;
+        angular.forEach(vm.environments, function (value) {
+            if (value.name === vm.componentEnvironment)
+                vm.componentEnvironment = value;
+        });
         vm.localComponent = {
             componentName: vm.componentName,
             filePath: vm.filePath,
@@ -492,11 +502,11 @@ ConfigApp.controller('AddApplication',
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('AddVar',
     function ($rootScope, $scope, $element,
-        close, componentName, parentElement, element,
+        close, componentName, parentRows, parentElement, element,
         attribute, key, valueName, show, isNew, files) {
 
         var vm = $scope;
-        var additionalParentElements = [];
+        var parentRows;
         var noAttributeKey = key;
         var selectedFile;
         var fileName;
@@ -504,6 +514,7 @@ ConfigApp.controller('AddVar',
         vm.files = files;
         vm.componentName = componentName;
         vm.element = element;
+        vm.parentRows = parentRows;
         vm.parentElement = parentElement;
         vm.attribute = attribute;
         vm.key = key;
