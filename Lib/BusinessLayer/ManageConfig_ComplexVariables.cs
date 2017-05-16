@@ -597,6 +597,8 @@ namespace BusinessLayer
                                 appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                         }
                         appVarModel.values.AddRange(configVar.ConfigVariableValues);
+                        if (DevOpsContext.Notes.Where(x => x.note_id == appVarModel.configvar_id && x.note_type == "ConfigVariables").Any())
+                            appVarModel.hasNotes = true;
                         allVars.Add(appVarModel);
                     }
                 }
@@ -877,6 +879,7 @@ namespace BusinessLayer
                 modify_date = config.modify_date,
                 value_name = config.value_name ?? "",
                 parent_element = config.parent_element,
+                full_element = config.full_element,
                 ConfigFile = EfToVmConverter.EfConfigFileToVm(file),
                 ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(configVars, environments),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)

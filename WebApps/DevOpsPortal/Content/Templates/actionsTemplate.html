@@ -9,6 +9,8 @@
 <div ng-if="!row.groupHeader">
     <div class="ui-grid-cell-contents">
         <button id="editBtn" ng-if="!grid.appScope.edit || grid.renderContainers.body.visibleRowCache.indexOf(row) !== grid.appScope.rowIndex" type="button" class="btn btn-xs btn-info" ng-click="grid.appScope.editCell(row)">Edit </button>
+        <button id="noteBtn" ng-if="(!grid.appScope.edit || grid.renderContainers.body.visibleRowCache.indexOf(row) !== grid.appScope.rowIndex) && !row.entity.hasNotes" type="button" class="btn btn-xs btn-info" ng-click="grid.appScope.getNote(row)">Add Note </button>
+        <button id="noteBtn" ng-if="(!grid.appScope.edit || grid.renderContainers.body.visibleRowCache.indexOf(row) !== grid.appScope.rowIndex) && row.entity.hasNotes" type="button" class="btn btn-xs btn-primary" ng-click="grid.appScope.getNote(row)">View Note </button>
         <button id="saveBtn" ng-if="grid.appScope.edit && grid.renderContainers.body.visibleRowCache.indexOf(row) === grid.appScope.rowIndex" type="button" class="btn btn-xs btn-primary" ng-click="grid.appScope.saveRow(row)">Save </button>
         <button id="cancelBtn" ng-if="grid.appScope.edit && grid.renderContainers.body.visibleRowCache.indexOf(row) === grid.appScope.rowIndex" type="button" class="btn btn-xs btn-danger" ng-click="grid.appScope.cancelEdit()">Cancel </button>
     </div>

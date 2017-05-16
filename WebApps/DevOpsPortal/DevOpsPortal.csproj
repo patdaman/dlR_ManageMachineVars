@@ -182,6 +182,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\powershell_spelling.txt" />
+    <Content Include="Assets\selectArrow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\angular-multi-select.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -220,6 +223,9 @@
     <Content Include="Content\Templates\machineActionsTemplate.html" />
     <Content Include="Content\Templates\codeMirror.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\noteModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\powershellExcecuteModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

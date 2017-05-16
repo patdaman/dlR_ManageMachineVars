@@ -26,13 +26,9 @@ ConfigApp.controller('ConfigViewer',
         var vm = $scope;
         var selectedEnvironment;
         var selectedFile;
-        var files;
-        var environment;
-        var environments;
         var filePath;
         var fileName;
         var configXml;
-        var component;
         var modalSize;
 
         vm.environments = environments;
@@ -506,7 +502,6 @@ ConfigApp.controller('AddVar',
         attribute, key, valueName, show, isNew, files) {
 
         var vm = $scope;
-        var parentRows;
         var noAttributeKey = key;
         var selectedFile;
         var fileName;
@@ -557,6 +552,63 @@ ConfigApp.controller('AddVar',
                 key: vm.key,
                 valueName: vm.valueName,
                 fileName: vm.selectedFile.fileName,
+            }, 500);
+        };
+    });
+
+///-------------------------------------------------------------------------------------------------
+/// <summary>   Note Modal Controller. </summary>
+///
+/// <remarks>   Pdelosreyes, 5/15/2017. </remarks>
+///
+/// <param name="'note'">           The 'note'. </param>
+/// <param name="($rootScope">      The $root scope. </param>
+/// <param name="$scope">           The $scope. </param>
+/// <param name="$element">         The $element. </param>
+/// <param name="close">            The close. </param>
+/// <param name="componentName">    Name of the component. </param>
+/// <param name="key">              The key. </param>
+/// <param name="fullElement">      The full element. </param>
+/// <param name="configVarId">      Identifier for the configuration variable. </param>
+/// <param name="noteText">         The note text. </param>
+///
+/// <returns>   . </returns>
+///-------------------------------------------------------------------------------------------------
+ConfigApp.controller('noteViewer',
+    function ($rootScope, $scope, $element, close,
+        componentName, key, fullElement, configVarId, createDate,
+        lastModifiedUser, lastModifiedDate, noteText) {
+
+        var vm = $scope;
+        var save;
+        var modalSize;
+
+        vm.componentName = componentName;
+        vm.key = key;
+        vm.fullElement = fullElement;
+        vm.configVarId = configVarId;
+        vm.noteText = noteText;
+        vm.lastModifiedDate = lastModifiedDate;
+        vm.lastModifiedUser = lastModifiedUser;
+        vm.modalSize = "modal-dialog modal-md";
+
+        //vm.modalSize = function () {
+        //    if (vm.selectedEnvironment.name != '' && vm.selectedFile.fileName != '')
+        //        modalSize = "modal-dialog modal-lg";
+        //};
+
+        vm.close = function () {
+            $element.modal('hide');
+            close({
+                save: false,
+            }, 500);
+        };
+        vm.save = function () {
+            $element.modal('hide');
+            close({
+                save: true,
+                configVarId: vm.configVarId,
+                noteText: vm.noteText,
             }, 500);
         };
     });

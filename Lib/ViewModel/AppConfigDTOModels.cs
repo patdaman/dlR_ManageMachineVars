@@ -233,10 +233,9 @@ namespace ViewModel
 
     public class ConfigVariable
     {
-        public string full_element;
-
         public int id { get; set; }
         public string parent_element { get; set; }
+        public string full_element { get; set; }
         public string element { get; set; }
         public string attribute { get; set; }
         public string key { get; set; }
@@ -255,6 +254,7 @@ namespace ViewModel
         {
             id = c.id;
             parent_element = c.parent_element;
+            full_element = c.full_element;
             element = c.element;
             attribute = c.attribute;
             key = c.key;

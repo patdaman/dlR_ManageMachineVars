@@ -39,9 +39,12 @@ namespace ViewModel
         public string key { get; set; }
         public string valueName { get; set; }
         public List<ConfigVariableValue> values { get; set; }
+        public bool hasNotes { get; set; }
 
         public AppVar()
-        { }
+        {
+            hasNotes = false;
+        }
         public AppVar(AppVar x)
         {
             configvar_id = x.configvar_id;
@@ -55,12 +58,14 @@ namespace ViewModel
             key = x.key;
             valueName = x.valueName;
             values = x.values;
+            hasNotes = x.hasNotes;
         }
 
         public AppVar(ConfigVariable x)
         {
             configvar_id = x.id;
             configParentElement = x.parent_element;
+            fullElement = x.full_element;
             configElement = x.element;
             attribute = x.attribute;
             fileName = x.ConfigFile.file_name;
@@ -70,6 +75,7 @@ namespace ViewModel
                 key = x.key;
             valueName = x.value_name;
             values = new List<ConfigVariableValue>();
+            hasNotes = false;
         }
     }
 

@@ -44,5 +44,6 @@ namespace EFDataModel.DevOps
         public virtual DbSet<vi_ConfigVariables> vi_ConfigVariables { get; set; }
         public virtual DbSet<ConfigVariable> ConfigVariables { get; set; }
         public virtual DbSet<ConfigFile> ConfigFiles { get; set; }
+        public virtual DbSet<Note> Notes { get; set; }
     }
 }

@@ -75,29 +75,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         return $scope.subEdit;
     };
 
-    /// Grid Filters
-    $scope.environment = 'development';
-    $scope.filterEnvironment = function () {
-        return $scope.environment;
-    };
-    $scope.environmentIndex = 0;
-    $scope.filterEnvironmentIndex = function () {
-        return $scope.environmentIndex;
-    };
-    $scope.filterEnvironmentIndex = function () {
-        return $scope.environmentIndex;
-    };
-
-    $scope.application = '';
-    $scope.filterApplication = function () {
-        return $scope.application;
-    };
-
-    $scope.component = '';
-    $scope.filterComponent = function () {
-        return $scope.component;
-    };
-
     /// Configure Config UI grid
     $scope.gridOptions = {
         enablePaging: true,
@@ -140,11 +117,63 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         enableMultiselect: false,
 
         expandableRowTemplate: '/Content/Templates/expandableRowTemplate.html',
-        expandableRowHeight: 157,
+        //expandableRowHeight: 157,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
         },
     };
+
+    /// Grid Filters
+    $scope.environment = 'development';
+    $scope.filterEnvironment = function () {
+        return $scope.environment;
+    };
+    $scope.environmentIndex = 0;
+    $scope.filterEnvironmentIndex = function () {
+        return $scope.environmentIndex;
+    };
+
+    $scope.application = '';
+    $scope.filterApplication = function () {
+        return $scope.application;
+    };
+
+    $scope.component = '';
+    $scope.filterComponent = function () {
+        return $scope.component;
+    };
+
+    // List of environments:
+    $scope.GetEnvironments = function () {
+        getObjectService.getConfigObjects('environment')
+        .then(function (result) {
+            $scope.environments = result;
+            $scope.gridOptions.expandableRowHeight = (result.length * 30) + 37;
+        })
+    };
+
+    // List of components:
+    $scope.GetComponents = function () {
+        getObjectService.getConfigObjects('component')
+        .then(function (result) {
+            $scope.components = result;
+        })
+    };
+
+    // List of applications:
+    $scope.GetApplications = function () {
+        getObjectService.getConfigObjects('application')
+        .then(function (result) {
+            $scope.applications = result;
+        })
+    };
+
+    $scope.loadConfigObjects = function () {
+        $scope.GetApplications();
+        $scope.GetComponents();
+        $scope.GetEnvironments();
+    };
+    $scope.loadConfigObjects();
 
     //$scope.gridOptions.columnDefs = [
     $scope.columnDefinition = function (valueOrdinal) {
@@ -208,13 +237,16 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             width: 200,
             enableFiltering: true,
             cellToolTip: function (row, col) {
-                if (grid.appScope.isBlank(row.entity.attribute)) {
-                    return '<' + row.entity.configParentElement + '><br>&nbsp;<' + row.entity.key + '> {value} </' + row.entity.key + '><br>&nbsp;. . .<br></' + row.entity.configParentElement + '>';
-                }
-                else {
-                    return '<' + row.entity.configParentElement + ' . . . /><br>&nbsp; <' + row.entity.configElement + '&nbsp;' + row.entity.attribute + '="{value}"&nbsp;' + row.entity.valueName + '="{value}" /><br>&nbsp;. . .<br></' + row.entity.configParentElement + ' . . .>" tooltip-placement="right" ';
-                }
+                return row.entity.configElement;
             }
+            //cellToolTip: function (row, col) {
+            //    if (grid.appScope.isBlank(row.entity.attribute)) {
+            //        return '<' + row.entity.configParentElement + '><br>&nbsp;<' + row.entity.key + '> {value} </' + row.entity.key + '><br>&nbsp;. . .<br></' + row.entity.configParentElement + '>';
+            //    }
+            //    else {
+            //        return '<' + row.entity.configParentElement + ' . . . /><br>&nbsp; <' + row.entity.configElement + '&nbsp;' + row.entity.attribute + '="{value}"&nbsp;' + row.entity.valueName + '="{value}" /><br>&nbsp;. . .<br></' + row.entity.configParentElement + ' . . .>" tooltip-placement="right" ';
+            //    }
+            //}
         },
         { field: 'valueName', visible: false, enableCellEdit: 'false' },
         {
@@ -226,6 +258,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             cellEditableCondition: $scope.canEdit,
             enableFiltering: true,
         },
+        { field: 'hasNotes', visible: false, enableCellEdit: 'false' },
         {
             name: "Actions",
             width: 150,
@@ -517,37 +550,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             .error(deferred.reject);
         return deferred.promise;
     };
-
-    // List of environments:
-    $scope.GetEnvironments = function () {
-        getObjectService.getConfigObjects('environment')
-        .then(function (result) {
-            $scope.environments = result;
-        })
-    };
-
-    // List of components:
-    $scope.GetComponents = function () {
-        getObjectService.getConfigObjects('component')
-        .then(function (result) {
-            $scope.components = result;
-        })
-    };
-
-    // List of applications:
-    $scope.GetApplications = function () {
-        getObjectService.getConfigObjects('application')
-        .then(function (result) {
-            $scope.applications = result;
-        })
-    };
-
-    $scope.loadConfigObjects = function () {
-        $scope.GetApplications();
-        $scope.GetComponents();
-        $scope.GetEnvironments();
-    };
-    $scope.loadConfigObjects();
 
     // Function call from Index page dropdown OnChange
     $scope.updateEnvironment = function () {
@@ -873,6 +875,74 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                         if (result.publish) {
                             $scope.downloadConfig(result.component, result.fileName, fileEnvironment)
                         };
+                    });
+                })
+            return def.promise;
+        })
+        .error(function (error) {
+            console.log(error);
+        })
+    };
+
+
+    $scope.getNote = function (row) {
+        var configVarId = row.entity.configvar_id;
+        var key = row.entity.key;
+        var fullElement = row.entity.fullElement;
+        var componentName = row.entity.componentName;
+        var componentFileName = row.entity.fileName;
+        var noteText;
+        var def = $q.defer();
+        $http({
+            method: 'GET',
+            url: 'api:/NoteApi',
+            params: {
+                noteType: 'configvariables',
+                id: configVarId,
+                createDate: '1900-01-01'
+                //componentName: componentName,
+            }
+        })
+        .success(def.resolve)
+        .success(function (data) {
+            var singleData = data[0];
+            ModalService.showModal({
+                templateUrl: "/Content/Templates/noteModal.html",
+                controller: "noteViewer",
+                inputs: {
+                    componentName: componentName,
+                    key: key,
+                    fullElement: fullElement,
+                    configVarId: configVarId,
+                    createDate: singleData.createDate,
+                    lastModifiedUser: singleData.userName,
+                    lastModifiedDate: singleData.modifyDate,
+                    noteText: singleData.noteText,
+                    //createDate: data.createDate,
+                    //lastModifiedUser: data.userName,
+                    //lastModifiedDate: data.modifyDate,
+                    //noteText: data.noteText,
+                }
+            })
+                .then(function (modal) {
+                    modal.element.modal();
+                    modal.close.then(function (result) {
+                        if (result.save) {
+                            var deferred = $q.defer();
+                            var data = JSON.stringify({
+                                noteId: result.configVarId,
+                                noteType: 'configvariables',
+                                noteText: result.noteText,
+                            });
+                            $http({
+                                method: 'POST',
+                                url: 'api:/NoteApi/',
+                                data: data,
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }).success(deferred.resolve)
+                        }
                     });
                 })
             return def.promise;

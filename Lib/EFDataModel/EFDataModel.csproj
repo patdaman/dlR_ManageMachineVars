@@ -114,6 +114,9 @@
     <Compile Include="DevOps\MachineComponentPathMap.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Note.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Partials\DevOpsEntities.cs" />
     <Compile Include="DevOps\Script.cs">
       <DependentUpon>DevOps.tt</DependentUpon>

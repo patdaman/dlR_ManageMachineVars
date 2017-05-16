@@ -188,6 +188,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LogApiController.cs" />
     <Compile Include="Controllers\MachineApiController.cs" />
+    <Compile Include="Controllers\NoteApiController.cs" />
     <Compile Include="Controllers\PowershellApiController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

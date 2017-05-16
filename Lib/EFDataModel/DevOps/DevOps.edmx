@@ -190,6 +190,18 @@
           <Property Name="environmentVariable_id" Type="int" Nullable="false" />
           <Property Name="machine_id" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Notes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="note_id" Type="int" Nullable="false" />
+          <Property Name="note_type" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="text" Type="varchar" MaxLength="4000" Nullable="false" />
+          <Property Name="create_date" Type="datetime" Nullable="false" />
+          <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="ServerGroups">
           <Key>
             <PropertyRef Name="id" />
@@ -556,6 +568,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="Machines" EntityType="Self.Machines" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachinesServerGroupsMap" EntityType="Self.MachinesServerGroupsMap" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineVariablesMap" EntityType="Self.MachineVariablesMap" Schema="config" store:Type="Tables" />
+          <EntitySet Name="Notes" EntityType="Self.Notes" Schema="config" store:Type="Tables" />
           <EntitySet Name="ServerGroups" EntityType="Self.ServerGroups" Schema="config" store:Type="Tables" />
           <EntitySet Name="Devices" EntityType="Self.Devices" Schema="logging" store:Type="Tables" />
           <EntitySet Name="Events" EntityType="Self.Events" Schema="logging" store:Type="Tables" />
@@ -1100,6 +1113,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="ConfigFile" EntitySet="ConfigFiles" />
             <End Role="ConfigVariable" EntitySet="ConfigVariables" />
           </AssociationSet>
+          <EntitySet Name="Notes" EntityType="DevOpsModel.Note" />
         </EntityContainer>
         <EntityType Name="ConfigVariable">
           <Key>
@@ -1187,6 +1201,18 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Note">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="note_id" Type="Int32" Nullable="false" />
+          <Property Name="note_type" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="text" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1468,6 +1494,19 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
                 <ScalarProperty Name="xml_declaration" ColumnName="xml_declaration" />
                 <ScalarProperty Name="file_name" ColumnName="file_name" />
                 <ScalarProperty Name="component_id" ColumnName="component_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notes">
+            <EntityTypeMapping TypeName="DevOpsModel.Note">
+              <MappingFragment StoreEntitySet="Notes">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="text" ColumnName="text" />
+                <ScalarProperty Name="note_type" ColumnName="note_type" />
+                <ScalarProperty Name="note_id" ColumnName="note_id" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>

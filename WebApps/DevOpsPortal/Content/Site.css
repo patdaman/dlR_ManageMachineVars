@@ -15,6 +15,7 @@ body {
     color: #525252;
     background-color: #fff;
 }
+
 /* Bootstrap overrides */
 .navbar {
     background: #F0F0F0 !important;
@@ -25,7 +26,14 @@ body {
 .navbar .container {
     margin-left: 0px !important;
 }
-
+.prodWarning {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    display: inline-block;
+    margin-left: 5px;
+}
 .navbar-brand {
     background: url(../Assets/MCC_Logo_158x18.png) no-repeat top left !important;
      display: block !important;
@@ -89,15 +97,17 @@ select::-ms-expand {
 
 select {
     display: inline-block;
-    padding: 0px 3px!important;
+    /*padding: 0px 3px!important;*/
+    padding-left: 3px;
+    padding-right: 15px;
     border-color: #f57c21;
     background-color: #fbc69b;
-    /*-webkit-appearance: none;*/
-    background: url(assets/selectArrow.png) no-repeat right #fbc69b;
+    -webkit-appearance: none;
+    background: url(/Assets/selectArrow.png) no-repeat right #fbc69b;
 }
 select.inpSelect {
     -webkit-appearance: none;
-    background: url(assets/selectArrow.png) no-repeat right #fbc69b;
+    background: url(/Assets/selectArrow.png) no-repeat right #fbc69b;
 }
 .btn {
     font-family: "Segoe UI", Helvetica, Verdana;
@@ -108,14 +118,10 @@ select.inpSelect {
     border-width: thin;
     border-radius: 5px;
 }
-.btn:hover {
-    padding: 0px 7px!important;
-}
 .btn.btn-info {
     background: #fbc69b;
     color: #525252;
     border-color: #f57c21;
-    border-width: thin;
 }
 .btn.btn-xs {
     padding: 0px 6px!important;
@@ -315,6 +321,14 @@ div.flipReverse {
     border: 5px dashed blue;
 }
 
+.modal-content.ui-resizable {
+    /*overflow-y: scroll;*/
+    /*overflow-y: hidden;*/
+    /*position: static;*/
+}
+.modal-dialog {
+  position: relative;
+}
 /* Modal Service Dialogs */
 @media (min-width: 768px) {
     .modal-dialog.modal-lg {
@@ -330,8 +344,19 @@ div.flipReverse {
 .modal-body .file-view {
     min-width: 60%;
     min-height: 60%;
+    resize: both;
     width: 800px;
     height: 600px;
+}
+.modal-body .form-group .display-element {
+    font-weight: bold;
+}
+.modal-body .note-view {
+    min-width: 60%;
+    min-height: 60%;
+    resize: both;
+    width: 800px;
+    height: 300px;
 }
 .modal-body .form-control {
     /*max-width: 500px;*/
@@ -376,13 +401,6 @@ div.flipReverse {
 
 li {
     list-style-type: disc;
-}
-.modal-content.ui-resizable {
-    overflow-y: scroll;
-    position: static;
-}
-.modal-dialog {
-  position: relative;
 }
 
 .sweet-alert {

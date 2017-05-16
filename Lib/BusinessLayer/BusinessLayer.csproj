@@ -57,6 +57,7 @@
     <Compile Include="ManageEnvironment_Variables.cs" />
     <Compile Include="ManageLogging.cs" />
     <Compile Include="ManageMachines.cs" />
+    <Compile Include="ManageNotes.cs" />
     <Compile Include="ManagePowershell_Scripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

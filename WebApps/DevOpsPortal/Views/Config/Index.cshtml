@@ -21,6 +21,7 @@
             <input type="button" class="btn btn-md btn-info" ng-click="addComponent()" value="Add / Edit Component" />
 
             <input type="button" class="btn btn-md btn-info" ng-click="addApplication()" value="Add / Edit Application" />
+            <div id="prodEnvironment" ng-if="environment==='production'" class="prodWarning"><h4>{{environment}}!</h4></div>
             <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
         </div>
             <div ui-grid="gridOptions"
