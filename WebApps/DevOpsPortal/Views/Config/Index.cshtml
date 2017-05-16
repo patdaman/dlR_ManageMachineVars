@@ -7,7 +7,12 @@
 <hr />
 <div ng-app="app">
     <div ng-controller="ConfigController as vm">
-        <div class="control-group">
+        <div ng-if="displayApi" class="above-grid">
+            <div class="pull-left">
+                Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a>
+            </div>
+        </div>
+        <div class="control-group above-grid">
             <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">
                 <option value="" style="color:red">Environment</option>
             </select>
@@ -21,14 +26,16 @@
             <input type="button" class="btn btn-md btn-info" ng-click="addComponent()" value="Add / Edit Component" />
 
             <input type="button" class="btn btn-md btn-info" ng-click="addApplication()" value="Add / Edit Application" />
-            <div id="prodEnvironment" ng-if="environment==='production'" class="prodWarning"><h4>{{environment}}!</h4></div>
-            <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
+            <div id="prodEnvironment" ng-if="environment==='production'" class="prodWarning">{{environment}}!</div>
+            <div class="pull-right">
+                User: <i><font color="red">{{currentUser}}</font></i>
+            </div>
         </div>
-            <div ui-grid="gridOptions"
-            ui-grid-grouping ui-grid-exporter ui-grid-selection
-            ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
-            ui-grid-pagination ui-grid-cellNav ui-grid-expandable
-            class="gridStyle" >
+        <div ui-grid="gridOptions"
+             ui-grid-grouping ui-grid-exporter ui-grid-selection
+             ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
+             ui-grid-pagination ui-grid-cellNav ui-grid-expandable
+             class="gridStyle">
         </div>
     </div>
 </div>

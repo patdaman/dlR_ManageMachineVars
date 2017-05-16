@@ -14,7 +14,12 @@ namespace DevOpsPortal.Controllers
             logger.Info(String.Format("BaseController getting called. Page Load at {0}", DateTime.Now.ToString()));
             ViewData["ApiUri"] = System.Configuration.ConfigurationManager.AppSettings["ApiUri"];
             ViewData["SignalRPath"] = System.Configuration.ConfigurationManager.AppSettings["SignalRPath"];
-
+            ViewData["UserName"] = Environment.UserDomainName + @"\\" + Environment.UserName;
+#if DEBUG
+            ViewData["DisplayApi"] = true;
+#else
+            ViewData["DisplayApi"] = false;
+#endif
             if (ViewData["ApiUri"] == null ||
                 ViewData["SignalRPath"] == null)
             {

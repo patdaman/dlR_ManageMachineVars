@@ -56,10 +56,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     var selectedEnvironment;
     var environment;
     var environmentIndex;
+    var subGridHeight;
 
     /// Display current API path and link to Help page
     $scope.ApiBaseUrl = ApiPath;
     $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
+    $scope.currentUser = UserName;
+    $scope.displayApi = displayApi;
 
     /// Edit Variables
     $scope.selectedRow = "";
@@ -117,7 +120,6 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         enableMultiselect: false,
 
         expandableRowTemplate: '/Content/Templates/expandableRowTemplate.html',
-        //expandableRowHeight: 157,
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
         },
@@ -148,6 +150,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
         getObjectService.getConfigObjects('environment')
         .then(function (result) {
             $scope.environments = result;
+            $scope.subGridHeight = (result.length * 30) + 37;
             $scope.gridOptions.expandableRowHeight = (result.length * 30) + 37;
         })
     };
@@ -238,20 +241,13 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             enableFiltering: true,
             cellToolTip: function (row, col) {
                 return row.entity.configElement;
-            }
-            //cellToolTip: function (row, col) {
-            //    if (grid.appScope.isBlank(row.entity.attribute)) {
-            //        return '<' + row.entity.configParentElement + '><br>&nbsp;<' + row.entity.key + '> {value} </' + row.entity.key + '><br>&nbsp;. . .<br></' + row.entity.configParentElement + '>';
-            //    }
-            //    else {
-            //        return '<' + row.entity.configParentElement + ' . . . /><br>&nbsp; <' + row.entity.configElement + '&nbsp;' + row.entity.attribute + '="{value}"&nbsp;' + row.entity.valueName + '="{value}" /><br>&nbsp;. . .<br></' + row.entity.configParentElement + ' . . .>" tooltip-placement="right" ';
-            //    }
-            //}
+            },
+            //cellToolTip: true,
+            //cellTemplate: '/Content/Templates/toolTipTemplate.html'
         },
         { field: 'valueName', visible: false, enableCellEdit: 'false' },
         {
             field: valueColumn,
-            //field: 'values[0].value',
             displayName: 'value',
             visible: true,
             //width: "35%",
@@ -389,7 +385,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     //};
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
-    $scope.editCell = function (row, column) {
+    $scope.editCell = function (row) {
         $scope.gridApi.grid.cellNav.clearFocus();
         $scope.gridApi.grid.cellNav.focusedCells = [];
         $scope.var_id = row.entity.configvar_id;
@@ -409,8 +405,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
                 $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             }
-            $scope.gridApi.cellNav.scrollToFocus($scope.rowId, 11);
-            $scope.gridApi.cellNav.scrollToFocus($scope.rowId, 11);
+            //$scope.gridApi.cellNav.scrollToFocus($scope.rowId, 11);
+            row.grid.api.cellNav.scrollToFocus($scope.rowId, 11);
             $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
         }
             // For Values
@@ -933,6 +929,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                                 noteId: result.configVarId,
                                 noteType: 'configvariables',
                                 noteText: result.noteText,
+                                userName: UserName,
                             });
                             $http({
                                 method: 'POST',

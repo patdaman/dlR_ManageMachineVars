@@ -28,11 +28,11 @@ body {
 }
 .prodWarning {
     color: red;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     font-style: italic;
-    display: inline-block;
-    margin-left: 5px;
+    display: inline;
+    margin-left: 25px;
 }
 .navbar-brand {
     background: url(../Assets/MCC_Logo_158x18.png) no-repeat top left !important;
@@ -235,37 +235,23 @@ div.flip {
     text-decoration:underline;
 }  
 
-div.panelReverse {
-    margin: 0px;
-	padding: 5px;
-	/*text-align: left;
-	background: #ddd;
-	border: solid 1px #fff;
-    max-width: 75%;*/
-}
-
-/* Instruction panel button */
-div.flipReverse {
-    border: solid 1px #fff;
-}
-
-.flipReverse span{
-    color: blue;
-}
-
-.flipReverse:hover span{
-    font-weight:bold;
-    text-decoration:underline;
-}  
-
 .gridStyle {
-  /*width: 1600px;*/
-  width: 95%;
+  width: 99%;
   max-width: 1800px;
   height: 800px;
   align-content: center;
 }
+.subGridStyle {
+  width: 100%;
+  float: right;
+}
 
+.above-grid {
+    width: 99%;
+    height: 28px;
+    display: block;
+    padding-right: 8px;
+}
 .grid-tooltip {
   overflow: visible;
   z-index: 9999999;
@@ -303,10 +289,6 @@ div.flipReverse {
     resize: both;
 }
 
-/*.CodeMirror {
-  font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New", monospace !important;
-}*/
-
 /* for drag and drop file upload */ 
 .drop-box {
     background: #F8F8F8;
@@ -330,7 +312,7 @@ div.flipReverse {
   position: relative;
 }
 /* Modal Service Dialogs */
-@media (min-width: 768px) {
+@media (min-width: 168px) {
     .modal-dialog.modal-lg {
         min-width: 1000px;
     }
@@ -371,6 +353,7 @@ div.flipReverse {
 .multiSelect .multiSelectBox {
     min-width: 200px;
     min-height: 80px;
+    background: #fce8d8;
 }
 
 .multiSelect .text {

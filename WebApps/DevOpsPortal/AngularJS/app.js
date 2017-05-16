@@ -3,6 +3,8 @@
 var DevOpsWebApp;
 var ApiPath = DevOpsWebApp.ApiPath;
 var SignalRPath = DevOpsWebApp.SignalRPath;
+var UserName = DevOpsWebApp.UserName;
+var displayApi = DevOpsWebApp.DisplayApi;
 
 var ConfigApp = angular.module('ConfigApp',
         ['ui.grid',
@@ -21,10 +23,6 @@ var ConfigApp = angular.module('ConfigApp',
             'ui.grid.infiniteScroll',
             'ui.grid.importer',
             'ui.router',
-            'angularModalService',
-            'ngAnimate',
-            'ui.bootstrap',
-            //'ngclipboard',
             'ngFileUpload'
         ])
 
@@ -48,14 +46,11 @@ var LogApp = angular.module('LogApp',
             'ui.grid.pagination',
             'ui.grid.expandable',
             'ui.grid.selection',
-            'ui.bootstrap',
             'ui.grid.pinning'
         ]);
 
 var PowershellApp = angular.module('PowershellApp',
         [
-            'angularModalService',
-            'ui.bootstrap',
             'ngAnimate',
             'ngFileUpload',
             'ui.codemirror'
@@ -72,7 +67,13 @@ var PowershellApp = angular.module('PowershellApp',
 /// <summary>   The application. </summary>
 ///
 ///  ----------------------------------------------------------- ///
-var app = angular.module('app', ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp', 'ngclipboard']);
+var app = angular.module('app',
+    ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp',
+        'ngclipboard',
+        'ui.bootstrap',
+        'ngAnimate',
+        'angularModalService'
+    ]);
 //var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'PowershellApp', 'dashboardApp']);
 
 app.run(['$rootScope', function ($rootScope) {
@@ -86,17 +87,40 @@ app.run(['$rootScope', function ($rootScope) {
 
 
 // http interceptor to add hostname [] are for minification safety
-app.factory('httpAPIPathAdder', [function () {
-    //var def = $q.defer();
+app.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $location) {
     return {
         request: function (config) {
             if (config.url.search("api:") === 0)
                 config.url = ApiPath + config.url.slice(4);
             return config;
+            //return $q.defer(config);
         },
-        responseError: function (rejection) {
-            return rejection;
-        }
+        requestError: function (config) {
+            if (config.status === 401) {
+                $location.path('/home');
+                return $q.reject(config);
+            }
+            else {
+                return $q.reject(config);
+            }
+         },
+
+        response: function (res) {
+            return res;
+            //return $q.defer(res);
+        },
+        responseError: function (res) {
+            if (res.status === 401) {
+                $location.path('/home');
+                return $q.reject(res);
+            }
+            else {
+                return $q.reject(res);
+            }
+        },
+        //responseError: function (rejection) {
+        //    return rejection;
+        //},
     }
 }]);
 

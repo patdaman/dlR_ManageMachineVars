@@ -1070,16 +1070,27 @@ namespace BusinessLayer
                         && x.environment_type == val.environment).FirstOrDefault();
                     if (efConfigValue == null)
                     {
-                        efConfigValue = new EFDataModel.DevOps.ConfigVariableValue()
+                        if (!string.IsNullOrWhiteSpace(val.value))
                         {
-                            configvar_id = appValue.configvar_id.Value,
-                            environment_type = val.environment,
-                            value = val.value,
-                            create_date = DateTime.Now,
-                            modify_date = DateTime.Now,
-                            published_date = val.publish_date
-                        };
-                        DevOpsContext.ConfigVariableValues.Add(efConfigValue);
+                            efConfigValue = new EFDataModel.DevOps.ConfigVariableValue()
+                            {
+                                configvar_id = appValue.configvar_id.Value,
+                                environment_type = val.environment,
+                                value = val.value,
+                                create_date = DateTime.Now,
+                                modify_date = DateTime.Now,
+                                published_date = val.publish_date
+                            };
+                            DevOpsContext.ConfigVariableValues.Add(efConfigValue);
+                        }
+                    }
+                    else
+                    {
+                        if (efConfigValue.value != val.value)
+                        {
+                            efConfigValue.value = val.value;
+                            efConfigValue.modify_date = DateTime.Now;
+                        }
                     }
                 }
             }
