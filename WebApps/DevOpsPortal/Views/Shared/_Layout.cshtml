@@ -5,21 +5,21 @@
     @Html.Partial("~/Views/Shared/AngularDependancies.cshtml")
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Application Configuration Manager</title>
-    @Scripts.Render("~/bundles/modernizr")
+    <title>@ViewBag.Title - DevOps Portal</title>
+    @*@Scripts.Render("~/bundles/modernizr")*@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/angular")
-    @Scripts.Render("~/bundles/app")
     @Scripts.Render("~/bundles/codemirror")
+    @Styles.Render("~/Content/codemirror")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/app")
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header noncollapsed">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                </button>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
                 @Html.ActionLink("Application Configuration", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("Sign Out", "Logout", "Home", new { area = "" }, new { @class = "navbar-logout" })
             </div>
@@ -27,9 +27,12 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("AppConfig", "Index", "Config")</li>
-                    <li>@Html.ActionLink("Machine", "Index", "Machine")</li>
-                    <li>@Html.ActionLink("Dashboard", "Index", "Dashboard")</li>
-                    <li>@Html.ActionLink("Powershell", "Index", "Powershell")</li>
+                    @*@if (User.IsInRole("DevOps"))
+                    {*@
+                        <li>@Html.ActionLink("Machine", "Index", "Machine")</li>
+                        <li>@Html.ActionLink("Dashboard", "Index", "Dashboard")</li>
+                        <li>@Html.ActionLink("Powershell", "Index", "Powershell")</li>
+                    @*}*@
                 </ul>
             </div>
         </div>

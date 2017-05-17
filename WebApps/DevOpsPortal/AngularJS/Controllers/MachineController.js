@@ -5,7 +5,9 @@
 //    'ui.grid.grouping', 'ui.grid.selection', 'ui.grid.rowEdit',
 //    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
 
-app.controller('MachineController', function ($scope, $http, uiGridConstants,
+app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
+    '$log', '$timeout', '$q', '$interval', 'ModalService',
+    function ($scope, $http, uiGridConstants,
     $log, $timeout, $q, $interval, ModalService) {
     $scope.title = "Machine Configuration ";
 
@@ -44,8 +46,7 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants,
     $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
 
     /// Grid Filters
-    //$scope.environment = 'development';
-    $scope.environment = 'all';
+    $scope.environment = '';
     $scope.filterEnvironment = function () {
         return $scope.environment;
     };
@@ -90,8 +91,8 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants,
 
         //treeRowHeaderAlwaysVisible: false,
 
-        //enableCellSelection: true,
-        //enableCellEditOnFocus: true,
+        enableCellSelection: true,
+        enableCellEditOnFocus: true,
         enableRowSelection: true,
         enableRowHeaderSelection: true,
         enableMultiselect: true,
@@ -108,7 +109,7 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants,
                     noTerm: true,
                     condition: function (searchTerm, cellValue) {
                         return $scope.filterEnvironment() === cellValue
-                            || $scope.environment === 'all';
+                            || $scope.environment == '';
                     }
                 },
                 grouping: { groupPriority: 0 },
@@ -117,7 +118,7 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants,
             },
             {
                 field: 'location',
-                grouping: { groupPriority: 1 },
+                //grouping: { groupPriority: 1 },
                 sort: { priority: 1, direction: 'asc' },
                 groupable: true,
                 width: '15%'
@@ -413,4 +414,4 @@ app.controller('MachineController', function ($scope, $http, uiGridConstants,
     }
 
     //$scope.gridOptions.data = $scope.Machines;
-});
+}]);

@@ -6,19 +6,19 @@
                 <h2 class="modal-title">{{machineName}}</h2>
             </div>
             <div class="modal-body">
-                <textarea style="height:800px;width:1000px;" ng-model="executionLogs">
-                </textarea>
+                <textarea id="results" name="results" class="results">{{executionLogs}}</textarea>
             </div>
             <div class="modal-footer">
-                <!--<button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Import</button>-->
+                <button ngclipboard data-clipboard-target="#results" class="btn btn-md btn-info" style="float:left;">Copy To Clipboard</button>
                 <button type="button" ng-click="save()" class="btn btn-primary">Save</button>
                 <button type="button" ng-click="cancel()" class="btn">Cancel</button>
             </div>
         </div>
     </div>
+    <script>
+        $('.modal-content').resizable({
+            alsoResize: ".modal-dialog"
+        });
+        $('.modal-dialog').draggable();
+    </script>
 </div>
-<script>
-    $('.modal-content').resizable({
-    });
-    $('.modal-dialog').draggable();
-</script>

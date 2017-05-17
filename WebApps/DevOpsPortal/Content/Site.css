@@ -340,6 +340,13 @@ div.flip {
     width: 800px;
     height: 300px;
 }
+.modal-body .results {
+    min-width: 60%;
+    min-height: 60%;
+    resize: both;
+    width: 800px;
+    height: 600px;
+}
 .modal-body .form-control {
     /*max-width: 500px;*/
 }

@@ -18,7 +18,8 @@
 ///
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('ConfigViewer',
+ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http', '$q',
+        'component', 'files', 'environments', 'environment', 'close',
     function ($rootScope, $scope, $element, $http, $q,
         component, files, environments, environment, close) {
 
@@ -114,7 +115,7 @@ ConfigApp.controller('ConfigViewer',
                 component: vm.component
             }, 500);
         }
-    });
+    }]);
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>   Controllers. </summary>
@@ -139,7 +140,7 @@ ConfigApp.controller('ConfigViewer',
 ///
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddComponent',
+ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http', '$timeout', 'Upload', 'close', 'components', 'applications', 'environments', 'environment',
     function ($rootScope, $scope, $element, $http, $timeout,
         Upload, close, components, applications, environments, environment) {
 
@@ -330,7 +331,7 @@ ConfigApp.controller('AddComponent',
                 filePath: vm.filePath,
             }, 500);
         }
-    });
+    }]);
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>   Add Application Controller </summary>
@@ -353,7 +354,7 @@ ConfigApp.controller('AddComponent',
 /// filePath = filePath; var availableComponents = []; var applicationComponents = [];
 /// </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddApplication',
+ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$http', '$timeout', 'close', 'components', 'applications', 'environments',
     function ($rootScope, $scope, $element, $http, $timeout,
         close, components, applications, environments) {
 
@@ -479,7 +480,7 @@ ConfigApp.controller('AddApplication',
                 release: vm.release,
             }, 500);
         }
-    });
+    }]);
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>   AddVar Controller </summary>
@@ -496,7 +497,9 @@ ConfigApp.controller('AddApplication',
 /// <param name="save">             The save. </param>
 /// <param name="publish">          The publish. </param>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddVar',
+ConfigApp.controller('AddVar', ['$rootScope', '$scope', '$element', 
+        'close', 'componentName', 'parentRows', 'parentElement', 'element',
+        'attribute', 'key', 'valueName', 'show', 'isNew', 'files',
     function ($rootScope, $scope, $element,
         close, componentName, parentRows, parentElement, element,
         attribute, key, valueName, show, isNew, files) {
@@ -554,7 +557,7 @@ ConfigApp.controller('AddVar',
                 fileName: vm.selectedFile.fileName,
             }, 500);
         };
-    });
+    }]);
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>   Note Modal Controller. </summary>
@@ -574,7 +577,9 @@ ConfigApp.controller('AddVar',
 ///
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('noteViewer',
+ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
+        'componentName', 'key', 'fullElement', 'configVarId', 'createDate',
+        'lastModifiedUser', 'lastModifiedDate', 'noteText',
     function ($rootScope, $scope, $element, close,
         componentName, key, fullElement, configVarId, createDate,
         lastModifiedUser, lastModifiedDate, noteText) {
@@ -611,4 +616,4 @@ ConfigApp.controller('noteViewer',
                 noteText: vm.noteText,
             }, 500);
         };
-    });
+    }]);

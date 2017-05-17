@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-ConfigApp.directive('multiSelect', function ($q) {
+ConfigApp.directive('multiSelect', ['$q', function ($q) {
     return {
         restrict: 'E',
         require: 'ngModel',
@@ -101,4 +101,4 @@ ConfigApp.directive('multiSelect', function ($q) {
             });
         }
     };
-})
+}]);

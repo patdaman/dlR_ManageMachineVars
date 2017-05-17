@@ -79,49 +79,49 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
     <File Include="bin/ApiLib.dll">
-      <publishTime>05/11/2017 11:03:00</publishTime>
+      <publishTime>05/16/2017 09:42:02</publishTime>
     </File>
     <File Include="bin/ApiLib.pdb">
       <publishTime>05/11/2017 11:03:00</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/11/2017 15:33:33</publishTime>
+      <publishTime>05/16/2017 17:41:55</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/11/2017 15:33:33</publishTime>
+      <publishTime>05/16/2017 17:41:55</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>05/11/2017 11:20:03</publishTime>
+      <publishTime>05/16/2017 17:41:45</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/11/2017 11:20:03</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>05/16/2017 09:42:01</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/CommonUtils.Exception.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>04/21/2017 16:09:37</publishTime>
     </File>
     <File Include="bin/CommonUtils.Exception.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/CommonUtils.Powershell.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>05/16/2017 17:41:44</publishTime>
     </File>
     <File Include="bin/CommonUtils.Powershell.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/DevOpsApi.dll">
-      <publishTime>05/11/2017 12:11:35</publishTime>
+      <publishTime>05/16/2017 17:41:48</publishTime>
     </File>
     <File Include="bin/DevOpsApi.pdb">
       <publishTime>05/11/2017 12:11:35</publishTime>
     </File>
     <File Include="bin/EFDataModel.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>05/16/2017 09:42:01</publishTime>
     </File>
     <File Include="bin/EFDataModel.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
@@ -181,25 +181,25 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 21:19:46</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>05/16/2017 09:42:01</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.DataStructures.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>04/21/2017 16:09:37</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.DataStructures.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Logging.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>05/16/2017 09:42:01</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Logging.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Reflection.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>04/21/2017 16:09:37</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.Reflection.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
@@ -244,7 +244,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2015 04:04:30</publishTime>
     </File>
     <File Include="bin/ViewModel.dll">
-      <publishTime>05/11/2017 11:02:59</publishTime>
+      <publishTime>05/16/2017 09:42:00</publishTime>
     </File>
     <File Include="bin/ViewModel.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
@@ -280,7 +280,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/27/2017 16:55:05</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/11/2017 15:33:27</publishTime>
+      <publishTime>05/16/2017 17:41:49</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>04/11/2017 12:37:40</publishTime>
@@ -322,7 +322,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/11/2017 12:37:40</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>04/11/2017 12:37:40</publishTime>
+      <publishTime>05/16/2017 15:44:10</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/11/2017 12:37:40</publishTime>
@@ -331,7 +331,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/11/2017 12:37:40</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/04/2017 15:07:09</publishTime>
+      <publishTime>05/16/2017 09:42:06</publishTime>
     </File>
   </ItemGroup>
 </Project>

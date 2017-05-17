@@ -4,7 +4,7 @@
         ApiPath: '@(ViewData["ApiUri"])',
         SignalRPath: '@(ViewData["SignalRPath"])',
         TitleTag : '@(ViewData["TitleTag"])',
-        UserName : '@(ViewData["UserName"])',
+        UserName: '@User.Identity.Name.ToString().Replace(@"\",@"\\")',
         DisplayApi : '@(ViewData["DisplayApi"])'
     }
 </script>

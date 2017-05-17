@@ -5,9 +5,9 @@
 <h2>App Config Editor</h2>
 @Html.AntiForgeryToken()
 <hr />
-<div ng-app="app">
+<div ng-app="app" ng-strict-di>
     <div ng-controller="ConfigController as vm">
-        <div ng-if="displayApi" class="above-grid">
+        <div ng-if="displayApi=='True'" class="above-grid">
             <div class="pull-left">
                 Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a>
             </div>

@@ -12,7 +12,8 @@ PowershellApp.value('ui.config', {
     }
 });
 
-PowershellApp.controller('PowershellController', function ($rootScope, $scope, $http, $log, $timeout, $q, $interval, $attrs, ModalService) {
+PowershellApp.controller('PowershellController', ['$rootScope', '$scope', '$http', '$log', '$timeout', '$q', '$interval', '$attrs', 'ModalService',
+    function ($rootScope, $scope, $http, $log, $timeout, $q, $interval, $attrs, ModalService) {
     $scope.title = "Script Execution ";
 
     var vm = $scope;
@@ -50,8 +51,9 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
     var application;
     var selectedEnvironment;
     var environment;
+    var refreshCode;
 
-    $scope.scripts = [];
+    //$scope.scripts = [];
     $scope.scriptName = '';
     $scope.scriptText = '#Code goes here\n\n\n\n\n\n\n\n\n\n';
 
@@ -61,6 +63,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
     //$scope.readOnly = 'nocursor';
     $scope.readOnly = false;
     $scope.mode = 'powershell';
+    $scope.refreshCode = false;
 
     // The ui-codemirror option
     $scope.cmOptions = {
@@ -89,6 +92,8 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
     /// Display current API path and link to Help page
     $scope.ApiBaseUrl = ApiPath;
     $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
+    $scope.currentUser = UserName;
+    $scope.displayApi = displayApi;
 
     /// Grid Filters
     //$scope.environment = 'development';
@@ -184,11 +189,12 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
         $scope.machine = $scope.selectedMachine;
     };
 
-    // Function call from Index page dropdown OnChange
-    $scope.updateScript = function () {
+    $scope.updatePsScript = function () {
         $scope.script = $scope.selectedScript;
         $scope.scriptName = $scope.selectedScript.ScriptName;
         $scope.scriptText = $scope.selectedScript.ScriptText;
+        $scope.refreshCode = true;
+        $scope.refreshCode = false;
     };
 
     // Function call from Index page dropdown OnChange
@@ -213,6 +219,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
         var data = JSON.stringify({
             "scriptText": scriptText,
         });
+        var def = $q.defer();
         $http({
             method: 'POST',
             url: 'api:/PowershellApi',
@@ -226,7 +233,7 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
             headers: {
                 'Content-Type': 'application/json'
             },
-            transformResponse: function (data) {return {list: angular.fromJson(data)} }
+            transformResponse: function (data) { return { list: angular.fromJson(data) } }
         })
         .success(function (data) {
             ModalService.showModal({
@@ -234,33 +241,42 @@ PowershellApp.controller('PowershellController', function ($rootScope, $scope, $
                 controller: "ScriptResults",
                 inputs: {
                     machineName: machineName,
-                    //executionLogs: data,
-                    executionLogs: data.list,
+                    executionLogs: data,
+                    //executionLogs: data.list,
                 }
             })
                 .then(function (modal) {
                     modal.element.modal();
-                    modal.close.then(function (result) {
-                        if (result.download) {
-                            $scope.downloadConfig(result.title, result.fileName)
-                        };
-                        if (result.publish) {
-                            $scope.downloadConfig(result.title, result.fileName)
-                        };
-                    });
+                    //modal.close;
+                    //modal.close.then(function (result) {
+                    //    if (result.save) {
+                    //        $scope...
+                    //    };
+                    //});
                 })
-        });
-    }
-});
+            return def.promise;
+        })
+        .error(function (error) {
+            console.log(error);
+        })
+    };
+}])
 
-PowershellApp.controller('ScriptResults',
+.controller('ScriptResults', ['$rootScope', '$scope', '$element', 'machineName', 'executionLogs',
     function ($rootScope, $scope, $element, machineName, executionLogs) {
         //var vm = this;
         var vm = $scope;
-        var title;
         vm.machineName = machineName;
-        vm.executionLogs = executionLogs;
-        vm.title = machineName;
+        if (executionLogs) {
+            if (executionLogs.list) {
+                if (executionLogs.list.length > 0)
+                    vm.executionLogs = executionLogs.list.join("\n");
+                else if (executionLogs.list.Message)
+                    vm.executionLogs = executionLogs.list.Message;
+            }
+        }
+        else
+            vm.executionLogs = executionLogs;
         vm.cancel = function () {
             $element.modal('hide');
             close({
@@ -270,9 +286,5 @@ PowershellApp.controller('ScriptResults',
             $element.modal('hide');
             close({
             }, 500);
-        }
-        vm.ngClickCopy = function () {
-            vm.ngClickCopy;
-            //$rootscope.ngClickCopy;
-        }
-    });
+        };
+    }]);

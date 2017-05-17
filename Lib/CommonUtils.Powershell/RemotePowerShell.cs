@@ -16,15 +16,23 @@ namespace CommonUtils.Powershell
         public string machineName { get; set; }
         public PSCredential credential { get; set; }
 
-        private Dictionary<string, Runspace> _runspaceCache = new Dictionary<string, Runspace>();
-        private int portNumber = 5986;
-        private WSManConnectionInfo psConn;
+        //private Dictionary<string, Runspace> _runspaceCache = new Dictionary<string, Runspace>();
+        //private int portNumber = 5986;
+        //private WSManConnectionInfo psConn;
+        //private SecureString secure = new SecureString();
+
+        public Dictionary<string, Runspace> _runspaceCache = new Dictionary<string, Runspace>();
+        public int portNumber = 5986;
+        public WSManConnectionInfo psConn;
+        public SecureString secure = new SecureString();
 
 
-
-        ~PowerShellEngine()
+        public PowerShellEngine()
         {
-
+            foreach (char c in "ok2m40tK!")
+            {
+                secure.AppendChar(c);
+            }
             psConn = new WSManConnectionInfo(
             //useSsl
             true,
@@ -37,7 +45,7 @@ namespace CommonUtils.Powershell
             //shellUri,
             "http://schemas.microsoft.com/powershell/Microsoft.PowerShell",
             //credential
-            new PSCredential("", new SecureString())
+            new PSCredential(@"DC\root", secure)
             );
             Clean();
         }

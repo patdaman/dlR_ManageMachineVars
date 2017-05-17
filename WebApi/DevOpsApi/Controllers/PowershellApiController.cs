@@ -63,7 +63,8 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<String>>(HttpStatusCode.OK, scriptProcessor.ExecuteScript(scriptText, machineName));
+                //return Request.CreateResponse<List<String>>(HttpStatusCode.OK, scriptProcessor.ExecuteScript(scriptText, "hqdev08.dev.corp.printable.com"));
+                return Request.CreateResponse<List<String>>(HttpStatusCode.OK, scriptProcessor.ExecuteScript(scriptText.Replace("{{MACHINENAME}}",machineName), machineName));
             }
             catch (Exception ex)
             {

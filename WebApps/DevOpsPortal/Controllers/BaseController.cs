@@ -1,5 +1,6 @@
 ﻿using CommonUtils.Logging;
 using System;
+using System.Security.Principal;
 using System.Web.Mvc;
 
 namespace DevOpsPortal.Controllers
@@ -14,7 +15,8 @@ namespace DevOpsPortal.Controllers
             logger.Info(String.Format("BaseController getting called. Page Load at {0}", DateTime.Now.ToString()));
             ViewData["ApiUri"] = System.Configuration.ConfigurationManager.AppSettings["ApiUri"];
             ViewData["SignalRPath"] = System.Configuration.ConfigurationManager.AppSettings["SignalRPath"];
-            ViewData["UserName"] = Environment.UserDomainName + @"\\" + Environment.UserName;
+            ViewData["UserName"] = System.Web.HttpContext.Current.User.ToString().Replace(@"\",@"\\");
+            //ViewData["UserName"] = User.Identity.Name;
 #if DEBUG
             ViewData["DisplayApi"] = true;
 #else

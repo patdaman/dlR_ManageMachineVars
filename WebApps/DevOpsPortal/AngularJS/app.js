@@ -23,7 +23,11 @@ var ConfigApp = angular.module('ConfigApp',
             'ui.grid.infiniteScroll',
             'ui.grid.importer',
             'ui.router',
-            'ngFileUpload'
+            'ngFileUpload',
+            'ngclipboard',
+            'ui.bootstrap',
+            'ngAnimate',
+            'angularModalService'
         ])
 
 var MachineApp = angular.module('MachineApp',
@@ -37,7 +41,11 @@ var MachineApp = angular.module('MachineApp',
             'ui.grid.selection',
             'ui.grid.rowEdit',
             'ui.grid.pinning',
-            'ui.grid.exporter'
+            'ui.grid.exporter',
+            'ngclipboard',
+            'ui.bootstrap',
+            'ngAnimate',
+            'angularModalService'
         ]);
 
 var LogApp = angular.module('LogApp',
@@ -51,9 +59,12 @@ var LogApp = angular.module('LogApp',
 
 var PowershellApp = angular.module('PowershellApp',
         [
-            'ngAnimate',
             'ngFileUpload',
-            'ui.codemirror'
+            'ui.codemirror',
+            'ngclipboard',
+            'ui.bootstrap',
+            'ngAnimate',
+            'angularModalService'
         ]);
 
 //var dashboardApp = angular.module('dashboardApp',
@@ -68,11 +79,11 @@ var PowershellApp = angular.module('PowershellApp',
 ///
 ///  ----------------------------------------------------------- ///
 var app = angular.module('app',
-    ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp',
-        'ngclipboard',
-        'ui.bootstrap',
-        'ngAnimate',
-        'angularModalService'
+    ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp'
+        //', ngclipboard',
+        //'ui.bootstrap',
+        //'ngAnimate',
+        //'angularModalService'
     ]);
 //var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'PowershellApp', 'dashboardApp']);
 
@@ -93,34 +104,31 @@ app.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $location) {
             if (config.url.search("api:") === 0)
                 config.url = ApiPath + config.url.slice(4);
             return config;
-            //return $q.defer(config);
         },
         requestError: function (config) {
             if (config.status === 401) {
                 $location.path('/home');
-                return $q.reject(config);
             }
             else {
-                return $q.reject(config);
+                swal({
+                    title: "Application Error",
+                    text: config,
+                    type: "error",
+                    confirmButtonText: "Cool"
+                });
+                console.log(config);
             }
-         },
-
+            return config;
+        },
         response: function (res) {
             return res;
-            //return $q.defer(res);
         },
         responseError: function (res) {
             if (res.status === 401) {
                 $location.path('/home');
-                return $q.reject(res);
             }
-            else {
-                return $q.reject(res);
-            }
-        },
-        //responseError: function (rejection) {
-        //    return rejection;
-        //},
+            return res;
+        }
     }
 }]);
 

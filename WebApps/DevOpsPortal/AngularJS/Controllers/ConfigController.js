@@ -18,7 +18,9 @@
 ///
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $log, $timeout,
+ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log', '$timeout',
+    'uiGridConstants', '$q', '$interval', 'ModalService', 'getObjectService',
+    function ($rootScope, $scope, $http, $log, $timeout,
     uiGridConstants, $q, $interval, ModalService, getObjectService) {
     $scope.title = "Application Configuration";
 
@@ -210,7 +212,8 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
             groupable: true,
             enableFiltering: false,
             filter: {
-                noTerm: true,
+                term: '.',
+                //noTerm: true,
                 condition: function (searchTerm, cellValue) {
                     if ($scope.component !== '')
                         return $scope.filterComponent() === cellValue;
@@ -570,10 +573,12 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
     // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
-        if (!$scope.selectedComponent)
-            $scope.component = '';
-        else
+        $scope.component = '';
+        if ($scope.selectedComponent)
+        //    $scope.component = '';
+        //else
             $scope.component = $scope.selectedComponent.value;
+        $scope.filterComponent;
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         $scope.expandValues();
     };
@@ -596,12 +601,14 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
     };
 
     $scope.expandValues = function () {
-        $scope.gridApi.treeBase.collapseAllRows();
         var groupRow;
         angular.forEach($scope.gridApi.grid.treeBase.tree, function (value, key) {
-            if (value.aggregations[0].groupVal == $scope.component)
-                $scope.gridApi.treeBase.expandRowChildren(value.row);
+            if (value.aggregations[0].groupVal == $scope.component) {
+                groupRow = value.row;
+                $scope.gridApi.treeBase.expandRow(value.row);
+            }
         });
+        var temp = groupRow;
     };
 
     // Bring up the Add / Edit Component Modal
@@ -882,6 +889,7 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
 
 
     $scope.getNote = function (row) {
+        var localRow = row;
         var configVarId = row.entity.configvar_id;
         var key = row.entity.key;
         var fullElement = row.entity.fullElement;
@@ -939,6 +947,9 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                                     'Content-Type': 'application/json'
                                 }
                             }).success(deferred.resolve)
+                              .success(function () {
+                                  localRow.entity.hasNotes = true;
+                              })
                         }
                     });
                 })
@@ -1001,4 +1012,4 @@ ConfigApp.controller('ConfigController', function ($rootScope, $scope, $http, $l
                 }
             });
     }
-});
+}]);

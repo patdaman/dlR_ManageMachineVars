@@ -20,7 +20,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>44339</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
@@ -151,14 +151,11 @@
     <Content Include="AngularJS\Controllers\PowershellController.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="AngularJS\Directives\appDirectives.js" />
     <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
     <Content Include="AngularJS\Services\DashboardHubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
-    <Content Include="AngularJS\Services\IHttpService.js" />
     <Content Include="AngularJS\Services\LogHubService.js" />
-    <Content Include="AngularJS\Services\MachineService.js" />
     <Content Include="Assets\404-150x150.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -227,7 +224,7 @@
     <Content Include="Content\Templates\noteModal.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\powershellExcecuteModal.html">
+    <Content Include="Content\Templates\powershellExecuteModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\subGridActionsTemplate.html">
@@ -768,7 +765,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
-    <Content Include="Content\Site.css" />
+    <Content Include="Content\Site.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -792,7 +791,6 @@
     <Content Include="AngularJS\Controllers\LogController.js" />
     <Content Include="AngularJS\Controllers\MachineController.js" />
     <Content Include="AngularJS\Services\ConfigService.js" />
-    <Content Include="AngularJS\Services\EnumListService.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

@@ -20,7 +20,7 @@
     <div ng-controller="MachineController as vm">
         <div class="control-group">
             <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">
-                <option value="all" style="color:red">Environment</option>
+                <option value="" style="color:red">Environment</option>
             </select>
             <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
