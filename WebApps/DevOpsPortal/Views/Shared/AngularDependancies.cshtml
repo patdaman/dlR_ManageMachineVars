@@ -2,6 +2,7 @@
     var DevOpsWebApp = {
         AppBuildTag: '@(ViewData["AppBuildTag"])',
         ApiPath: '@(ViewData["ApiUri"])',
+        EnumPath: '@(ViewData["EnumRelativeUri"])',
         SignalRPath: '@(ViewData["SignalRPath"])',
         TitleTag : '@(ViewData["TitleTag"])',
         UserName: '@User.Identity.Name.ToString().Replace(@"\",@"\\")',

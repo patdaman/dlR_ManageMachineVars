@@ -31,7 +31,11 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var fileName;
         var configXml;
         var modalSize;
+        var displayFileSelect;
+        var displayGetFile;
 
+        vm.displayFileSelect = true;
+        vm.displayGetFile = false;
         vm.environments = environments;
         vm.environment = environment;
         angular.forEach(vm.environments, function (value) {
@@ -47,9 +51,11 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
 
         vm.updateFile = function (selectedFile) {
             vm.fileName = selectedFile.fileName;
+            vm.displayGetFile = true;
         };
         vm.updateEnvironment = function (selectedEnvironment) {
             vm.environment = selectedEnvironment.name;
+            vm.displayGetFile = true;
         };
 
         vm.modalSize = function () {
@@ -72,12 +78,14 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             .success(function (data) {
                 vm.configXml = data.text,
                 vm.filePath = data.path,
+                vm.displayGetFile = false,
                 vm.modalSize()
             })
         };
 
         if (vm.files.length === 1) {
             vm.selectedFile = vm.files[0];
+            vm.displayFileSelect = false;
             vm.getFile();
         };
 

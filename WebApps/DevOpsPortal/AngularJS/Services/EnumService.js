@@ -1,9 +1,10 @@
 ﻿//get object lists
-ConfigApp.service('getObjectService', ['$http', function ($http) {
+EnumService.service('getObjectService', ['$http', '$rootScope', function ($http, $rootScope) {
     this.getConfigObjects = function (type) {
         return $http({
             method: 'get',
-            url: ('api:/ConfigValuesApi'),
+            //url: ('api:/ConfigValuesApi'),
+            url: ($rootScope.EnumPath),
             params: {
                 type: type,
             },

@@ -2,9 +2,12 @@
 
 var DevOpsWebApp;
 var ApiPath = DevOpsWebApp.ApiPath;
+var EnumPath = DevOpsWebApp.EnumPath;
 var SignalRPath = DevOpsWebApp.SignalRPath;
 var UserName = DevOpsWebApp.UserName;
 var displayApi = DevOpsWebApp.DisplayApi;
+
+var EnumService = angular.module('EnumService', []);
 
 var ConfigApp = angular.module('ConfigApp',
         ['ui.grid',
@@ -27,7 +30,8 @@ var ConfigApp = angular.module('ConfigApp',
             'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
-            'angularModalService'
+            'angularModalService',
+            'EnumService'
         ])
 
 var MachineApp = angular.module('MachineApp',
@@ -45,7 +49,8 @@ var MachineApp = angular.module('MachineApp',
             'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
-            'angularModalService'
+            'angularModalService',
+            'EnumService'
         ]);
 
 var LogApp = angular.module('LogApp',
@@ -54,7 +59,8 @@ var LogApp = angular.module('LogApp',
             'ui.grid.pagination',
             'ui.grid.expandable',
             'ui.grid.selection',
-            'ui.grid.pinning'
+            'ui.grid.pinning',
+            'EnumService'
         ]);
 
 var PowershellApp = angular.module('PowershellApp',
@@ -64,13 +70,15 @@ var PowershellApp = angular.module('PowershellApp',
             'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
-            'angularModalService'
+            'angularModalService',
+            'EnumService'
         ]);
 
 //var dashboardApp = angular.module('dashboardApp',
 //      [
 //          'ng.epoch',
 //          'n3-pie-chart'
+//          'EnumService'
 //      ]);
 
 
@@ -79,17 +87,13 @@ var PowershellApp = angular.module('PowershellApp',
 ///
 ///  ----------------------------------------------------------- ///
 var app = angular.module('app',
-    ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp'
-        //', ngclipboard',
-        //'ui.bootstrap',
-        //'ngAnimate',
-        //'angularModalService'
-    ]);
+    ['ConfigApp', 'LogApp', 'MachineApp', 'PowershellApp']);
 //var app = angular.module('app', ['ConfigApp', 'logApp', 'machineApp', 'PowershellApp', 'dashboardApp']);
 
 app.run(['$rootScope', function ($rootScope) {
     $rootScope.APIPath = ApiPath;
-    $rootScope.SignalRPATH = SignalRPath;
+    $rootScope.EnumPath = EnumPath;
+    $rootScope.SignalRPath = SignalRPath;
 }]);
 ///  ----------------------------------------------------------- ///
 /// <summary>   The application. </summary>
@@ -103,6 +107,12 @@ app.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $location) {
         request: function (config) {
             if (config.url.search("api:") === 0)
                 config.url = ApiPath + config.url.slice(4);
+            var endInteger = config.url.match(/\d+$/);
+            if (endInteger) {
+                var integerLength = config.url.length - endInteger[0].length;
+                if (config.url.charAt(integerLength) != '/')
+                    var endUrl = config.url.slice(-(integerLength)) + '/' + endInteger[0];
+                };
             return config;
         },
         requestError: function (config) {

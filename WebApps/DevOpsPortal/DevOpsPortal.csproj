@@ -217,6 +217,12 @@
     <Content Include="Content\Templates\expandableRowTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Templates\expandButtonTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\keyTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\machineActionsTemplate.html" />
     <Content Include="Content\Templates\codeMirror.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -231,6 +237,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\toolTipTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\valueTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\themes\base\accordion.css" />
@@ -790,7 +799,7 @@
     <Content Include="AngularJS\Controllers\ConfigController.js" />
     <Content Include="AngularJS\Controllers\LogController.js" />
     <Content Include="AngularJS\Controllers\MachineController.js" />
-    <Content Include="AngularJS\Services\ConfigService.js" />
+    <Content Include="AngularJS\Services\EnumService.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

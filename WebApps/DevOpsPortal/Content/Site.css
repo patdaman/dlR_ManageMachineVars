@@ -237,8 +237,9 @@ div.flip {
 
 .gridStyle {
   width: 99%;
-  max-width: 1800px;
-  height: 800px;
+  /*max-width: 1800px;*/
+  min-height: 800px;
+  max-height: 1200px;
   align-content: center;
 }
 .subGridStyle {
@@ -256,6 +257,9 @@ div.flip {
   overflow: visible;
   z-index: 9999999;
   float: left;
+}
+div[disabled] {
+  display:none;
 }
 
 .my-custom-menu {

@@ -41,28 +41,9 @@ namespace DevOpsPortal
                       "~/Scripts/sweetalert.min.js"
                     ));
 
-            bundles.Add(new ScriptBundle("~/bundles/app").Include(
-                      "~/AngularJS/app.js",
-                      "~/AngularJS/Controllers/ConfigController.js",
-                      "~/AngularJS/Controllers/ConfigModalController.js",
-                      "~/AngularJS/Controllers/DashboardController.js",
-                      "~/AngularJS/Controllers/MachineController.js",
-                      "~/AngularJS/Controllers/PowershellController.js",
-                      "~/AngularJS/Controllers/LogController.js",
-                      "~/Scripts/ngclipboard.min.js",
-                      "~/AngularJS/Directives/appDirectives.js",
-                      "~/AngularJS/Directives/ConfigDirectives.js",
-                      "~/AngularJS/Directives/powershellCodeMirror.js",
 
-                      "~/AngularJS/Services/ConfigService.js",
-                      "~/AngularJS/Services/DashboardHubService.js",
-                      "~/AngularJS/Services/EnumListService.js",
-                      "~/AngularJS/Services/LogHubService.js",
-                      "~/AngularJS/Services/MachineService.js"
-                      //"~/Scripts/Site.js"
-                      //"~/AngularJS/Services/Utils.js",
-                      //"~/AngularJS/Services/ngClickCopy.js"
-                      ));
+            bundles.Add(new ScriptBundle("~/bundles/app").IncludeDirectory(
+                      "~/AngularJS", "*.js", true));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      //"~/Content/bootstrap-combined.min.css",
