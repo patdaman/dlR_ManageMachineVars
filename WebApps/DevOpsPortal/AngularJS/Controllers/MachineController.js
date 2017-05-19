@@ -1,11 +1,6 @@
 ﻿'use strict'
 
-//var app = angular.module('app', ['ui.grid', 'ui.grid.edit',
-//    'ui.grid.pagination', 'ui.grid.expandable', 'ui.grid.cellNav',
-//    'ui.grid.grouping', 'ui.grid.selection', 'ui.grid.rowEdit',
-//    'ui.grid.selection', 'ui.grid.pinning', 'ui.grid.exporter']);
-
-app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
+MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
     '$log', '$timeout', '$q', '$interval', 'ModalService',
     function ($scope, $http, uiGridConstants,
     $log, $timeout, $q, $interval, ModalService) {
@@ -75,7 +70,7 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
         exporterPdfDefaultStyle: { fontSize: 9 },
         exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
         exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
-        exporterPdfHeader: { text: "Marcom Central - Component Configuration", style: 'headerStyle' },
+        exporterPdfHeader: { text: "Marcom Central - Server Configuration", style: 'headerStyle' },
         exporterPdfFooter: function (currentPage, pageCount) {
             return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
@@ -134,7 +129,6 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
                 enableFiltering: false,
                 width: 80
             },
-            //{ field: 'ConfigVariableValues', visible: false },
             //{ field: 'Enum_Locations', visible: false },
             //{ field: 'MachineComponentPaths', visible: false },
             //{ field: 'EnvironmentVariables', visible: true },
@@ -238,8 +232,7 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
     };
 
-    $http.get(ApiPath + '/MachineApi')
-    //$http.get('api:/ConfigApi')
+    $http.get('api:/MachineApi')
         .success(function (data) {
             //for (i = 0; i < data.length; i++) {
             //    data[i].subGridOptions = {
@@ -312,13 +305,9 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
                 data["index"] = index;
             });
         });
-    //        function () {
-    //            //swal("Oops..", "Error occured while loading", "error"); //fail
-    //        });
 
     //save form data
     $scope.save = function () {
-        //debugger;
         var Machine = {
             id: $scope.id,
             machine_name: $scope.machine_name,
@@ -337,19 +326,17 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
         saverecords.then(function (d) {
             $scope.id = d.data.id;
             loadMachines();
-            //swal("Reord inserted successfully");
+            swal("Reord inserted successfully");
         },
             function () {
-                //swal("Oops..", "Error occured while saving", 'error');
+                swal("Oops..", "Error occured while saving", 'error');
             });
     }
 
     //get single record by ID
     $scope.get = function (Machine) {
-        //debugger;
         var singlerecord = $http.get("api:/MachineApi" + Machine.id);
         singlerecord.then(function (d) {
-            // debugger;
             var record = d.data;
             $scope.Updateid = record.id;
             $scope.Updatemachine_name = record.machine_name;
@@ -360,13 +347,12 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
             $scope.Updateactive = record.active;
         },
             function () {
-                //swal("Oops...", "Error occured while getting record", "error");
+                swal("Oops...", "Error occured while getting record", "error");
             });
     }
 
     //update Machine data
     $scope.update = function () {
-        //debugger;
         var Machine = {
             id: $scope.Updateid,
             machine_name: $scope.Updatemachine_name,
@@ -384,10 +370,10 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
         });
         updaterecords.then(function (d) {
             loadMachines();
-            //swal("Record updated successfully");
+            swal("Record updated successfully");
         },
             function () {
-                //swal("Opps...", "Error occured while updating", "error");
+                swal("Opps...", "Error occured while updating", "error");
             });
     }
 
@@ -409,7 +395,7 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
                 active: '',
             };
             loadMachines();
-            //swal("Record deleted succussfully");
+            swal("Record deleted succussfully");
         });
     }
 

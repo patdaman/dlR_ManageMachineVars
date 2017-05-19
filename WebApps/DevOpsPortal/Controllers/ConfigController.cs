@@ -6,11 +6,10 @@ using System.Web.Mvc;
 
 namespace DevOpsPortal.Controllers
 {
-    //public class ConfigController : Controller
     public class ConfigController : BaseController
     {
 #if DEBUG
-        [Authorize(Roles = "Engineers")]
+        //[Authorize(Roles = "Engineers")]
 #endif
 #if RELEASE
         [Authorize(Roles = "Engineers")]
