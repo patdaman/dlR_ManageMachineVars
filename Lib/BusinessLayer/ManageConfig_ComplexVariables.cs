@@ -596,6 +596,8 @@ namespace BusinessLayer
                                 //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                                 appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                         }
+                        if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
+                            appVarModel.applicationNames = string.Empty;
                         appVarModel.values.AddRange(configVar.ConfigVariableValues);
                         if (DevOpsContext.Notes.Where(x => x.note_id == appVarModel.configvar_id && x.note_type == "ConfigVariables").Any())
                             appVarModel.hasNotes = true;

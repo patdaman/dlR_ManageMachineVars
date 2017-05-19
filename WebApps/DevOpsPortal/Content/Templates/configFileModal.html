@@ -22,7 +22,7 @@
                         <b>Select an Environment: </b>
                     </div>
                     <!--<select ng-model="selectedEnvironment" ng-options="e for e in files.environment" ng-change="updateEnvironment(selectedEnvironment)">-->
-                    <select ng-model="selectedEnvironment" ng-options="e.name for e in environments" ng-change="updateEnvironment(selectedEnvironment)">
+                    <select ng-model="selectedVmEnvironment" ng-options="e.name for e in environments" ng-change="updateEnvironment(selectedVmEnvironment)">
                     </select>
                     <button ng-if="displayGetFile" type="button" class="btn btn-dark btn-primary" ng-click="getFile()">Get File</button>
                 </div>

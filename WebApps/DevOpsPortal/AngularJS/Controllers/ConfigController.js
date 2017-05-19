@@ -32,7 +32,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
     var rowId;
 
     var edit;
-    var subEdit;
     var var_id;
     var key;
     var value;
@@ -132,11 +131,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
     };
 
     /// Grid Filters
-    $scope.environment = 'development';
+    $scope.environment = '';
     $scope.filterEnvironment = function () {
         return $scope.environment;
     };
-    $scope.environmentIndex = 0;
+    $scope.environmentIndex = -1;
     $scope.filterEnvironmentIndex = function () {
         return $scope.environmentIndex;
     };
@@ -166,6 +165,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         getObjectService.getConfigObjects('component')
         .then(function (result) {
             $scope.components = result;
+            if ($scope.component && $scope.component!= '')
+                angular.forEach($scope.components, function (components) {
+                    if (components.value == $scope.component)
+                        $scope.selectedComponent = component;
+                });
         })
     };
 
@@ -186,18 +190,27 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
     //$scope.gridOptions.columnDefs = [
     $scope.columnDefinition = function (valueOrdinal) {
-        var valueColumn = "values[" + valueOrdinal + "].value";
+        var valueColumn;
+        if (valueOrdinal === -1)
+            valueColumn = 'a';
+        else
+            valueColumn = "values[" + valueOrdinal + "].value";
         return [{
             field: 'applicationNames',
             enableCellEdit: false,
             visible: false,
+            enableFiltering: false,
             filter: {
+                term: '.',
                 condition: function (searchTerm, cellValue) {
-                    if ($scope.application !== '')
-                        return cellValue.indexOf($scope.filterapplication()) != -1;
+                    if ($scope.application !== '') {
+                        var debug = cellValue.indexOf($scope.filterApplication()) != -1;
+                        var blankCell = (cellValue == '');
+                        return debug && !blankCell;
+                    }
                     else
                         return true;
-                },
+                }
             },
             filterCellFiltered: true,
         },
@@ -345,17 +358,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
     $scope.editCell = function (row) {
-        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
-        if (rowCol !== null) {
-            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
-        }
-        var values = [];
-        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
-        for (var i = 0; i < currentSelection.length; i++) {
-            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
-        }
-        $scope.printSelection = values.toString();
-
         $scope.gridApi.grid.cellNav.clearFocus();
         $scope.gridApi.grid.cellNav.focusedCells = [];
         $scope.var_id = row.entity.configvar_id;
@@ -374,8 +376,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
             $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
         }
-        //$scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[11]);
-        //$scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[13]);
         $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[13]);
         $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
         $scope.selectedRow = row;
@@ -415,9 +415,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         });
         $scope.gridApi.rowEdit.setRowsClean(dataRows);
         $scope.edit = false;
-        $scope.subEdit = false;
         $scope.canEdit();
-        $scope.subCanEdit();
         $scope.bypassEditCancel = true;
     };
     // Requests the key data save promise
@@ -454,8 +452,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
     // Function call from Index page dropdown OnChange
     $scope.updateEnvironment = function () {
         if (!$scope.selectedEnvironment) {
-            $scope.environment = 'development';
-            $scope.environmentIndex = 0;
+            $scope.environment = '';
+            $scope.environmentIndex = -1;
             $scope.filterEnvironment();
             $scope.filterEnvironmentIndex();
         }
@@ -468,13 +466,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             $scope.filterEnvironment();
             $scope.filterEnvironmentIndex();
         };
-        //$scope.filterSubGrid($scope.environment);
         $scope.loadGridColumns();
     };
 
     // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
-        $scope.component = '';
         if (!$scope.selectedComponent) {
             $scope.component = '';
             $scope.gridOptions.columnDefs[2].visible = true;
@@ -502,6 +498,29 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         $timeout(function () {
             $scope.gridOptions.data = $scope.loadGrid();
             $scope.$apply();
+        })
+        .then(function () {
+            if ($scope.component !== '' && (!$scope.selectedComponent || ($scope.selectedComponent.value != $scope.component))) {
+                angular.forEach($scope.components, function (components) {
+                    if (components.value == $scope.component)
+                        $scope.selectedComponent = components;
+                });
+                $scope.updateComponent();
+            }
+            if ($scope.environment !== '' && (!$scope.selectedEnvironment || ($scope.selectedEnvironment.value != $scope.environment))) {
+                angular.forEach($scope.environments, function (environments) {
+                    if (environments.value == $scope.environment)
+                        $scope.selectedEnvironment = environments;
+                });
+                $scope.updateEnvironment();
+            }
+            if ($scope.application !== '' && (!$scope.selectedApplication || ($scope.selectedApplication.value != $scope.application))) {
+                angular.forEach($scope.applications, function (applications) {
+                    if (applications.value == $scope.application)
+                        $scope.selectedApplication = applications;
+                });
+                $scope.updateApplication();
+            }
         });
     };
 
@@ -526,7 +545,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 components: $scope.components,
                 applications: $scope.applications,
                 environments: $scope.environments,
-                environment: $scope.environment,
+                environment: $scope.selectedEnvironment,
             }
         })
         .then(function (modal) {
@@ -549,12 +568,16 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                             'Content-Type': 'application/json'
                         }
                     }).success(deferred.resolve)
-                      .success(function () {
-                          $scope.refreshGrid()
+                      .then(function () {
+                          $scope.environment = result.environment.value;
+                          $scope.component = result.componentName;
+                          $scope.refreshGrid();
                       })
                     return deferred.promise;
                 }
                 else if (result.upload) {
+                    $scope.environment = result.environment.value;
+                    $scope.component = result.componentName;
                     $scope.refreshGrid();
                 }
                 else {

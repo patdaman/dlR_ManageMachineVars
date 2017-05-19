@@ -3,9 +3,14 @@
         {{row.entity.fullElement}}
     </div>
 </div>
-<div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value==''">
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value==''&&grid.appScope.environmentIndex!=-1">
     <div class="ui-grid-cell-contents">
         { no value }
+    </div>
+</div>
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&(grid.appScope.environmentIndex===-1)">
+    <div class="ui-grid-cell-contents">
+        { Please Select Environment }
     </div>
 </div>
 <div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value!=''" 

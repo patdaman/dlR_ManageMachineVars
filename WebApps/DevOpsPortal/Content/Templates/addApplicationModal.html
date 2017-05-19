@@ -13,11 +13,13 @@
                                 <option value="" style="color:red">Select Application:</option>
                             </select>
                         </div>
-                        <b> OR: </b>
-                        <div class="form-group">
-                            <label><b>New Application Name:</b></label>
-                            <!--<input id="application" class="form-control" type="text" ng-model="applicationName" required>-->
-                            <input id="application" class="form-control" type="text" ng-model="applicationName">
+                        <div ng-hide="(applicationApplications)">
+                            <b> OR: </b>
+                            <div class="form-group">
+                                <label><b>New Application Name:</b></label>
+                                <!--<input id="application" class="form-control" type="text" ng-model="applicationName" required>-->
+                                <input id="application" class="form-control" type="text" ng-model="applicationName">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label><b>Release Version:</b></label>

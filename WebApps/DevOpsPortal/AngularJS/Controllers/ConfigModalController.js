@@ -53,8 +53,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             vm.fileName = selectedFile.fileName;
             vm.displayGetFile = true;
         };
-        vm.updateEnvironment = function (selectedEnvironment) {
-            vm.environment = selectedEnvironment.name;
+        vm.updateVmEnvironment = function (selectedVmEnvironment) {
+            vm.environment = selectedVmEnvironment.value;
             vm.displayGetFile = true;
         };
 
@@ -173,61 +173,64 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         vm.components = components;
         vm.environments = environments;
         vm.environment = environment;
-        angular.forEach(vm.environments, function (value) {
-            if (value.name === vm.componentEnvironment)
-                vm.componentEnvironment = value;
-        });
-        vm.localComponent = {
-            componentName: vm.componentName,
-            filePath: vm.filePath,
-            applications: vm.componentApplications,
-        }
+        //angular.forEach(vm.environments, function (value) {
+        //    if (value.name === vm.environment)
+        //        vm.componentEnvironment = value;
+        //});
+        
+        vm.selectEnvironment = function (environment) {
+            vm.componentEnvironment = environment;
+            var test = vm.componentComponents;
+        };
 
         vm.selectComponent = function (component) {
-            $http({
-                method: 'GET',
-                url: apiRelPath,
-                params: {
-                    componentName: component.name,
+            if (component) {
+                $http({
+                    method: 'GET',
+                    url: apiRelPath,
+                    params: {
+                        componentName: component.name,
 
-                },
-            }).then(function (result) {
-                vm.componentData = result.data;
-                vm.availableApplications = vm.applications;
-                if (typeof vm.componentData.ConfigFile !== "undefined")
-                    vm.fileName = vm.componentData.ConfigFiles.file_name;
-                vm.filePath = vm.componentData.relative_path;
-                vm.componentName = vm.componentComponents.name;
-                vm.componentApplications = [];
-                angular.forEach(result.data.Applications, function (Applications) {
-                    var name = Applications.application_name;
-                    var id = Applications.id;
-                    var value = Applications.application_name;
-                    vm.componentApplications.push({
-                        id: id,
-                        name: name.replace(/"/g, '').replace(/'/g, '')
-                            .replace(/\[/g, '').replace(/]/g, ''),
-                        value: value.replace(/"/g, '').replace(/'/g, '')
-                            .replace(/\[/g, '').replace(/]/g, ''),
+                    },
+                }).then(function (result) {
+                    vm.componentData = result.data;
+                    vm.availableApplications = vm.applications;
+                    if (typeof vm.componentData.ConfigFile !== "undefined")
+                        vm.fileName = vm.componentData.ConfigFiles.file_name;
+                    vm.filePath = vm.componentData.relative_path;
+                    vm.componentName = vm.componentComponents.name;
+                    vm.componentApplications = [];
+                    angular.forEach(result.data.Applications, function (Applications) {
+                        var name = Applications.application_name;
+                        var id = Applications.id;
+                        var value = Applications.application_name;
+                        vm.componentApplications.push({
+                            id: id,
+                            name: name.replace(/"/g, '').replace(/'/g, '')
+                                .replace(/\[/g, '').replace(/]/g, ''),
+                            value: value.replace(/"/g, '').replace(/'/g, '')
+                                .replace(/\[/g, '').replace(/]/g, ''),
+                        });
                     });
-                });
-                vm.applicationNames = JSON.stringify(vm.componentApplications.map(function (item) {
-                    return item['name'].replace(/"/g, '').replace(/'/g, '')
-                        .replace(/\[/g, '').replace(/]/g, '');
-                }));
-                for (var i = vm.availableApplications.length - 1; i >= 0; i--) {
-                    for (var j = 0; j < vm.componentApplications.length; j++) {
-                        if (vm.availableApplications[i] && (vm.availableApplications[i].name === vm.componentApplications[j].name)) {
-                            vm.availableApplications.splice(i, 1);
+                    vm.applicationNames = JSON.stringify(vm.componentApplications.map(function (item) {
+                        return item['name'].replace(/"/g, '').replace(/'/g, '')
+                            .replace(/\[/g, '').replace(/]/g, '');
+                    }));
+                    for (var i = vm.availableApplications.length - 1; i >= 0; i--) {
+                        for (var j = 0; j < vm.componentApplications.length; j++) {
+                            if (vm.availableApplications[i] && (vm.availableApplications[i].name === vm.componentApplications[j].name)) {
+                                vm.availableApplications.splice(i, 1);
+                            }
                         }
                     }
-                }
-                vm.localComponent = {
-                    componentName: vm.componentName,
-                    filePath: vm.filePath,
-                    applications: vm.componentApplications,
-                }
-            });
+                });
+            }
+            else {
+                vm.componentName = '';
+                vm.componentApplications = [];
+                vm.filePath = '';
+                vm.availableApplications = vm.applications;
+            };
         };
 
         vm.$watch('files', function () {
@@ -243,7 +246,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         vm.upload = function (file) {
             if (typeof file !== 'undefined') {
                 if (!file.$error && typeof file.name !== 'undefined') {
-                    if (vm.componentName === '') {
+                    if (vm.componentName == '') {
                         swal({
                             title: "Add Component",
                             text: "No Component Name Supplied",
@@ -251,7 +254,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                             confirmButtonText: "Cool"
                         });
                     }
-                    else if (vm.environment === '') {
+                    else if (!vm.componentEnvironment) {
                         swal({
                             title: "Add Component",
                             text: "No Environment Supplied",
@@ -303,6 +306,9 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             });
             $element.modal('hide');
             close({
+                componentApplications: vm.componentApplications,
+                componentName: vm.componentName,
+                environment: vm.componentEnvironment,
                 upload: true,
             }, 500);
         };
@@ -336,6 +342,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 publish: false,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
+                environment: vm.componentEnvironment,
                 filePath: vm.filePath,
             }, 500);
         }

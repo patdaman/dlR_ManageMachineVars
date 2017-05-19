@@ -7,41 +7,44 @@
             </div>
             <div class="modal-body">
                 <form name="componentForm">
-                        <div class="form-group">
-                            <select ng-model="componentComponents" ng-options="c.name for c in components" ng-change="selectComponent(componentComponents)">
-                                <option value="" style="color:red">Select Component:</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <select ng-model="componentComponents" ng-options="c.name for c in components" ng-change="selectComponent(componentComponents)">
+                            <option value="" style="color:red">Select Component:</option>
+                        </select>
+                    </div>
+                    <div ng-hide="(componentComponents)">
                         <b> OR: </b>
                         <div class="form-group">
                             <label><b>New Component Name:</b></label>
                             <!--<input id="component" class="form-control" type="text" ng-model="componentName" required>-->
                             <input id="component" class="form-control" type="text" ng-model="componentName">
                         </div>
-                        <div class="form-group">
-                            <label><b>Application(s):</b></label>
-                            <multi-select ng-model="componentApplications"
-                                          available="availableApplications"
-                                          selected-label="Current"
-                                          available-label="Available"
-                                          display-attr="name">
-                            </multi-select>
-                        </div>
-                        <div class="form-group">
-                            <label>Relative File Path:</label>
-                            <!--<input id="path" class="form-control" type="text" ng-model="filePath" required>-->
-                            <input id="path" class="form-control" type="text" ng-model="filePath">
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><b>Application(s):</b></label>
+                        <multi-select ng-model="componentApplications"
+                                      available="availableApplications"
+                                      selected-label="Current"
+                                      available-label="Available"
+                                      display-attr="name">
+                        </multi-select>
+                    </div>
+                    <div class="form-group">
+                        <label>Relative File Path:</label>
+                        <!--<input id="path" class="form-control" type="text" ng-model="filePath" required>-->
+                        <input id="path" class="form-control" type="text" ng-model="filePath">
+                    </div>
                     <br />
-                         <div class="form-group">
-                            <select name="selectEnvironment" ng-model="componentEnvironment" ng-options="c.name for c in environments">
-                            </select>
-                        </div>
-                        <div ng-disabled="componentEnvironment == '' || componentName == ''" ngf-drop ngf-select ng-model="files" class="drop-box"
-                             ngf-drag-over-class="'dragover'" ngf-multiple="false" ngf-allow-dir="false"
-                             accept=".config,.xml"
-                             ngf-pattern="'.config,.xml'">Drop .config or .xml files here or click to upload</div>
-                        <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+                    <div class="form-group">
+                        <select name="selectEnvironment" ng-model="componentEnvironment" ng-options="c.name for c in environments" ng-change="selectEnvironment(componentEnvironment)">
+                            <option value="" style="color:red">Select Environment:</option>
+                        </select>
+                    </div>
+                    <div ng-disabled="!(componentEnvironment) || (componentName === '')" ngf-drop ngf-select ng-model="files" class="drop-box"
+                         ngf-drag-over-class="'dragover'" ngf-multiple="false" ngf-allow-dir="false"
+                         accept=".config,.xml"
+                         ngf-pattern="'.config,.xml'">Drop .config or .xml files here or click to upload</div>
+                    <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
                 </form>
             </div>
             <div class="modal-footer">

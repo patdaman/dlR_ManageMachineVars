@@ -10,15 +10,18 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
         },
         'requestError': function (rejection) {
             if (rejection.status === 401) {
+                swal({
+                    title: "Access Denied",
+                    text: rejection.data.ExceptionMessage,
+                    type: "error",
+                    configButtonText: "OK"
+                });
                 $location.path('/home');
             }
-                //else if (canRecover(rejection)) {
-                //    return responseOrNewPromise;
-                //}
             else {
                 swal({
                     title: "Application Error",
-                    text: rejection,
+                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.ExceptionMessage,
                     type: "error",
                     confirmButtonText: "Cool"
                 });
@@ -30,15 +33,18 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
         },
         'responseError': function (rejection) {
             if (rejection.status === 401) {
+                swal({
+                    title: "Access Denied",
+                    text: rejection.data.ExceptionMessage,
+                    type: "error",
+                    configButtonText: "OK"
+                });
                 $location.path('/home');
             }
-                //else if (canRecover(rejection)) {
-                //    return responseOrNewPromise;
-                //}
             else {
                 swal({
                     title: "Application Error",
-                    text: rejection,
+                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.ExceptionMessage,
                     type: "error",
                     confirmButtonText: "Cool"
                 });
@@ -57,17 +63,17 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
 
 // error handling [] are for minification safety
 .factory('$exceptionHandler', [function () {
-    return function (exception, cause) {
+    return function (exception, stack) {
         if (exception) {
             if (exception.message) {
                 var showstr = exception.message;
-                if (cause)
-                    showstr = showstr + "\nCause: " + cause;
+                if (stack)
+                    showstr = showstr + "\nCause: " + stack;
                 swal({
                     title: "Application Error",
                     text: showstr,
                     type: "error",
-                    confirmButtonText: "Cool"
+                    confirmButtonText: "OK"
                 });
                 console.log(showstr);
             }
@@ -77,13 +83,13 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
             }
         }
         else {
-            if (cause) {
+            if (stack) {
                 console.log(cause);
                 swal({
                     title: "Application Error",
-                    text: cause,
+                    text: stack,
                     type: "error",
-                    confirmButtonText: "Cool"
+                    confirmButtonText: "OK"
                 });
             }
             else {
@@ -92,7 +98,7 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
                     title: "Application Error",
                     text: "Unknown Exception",
                     type: "error",
-                    confirmButtonText: "Cool"
+                    confirmButtonText: "OK"
                 });
             }
             alert("Unknown Exception")
