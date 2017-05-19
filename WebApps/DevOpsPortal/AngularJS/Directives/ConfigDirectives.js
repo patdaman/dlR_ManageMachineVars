@@ -101,4 +101,4 @@ ConfigApp.directive('multiSelect', ['$q', function ($q) {
             });
         }
     };
-}]);
+}])

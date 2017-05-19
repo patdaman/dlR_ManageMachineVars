@@ -15,6 +15,7 @@ namespace DevOpsPortal.Controllers
             logger.Info(String.Format("BaseController getting called. Page Load at {0}", DateTime.Now.ToString()));
             ViewData["ApiUri"] = System.Configuration.ConfigurationManager.AppSettings["ApiUri"];
             ViewData["SignalRPath"] = System.Configuration.ConfigurationManager.AppSettings["SignalRPath"];
+            ViewData["EnumRelativeUri"] = System.Configuration.ConfigurationManager.AppSettings["EnumRelativeUri"];
             ViewData["UserName"] = System.Web.HttpContext.Current.User.ToString().Replace(@"\",@"\\");
             //ViewData["UserName"] = User.Identity.Name;
 #if DEBUG
@@ -23,7 +24,9 @@ namespace DevOpsPortal.Controllers
             ViewData["DisplayApi"] = false;
 #endif
             if (ViewData["ApiUri"] == null ||
-                ViewData["SignalRPath"] == null)
+                ViewData["SignalRPath"] == null ||
+                ViewData["EnumRelativeUri"] == null
+                )
             {
                 throw new Exception("Error required AppSettings data was null: ApiUri or SignalRPath");
             }

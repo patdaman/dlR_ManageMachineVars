@@ -1,0 +1,21 @@
+﻿<div ng-if="!row.groupHeader&&row.entity.key==''">
+    <div class="ui-grid-cell-contents">
+        {{row.entity.fullElement}}
+    </div>
+</div>
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value==''">
+    <div class="ui-grid-cell-contents">
+        { no value }
+    </div>
+</div>
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value!=''" 
+     class="grid-tooltip" 
+     tooltip="{{row.entity.configParentElement}}<br />&nbsp;{{row.entity.fullElement}}<br />{{row.entity.configParentElement}}" 
+     tooltip-placement="right" 
+     popover-template="{{ row.entity.configElement }}" 
+     popover-placement="bottom" 
+     popover-trigger="mouseenter">
+    <div class="ui-grid-cell-contents">
+        {{ COL_FIELD }}
+    </div>
+</div>

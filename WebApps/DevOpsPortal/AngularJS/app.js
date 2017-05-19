@@ -2,10 +2,12 @@
 
 var DevOpsWebApp;
 var ApiPath = DevOpsWebApp.ApiPath;
-var DashboardSignalRPath = DevOpsWebApp.DashboardSignalRPath;
-var LogSignalRPath = DevOpsWebApp.LogSignalRPath;
+var EnumPath = DevOpsWebApp.EnumPath;
+var SignalRPath = DevOpsWebApp.SignalRPath;
 var UserName = DevOpsWebApp.UserName;
 var displayApi = DevOpsWebApp.DisplayApi;
+
+var EnumService = angular.module('EnumService', []);
 
 var ConfigApp = angular.module('ConfigApp',
         ['ui.grid',
@@ -28,8 +30,9 @@ var ConfigApp = angular.module('ConfigApp',
             'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
-            'angularModalService'
-        ]);
+            'angularModalService',
+            'EnumService'
+        ])
 
 var MachineApp = angular.module('MachineApp',
         [
@@ -46,7 +49,8 @@ var MachineApp = angular.module('MachineApp',
             //'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
-            'angularModalService'
+            'angularModalService',
+            'EnumService'
         ]);
 
 var LogApp = angular.module('LogApp',
@@ -55,7 +59,8 @@ var LogApp = angular.module('LogApp',
             'ui.grid.pagination',
             'ui.grid.expandable',
             'ui.grid.selection',
-            'ui.grid.pinning'
+            'ui.grid.pinning',
+            'EnumService'
         ]);
 
 var PowershellApp = angular.module('PowershellApp',
@@ -65,7 +70,8 @@ var PowershellApp = angular.module('PowershellApp',
             //'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
-            'angularModalService'
+            'angularModalService',
+            'EnumService'
         ]);
 
 var DashboardApp = angular.module('DashboardApp',
@@ -91,6 +97,7 @@ var app = angular.module('app',
 
 app.run(['$rootScope', function ($rootScope) {
     $rootScope.APIPath = ApiPath;
+    $rootScope.EnumPath = EnumPath;
     $rootScope.UserName = DevOpsWebApp.UserName;
     $rootScope.displayApi = DevOpsWebApp.DisplayApi;
 }]);
@@ -101,7 +108,6 @@ app.run(['$rootScope', function ($rootScope) {
 ///  ----------------------------------------------------------- ///
 var signalRApp = angular.module('signalRApp',
   ['appHandler', 'LogApp', 'DashboardApp']);
-
 signalRApp.run(['$rootScope', function ($rootScope) {
     $rootScope.APIPath = ApiPath;
     $rootScope.DashboardSignalRPATH = DashboardSignalRPath;

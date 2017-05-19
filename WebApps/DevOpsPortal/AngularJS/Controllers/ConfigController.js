@@ -91,7 +91,18 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         showGridFooter: true,
         enableSorting: true,
         enableFiltering: true,
+        
+        enableExpandableRowHeader: false,
 
+        saveScroll: true,
+        saveGroupingExpandedStates: true,
+        saveTreeView: true,
+        saveSelection: true,
+        saveFocus: true,
+        saveOrder: true,
+        saveVisible: true,
+        saveFilter: true,
+        
         enableGridMenu: true,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
@@ -186,12 +197,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         return [{
             field: 'applicationNames',
             enableCellEdit: false,
-            width: 225,
             visible: false,
-            //filter: {
-            //    condition: uiGridConstants.filter.CONTAINS,
-            //    term: $scope.application
-            //},
             filter: {
                 condition: function (searchTerm, cellValue) {
                     if ($scope.application !== '')
@@ -223,15 +229,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             },
             filterCellFiltered: true,
         },
-        {
-            field: 'fileName',
-            enableCellEdit: false,
-            //width: '10%',
-            visible: false,
-            //grouping: { groupPriority: 1 },
-            //sort: { priority: 1, direction: 'asc' },
-            //groupable: true
-        },
+        { field: 'fileName', enableCellEdit: false, visible: false },
         { field: 'configvar_id', visible: false, enableCellEdit: false },
         { field: 'configParentElement', visible: false, enableCellEdit: false },
         { field: 'fullElement', visible: false, enableCellEdit: false },
@@ -240,13 +238,14 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         {
             field: 'key',
             cellEditableCondition: $scope.canEdit,
-            width: 200,
+            width: '20%',
             enableFiltering: true,
-            cellToolTip: function (row, col) {
-                return row.entity.configElement;
-            },
-            //cellToolTip: true,
-            //cellTemplate: '/Content/Templates/toolTipTemplate.html'
+            //cellToolTip: function (row) {
+            //    return row.entity.configElement;
+            //},
+            visible: true,
+            cellToolTip: true,
+            cellTemplate: '/Content/Templates/keyTemplate.html'
         },
         { field: 'valueName', visible: false, enableCellEdit: 'false' },
         {
@@ -256,6 +255,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             //width: "35%",
             cellEditableCondition: $scope.canEdit,
             enableFiltering: true,
+            cellTemplate: '/Content/Templates/valueTemplate.html'
         },
         { field: 'hasNotes', visible: false, enableCellEdit: 'false' },
         {
@@ -277,9 +277,10 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
+        $scope.gridApi.core.addRowHeaderColumn({ name: 'rowHeaderCol', displayName: '', width: 26, cellTemplate: '/Content/Templates/expandButtonTemplate.html' });
         gridApi.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
             if ($scope.bypassEditCancel === false) {
-                if (newRowCol.row.entity.key === "undefined" || newRowCol.row.entity.configvar_id !== $scope.var_id || $scope.subEdit === true) {
+                if ((!newRowCol.row.entity.key) || newRowCol.row.entity.key == "" || newRowCol.row.entity.configvar_id !== $scope.var_id || $scope.subEdit === true) {
                     $scope.cancelEdit();
                     if (oldRowCol !== null && oldRowCol !== "undefined") {
                         oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
@@ -515,8 +516,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 'Content-Type': 'application/json'
             }
         })
-            .success(deferred.resolve)
-        //.error(deferred.reject);
+        .success(deferred.resolve)
+        .error(deferred.reject);
         return deferred.promise;
     };
 
@@ -574,11 +575,16 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
     // Function call from Index page dropdown OnChange
     $scope.updateComponent = function () {
         $scope.component = '';
-        if ($scope.selectedComponent)
-        //    $scope.component = '';
-        //else
+        if (!$scope.selectedComponent) {
+            $scope.component = '';
+            $scope.gridOptions.columnDefs[2].visible = true;
+        }
+        else {
             $scope.component = $scope.selectedComponent.value;
+            $scope.gridOptions.columnDefs[2].visible = false;
+        }
         $scope.filterComponent;
+        //$scope.gridOptions.columnDefinition[3].visible = false;
         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         $scope.expandValues();
     };
