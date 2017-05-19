@@ -345,6 +345,17 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
     // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
     $scope.editCell = function (row) {
+        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        if (rowCol !== null) {
+            $scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
+        }
+        var values = [];
+        var currentSelection = $scope.gridApi.cellNav.getCurrentSelection();
+        for (var i = 0; i < currentSelection.length; i++) {
+            values.push(currentSelection[i].row.entity[currentSelection[i].col.name])
+        }
+        $scope.printSelection = values.toString();
+
         $scope.gridApi.grid.cellNav.clearFocus();
         $scope.gridApi.grid.cellNav.focusedCells = [];
         $scope.var_id = row.entity.configvar_id;
@@ -363,8 +374,9 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
             $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
         }
-        $scope.gridApi.cellNav.scrollToFocus($scope.rowId, 11);
-        //row.grid.api.cellNav.scrollToFocus($scope.rowId, 11);
+        //$scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[11]);
+        //$scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[13]);
+        $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[13]);
         $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
         $scope.selectedRow = row;
         $scope.bypassEditCancel = false;

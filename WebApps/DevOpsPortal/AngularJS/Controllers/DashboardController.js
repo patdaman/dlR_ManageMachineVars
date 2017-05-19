@@ -1,6 +1,8 @@
 ﻿'use strict';
 
-DashboardApp.controller('ServerTimeController', ['$scope', 'backendHubProxy',
+DashboardApp
+    
+    .controller('ServerTimeController', ['$scope', 'backendHubProxy',
     function ServerTimeController($scope, backendHubProxy) {
         var clientPushHubProxy = backendHubProxy(backendHubProxy.defaultServer, 'performanceHub', { logging: true });
         var serverTimeHubProxy = backendHubProxy(backendHubProxy.defaultServer, 'performanceHub');
@@ -16,10 +18,9 @@ DashboardApp.controller('ServerTimeController', ['$scope', 'backendHubProxy',
             });
         };
     }
-]);
+])
 
-
-DashboardApp.controller('PerformanceDataController', ['$scope', '$http', 'backendHubProxy',
+    .controller('PerformanceDataController', ['$scope', '$http', 'backendHubProxy',
     function ($scope, $http, backendHubProxy) {
         var performanceDataHub = backendHubProxy(backendHubProxy.defaultServer, 'performanceHub');
         var entry = [];
