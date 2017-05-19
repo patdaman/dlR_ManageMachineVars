@@ -155,8 +155,10 @@ app.factory('$exceptionHandler', [function () {
         if (exception) {
             if (exception.message) {
                 var showstr = exception.message;
-                if (cause)
-                    showstr = showstr + "\nCause: " + cause;
+                if (exception.stack)
+                    showstr = showstr + "\nStack: " + exception.stack;
+                //if (cause)
+                //    showstr = showstr + "\nCause: " + cause;
                 swal({
                     title: "Application Error",
                     text: showstr,
