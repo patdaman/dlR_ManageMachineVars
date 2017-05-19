@@ -3,20 +3,10 @@
     ViewBag.Title = "Machine Editor";
 }
 
-@Scripts.Render("~/bundles/app")
-
-<script src="@Url.Content("~/Scripts/angular-ui/ui-bootstrap-tpls.js")"></script>
-<script src="@Url.Content("~/Scripts/ui-grid.js")"></script>
-<script src="@Url.Content("~/Scripts/ng-file-upload.js")"></script>
-<script src="@Url.Content("~/Scripts/ng-file-upload-shim.js")"></script>
-<script src="@Url.Content("~/AngularJS/Services/GridRowEditService.js")"></script>
-<script src="@Url.Content("~/AngularJS/app.js")"></script>
-<script src="@Url.Content("~/AngularJS/Controllers/MachineController.js")"></script>
-
 <h2>Machine Editor</h2>
 
 @Html.AntiForgeryToken()
-<div ng-app="app">
+<div ng-app="app" ng-strict-di>
     <div ng-controller="MachineController as vm">
         <div class="control-group">
             <select ng-model="selectedEnvironment" ng-options="x.name for x in environments" ng-change="updateEnvironment()">

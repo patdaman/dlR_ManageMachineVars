@@ -19,8 +19,26 @@ namespace DevOpsPortal
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
-            //bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-            //            "~/Scripts/modernizr-*"));
+            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
+                        "~/Scripts/modernizr-*"));
+
+            bundles.Add(new ScriptBundle("~/bundles/codemirror").Include(
+                      "~/Scripts/codemirror/lib/codemirror.js",
+                      "~/Scripts/codemirror/ui-codemirror.min.js",
+                      "~/Scripts/codemirror/mode/powershell/powershell.js",
+                      "~/Scripts/codemirror/mode/matchbrackets.js",
+                      "~/Scripts/codemirror/addon/hint/show-hint.js"
+                      ));
+
+            bundles.Add(new StyleBundle("~/Content/codemirror").Include(
+                      "~/Scripts/codemirror/addon/hint/show-hint.css",
+                      "~/Scripts/codemirror/lib/codemirror.css",
+                      "~/Scripts/codemirror/theme/midnight.css",
+                      "~/Scripts/codemirror/theme/eclipse.css",
+                      "~/Scripts/codemirror/theme/abcdef.css",
+                      "~/Scripts/codemirror/theme/rubyblue.css",
+                      "~/Scripts/codemirror/theme/solarized.css"
+                    ));
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                       "~/Scripts/angular.js",
@@ -41,9 +59,13 @@ namespace DevOpsPortal
                       "~/Scripts/sweetalert.min.js"
                     ));
 
+            bundles.Add(new ScriptBundle("~/bundles/app")
+                    .IncludeDirectory("~/AngularJS", "*.js", true));
 
-            bundles.Add(new ScriptBundle("~/bundles/app").IncludeDirectory(
-                      "~/AngularJS", "*.js", true));
+            bundles.Add(new ScriptBundle("~/bundles/dashboard")
+                    .IncludeDirectory("~/Scripts/Dashboard", "*.js", true));
+            bundles.Add(new StyleBundle("~/bundles/dashboardcss")
+                    .IncludeDirectory("~/Content/Dashboard", "*.js", true));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      //"~/Content/bootstrap-combined.min.css",
@@ -56,24 +78,6 @@ namespace DevOpsPortal
                      //
                      "~/Content/site.css"
                      ));
-
-            bundles.Add(new ScriptBundle("~/bundles/codemirror").Include(
-                      "~/Scripts/codemirror/lib/codemirror.js",
-                      "~/Scripts/codemirror/ui-codemirror.min.js",
-                      "~/Scripts/codemirror/mode/powershell/powershell.js",
-                      "~/Scripts/codemirror/mode/matchbrackets.js",
-                      "~/Scripts/codemirror/addon/hint/show-hint.js"
-                      ));
-
-            bundles.Add(new StyleBundle("~/Content/codemirror").Include(
-                      "~/Scripts/codemirror/addon/hint/show-hint.css",
-                      "~/Scripts/codemirror/lib/codemirror.css",
-                      "~/Scripts/codemirror/theme/midnight.css",
-                      "~/Scripts/codemirror/theme/eclipse.css",
-                      "~/Scripts/codemirror/theme/abcdef.css",
-                      "~/Scripts/codemirror/theme/rubyblue.css",
-                      "~/Scripts/codemirror/theme/solarized.css"
-                    ));
         }
     }
 }

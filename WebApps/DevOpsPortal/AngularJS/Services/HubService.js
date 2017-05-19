@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-app.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', function ($rootScope, backendServerUrl) {
+signalRApp.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', function ($rootScope, backendServerUrl) {
     function backendHubProxyFactory(serverUrl, hubName, startOptions) {
         var connection = $.hubConnection(backendServerUrl);
         var proxy = connection.createHubProxy(hubName);

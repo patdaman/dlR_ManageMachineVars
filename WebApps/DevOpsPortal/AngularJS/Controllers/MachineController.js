@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
+MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
     '$log', '$timeout', '$q', '$interval', 'ModalService',
     function ($scope, $http, uiGridConstants,
     $log, $timeout, $q, $interval, ModalService) {
@@ -63,26 +63,26 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
             enableSorting: true,
             enableFiltering: true,
 
-            enableGridMenu: true,
-            exporterMenuCsv: true,
-            exporterMenuPdf: true,
-            exporterCsvFilename: 'Machines' + $scope.dateTimeString + '.csv',
-            exporterPdfDefaultStyle: { fontSize: 9 },
-            exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
-            exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
-            exporterPdfHeader: { text: "Marcom Central - Machine Configuration", style: 'headerStyle' },
-            exporterPdfFooter: function (currentPage, pageCount) {
-                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-            },
-            exporterPdfCustomFormatter: function (docDefinition) {
-                docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
-                docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
-                return docDefinition;
-            },
-            exporterPdfOrientation: 'landscape',
-            exporterPdfPageSize: 'LETTER',
-            exporterPdfMaxGridWidth: 500,
-            exporterSuppressColumns: ['Action'],
+        enableGridMenu: true,
+        exporterMenuCsv: true,
+        exporterMenuPdf: true,
+        exporterCsvFilename: 'Machines' + $scope.dateTimeString + '.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
+        exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
+        exporterPdfHeader: { text: "Marcom Central - Server Configuration", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'LETTER',
+        exporterPdfMaxGridWidth: 500,
+        exporterSuppressColumns: ['Action'],
 
             treeRowHeaderAlwaysVisible: false,
 
@@ -92,46 +92,46 @@ app.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
             enableRowHeaderSelection: true,
             enableMultiselect: true,
 
-            //column definitions
-            columnDefs: [
-                { field: 'id', visible: false },
-                {
-                    field: 'usage',
-                    width: '10%',
-                    visible: true,
-                    enableFiltering: false,
-                    filter: {
-                        noTerm: true,
-                        condition: function (searchTerm, cellValue) {
-                            return $scope.filterEnvironment() === cellValue
-                                || $scope.environment == '';
-                        }
-                    },
-                    grouping: { groupPriority: 0 },
-                    sort: { priority: 0, direction: 'asc' },
-                    groupable: true,
+        //column definitions
+        columnDefs: [
+            { field: 'id', visible: false },
+            {
+                field: 'usage',
+                width: '10%',
+                visible: true,
+                enableFiltering: false,
+                filter: {
+                    noTerm: true,
+                    condition: function (searchTerm, cellValue) {
+                        return $scope.filterEnvironment() === cellValue
+                            || $scope.environment == '';
+                    }
                 },
-                {
-                    field: 'location',
-                    sort: { priority: 1, direction: 'asc' },
-                    groupable: true,
-                    width: '15%'
-                },
-                { field: 'machine_name', width: '20%' },
-                { field: 'uri', width: '20%' },
-                { field: 'ip_address', width: '10%' },
-                { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
-                { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
-                {
-                    field: 'active',
-                    type: 'boolean',
-                    enableFiltering: false,
-                    width: 80
-                },
-                { field: 'ConfigVariableValues', visible: false },
-                { field: 'Enum_Locations', visible: false },
-                { field: 'MachineComponentPaths', visible: false },
-                { field: 'EnvironmentVariables', visible: true },
+                grouping: { groupPriority: 0 },
+                sort: { priority: 0, direction: 'asc' },
+                groupable: true,
+            },
+            {
+                field: 'location',
+                //grouping: { groupPriority: 1 },
+                sort: { priority: 1, direction: 'asc' },
+                groupable: true,
+                width: '15%'
+            },
+            { field: 'machine_name', width: '20%' },
+            { field: 'uri', width: '20%' },
+            { field: 'ip_address', width: '10%' },
+            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
+            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
+            {
+                field: 'active',
+                type: 'boolean',
+                enableFiltering: false,
+                width: 80
+            },
+            //{ field: 'Enum_Locations', visible: false },
+            //{ field: 'MachineComponentPaths', visible: false },
+            //{ field: 'EnvironmentVariables', visible: true },
 
                 {
                     field: "Action",

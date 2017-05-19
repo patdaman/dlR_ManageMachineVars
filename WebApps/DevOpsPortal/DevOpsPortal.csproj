@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularJS\app.js" />
+    <Content Include="AngularJS\appHandler.js" />
     <Content Include="AngularJS\Controllers\ConfigModalController.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js">
@@ -153,9 +154,8 @@
     </Content>
     <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
-    <Content Include="AngularJS\Services\DashboardHubService.js" />
+    <Content Include="AngularJS\Services\HubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
-    <Content Include="AngularJS\Services\LogHubService.js" />
     <Content Include="Assets\404-150x150.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -745,6 +745,7 @@
     <Content Include="Scripts\FileAPI.flash.swf" />
     <Content Include="Scripts\FileAPI.js" />
     <Content Include="Scripts\FileAPI.min.js" />
+    <Content Include="Scripts\Dashboard\jquery.signalR.core.js" />
     <None Include="Scripts\jquery-1.12.4.intellisense.js" />
     <Content Include="Scripts\jquery-1.12.4.js" />
     <Content Include="Scripts\jquery-1.12.4.min.js" />
