@@ -85,13 +85,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/11/2017 11:03:00</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/16/2017 17:41:55</publishTime>
+      <publishTime>05/19/2017 16:54:13</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/16/2017 17:41:55</publishTime>
+      <publishTime>05/19/2017 16:54:13</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>05/16/2017 17:41:45</publishTime>
+      <publishTime>05/19/2017 16:36:22</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/11/2017 11:20:03</publishTime>
@@ -115,7 +115,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/DevOpsApi.dll">
-      <publishTime>05/16/2017 17:41:48</publishTime>
+      <publishTime>05/19/2017 16:54:08</publishTime>
     </File>
     <File Include="bin/DevOpsApi.pdb">
       <publishTime>05/11/2017 12:11:35</publishTime>
@@ -280,7 +280,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/27/2017 16:55:05</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/16/2017 17:41:49</publishTime>
+      <publishTime>05/19/2017 16:54:08</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>04/11/2017 12:37:40</publishTime>

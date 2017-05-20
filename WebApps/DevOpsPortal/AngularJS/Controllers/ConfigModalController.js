@@ -25,7 +25,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
 
         //var vm = this;
         var vm = $scope;
-        var selectedEnvironment;
+        var selectedVmEnvironment;
         var selectedFile;
         var filePath;
         var fileName;
@@ -38,55 +38,69 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.displayGetFile = false;
         vm.environments = environments;
         vm.environment = environment;
-        angular.forEach(vm.environments, function (value) {
-            if (value.name === vm.environment)
-                vm.selectedEnvironment = value;
-        });
+        if (vm.environment)
+            angular.forEach(vm.environments, function (value) {
+                if (value.name === vm.environment)
+                    vm.selectedVmEnvironment = value;
+            });
         vm.files = files;
         vm.filePath = '';
         vm.fileName = '';
         vm.configXml = '';
         vm.component = component;
-        vm.modalSize = "modal-dialog modal-md";
+        vm.modalSize = "modal-dialog modal-lg";
 
         vm.updateFile = function (selectedFile) {
             vm.fileName = selectedFile.fileName;
             vm.displayGetFile = true;
         };
-        vm.updateVmEnvironment = function (selectedVmEnvironment) {
+        vm.updateEnvironment = function (selectedVmEnvironment) {
             vm.environment = selectedVmEnvironment.value;
-            vm.displayGetFile = true;
+            if (vm.environment && vm.environment != '')
+                vm.displayGetFile = true;
         };
 
         vm.modalSize = function () {
-            if (vm.selectedEnvironment.name != '' && vm.selectedFile.fileName != '')
+            if (vm.selectedVmEnvironment.name != '' && vm.selectedFile.fileName != '')
                 modalSize = "modal-dialog modal-lg";
         };
 
         vm.getFile = function () {
-            var def = $q.defer();
-            $http({
-                method: 'GET',
-                url: 'api:/ConfigApi',
-                params: {
-                    componentName: vm.component,
-                    environment: vm.environment,
-                    fileName: vm.selectedFile.fileName,
-                }
-            })
-            .success(def.resolve)
-            .success(function (data) {
-                vm.configXml = data.text,
-                vm.filePath = data.path,
-                vm.displayGetFile = false,
-                vm.modalSize()
-            })
+            if (!vm.component || !vm.environment || !vm.selectedFile) {
+                swal({
+                    title: "Data Missing",
+                    text: "Null Value(s)",
+                    type: "error",
+                    configButtonText: "OK"
+                });
+            }
+            else {
+                var def = $q.defer();
+                $http({
+                    method: 'GET',
+                    url: 'api:/ConfigApi',
+                    params: {
+                        componentName: vm.component,
+                        environment: vm.environment,
+                        fileName: vm.selectedFile.fileName,
+                    }
+                })
+                .success(def.resolve)
+                .success(function (data) {
+                    vm.configXml = data.text,
+                    vm.filePath = data.path,
+                    vm.displayGetFile = false,
+                    vm.modalSize()
+                })
+            }
         };
 
         if (vm.files.length === 1) {
             vm.selectedFile = vm.files[0];
-            vm.displayFileSelect = false;
-            vm.getFile();
+            if (vm.environment && vm.environment != '') {
+                vm.displayFileSelect = false;
+                vm.getFile();
+            }
         };
 
         vm.close = function () {

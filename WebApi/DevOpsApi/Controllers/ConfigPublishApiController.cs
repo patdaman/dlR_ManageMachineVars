@@ -191,9 +191,9 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "DevOps")]
+//#endif
         [HttpPost]
         public HttpResponseMessage Post(ViewModel.AppVar value, string environment = null)
         {
@@ -221,53 +221,53 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
-        [HttpPut]
-        public HttpResponseMessage Put(List<ViewModel.AppVar> value)
-        {
-            try
-            {
-                return Post(value);
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
+//#if RELEASE
+//    [Authorize(Roles = "DevOps")]
+//#endif
+//        [HttpPut]
+//        public HttpResponseMessage Put(List<ViewModel.AppVar> value)
+//        {
+//            try
+//            {
+//                return Post(value);
+//            }
+//            catch (Exception ex)
+//            {
+//                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+//            }
+//        }
 
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Post this message. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="value">        The value to put. </param>
-        /// <param name="environment">  (Optional)
-        ///                                                        The environment to get. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
-        [HttpPost]
-        public HttpResponseMessage Post(List<ViewModel.AppVar> value, string environment = null)
-        {
-            try
-            {
-                configProcessor = new BusinessLayer.ManageConfig_Files()
-                {
-                    environment = environment ?? string.Empty,
-                };
-                var response = Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.PublishValue(value));
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
+//        ///-------------------------------------------------------------------------------------------------
+//        /// <summary>   Post this message. </summary>
+//        ///
+//        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
+//        ///
+//        /// <param name="value">        The value to put. </param>
+//        /// <param name="environment">  (Optional)
+//        ///                                                        The environment to get. </param>
+//        ///
+//        /// <returns>   A HttpResponseMessage. </returns>
+//        ///-------------------------------------------------------------------------------------------------
+////#if RELEASE
+////    [Authorize(Roles = "DevOps")]
+////#endif
+//        [HttpPost]
+//        public HttpResponseMessage Post(List<ViewModel.AppVar> value, string environment = null)
+//        {
+//            try
+//            {
+//                configProcessor = new BusinessLayer.ManageConfig_Files()
+//                {
+//                    environment = environment ?? string.Empty,
+//                };
+//                var response = Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.PublishValue(value));
+//                return response;
+//            }
+//            catch (Exception ex)
+//            {
+//                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+//            }
+//        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Puts. </summary>
