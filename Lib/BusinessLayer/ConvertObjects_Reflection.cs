@@ -129,40 +129,37 @@ namespace BusinessLayer
         public ICollection<ViewModel.ConfigVariableValue> EfConfigValueListToVm(ICollection<EFDataModel.DevOps.ConfigVariableValue> EF, List<EFDataModel.DevOps.Enum_EnvironmentType> environments = null)
         {
             var vm = new List<ViewModel.ConfigVariableValue>();
-            foreach (var x in EF)
+            var defaultVal = EF.FirstOrDefault();
+            foreach (var e in environments.OrderBy(x => x.name))
             {
                 //vm.Add(ConfigValueEfToVm(x));
                 //vm.Add(new ViewModel.ConfigVariableValue(ConfigValueEfToVm(x)));
-                vm.Add(new ViewModel.ConfigVariableValue()
+                var val = EF.Where(x => x.Enum_EnvironmentType == e).FirstOrDefault();
+                if (val != null)
+                    vm.Add(new ViewModel.ConfigVariableValue()
+                    {
+                        id = val.id,
+                        configvar_id = val.configvar_id,
+                        environment = val.environment_type,
+                        value = val.value,
+                        create_date = val.create_date,
+                        modify_date = val.modify_date,
+                        publish_date = val.published_date,
+                        published = val.published
+                    });
+                else
                 {
-                    id = x.id,
-                    configvar_id = x.configvar_id,
-                    environment = x.environment_type,
-                    value = x.value,
-                    create_date = x.create_date,
-                    modify_date = x.modify_date,
-                    publish_date = x.published_date,
-                    published = x.published
-                });
-            }
-            if (environments != null && EF.Count > 0)
-            {
-                var defaultVal = EF.FirstOrDefault();
-                foreach (var e in environments)
-                {
-                    var check = vm.Where(z => z.environment == e.name.ToString()).FirstOrDefault();
-                    if (check == null)
-                        vm.Add(new ViewModel.ConfigVariableValue()
-                        {
-                            id = null,
-                            configvar_id = defaultVal.configvar_id,
-                            environment = e.name.ToString(),
-                            value = string.Empty,
-                            create_date = null,
-                            modify_date = null,
-                            publish_date = null,
-                            published = false
-                        });
+                    vm.Add(new ViewModel.ConfigVariableValue()
+                    {
+                        id = null,
+                        configvar_id = defaultVal.configvar_id,
+                        environment = e.name.ToString(),
+                        value = string.Empty,
+                        create_date = null,
+                        modify_date = null,
+                        publish_date = null,
+                        published = false
+                    });
                 }
             }
             return vm;

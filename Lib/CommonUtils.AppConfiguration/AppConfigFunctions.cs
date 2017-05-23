@@ -481,7 +481,13 @@ namespace CommonUtils.AppConfiguration
         ///-------------------------------------------------------------------------------------------------
         public Enums.ModifyResult AddKeyValue(string attribute, string appKey, string valueName, string value, string element, string full_element, string parent_element = null)
         {
+
+            ///  This is driving me nuts
+            ///  PLEASE REFACTOR!!
+            ///  
             string parentElementName = string.Empty;
+            List<XElement> parentElement = new List<XElement>();
+
             if (string.IsNullOrWhiteSpace(parent_element))
             {
                 var rootElement = configFile.Elements().Where(x => x.Name == element).FirstOrDefault();
@@ -509,9 +515,7 @@ namespace CommonUtils.AppConfiguration
                     }
                 }
             }
-
-            List<XElement> parentElement = new List<XElement>();
-            if (!string.IsNullOrWhiteSpace(parent_element))
+            else
             {
                 char[] chars = { ' ', '=' };
                 int index = parent_element.IndexOfAny(chars);
@@ -536,9 +540,17 @@ namespace CommonUtils.AppConfiguration
                 if (namedElement == null)
                 {
                     if (string.IsNullOrWhiteSpace(value))
-                        parentElement.FirstOrDefault().Add(new XElement(element, string.Empty));
+                        if (parentElement.Count < 1)
+                            parentElement.Add(new XElement(element, string.Empty));
+                        else
+                            parentElement.FirstOrDefault().Add(new XElement(element, string.Empty));
+
+                    else
+                        if (parentElement.Count < 1)
+                        parentElement.Add(new XElement(element, value));
                     else
                         parentElement.FirstOrDefault().Add(new XElement(element, value));
+
                     return Enums.ModifyResult.Created;
                 }
                 else

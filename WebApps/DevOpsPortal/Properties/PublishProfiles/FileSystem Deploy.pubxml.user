@@ -16,10 +16,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/19/2017 13:05:10</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigController.js">
-      <publishTime>05/19/2017 16:35:30</publishTime>
+      <publishTime>05/22/2017 13:24:17</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigModalController.js">
-      <publishTime>05/19/2017 17:29:26</publishTime>
+      <publishTime>05/22/2017 13:19:42</publishTime>
     </File>
     <File Include="AngularJS/Controllers/DashboardController.js">
       <publishTime>05/19/2017 10:07:32</publishTime>
@@ -184,10 +184,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/15/2017 16:50:33</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/19/2017 17:32:52</publishTime>
+      <publishTime>05/22/2017 13:53:55</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/19/2017 17:32:52</publishTime>
+      <publishTime>05/22/2017 13:53:55</publishTime>
     </File>
     <File Include="bin/Assets/404-150x150.png">
       <publishTime>02/07/2017 09:32:03</publishTime>
@@ -214,7 +214,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/15/2017 17:31:09</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>05/19/2017 16:36:22</publishTime>
+      <publishTime>05/22/2017 13:53:12</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/16/2017 09:32:54</publishTime>
@@ -286,10 +286,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/16/2017 09:29:57</publishTime>
     </File>
     <File Include="bin/Content/Templates/valueTemplate.html">
-      <publishTime>05/19/2017 13:28:16</publishTime>
+      <publishTime>05/22/2017 13:35:04</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.dll">
-      <publishTime>05/19/2017 16:37:00</publishTime>
+      <publishTime>05/22/2017 13:53:43</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.pdb">
       <publishTime>05/16/2017 14:01:51</publishTime>
@@ -358,7 +358,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 21:19:46</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.dll">
-      <publishTime>05/16/2017 09:42:01</publishTime>
+      <publishTime>05/22/2017 13:53:11</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.pdb">
       <publishTime>05/15/2017 16:50:33</publishTime>
@@ -553,7 +553,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/16/2017 09:29:57</publishTime>
     </File>
     <File Include="Content/Templates/valueTemplate.html">
-      <publishTime>05/19/2017 13:28:16</publishTime>
+      <publishTime>05/22/2017 13:35:04</publishTime>
     </File>
     <File Include="Content/themes/base/accordion.css">
       <publishTime>05/04/2017 17:10:20</publishTime>
@@ -730,7 +730,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/04/2017 17:10:28</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/19/2017 17:32:48</publishTime>
+      <publishTime>05/22/2017 13:53:50</publishTime>
     </File>
     <File Include="Scripts/angular-animate.js">
       <publishTime>04/04/2017 14:36:39</publishTime>
@@ -2143,7 +2143,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 12:14:28</publishTime>
     </File>
     <File Include="Views/Error/NotFound.cshtml">
-      <publishTime>04/04/2017 12:14:28</publishTime>
+      <publishTime>05/22/2017 13:52:41</publishTime>
     </File>
     <File Include="Views/Home/About.cshtml">
       <publishTime>04/04/2017 12:14:32</publishTime>

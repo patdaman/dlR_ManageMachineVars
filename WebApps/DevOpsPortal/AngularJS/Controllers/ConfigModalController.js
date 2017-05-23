@@ -66,7 +66,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         };
 
         vm.getFile = function () {
-            if (!vm.component || !vm.environment || !vm.selectedFile) {
+            if ((!vm.component || !vm.environment || !vm.selectedFile) && 
+                (vm.component !== '' || vm.environment !== '' || vm.selectedFile !== '')) {
                 swal({
                     title: "Data Missing",
                     text: "Null Value(s)",

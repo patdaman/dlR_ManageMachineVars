@@ -258,7 +258,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             field: valueColumn,
             displayName: 'value',
             visible: true,
-            //width: "35%",
             cellEditableCondition: $scope.canEdit,
             enableFiltering: true,
             cellTemplate: '/Content/Templates/valueTemplate.html'
@@ -798,8 +797,10 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         var fileEnvironment;
                         if (result.environment === '')
                             fileEnvironment = $scope.environment;
-                        else
+                        else {
                             fileEnvironment = result.environment;
+                            $scope.environment = fileEnvironment;
+                        }
                         if (result.download) {
                             $scope.downloadConfig(result.component, result.fileName, fileEnvironment)
                         };

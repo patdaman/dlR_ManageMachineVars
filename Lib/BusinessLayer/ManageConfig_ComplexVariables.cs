@@ -258,7 +258,7 @@ namespace BusinessLayer
             }
             else if (type.ToLower().StartsWith("env"))
             {
-                var environments = DevOpsContext.Enum_EnvironmentType.ToList();
+                var environments = DevOpsContext.Enum_EnvironmentType.OrderBy(x => x.name).ToList();
                 foreach (var e in environments)
                     values.Add(new NameValuePair()
                     {
@@ -863,7 +863,7 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         private ViewModel.ConfigVariable ReturnConfigVariable(EFDataModel.DevOps.ConfigVariable config)
         {
-            var environments = DevOpsContext.Enum_EnvironmentType.ToList();
+            var environments = DevOpsContext.Enum_EnvironmentType.OrderBy(x => x.name).ToList();
             var file = config.ConfigFile;
             if (file == null)
                 file = new EFDataModel.DevOps.ConfigFile();
@@ -941,7 +941,7 @@ namespace BusinessLayer
                         //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                         appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                 }
-                appVarModel.values.AddRange(configVar.ConfigVariableValues);
+                appVarModel.values.AddRange(configVar.ConfigVariableValues.OrderBy(x => x.environment));
                 appVars.Add(appVarModel);
             }
             return appVars;

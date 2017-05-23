@@ -246,6 +246,11 @@ namespace BusinessLayer
             }
             else
                 this.outputPath = outputPath;
+            if (string.IsNullOrEmpty(environment))
+                if (this.environment == null)
+                    throw new Exception("No environment type provided file.");
+                else
+                    environment = this.environment;
             if (File.Exists(outputPath))
             {
                 File.Delete(outputPath);
