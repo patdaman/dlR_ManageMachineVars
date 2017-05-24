@@ -5,7 +5,10 @@ var ApiPath = DevOpsWebApp.ApiPath;
 var EnumPath = DevOpsWebApp.EnumPath;
 var SignalRPath = DevOpsWebApp.SignalRPath;
 var UserName = DevOpsWebApp.UserName;
+var UserName2 = DevOpsWebApp.UserName2;
 var displayApi = DevOpsWebApp.DisplayApi;
+var Admin = DevOpsWebApp.Admin;
+var Engineer = DevOpsWebApp.Engineer;
 
 var EnumService = angular.module('EnumService', []);
 
@@ -96,10 +99,12 @@ var app = angular.module('app',
     ['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp']);
 
 app.run(['$rootScope', function ($rootScope) {
-    $rootScope.APIPath = ApiPath;
+    $rootScope.ApiPath = ApiPath;
     $rootScope.EnumPath = EnumPath;
     $rootScope.UserName = DevOpsWebApp.UserName;
     $rootScope.displayApi = DevOpsWebApp.DisplayApi;
+    $rootScope.Admin = DevOpsWebApp.Admin;
+    $rootScope.Engineer = DevOpsWebApp.Engineer;
 }]);
 
 ///  ----------------------------------------------------------- ///
@@ -109,10 +114,12 @@ app.run(['$rootScope', function ($rootScope) {
 var signalRApp = angular.module('signalRApp',
   ['appHandler', 'LogApp', 'DashboardApp']);
 signalRApp.run(['$rootScope', function ($rootScope) {
-    $rootScope.APIPath = ApiPath;
+    $rootScope.ApiPath = ApiPath;
     $rootScope.DashboardSignalRPATH = DashboardSignalRPath;
     $rootScope.LogSignalRPath = DevOpsWebApp.LogSignalRPath;
     $rootScope.UserName = DevOpsWebApp.UserName;
     $rootScope.displayApi = DevOpsWebApp.DisplayApi;
-}])
+    $rootScope.Admin = DevOpsWebApp.Admin;
+    $rootScope.Engineer = DevOpsWebApp.Engineer;
+}]);
 

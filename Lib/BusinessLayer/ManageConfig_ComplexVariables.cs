@@ -10,6 +10,7 @@ namespace BusinessLayer
 {
     public class ManageConfig_ComplexVariables
     {
+        public string userName { get; set; }
         DevOpsEntities DevOpsContext;
         ConvertObjects_Reflection EfToVmConverter = new ConvertObjects_Reflection();
 
@@ -74,30 +75,13 @@ namespace BusinessLayer
         public ViewModel.Application GetApplication(int id)
         {
             var efApplication = DevOpsContext.Applications.Where(x => x.id == id).FirstOrDefault();
-            return new ViewModel.Application()
-            {
-                active = efApplication.active,
-                application_name = efApplication.application_name,
-                create_date = efApplication.create_date,
-                modify_date = efApplication.modify_date,
-                id = efApplication.id,
-                release = efApplication.release,
-            };
+            return ReturnApplicationVariable(efApplication);
         }
 
         public ViewModel.Application GetApplication(string applicationName)
         {
             var efApplication = DevOpsContext.Applications.Where(x => x.application_name == applicationName).FirstOrDefault();
-            return new ViewModel.Application()
-            {
-                active = efApplication.active,
-                application_name = efApplication.application_name,
-                create_date = efApplication.create_date,
-                modify_date = efApplication.modify_date,
-                id = efApplication.id,
-                release = efApplication.release,
-                Components = EfToVmConverter.EfComponentListToVm(efApplication.Components).ToList(),
-            };
+            return ReturnApplicationVariable(efApplication);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -153,6 +137,7 @@ namespace BusinessLayer
                     component_name = component.component_name,
                     create_date = component.create_date,
                     modify_date = component.modify_date ?? DateTime.Now,
+                    last_modify_user = this.userName,
                     MachineComponentPathMaps = new List<MachineComponentPathMap>(),
                     active = component.active,
                     relative_path = component.relative_path,
@@ -165,6 +150,7 @@ namespace BusinessLayer
                 efComp.component_name = component.component_name;
                 efComp.create_date = component.create_date;
                 efComp.modify_date = component.modify_date ?? DateTime.Now;
+                efComp.last_modify_user = this.userName;
                 efComp.active = component.active;
                 efComp.relative_path = component.relative_path;
                 var efApps = GetEfApplication(component.Applications);
@@ -205,6 +191,7 @@ namespace BusinessLayer
                     application_name = application.application_name,
                     create_date = application.create_date,
                     modify_date = application.modify_date ?? DateTime.Now,
+                    last_modify_user = this.userName,
                     active = application.active,
                     release = application.release,
                     Components = GetEfComponent(application.Components),
@@ -214,6 +201,7 @@ namespace BusinessLayer
                 efApp.application_name = application.application_name;
                 efApp.create_date = application.create_date;
                 efApp.modify_date = application.modify_date ?? DateTime.Now;
+                efApp.last_modify_user = this.userName;
                 efApp.active = application.active;
                 efApp.release = application.release;
                 var efComps = GetEfComponent(application.Components);
@@ -327,7 +315,8 @@ namespace BusinessLayer
                             active = true,
                             create_date = DateTime.Now,
                             modify_date = DateTime.Now,
-                            release = vmApp.release ?? ".42",
+                            last_modify_user = this.userName,
+                            release = vmApp.release ?? string.Empty,
                             EnvironmentVariables = new List<EnvironmentDtoVariable>(),
                         });
                     }
@@ -340,6 +329,7 @@ namespace BusinessLayer
                             application_name = app.application_name,
                             create_date = app.create_date,
                             modify_date = app.modify_date,
+                            last_modify_user = app.last_modify_user,
                             release = app.release,
                             EnvironmentVariables = new List<EnvironmentDtoVariable>(),
                         });
@@ -367,7 +357,8 @@ namespace BusinessLayer
                     active = true,
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
-                    release = ".42",
+                    last_modify_user = this.userName,
+                    release = string.Empty,
                     EnvironmentVariables = new List<EnvironmentDtoVariable>(),
                 };
             }
@@ -380,6 +371,7 @@ namespace BusinessLayer
                     application_name = app.application_name,
                     create_date = app.create_date,
                     modify_date = app.modify_date,
+                    last_modify_user = app.last_modify_user,
                     release = app.release,
                     EnvironmentVariables = new List<EnvironmentDtoVariable>(),
                 };
@@ -411,14 +403,13 @@ namespace BusinessLayer
             app = DevOpsContext.Applications.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
             if (app == null)
             {
-                if (string.IsNullOrWhiteSpace(vmApp.release))
-                    vmApp.release = ".42";
                 app = new EFDataModel.DevOps.Application()
                 {
                     application_name = vmApp.application_name,
                     active = vmApp.active, // ?? true,
                     create_date = vmApp.create_date, // ?? DateTime.Now,
                     modify_date = vmApp.modify_date ?? DateTime.Now,
+                    last_modify_user = this.userName,
                     release = vmApp.release,
                     EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
                 };
@@ -430,6 +421,7 @@ namespace BusinessLayer
                 app.application_name = vmApp.application_name;
                 app.create_date = vmApp.create_date;
                 app.modify_date = vmApp.modify_date ?? DateTime.Now;
+                app.last_modify_user = vmApp.last_modify_user;
                 app.release = vmApp.release;
             }
             return app;
@@ -470,6 +462,7 @@ namespace BusinessLayer
                     active = true,
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
+                    last_modify_user = this.userName,
                     relative_path = "",
                 };
             }
@@ -482,6 +475,7 @@ namespace BusinessLayer
                     component_name = comp.component_name,
                     create_date = comp.create_date,
                     modify_date = comp.modify_date,
+                    last_modify_user = comp.last_modify_user,
                     relative_path = comp.relative_path,
                 };
             }
@@ -522,6 +516,7 @@ namespace BusinessLayer
                     component_name = component.component_name,
                     create_date = component.create_date,
                     modify_date = component.modify_date,
+                    last_modify_user = component.last_modify_user,
                     relative_path = component.relative_path,
                 };
             }
@@ -549,6 +544,7 @@ namespace BusinessLayer
                     active = vmComp.active, // ?? true,
                     create_date = vmComp.create_date, // ?? DateTime.Now,
                     modify_date = vmComp.modify_date ?? DateTime.Now,
+                    last_modify_user = vmComp.last_modify_user,
                     relative_path = vmComp.relative_path,
                 };
             }
@@ -559,6 +555,7 @@ namespace BusinessLayer
                 comp.component_name = vmComp.component_name;
                 comp.create_date = vmComp.create_date;
                 comp.modify_date = vmComp.modify_date ?? DateTime.Now;
+                comp.last_modify_user = vmComp.last_modify_user;
                 comp.relative_path = vmComp.relative_path;
             }
             return comp;
@@ -705,6 +702,7 @@ namespace BusinessLayer
                     value = value.value,
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
+                    last_modify_user = this.userName,
                 };
                 efConfigVar.ConfigVariableValues.Add(efValue);
             }
@@ -714,6 +712,7 @@ namespace BusinessLayer
                 {
                     efValue.value = value.value;
                     efValue.modify_date = DateTime.Now;
+                    efValue.last_modify_user = this.userName;
                 }
             }
             DevOpsContext.SaveChanges();
@@ -796,6 +795,7 @@ namespace BusinessLayer
                     create_date = component.create_date,
                     relative_path = component.relative_path,
                     modify_date = component.modify_date,
+                    last_modify_user = component.last_modify_user,
                     MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
                     Applications = EfToVmConverter.EfAppListToVm(component.Applications),
                     ConfigVariables = new List<ViewModel.ConfigVariable>(),
@@ -811,6 +811,7 @@ namespace BusinessLayer
                     create_date = component.create_date,
                     relative_path = component.relative_path,
                     modify_date = component.modify_date,
+                    last_modify_user = component.last_modify_user,
                     MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
                     Applications = EfToVmConverter.EfAppListToVm(component.Applications),
                     ConfigVariables = EfToVmConverter.EfConfigListToVm(component.ConfigVariables).ToList(),
@@ -847,6 +848,7 @@ namespace BusinessLayer
                 environment = efValue.environment_type,
                 create_date = efValue.create_date,
                 modify_date = efValue.modify_date,
+                last_modify_user = efValue.last_modify_user,
                 publish_date = efValue.published_date,
                 published = efValue.published
             };
@@ -879,6 +881,7 @@ namespace BusinessLayer
                 element = config.element,
                 key = config.key,
                 modify_date = config.modify_date,
+                last_modify_user = config.last_modify_user,
                 value_name = config.value_name ?? "",
                 parent_element = config.parent_element,
                 full_element = config.full_element,
@@ -907,6 +910,7 @@ namespace BusinessLayer
                 value = configVal.value,
                 create_date = configVal.create_date,
                 modify_date = configVal.modify_date,
+                last_modify_user = configVal.last_modify_user,
                 publish_date = configVal.published_date,
                 published = configVal.published
             };
@@ -1009,6 +1013,7 @@ namespace BusinessLayer
                     ConfigFile = efConfigFile ?? new EFDataModel.DevOps.ConfigFile(),
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
+                    last_modify_user = this.userName,
                 };
                 if (appValue.values.Count > 0)
                 {
@@ -1019,6 +1024,7 @@ namespace BusinessLayer
                             configvar_id = val.configvar_id,
                             create_date = val.create_date ?? DateTime.Now,
                             modify_date = val.modify_date ?? DateTime.Now,
+                            last_modify_user = this.userName,
                             environment_type = val.environment,
                             published = val.published ?? false,
                             published_date = val.publish_date,
@@ -1032,6 +1038,7 @@ namespace BusinessLayer
                     {
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,
+                        last_modify_user = this.userName,
                         environment_type = "development",
                         published = false,
                         value = "",
@@ -1081,6 +1088,7 @@ namespace BusinessLayer
                                 value = val.value,
                                 create_date = DateTime.Now,
                                 modify_date = DateTime.Now,
+                                last_modify_user = this.userName,
                                 published_date = val.publish_date
                             };
                             DevOpsContext.ConfigVariableValues.Add(efConfigValue);
@@ -1092,6 +1100,7 @@ namespace BusinessLayer
                         {
                             efConfigValue.value = val.value;
                             efConfigValue.modify_date = DateTime.Now;
+                            efConfigValue.last_modify_user = this.userName;
                         }
                     }
                 }
@@ -1167,6 +1176,7 @@ namespace BusinessLayer
                 create_date = a.create_date,
                 id = a.id,
                 modify_date = a.modify_date,
+                last_modify_user = a.last_modify_user,
                 release = a.release,
                 Components = EfToVmConverter.EfComponentListToVm(a.Components).ToList(),
             };

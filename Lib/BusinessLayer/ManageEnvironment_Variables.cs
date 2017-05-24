@@ -10,6 +10,7 @@ namespace BusinessLayer
     public class ManageEnvironment_Variables
     {
         public EnvironmentVariableFunctions enVars { get; private set; }
+        public string userName { get; set; }
         public string machineName { get; private set; }
         DevOpsEntities DevOpsContext;
         ConvertObjects_Reflection EfToVmConverter = new ConvertObjects_Reflection();

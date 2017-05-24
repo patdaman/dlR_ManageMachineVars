@@ -4,8 +4,11 @@
         ApiPath: '@(ViewData["ApiUri"])',
         EnumPath: '@(ViewData["EnumRelativeUri"])',
         SignalRPath: '@(ViewData["SignalRPath"])',
-        TitleTag : '@(ViewData["TitleTag"])',
-        UserName: '@User.Identity.Name.ToString().Replace(@"\",@"\\")',
-        DisplayApi : '@(ViewData["DisplayApi"])'
-    }
+        TitleTag: '@(ViewData["TitleTag"])',
+        UserName: '@User.Identity.Name.ToString().Replace(@"\", @"\\")',
+        UserName2: '@(ViewData["UserName"])',
+        DisplayApi: '@(ViewData["DisplayApi"])',
+        Admin: 'True',
+        Engineer: '@User.IsInRole("Engineers")',
+    };
 </script>

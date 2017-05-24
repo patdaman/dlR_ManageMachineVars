@@ -38,6 +38,7 @@ namespace ViewModel
         public string attribute { get; set; }
         public string key { get; set; }
         public string valueName { get; set; }
+        public string userName { get; set; }
         public List<ConfigVariableValue> values { get; set; }
         public bool hasNotes { get; set; }
 
@@ -57,6 +58,7 @@ namespace ViewModel
             attribute = x.attribute;
             key = x.key;
             valueName = x.valueName;
+            userName = x.userName;
             values = x.values;
             hasNotes = x.hasNotes;
         }
@@ -86,6 +88,7 @@ namespace ViewModel
         public string path { get; set; }
         public Nullable<DateTime> createDate { get; set; }
         public Nullable<DateTime> modifyDate { get; set; }
+        public string last_modify_user { get; set; }
         public ConfigFiles()
         { }
         public ConfigFiles(ConfigFiles c)
@@ -95,6 +98,7 @@ namespace ViewModel
             path = c.path;
             createDate = c.createDate;
             modifyDate = c.modifyDate;
+            last_modify_user = c.last_modify_user;
         }
     }
 

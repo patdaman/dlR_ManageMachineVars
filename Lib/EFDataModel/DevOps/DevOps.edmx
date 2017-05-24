@@ -30,6 +30,7 @@
           <Property Name="release" Type="varchar" MaxLength="128" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ComponentConfigVariablesMap">
@@ -48,6 +49,7 @@
           <Property Name="component_name" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="relative_path" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
@@ -62,6 +64,7 @@
           <Property Name="root_element" Type="varchar" MaxLength="256" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="ConfigFileAttributes">
           <Key>
@@ -73,6 +76,7 @@
           <Property Name="attribute_value" Type="varchar" MaxLength="256" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="ConfigFileElements">
           <Key>
@@ -84,6 +88,7 @@
           <Property Name="parent_element" Type="int" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="ConfigVariables">
           <Key>
@@ -99,6 +104,7 @@
           <Property Name="value_name" Type="varchar" MaxLength="256" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ConfigVariableValue">
@@ -111,6 +117,7 @@
           <Property Name="value" Type="nvarchar" MaxLength="4000" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="published_date" Type="datetime" />
           <Property Name="published" Type="bit" Nullable="false" />
         </EntityType>
@@ -172,6 +179,7 @@
           <Property Name="usage" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="create_date" Type="datetime" Nullable="false" />
           <Property Name="modify_date" Type="datetime" Nullable="false" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="MachinesServerGroupsMap">
@@ -264,24 +272,23 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Key>
             <PropertyRef Name="config_id" />
             <PropertyRef Name="component_id" />
-            <PropertyRef Name="component_name" />
-            <PropertyRef Name="parent_element" />
-            <PropertyRef Name="create_date" />
           </Key>
           <Property Name="config_id" Type="int" Nullable="false" />
           <Property Name="component_id" Type="int" Nullable="false" />
-          <Property Name="component_name" Type="varchar" MaxLength="256" Nullable="false" />
-          <Property Name="file_name" Type="varchar" MaxLength="256" />
-          <Property Name="environment_type" Type="varchar" MaxLength="128" />
-          <Property Name="parent_element" Type="varchar" MaxLength="4000" Nullable="false" />
+          <Property Name="component_name" Type="varchar" MaxLength="256" />
+          <Property Name="fileName" Type="varchar" MaxLength="256" />
+          <Property Name="applications" Type="nvarchar(max)" />
+          <Property Name="environment" Type="varchar" MaxLength="128" />
+          <Property Name="parent_element" Type="varchar" MaxLength="4000" />
           <Property Name="full_element" Type="varchar" MaxLength="4000" />
           <Property Name="element" Type="varchar" MaxLength="256" />
           <Property Name="attribute" Type="varchar" MaxLength="256" />
           <Property Name="key" Type="varchar" MaxLength="256" />
           <Property Name="value_name" Type="varchar" MaxLength="256" />
           <Property Name="value" Type="nvarchar" MaxLength="4000" />
-          <Property Name="create_date" Type="datetime" Nullable="false" />
+          <Property Name="create_date" Type="datetime" />
           <Property Name="modify_date" Type="datetime" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" />
           <Property Name="published_date" Type="datetime" />
           <Property Name="published" Type="bit" />
         </EntityType>
@@ -579,8 +586,9 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
     [vi_ConfigVariables].[config_id] AS [config_id], 
     [vi_ConfigVariables].[component_id] AS [component_id], 
     [vi_ConfigVariables].[component_name] AS [component_name], 
-    [vi_ConfigVariables].[file_name] AS [file_name], 
-    [vi_ConfigVariables].[environment_type] AS [environment_type], 
+    [vi_ConfigVariables].[fileName] AS [fileName], 
+    [vi_ConfigVariables].[applications] AS [applications], 
+    [vi_ConfigVariables].[environment] AS [environment], 
     [vi_ConfigVariables].[parent_element] AS [parent_element], 
     [vi_ConfigVariables].[full_element] AS [full_element], 
     [vi_ConfigVariables].[element] AS [element], 
@@ -590,6 +598,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
     [vi_ConfigVariables].[value] AS [value], 
     [vi_ConfigVariables].[create_date] AS [create_date], 
     [vi_ConfigVariables].[modify_date] AS [modify_date], 
+    [vi_ConfigVariables].[last_modify_user] AS [last_modify_user], 
     [vi_ConfigVariables].[published_date] AS [published_date], 
     [vi_ConfigVariables].[published] AS [published]
     FROM [config].[vi_ConfigVariables] AS [vi_ConfigVariables]</DefiningQuery>
@@ -699,6 +708,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Components" Relationship="Self.AppComponents" FromRole="Applications" ToRole="Components" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="Self.ApplicationEnvironmentVariables" FromRole="Applications" ToRole="EnvironmentVariables" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Component">
           <Key>
@@ -714,6 +724,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="Applications" Relationship="Self.AppComponents" FromRole="Components" ToRole="Applications" />
           <NavigationProperty Name="ConfigVariables" Relationship="DevOpsModel.ComponentConfigVariablesMap" FromRole="Component" ToRole="ConfigVariable" />
           <NavigationProperty Name="ConfigFiles" Relationship="DevOpsModel.FK_ConfigFile_Components" FromRole="Component" ToRole="ConfigFile" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ConfigFileAttribute">
           <Key>
@@ -726,6 +737,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="ConfigFileElement" Relationship="Self.FK_ConfigFileAttributes_ConfigFileElements" FromRole="ConfigFileAttributes" ToRole="ConfigFileElements" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ConfigFileElement">
           <Key>
@@ -739,6 +751,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="ConfigFileAttributes" Relationship="Self.FK_ConfigFileAttributes_ConfigFileElements" FromRole="ConfigFileElements" ToRole="ConfigFileAttributes" />
           <NavigationProperty Name="ConfigFile" Relationship="DevOpsModel.FK_ConfigFileElements_ConfigFile" FromRole="ConfigFileElement" ToRole="ConfigFile" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ConfigVariableValue">
           <Key>
@@ -754,6 +767,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="published" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Enum_EnvironmentType" Relationship="Self.FK_ConfigVariableValue_Enum_EnvironmentType" FromRole="ConfigVariableValue" ToRole="Enum_EnvironmentType" />
           <NavigationProperty Name="ConfigVariable" Relationship="DevOpsModel.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariableValue" ToRole="ConfigVariable" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Enum_EnvironmentType">
           <Key>
@@ -828,6 +842,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="MachineComponentPathMaps" Relationship="Self.FK_MachineComponentPath_Machines" FromRole="Machines" ToRole="MachineComponentPathMap" />
           <NavigationProperty Name="ServerGroups" Relationship="Self.MachinesServerGroupsMap" FromRole="Machines" ToRole="ServerGroups" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="Self.MachineVariablesMap" FromRole="Machines" ToRole="EnvironmentVariables" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ServerGroup">
           <Key>
@@ -887,31 +902,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="modify_date" Type="DateTime" Precision="3" />
           <Property Name="is_active" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_ConfigVariables">
-          <Key>
-            <PropertyRef Name="config_id" />
-            <PropertyRef Name="component_id" />
-            <PropertyRef Name="component_name" />
-            <PropertyRef Name="parent_element" />
-            <PropertyRef Name="create_date" />
-          </Key>
-          <Property Name="config_id" Type="Int32" Nullable="false" />
-          <Property Name="component_id" Type="Int32" Nullable="false" />
-          <Property Name="component_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="environment_type" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="parent_element" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="attribute" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="value_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="value" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
-          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="modify_date" Type="DateTime" Precision="3" />
-          <Property Name="published_date" Type="DateTime" Precision="3" />
-          <Property Name="published" Type="Boolean" />
-          <Property Name="file_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="full_element" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_MachineComponentPath_Components">
           <End Role="Components" Type="Self.Component" Multiplicity="1" />
@@ -1042,7 +1032,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="Events" EntityType="Self.Event" />
           <EntitySet Name="ExecutionHistories" EntityType="Self.ExecutionHistory" />
           <EntitySet Name="Scripts" EntityType="Self.Script" />
-          <EntitySet Name="vi_ConfigVariables" EntityType="Self.vi_ConfigVariables" />
           <AssociationSet Name="FK_MachineComponentPath_Components" Association="Self.FK_MachineComponentPath_Components">
             <End Role="Components" EntitySet="Components" />
             <End Role="MachineComponentPathMap" EntitySet="MachineComponentPathMaps" />
@@ -1114,6 +1103,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="ConfigVariable" EntitySet="ConfigVariables" />
           </AssociationSet>
           <EntitySet Name="Notes" EntityType="DevOpsModel.Note" />
+          <EntitySet Name="vi_ConfigVariables" EntityType="DevOpsModel.vi_ConfigVariables" />
         </EntityContainer>
         <EntityType Name="ConfigVariable">
           <Key>
@@ -1133,6 +1123,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="ConfigVariableValues" Relationship="DevOpsModel.FK_ConfigVariableValue_ConfigVariables" FromRole="ConfigVariable" ToRole="ConfigVariableValue" />
           <NavigationProperty Name="Components" Relationship="DevOpsModel.ComponentConfigVariablesMap" FromRole="ConfigVariable" ToRole="Component" />
           <NavigationProperty Name="ConfigFile" Relationship="DevOpsModel.FK_ConfigVariables_ConfigFile" FromRole="ConfigVariable" ToRole="ConfigFile" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_ConfigVariableValue_ConfigVariables">
           <End Type="DevOpsModel.ConfigVariable" Role="ConfigVariable" Multiplicity="1" />
@@ -1164,6 +1155,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="Component" Relationship="DevOpsModel.FK_ConfigFile_Components" FromRole="ConfigFile" ToRole="Component" />
           <NavigationProperty Name="ConfigFileElements" Relationship="DevOpsModel.FK_ConfigFileElements_ConfigFile" FromRole="ConfigFile" ToRole="ConfigFileElement" />
           <NavigationProperty Name="ConfigVariables" Relationship="DevOpsModel.FK_ConfigVariables_ConfigFile" FromRole="ConfigFile" ToRole="ConfigVariable" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_ConfigFile_Components">
           <End Type="DevOpsModel.Component" Role="Component" Multiplicity="1" />
@@ -1213,6 +1205,30 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="vi_ConfigVariables">
+          <Key>
+            <PropertyRef Name="config_id" />
+            <PropertyRef Name="component_id" />
+          </Key>
+          <Property Name="config_id" Type="Int32" Nullable="false" />
+          <Property Name="component_id" Type="Int32" Nullable="false" />
+          <Property Name="component_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="fileName" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="applications" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="environment" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="parent_element" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="full_element" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="element" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="attribute" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="value_name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="value" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="create_date" Type="DateTime" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="last_modify_user" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="published_date" Type="DateTime" Precision="3" />
+          <Property Name="published" Type="Boolean" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1222,6 +1238,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="Applications">
             <EntityTypeMapping TypeName="DevOpsModel.Application">
               <MappingFragment StoreEntitySet="Applications">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="application_name" ColumnName="application_name" />
                 <ScalarProperty Name="release" ColumnName="release" />
@@ -1234,6 +1251,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="Components">
             <EntityTypeMapping TypeName="DevOpsModel.Component">
               <MappingFragment StoreEntitySet="Components">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="component_name" ColumnName="component_name" />
                 <ScalarProperty Name="relative_path" ColumnName="relative_path" />
@@ -1246,6 +1264,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigFileAttributes">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigFileAttribute">
               <MappingFragment StoreEntitySet="ConfigFileAttributes">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="element_id" ColumnName="element_id" />
                 <ScalarProperty Name="attribute_name" ColumnName="attribute_name" />
@@ -1258,6 +1277,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigFileElements">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigFileElement">
               <MappingFragment StoreEntitySet="ConfigFileElements">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="configfile_id" ColumnName="configfile_id" />
                 <ScalarProperty Name="element_name" ColumnName="element_name" />
@@ -1270,6 +1290,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigVariableValues">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigVariableValue">
               <MappingFragment StoreEntitySet="ConfigVariableValue">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="configvar_id" ColumnName="configvar_id" />
                 <ScalarProperty Name="environment_type" ColumnName="environment_type" />
@@ -1334,6 +1355,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="Machines">
             <EntityTypeMapping TypeName="DevOpsModel.Machine">
               <MappingFragment StoreEntitySet="Machines">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="machine_name" ColumnName="machine_name" />
                 <ScalarProperty Name="ip_address" ColumnName="ip_address" />
@@ -1406,28 +1428,6 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="vi_ConfigVariables">
-            <EntityTypeMapping TypeName="DevOpsModel.vi_ConfigVariables">
-              <MappingFragment StoreEntitySet="vi_ConfigVariables">
-                <ScalarProperty Name="full_element" ColumnName="full_element" />
-                <ScalarProperty Name="file_name" ColumnName="file_name" />
-                <ScalarProperty Name="config_id" ColumnName="config_id" />
-                <ScalarProperty Name="component_id" ColumnName="component_id" />
-                <ScalarProperty Name="component_name" ColumnName="component_name" />
-                <ScalarProperty Name="environment_type" ColumnName="environment_type" />
-                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
-                <ScalarProperty Name="element" ColumnName="element" />
-                <ScalarProperty Name="attribute" ColumnName="attribute" />
-                <ScalarProperty Name="key" ColumnName="key" />
-                <ScalarProperty Name="value_name" ColumnName="value_name" />
-                <ScalarProperty Name="value" ColumnName="value" />
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
-                <ScalarProperty Name="published_date" ColumnName="published_date" />
-                <ScalarProperty Name="published" ColumnName="published" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <AssociationSetMapping Name="AppComponents" TypeName="DevOpsModel.AppComponents" StoreEntitySet="AppComponents">
             <EndProperty Name="Applications">
               <ScalarProperty Name="id" ColumnName="application_id" />
@@ -1463,6 +1463,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigVariables">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigVariable">
               <MappingFragment StoreEntitySet="ConfigVariables">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="active" ColumnName="active" />
                 <ScalarProperty Name="modify_date" ColumnName="modify_date" />
                 <ScalarProperty Name="create_date" ColumnName="create_date" />
@@ -1488,6 +1489,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySetMapping Name="ConfigFiles">
             <EntityTypeMapping TypeName="DevOpsModel.ConfigFile">
               <MappingFragment StoreEntitySet="ConfigFile">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
                 <ScalarProperty Name="modify_date" ColumnName="modify_date" />
                 <ScalarProperty Name="create_date" ColumnName="create_date" />
                 <ScalarProperty Name="root_element" ColumnName="root_element" />
@@ -1508,6 +1510,30 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
                 <ScalarProperty Name="note_type" ColumnName="note_type" />
                 <ScalarProperty Name="note_id" ColumnName="note_id" />
                 <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_ConfigVariables">
+            <EntityTypeMapping TypeName="DevOpsModel.vi_ConfigVariables">
+              <MappingFragment StoreEntitySet="vi_ConfigVariables">
+                <ScalarProperty Name="published" ColumnName="published" />
+                <ScalarProperty Name="published_date" ColumnName="published_date" />
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="value_name" ColumnName="value_name" />
+                <ScalarProperty Name="key" ColumnName="key" />
+                <ScalarProperty Name="attribute" ColumnName="attribute" />
+                <ScalarProperty Name="element" ColumnName="element" />
+                <ScalarProperty Name="full_element" ColumnName="full_element" />
+                <ScalarProperty Name="parent_element" ColumnName="parent_element" />
+                <ScalarProperty Name="environment" ColumnName="environment" />
+                <ScalarProperty Name="applications" ColumnName="applications" />
+                <ScalarProperty Name="fileName" ColumnName="fileName" />
+                <ScalarProperty Name="component_name" ColumnName="component_name" />
+                <ScalarProperty Name="component_id" ColumnName="component_id" />
+                <ScalarProperty Name="config_id" ColumnName="config_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

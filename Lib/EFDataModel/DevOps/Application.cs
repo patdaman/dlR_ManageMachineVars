@@ -27,6 +27,7 @@ namespace EFDataModel.DevOps
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
         public bool active { get; set; }
+        public string last_modify_user { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Component> Components { get; set; }

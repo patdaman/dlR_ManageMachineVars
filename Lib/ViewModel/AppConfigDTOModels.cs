@@ -14,6 +14,7 @@ namespace ViewModel
         public string usage { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public bool active { get; set; }
         public virtual List<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }
@@ -32,6 +33,7 @@ namespace ViewModel
             usage = m.usage;
             create_date = m.create_date;
             modify_date = m.modify_date;
+            last_modify_user = m.last_modify_user;
             active = m.active;
             //ConfigVariableValues = m.ConfigVariableValues;
             //Enum_Locations = m.Enum_Locations;
@@ -85,6 +87,7 @@ namespace ViewModel
         public string release { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public bool active { get; set; }
         public virtual List<Component> Components { get; set; }
         public virtual List<EnvironmentDtoVariable> EnvironmentVariables { get; set; }
@@ -99,6 +102,7 @@ namespace ViewModel
             release = a.release;
             create_date = a.create_date;
             modify_date = a.modify_date;
+            last_modify_user = a.last_modify_user;
             active = a.active;
             //Components = a.Components;
             //EnvironmentVariables = a.EnvironmentVariables;
@@ -107,6 +111,7 @@ namespace ViewModel
         {
             id = a.id ?? 0;
             application_name = a.name;
+            last_modify_user = a.last_modify_user;
         }
     }
 
@@ -117,6 +122,7 @@ namespace ViewModel
         public string relative_path { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public bool active { get; set; }
         public virtual List<MachineComponentPath> MachineComponentPaths { get; set; }
         public virtual List<Application> Applications { get; set; }
@@ -133,6 +139,7 @@ namespace ViewModel
             relative_path = c.relative_path;
             create_date = c.create_date;
             modify_date = c.modify_date;
+            last_modify_user = c.last_modify_user;
             active = c.active;
             //MachineComponentPaths = c.MachineComponentPaths;
             //Applications = c.Applications;
@@ -145,6 +152,7 @@ namespace ViewModel
             relative_path = c.filePath;
             create_date = DateTime.Now;
             modify_date = DateTime.Now;
+            last_modify_user = c.last_modify_user;
             active = true;
             MachineComponentPaths = new List<MachineComponentPath>();
             Applications = new List<Application>();
@@ -158,6 +166,7 @@ namespace ViewModel
 
         public string componentName { get; set; }
         public string filePath { get; set; }
+        public string last_modify_user { get; set; }
         public List<ApplicationDto> applications { get; set; }
 
         public ComponentDto(ComponentDto c)
@@ -165,6 +174,7 @@ namespace ViewModel
             componentName = c.componentName;
             filePath = c.filePath;
             applications = c.applications;
+            last_modify_user = c.last_modify_user;
         }
     }
 
@@ -175,11 +185,13 @@ namespace ViewModel
         public string name { get; set; }
         public string components { get; set; }
         public string release { get; set; }
+        public string last_modify_user { get; set; }
         public ApplicationDto(ApplicationDto a)
         {
             id = a.id;
             name = a.name;
             release = a.release;
+            last_modify_user = a.last_modify_user;
         }
     }
 
@@ -193,6 +205,7 @@ namespace ViewModel
         public string xml_declaration { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public string root_element { get; set; }
         public Component Component { get; set; }
         //public ICollection<ConfigFileElement> ConfigFileElements { get; set; }
@@ -205,6 +218,7 @@ namespace ViewModel
             xml_declaration = c.xml_declaration;
             create_date = c.create_date;
             modify_date = c.modify_date;
+            last_modify_user = c.last_modify_user;
             root_element = c.root_element;
             //Component = c.Component;
         }
@@ -242,6 +256,7 @@ namespace ViewModel
         public string value_name { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public bool active { get; set; }
         public virtual ICollection<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual ICollection<Component> Components { get; set; }
@@ -261,6 +276,7 @@ namespace ViewModel
             value_name = c.value_name;
             create_date = c.create_date;
             modify_date = c.modify_date;
+            last_modify_user = c.last_modify_user;
             active = c.active;
             //ConfigVariableValues = c.ConfigVariableValues;
             //Components = c.Components;
@@ -276,6 +292,7 @@ namespace ViewModel
         public string value { get; set; }
         public Nullable<System.DateTime> create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public Nullable<DateTime> publish_date { get; set; }
         public bool? published { get; set; }
         public virtual ConfigVariable ConfigVariable { get; set; }
@@ -292,6 +309,7 @@ namespace ViewModel
             value = c.value;
             create_date = c.create_date;
             modify_date = c.modify_date;
+            last_modify_user = c.last_modify_user;
             publish_date = c.publish_date;
             published = c.published;
             //ConfigVariable = c.ConfigVariable;
@@ -328,6 +346,7 @@ namespace ViewModel
         public string path { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
+        public string last_modify_user { get; set; }
         public bool active { get; set; }
         public virtual ICollection<Application> Applications { get; set; }
         public virtual ICollection<Machine> Machines { get; set; }
@@ -344,6 +363,7 @@ namespace ViewModel
             path = e.path;
             create_date = e.create_date;
             modify_date = e.modify_date;
+            last_modify_user = e.last_modify_user;
             active = e.active;
             //Applications = e.Applications;
             //Machines = e.Machines;

@@ -17,7 +17,6 @@ namespace DevOpsPortal.Controllers
             ViewData["SignalRPath"] = System.Configuration.ConfigurationManager.AppSettings["SignalRPath"];
             ViewData["EnumRelativeUri"] = System.Configuration.ConfigurationManager.AppSettings["EnumRelativeUri"];
             ViewData["UserName"] = System.Web.HttpContext.Current.User.ToString().Replace(@"\",@"\\");
-            //ViewData["UserName"] = User.Identity.Name;
 #if DEBUG
             ViewData["DisplayApi"] = true;
 #else

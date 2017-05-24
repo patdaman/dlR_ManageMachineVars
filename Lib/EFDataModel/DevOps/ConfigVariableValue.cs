@@ -22,6 +22,7 @@ namespace EFDataModel.DevOps
         public System.DateTime modify_date { get; set; }
         public Nullable<System.DateTime> published_date { get; set; }
         public bool published { get; set; }
+        public string last_modify_user { get; set; }
     
         public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
         public virtual ConfigVariable ConfigVariable { get; set; }

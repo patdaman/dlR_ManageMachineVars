@@ -33,6 +33,7 @@ namespace BusinessLayer
                     release = app.release,
                     create_date = app.create_date,
                     modify_date = app.modify_date,
+                    last_modify_user = app.last_modify_user,
                     active = app.active,
                 });
             }
@@ -78,6 +79,7 @@ namespace BusinessLayer
                     usage = machine.usage,
                     create_date = machine.create_date,
                     modify_date = machine.modify_date,
+                    last_modify_user = machine.last_modify_user,
                     active = machine.active,
                 });
             }
@@ -144,6 +146,7 @@ namespace BusinessLayer
                         value = val.value,
                         create_date = val.create_date,
                         modify_date = val.modify_date,
+                        last_modify_user = val.last_modify_user,
                         publish_date = val.published_date,
                         published = val.published
                     });
@@ -157,6 +160,7 @@ namespace BusinessLayer
                         value = string.Empty,
                         create_date = null,
                         modify_date = null,
+                        last_modify_user = null,
                         publish_date = null,
                         published = false
                     });
@@ -187,6 +191,7 @@ namespace BusinessLayer
                     relative_path = x.relative_path,
                     create_date = x.create_date,
                     modify_date = x.modify_date,
+                    last_modify_user = x.last_modify_user,
                     active = x.active,
                 });
             }
@@ -244,6 +249,7 @@ namespace BusinessLayer
                 id = EF.id,
                 key = EF.key,
                 modify_date = EF.modify_date,
+                last_modify_user = EF.last_modify_user,
                 parent_element = EF.parent_element,
                 value_name = EF.value_name,
                 ConfigVariableValues = EfConfigValueListToVm(EF.ConfigVariableValues),
@@ -323,6 +329,7 @@ namespace BusinessLayer
                 file_name = configFile.file_name,
                 create_date = configFile.create_date,
                 modify_date = configFile.modify_date,
+                last_modify_user = configFile.last_modify_user,
                 component_id = configFile.component_id,
                 id = configFile.id,
                 root_element = configFile.root_element,

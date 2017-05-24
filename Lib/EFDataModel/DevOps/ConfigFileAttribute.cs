@@ -20,6 +20,7 @@ namespace EFDataModel.DevOps
         public string attribute_value { get; set; }
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
+        public string last_modify_user { get; set; }
     
         public virtual ConfigFileElement ConfigFileElement { get; set; }
     }

@@ -11,6 +11,7 @@ namespace BusinessLayer
     public class ManageNotes
     {
         DevOpsEntities DevOpsContext;
+        public string userName { get; set; }
         public string noteType { get; set; }
 
         ///-------------------------------------------------------------------------------------------------

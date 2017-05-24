@@ -14,6 +14,7 @@ namespace BusinessLayer
     {
         public AppConfigFunctions appConfigVars { get; private set; }
 
+        public string userName { get; set; }
         public int? machineId { get; set; }
         public string machineName { get; set; }
         public int? appId { get; set; }
@@ -262,7 +263,8 @@ namespace BusinessLayer
                         application_name = this.appName,
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,
-                        release = ""
+                        release = "",
+                        last_modify_user = this.userName,
                     };
             }
 
@@ -298,12 +300,14 @@ namespace BusinessLayer
                         root_element = configFile.Root.Name.ToString(),
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,
+                        last_modify_user = this.userName,
                     };
                     newComp = new EFDataModel.DevOps.Component()
                     {
                         component_name = this.componentName,
                         create_date = DateTime.Now,
                         modify_date = DateTime.Now,
+                        last_modify_user = this.userName,
                         active = true,
                         relative_path = Path.GetDirectoryName(this.path),
                     };
@@ -339,6 +343,7 @@ namespace BusinessLayer
                     root_element = configFile.Root.Name.ToString(),
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
+                    last_modify_user = this.userName,
                 };
                 if (efComp != null)
                     efComp.ConfigFiles.Add(efConfigFile);
@@ -428,12 +433,14 @@ namespace BusinessLayer
                                 configvar_id = configVar.id,
                                 value = x.value,
                                 create_date = DateTime.Now,
-                                modify_date = DateTime.Now
+                                modify_date = DateTime.Now,
+                                last_modify_user = this.userName,
                             });
                     else
                     {
                         efValue.value = x.value;
                         efValue.modify_date = DateTime.Now;
+                        efValue.last_modify_user = this.userName;
                     }
                 }
                 if (efComp != null)
@@ -474,6 +481,7 @@ namespace BusinessLayer
                 create_date = component.create_date,
                 id = component.id,
                 modify_date = component.modify_date ?? DateTime.Now,
+                last_modify_user = this.userName,
                 relative_path = component.relative_path,
                 MachineComponentPathMaps = new List<EFDataModel.DevOps.MachineComponentPathMap>(),
                 ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
@@ -489,6 +497,7 @@ namespace BusinessLayer
                     application_name = a.application_name,
                     create_date = a.create_date,
                     modify_date = a.modify_date ?? DateTime.Now,
+                    last_modify_user = this.userName,
                     release = a.release,
                 });
             }
@@ -501,6 +510,7 @@ namespace BusinessLayer
                     create_date = f.create_date,
                     file_name = f.file_name,
                     modify_date = f.modify_date,
+                    last_modify_user = this.userName,
                     root_element = f.root_element,
                     xml_declaration = f.xml_declaration,
                 });
@@ -524,6 +534,7 @@ namespace BusinessLayer
                     element = v.element,
                     key = v.key,
                     modify_date = v.modify_date ?? DateTime.Now,
+                    last_modify_user = this.userName,
                     parent_element = v.parent_element,
                     full_element = v.full_element,
                     value_name = v.value_name,
@@ -564,6 +575,7 @@ namespace BusinessLayer
                     value = vars.value,
                     create_date = DateTime.Now,
                     modify_date = DateTime.Now,
+                    last_modify_user = this.userName,
                     published = false
                 });
             }
@@ -578,6 +590,7 @@ namespace BusinessLayer
                 ConfigVariableValues = valueList,
                 create_date = DateTime.Now,
                 modify_date = DateTime.Now,
+                last_modify_user = this.userName,
                 active = true,
             };
             return efConfigVar;

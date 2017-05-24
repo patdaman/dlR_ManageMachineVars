@@ -6,12 +6,14 @@ CREATE PROCEDURE [config].[usp_GenerateAuditTables]
 	-- Must match the Table Name
 	-- ***************************************** --
 	@TableName varchar(128) = 'ENTER_MY_TABLE_NAME'
+	, @Schema	varchar(128)
 	-- ***************************************** --
 	-- 1 will drop and recreate the audit table
 	--	Anything else will not drop the audit table,
 	--	null value will be set to 0.
 	-- ***************************************** --
-	, @AuditNameExtention varchar(128) = '_audit'
+	, @AuditNameExtention varchar(128)
+	, @PrintOnly bit = 1
 	, @DropAuditTable bit = 0
 AS
 BEGIN --> 1
@@ -26,47 +28,48 @@ BEGIN --> 1
 	DECLARE @SelectKeyJoin varchar(150)
 	DECLARE @SelectIndexKeys varchar(150)
 	DECLARE @SelectInsertKeys varchar(250)
-	DECLARE @TABLE_NAME sysname
 	DECLARE @TABLE_SCHEMA sysname
 	DECLARE @CRLF char(2)
 
 	-- Declare temp variable to fetch records into
 	DECLARE @ColumnName varchar(128)
 	DECLARE @ColumnType varchar(128)
-	DECLARE @ColumnLength smallint
+	DECLARE @ColumnLength int
 	DECLARE @ColumnNullable varchar(10)
 	DECLARE @ColumnCollation sysname
-	DECLARE @ColumnPrecision tinyint
-	DECLARE @ColumnScale tinyint
+	DECLARE @ColumnPrecision int
+	DECLARE @ColumnScale int
 
 	SET @CRLF = Char(13) + Char(10)
+	SELECT @sql = ''
+	, @CreateStatement = ''
+	, @SelectKeys = ''
+	, @SelectKeyJoin = ''
+	, @SelectKeyValues = ''
+	, @SelectDelKeys = ''
+	, @SelectFirstKey = ''
+	, @SelectIndexKeys = ''
+	, @SelectInsertKeys = ''
+	IF @AuditNameExtention IS NULL
+		SET @AuditNameExtention = '_audit'
+	IF @Schema IS NULL
+		SET @Schema = ''
+	IF @PrintOnly IS NULL
+		SET @PrintOnly = 1
+	IF @DropAuditTable IS NULL
+		SET @DropAuditTable = 0
 
-	DECLARE TABLE_CURSOR CURSOR FOR
-	SELECT TABLE_NAME, TABLE_SCHEMA
+	SELECT TOP 1 @TABLE_SCHEMA = TABLE_SCHEMA
 	FROM INFORMATION_SCHEMA.Tables 
 	WHERE 
 		TABLE_TYPE= 'BASE TABLE' 
 			AND TABLE_NAME!= 'sysdiagrams'
 			AND TABLE_NAME NOT LIKE  ('%' + @AuditNameExtention)
-			AND TABLE_NAME LIKE ('%' + @TableName + '%')
+			--AND TABLE_NAME LIKE ('%' + @TableName + '%')
+			AND TABLE_NAME LIKE (@TableName)
 
-	OPEN TABLE_CURSOR
-	FETCH NEXT FROM TABLE_CURSOR INTO @TABLE_NAME, @TABLE_SCHEMA
-	
-	WHILE @@FETCH_STATUS = 0
-	BEGIN --> 2
-		SELECT @CreateStatement = ''
-			, @SelectKeys = ''
-			, @SelectKeyJoin = ''
-			, @SelectKeyValues = ''
-			, @SelectDelKeys = ''
-			, @SelectFirstKey = ''
-			, @SelectIndexKeys = ''
-			, @SelectInsertKeys = ''
-									
-		DECLARE TABLECOLUMNS CURSOR FOR
-
-		SELECT KCU.COLUMN_NAME, C.DATA_TYPE, C.CHARACTER_MAXIMUM_LENGTH, C.IS_NULLABLE, C.NUMERIC_PRECISION, C.NUMERIC_SCALE
+		DECLARE TABLECOLUMNS CURSOR LOCAL FOR
+		SELECT KCU.COLUMN_NAME, C.DATA_TYPE, CASE WHEN C.CHARACTER_MAXIMUM_LENGTH IS NULL THEN 0 ELSE C.CHARACTER_MAXIMUM_LENGTH END AS CHARACTER_MAXIMUM_LENGTH, C.IS_NULLABLE, C.NUMERIC_PRECISION, C.NUMERIC_SCALE
 		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 			JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU ON KCU.CONSTRAINT_SCHEMA = TC.CONSTRAINT_SCHEMA
 			JOIN INFORMATION_SCHEMA.COLUMNS C ON KCU.COLUMN_NAME = C.COLUMN_NAME
@@ -74,18 +77,19 @@ BEGIN --> 1
 				AND KCU.TABLE_SCHEMA = TC.TABLE_SCHEMA
 				AND KCU.TABLE_NAME = TC.TABLE_NAME
 		WHERE TC.CONSTRAINT_TYPE IN ('PRIMARY KEY','UNIQUE')
-			AND KCU.TABLE_NAME LIKE @TABLE_NAME
-			AND C.TABLE_NAME LIKE @TABLE_NAME
-			AND COLUMNPROPERTY(OBJECT_ID(@TABLE_NAME),c.COLUMN_NAME,'isidentity')<>1
+			AND KCU.TABLE_NAME LIKE @TableName
+			AND C.TABLE_NAME LIKE @TableName
+			--AND COLUMNPROPERTY(OBJECT_ID(@TableName),c.COLUMN_NAME,'isidentity')<>1
 		ORDER BY C.ORDINAL_POSITION
 
 		OPEN TABLECOLUMNS
 		
 		FETCH Next FROM TableColumns
 		INTO @ColumnName, @ColumnType, @ColumnLength, @ColumnNullable, @ColumnPrecision, @ColumnScale
-		
 		WHILE @@FETCH_STATUS = 0
 		BEGIN --> 3
+			IF @ColumnType in ('int') AND @ColumnName = 'id'
+				SET @ColumnName = @TableName + '_id'
 			IF (@ColumnType <> 'text' and @ColumnType <> 'ntext' and @ColumnType <> 'image' and @ColumnType <> 'timestamp')
 			BEGIN --> 4
 		
@@ -111,7 +115,6 @@ BEGIN --> 1
 		
 				SET @CreateStatement = @CreateStatement + 'NULL ' + @CRLF + ' , '	 	
 			END --< 4
-
 			FETCH Next FROM TableColumns
 			INTO @ColumnName, @ColumnType, @ColumnLength, @ColumnNullable, @ColumnPrecision, @ColumnScale
 		END --< 3
@@ -130,16 +133,25 @@ BEGIN --> 1
 		SET @SelectIndexKeys = REPLACE(@SelectKeys, ',',' ASC,')
 		SET @SelectIndexKeys = LEFT(@SelectIndexKeys, LEN(@SelectIndexKeys) - 1)
 
-		SET @sql = ' IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME= ''' + @TABLE_NAME + @AuditNameExtention + ''') ' + @CRLF
+		SET @sql = ' IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME= ''' + @TableName + @AuditNameExtention + ''') ' + @CRLF
 			+ ' BEGIN ' + @CRLF
 			+ '		IF (' + CAST(@DropAuditTable AS VARCHAR(1)) + ' = 1) ' + @CRLF
-			+ '			 DROP TABLE ' + @TABLE_NAME + @AuditNameExtention + @CRLF
+			+ '			 DROP TABLE ' + @TABLE_SCHEMA + '.' + @TableName + @AuditNameExtention + @CRLF
 			+ ' END ' + @CRLF
-		PRINT @sql
-		PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-		EXEC (@sql)
-		SET @sql = ' IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME= ''' + @TABLE_NAME + @AuditNameExtention + ''' AND TABLE_SCHEMA = ''' + @TABLE_SCHEMA + ''') ' + @CRLF
-			+ ' CREATE TABLE ' + @TABLE_SCHEMA + '.' + @TABLE_NAME + @AuditNameExtention + @CRLF
+PRINT @sql
+PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
+IF @PrintOnly = 0
+
+		BEGIN TRY --> 2
+	EXEC (@sql)
+		END TRY --< 2
+
+		BEGIN CATCH --> 2
+			EXEC config.usp_InsertErrorDetails
+		END CATCH --< 2
+
+		SET @sql = ' IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME= ''' + @TableName + @AuditNameExtention + ''' AND TABLE_SCHEMA = ''' + @TABLE_SCHEMA + ''') ' + @CRLF
+			+ ' CREATE TABLE ' + @TABLE_SCHEMA + '.' + @TableName + @AuditNameExtention + @CRLF
 			+ ' ( AuditID [int]IDENTITY(1,1) NOT NULL ' + @CRLF
 			+ ' , Type char(1) ' + @CRLF
 			+ ' , ' + @CreateStatement
@@ -149,37 +161,42 @@ BEGIN --> 1
 			+ ' , UpdateDate datetime2(3) DEFAULT (GetUTCDate()) ' + @CRLF
 			+ ' , UserName varchar(128) ' + @CRLF
 
-			+ ' , CONSTRAINT [PK_' + @TABLE_NAME + @AuditNameExtention + '] PRIMARY KEY CLUSTERED ' + @CRLF
+			+ ' , CONSTRAINT [PK_' + @TableName + @AuditNameExtention + '] PRIMARY KEY CLUSTERED ' + @CRLF
 			+ ' ( ' + @CRLF
 			+ '		[AuditID] ASC ' + @CRLF
 			+ '		)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY] ' + @CRLF
 			+ ' ) ON [PRIMARY] ' + @CRLF
 			+ @CRLF
-			+ ' CREATE NONCLUSTERED INDEX [IX_' + @TABLE_NAME + @AuditNameExtention + '_' + REPLACE(REPLACE(REPLACE(@SelectFirstKey,' ','_'),'[',''),']','') + '] ON [config].[' + @TABLE_NAME + @AuditNameExtention + '] ' + @CRLF
+			+ ' CREATE NONCLUSTERED INDEX [IX_' + @TableName + @AuditNameExtention + '_' + REPLACE(REPLACE(REPLACE(@SelectFirstKey,' ','_'),'[',''),']','') + '] ON [config].[' + @TableName + @AuditNameExtention + '] ' + @CRLF
 			+ ' (' + @CRLF
 			+ @SelectIndexKeys + @CRLF
 			+ ' )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ' + @CRLF
+PRINT @sql
+PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
 
 		BEGIN TRY --> 3
-			PRINT @sql
-			PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-			EXEC (@sql)
+IF @PrintOnly = 0
+	EXEC (@sql)
 		END TRY --< 3
+
 		BEGIN CATCH --> 3
-			EXEC usp_InsertErrorDetails
+			EXEC config.usp_InsertErrorDetails
 		END CATCH --< 3
 		
-		SET @sql = 'IF OBJECT_ID (''' + @TABLE_NAME + '_changeLog'', ''TR'') IS NOT NULL DROP TRIGGER ' + @TABLE_NAME + '_changeLog'
+		SET @sql = 'IF OBJECT_ID (''' + @TableName + '_changeLog'', ''TR'') IS NOT NULL DROP TRIGGER ' + @TableName + '_changeLog'
+PRINT @sql
+PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
+
 		BEGIN TRY --> 3
-			PRINT @sql
-			PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-			EXEC (@sql)
+IF @PrintOnly = 0
+	EXEC (@sql)
 		END TRY --< 3
+
 		BEGIN CATCH --> 3
-			EXEC usp_InsertErrorDetails
+			EXEC config.usp_InsertErrorDetails
 		END CATCH --< 3
 		SET @sql = 
-			' CREATE TRIGGER ' + @TABLE_NAME + '_changeLog ON ' + @TABLE_SCHEMA + '.' + @TABLE_NAME + ' FOR INSERT, UPDATE, DELETE ' + @CRLF
+			' CREATE TRIGGER ' + @TableName + '_changeLog ON ' + @TABLE_SCHEMA + '.' + @TableName + ' FOR INSERT, UPDATE, DELETE ' + @CRLF
 			+ ' AS ' + @CRLF
 			+ '	DECLARE @BIT INT ' + @CRLF
 			+ ' , @FIELD INT ' + @CRLF
@@ -197,17 +214,17 @@ BEGIN --> 1
 			+ ' SELECT @TYPE = ''D'' ' + @CRLF
 			+ ' SELECT * INTO #INS FROM INSERTED ' + @CRLF
 			+ ' SELECT * INTO #DEL FROM DELETED ' + @CRLF
-			+ ' SELECT @FIELD = 0, @MAXFIELD = MAX(column_id) FROM Sys.COLUMNS WHERE object_id = OBJECT_ID(''[config].' + @TABLE_NAME + ''')' + @CRLF
+			+ ' SELECT @FIELD = 0, @MAXFIELD = MAX(column_id) FROM Sys.COLUMNS WHERE object_id = OBJECT_ID(''[config].' + @TableName + ''')' + @CRLF
 			+ ' WHILE @FIELD < @MAXFIELD ' + @CRLF
 			+ ' BEGIN ' + @CRLF
-			+ ' SELECT @FIELD = MIN(column_id) FROM Sys.COLUMNS WHERE object_id = OBJECT_ID(''[config].' + @TABLE_NAME + ''') AND column_id > @FIELD ' + @CRLF
+			+ ' SELECT @FIELD = MIN(column_id) FROM Sys.COLUMNS WHERE object_id = OBJECT_ID(''[config].' + @TableName + ''') AND column_id > @FIELD ' + @CRLF
 			+ '		AND NAME NOT LIKE ''Last%'' ' + @CRLF
 			+ ' IF (sys.fn_IsBitSetInBitmask(COLUMNS_UPDATED(), @field)) <> 0 OR @TYPE IN (''D'') ' + @CRLF
 			+ ' BEGIN ' + @CRLF
-			+ ' SELECT @fieldname = name from Sys.COLUMNS WHERE object_id = OBJECT_ID(''[config].' + @TABLE_NAME + ''') and column_id = @field ' + @CRLF
-			+ ' SET @SQL = '' INSERT INTO ' + @TABLE_NAME + @AuditNameExtention + ' ''' + @CRLF
+			+ ' SELECT @fieldname = name from Sys.COLUMNS WHERE object_id = OBJECT_ID(''[config].' + @TableName + ''') and column_id = @field ' + @CRLF
+			+ ' SET @SQL = '' INSERT INTO ' + @TableName + @AuditNameExtention + ' ''' + @CRLF
 			+ '+ '' (Type, ' + @SelectKeys + ' FieldName, OldValue, NewValue, UpdateDate, UserName) ''' + @CRLF
-			+ '+ '' SELECT '''''' + @TYPE + '''''', ' + @SelectInsertKeys + ''''''' + @fieldname + '''''', d.['' + @fieldname + ''], i.['' + @fieldname + ''], GETUTCDATE(), COALESCE(i.[LastModifiedUser], SUSER_NAME()) ''' + @CRLF 
+			+ '+ '' SELECT '''''' + @TYPE + '''''', ' + @SelectInsertKeys + ''''''' + @fieldname + '''''', d.['' + @fieldname + ''], i.['' + @fieldname + ''], GETUTCDATE(), COALESCE(i.[Last_Modify_User], SUSER_NAME()) ''' + @CRLF 
 			+ '+ '' FROM #INS i ''' + @CRLF
 			+ '+ ''		FULL OUTER JOIN #DEL d ON ' + @SelectKeyJoin + '''' + @CRLF
 			+ '+ '' WHERE i.['' + @fieldname + ''] <> d.['' + @fieldname + '']'' ' + @CRLF
@@ -217,17 +234,17 @@ BEGIN --> 1
 			+ '	 END ' + @CRLF
 			+ ' END ' + @CRLF
 			+ @CRLF
+PRINT @sql
+PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
+
 		BEGIN TRY --> 3
-			PRINT @sql
-			PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-			EXEC (@sql)
+IF @PrintOnly = 0
+	EXEC (@sql)
 		END TRY --< 3
+
 		BEGIN CATCH --> 3
-			EXEC usp_InsertErrorDetails
+			EXEC config.usp_InsertErrorDetails
 		END CATCH --< 3
-		FETCH NEXT FROM TABLE_CURSOR INTO @TABLE_NAME, @TABLE_SCHEMA
 	END --> 2	
-	CLOSE TABLE_CURSOR
-	DEALLOCATE TABLE_CURSOR
-END --< 1
+--END --< 1
 

@@ -97,8 +97,8 @@ namespace DevOpsApi.Controllers
             try
             {
                 ViewModel.Component newComp = new ViewModel.Component(componentModel);
+                configProcessor.userName = componentModel.last_modify_user;
                 newComp.Applications = configProcessor.GetApplication(componentModel.applications);
-                //return Post(newComp);
                 return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(newComp));
             }
             catch (Exception ex)

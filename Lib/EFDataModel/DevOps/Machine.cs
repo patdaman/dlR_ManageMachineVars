@@ -30,6 +30,7 @@ namespace EFDataModel.DevOps
         public System.DateTime create_date { get; set; }
         public System.DateTime modify_date { get; set; }
         public bool active { get; set; }
+        public string last_modify_user { get; set; }
     
         public virtual Enum_EnvironmentType Enum_EnvironmentType { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }

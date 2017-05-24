@@ -107,6 +107,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
+                configProcessor.userName = value.last_modify_user;
                 var response = Request.CreateResponse<ViewModel.ConfigVariableValue>(HttpStatusCode.OK, configProcessor.UpdateValue(value));
                 return response;
             }

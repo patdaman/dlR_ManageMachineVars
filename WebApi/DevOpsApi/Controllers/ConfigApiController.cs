@@ -126,9 +126,9 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "Engineers")]
+//#endif
         [HttpPut]
         public HttpResponseMessage Put(ViewModel.AppVar value)
         {
@@ -151,14 +151,15 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "DevOps")]
+//#endif
         [HttpPost]
         public HttpResponseMessage Post(ViewModel.AppVar value)
         {
             try
             {
+                configProcessor.userName = value.userName;
                 var response = Request.CreateResponse<ViewModel.AppVar>(HttpStatusCode.OK, configProcessor.UpdateVariable(value));
                 return response;
             }
@@ -177,9 +178,9 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "DevOps")]
+//#endif
         [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {

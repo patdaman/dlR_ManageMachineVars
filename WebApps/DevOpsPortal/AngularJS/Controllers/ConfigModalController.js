@@ -19,9 +19,9 @@
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http', '$q',
-        'component', 'files', 'environments', 'environment', 'close',
+        'component', 'files', 'environments', 'environment', 'Admin', 'close',
     function ($rootScope, $scope, $element, $http, $q,
-        component, files, environments, environment, close) {
+        component, files, environments, environment, Admin, close) {
 
         //var vm = this;
         var vm = $scope;
@@ -34,7 +34,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var displayFileSelect;
         var displayGetFile;
 
-        vm.displayFileSelect = true;
+        vm.Admin = Admin;
         vm.displayGetFile = false;
         vm.environments = environments;
         vm.environment = environment;
@@ -44,8 +44,16 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
                     vm.selectedVmEnvironment = value;
             });
         vm.files = files;
-        vm.filePath = '';
-        vm.fileName = '';
+        if (vm.files.length < 2) {
+            vm.displayFileSelect = false;
+            vm.filePath = files[0].path;
+            vm.fileName = files[0].fileName;
+        }
+        else {
+            vm.displayFileSelect = true;
+            vm.filePath = '';
+            vm.fileName = '';
+        }
         vm.configXml = '';
         vm.component = component;
         vm.modalSize = "modal-dialog modal-lg";
@@ -66,7 +74,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         };
 
         vm.getFile = function () {
-            if ((!vm.component || !vm.environment || !vm.selectedFile) && 
+            if ((!vm.component || !vm.environment || !vm.selectedFile) &&
                 (vm.component !== '' || vm.environment !== '' || vm.selectedFile !== '')) {
                 swal({
                     title: "Data Missing",
@@ -192,7 +200,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         //    if (value.name === vm.environment)
         //        vm.componentEnvironment = value;
         //});
-        
+
         vm.selectEnvironment = function (environment) {
             vm.componentEnvironment = environment;
             var test = vm.componentComponents;
@@ -278,55 +286,87 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                         });
                     }
                     else {
-                        var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) {
-                            return item['name'].replace(/"/g, '').replace(/'/g, '')
-                                .replace(/\[/g, '').replace(/]/g, '');
-                        }));
-                        Upload.upload({
-                            url: 'api:/ConfigPublishApi',
-                            params: {
-                                componentName: vm.componentName,
-                                environment: vm.componentEnvironment.name,
-                                applications: jsonApps,
-                            },
-                            data: {
-                                file: file
+                        swal({
+                            title: "Are you sure?",
+                            text: "Existing Values will be overwritten in this environment",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#AEDEF4",
+                            confirmButtonText: "Yes, upload it!",
+                            closeOnConfirm: false
+                        },
+                        function (isConfirm) {
+                            if (isConfirm) {
+                                var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) {
+                                    return item['name'].replace(/"/g, '').replace(/'/g, '')
+                                        .replace(/\[/g, '').replace(/]/g, '');
+                                }));
+                                Upload.upload({
+                                    url: 'api:/ConfigPublishApi',
+                                    params: {
+                                        componentName: vm.componentName,
+                                        environment: vm.componentEnvironment.name,
+                                        applications: jsonApps,
+                                        userName: $rootScope.UserName,
+                                    },
+                                    data: {
+                                        file: file
+                                    }
+                                }).then(function (resp) {
+                                    $timeout(function () {
+                                        $scope.log = 'file: ' +
+                                        resp.config.data.file.name +
+                                        ', Response: ' + JSON.stringify(resp.data) +
+                                        '\n' + $scope.log;
+                                    });
+                                }, null, function (evt) {
+                                    var progressPercentage = parseInt(100.0 *
+                                            evt.loaded / evt.total);
+                                    $scope.log = 'progress: ' + progressPercentage +
+                                        '% ' + evt.config.data.file.name + '\n' +
+                                      $scope.log;
+                                })
+                                //.then(vm.uploadFile);
+                                .then(function () {
+                                    swal({
+                                        title: vm.componentName,
+                                        text: "Config File Added",
+                                        type: "success",
+                                        imageUrl: "/Assets/thumbs-up.jpg",
+                                        confirmButtonText: "Cool"
+                                    });
+                                });
                             }
-                        }).then(function (resp) {
-                            $timeout(function () {
-                                $scope.log = 'file: ' +
-                                resp.config.data.file.name +
-                                ', Response: ' + JSON.stringify(resp.data) +
-                                '\n' + $scope.log;
-                            });
-                        }, null, function (evt) {
-                            var progressPercentage = parseInt(100.0 *
-                                    evt.loaded / evt.total);
-                            $scope.log = 'progress: ' + progressPercentage +
-                                '% ' + evt.config.data.file.name + '\n' +
-                              $scope.log;
-                        })
-                        .then(vm.uploadFile);
-                    }
-                }
-            }
-        }
-
-        vm.uploadFile = function () {
-            swal({
-                title: vm.componentName,
-                text: "Config File Added",
-                type: "success",
-                confirmButtonText: "Cool"
-            });
-            $element.modal('hide');
-            close({
-                componentApplications: vm.componentApplications,
-                componentName: vm.componentName,
-                environment: vm.componentEnvironment,
-                upload: true,
-            }, 500);
+                            else {
+                                swal({
+                                    title: "Add Component File",
+                                    text: "No File Uploaded",
+                                    type: "warning",
+                                    confirmButtonText: "Cool"
+                                });
+                            };
+                        });
+                    };
+                };
+            };
         };
+
+        //vm.uploadFile = function () {
+        //    swal({
+        //        title: vm.componentName,
+        //        text: "Config File Added",
+        //        type: "success",
+        //        confirmButtonText: "Cool"
+        //    });
+        //    $element.modal('hide');
+        //    close({
+        //        componentApplications: vm.componentApplications,
+        //        componentName: vm.componentName,
+        //        environment: vm.componentEnvironment,
+        //        filePath: vm.filePath,
+        //        save: true,
+        //    }, 500);
+        //};
         vm.close = function () {
             $element.modal('hide');
             close({
@@ -347,6 +387,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 publish: true,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
+                environment: vm.componentEnvironment,
                 filePath: vm.filePath,
             }, 500);
         }
@@ -354,7 +395,6 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             $element.modal('hide');
             close({
                 save: true,
-                publish: false,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
                 environment: vm.componentEnvironment,
@@ -527,7 +567,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
 /// <param name="save">             The save. </param>
 /// <param name="publish">          The publish. </param>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddVar', ['$rootScope', '$scope', '$element', 
+ConfigApp.controller('AddVar', ['$rootScope', '$scope', '$element',
         'close', 'componentName', 'parentRows', 'parentElement', 'element',
         'attribute', 'key', 'valueName', 'show', 'isNew', 'files',
     function ($rootScope, $scope, $element,
@@ -626,11 +666,6 @@ ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
         vm.lastModifiedDate = lastModifiedDate;
         vm.lastModifiedUser = lastModifiedUser;
         vm.modalSize = "modal-dialog modal-md";
-
-        //vm.modalSize = function () {
-        //    if (vm.selectedEnvironment.name != '' && vm.selectedFile.fileName != '')
-        //        modalSize = "modal-dialog modal-lg";
-        //};
 
         vm.close = function () {
             $element.modal('hide');

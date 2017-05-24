@@ -16,6 +16,7 @@ namespace BusinessLayer
     {
         public AppConfigFunctions appConfigVars { get; private set; }
 
+        public string userName { get; set; }
         public int? machineId { get; set; }
         public string machineName { get; set; }
         public int? appId { get; set; }
@@ -149,7 +150,8 @@ namespace BusinessLayer
                 environment = this.environment,
                 componentName = this.componentName,
                 path = this.outputPath,
-                appName = this.appName
+                appName = this.appName,
+                userName = this.userName,
             };
             List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
         }
@@ -257,7 +259,7 @@ namespace BusinessLayer
             }
             configFile = GetConfigFile(componentId);
 #if DEBUG
-            outputPath = string.Format(@"D:\DevOps\Config\{0}.config", this.componentName);
+            outputPath = string.Format(@"E:\ConfigFiles\{0}\{1}.config", this.environment, this.componentName);
 #endif
             configFile.Save(outputPath);
         }
@@ -301,6 +303,7 @@ namespace BusinessLayer
                     path = file.Component.relative_path,
                     createDate = file.create_date,
                     modifyDate = file.modify_date,
+                    last_modify_user = file.last_modify_user,
                 });
             }
             return vmFiles;

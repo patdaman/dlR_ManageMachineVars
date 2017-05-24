@@ -73,6 +73,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
+                noteProcessor.userName = note.userName;
                 var response = Request.CreateResponse<ViewModel.Note>(HttpStatusCode.OK, noteProcessor.UpdateNote(note));
                 return response;
             }

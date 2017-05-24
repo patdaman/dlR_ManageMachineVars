@@ -18,8 +18,7 @@ namespace DevOpsApi.Controllers
     public class ConfigPublishApiController : ApiController
     {
         private BusinessLayer.ManageConfig_Files configProcessor { get; set; }
-        private static string ConfigFilePath = @"D:\ConfigFiles\";
-        // private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
+        private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets. </summary>
@@ -92,7 +91,7 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A Task&lt;IHttpActionResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string applications, string action = null)
+        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string applications, string userName, string action = null)
         {
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
@@ -158,116 +157,6 @@ namespace DevOpsApi.Controllers
             }
             return Ok();
         }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Puts the given value. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="value">    The value to put. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Put(ViewModel.AppVar value)
-        {
-            try
-            {
-                return Post(value);
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Post this message. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="value">        The value to put. </param>
-        /// <param name="environment">  (Optional)
-        ///                             The environment to get. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-//#if RELEASE
-//    [Authorize(Roles = "DevOps")]
-//#endif
-        [HttpPost]
-        public HttpResponseMessage Post(ViewModel.AppVar value, string environment = null)
-        {
-            try
-            {
-                configProcessor = new BusinessLayer.ManageConfig_Files()
-                {
-                    environment = environment ?? string.Empty,
-                };
-                var response = Request.CreateResponse<ViewModel.AttributeKeyValuePair>(HttpStatusCode.OK, configProcessor.PublishValue(value));
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Puts the given value. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="value">    The value to put. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-//#if RELEASE
-//    [Authorize(Roles = "DevOps")]
-//#endif
-//        [HttpPut]
-//        public HttpResponseMessage Put(List<ViewModel.AppVar> value)
-//        {
-//            try
-//            {
-//                return Post(value);
-//            }
-//            catch (Exception ex)
-//            {
-//                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-//            }
-//        }
-
-//        ///-------------------------------------------------------------------------------------------------
-//        /// <summary>   Post this message. </summary>
-//        ///
-//        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-//        ///
-//        /// <param name="value">        The value to put. </param>
-//        /// <param name="environment">  (Optional)
-//        ///                                                        The environment to get. </param>
-//        ///
-//        /// <returns>   A HttpResponseMessage. </returns>
-//        ///-------------------------------------------------------------------------------------------------
-////#if RELEASE
-////    [Authorize(Roles = "DevOps")]
-////#endif
-//        [HttpPost]
-//        public HttpResponseMessage Post(List<ViewModel.AppVar> value, string environment = null)
-//        {
-//            try
-//            {
-//                configProcessor = new BusinessLayer.ManageConfig_Files()
-//                {
-//                    environment = environment ?? string.Empty,
-//                };
-//                var response = Request.CreateResponse<List<ViewModel.AttributeKeyValuePair>>(HttpStatusCode.OK, configProcessor.PublishValue(value));
-//                return response;
-//            }
-//            catch (Exception ex)
-//            {
-//                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-//            }
-//        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Puts. </summary>
