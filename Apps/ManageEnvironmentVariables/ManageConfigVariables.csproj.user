@@ -3,4 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartArguments>-i -c=Commerce -a=import-appconfig -p=C:\Users\pdelosreyes\Desktop\printableConfig\Commerce\Commerce.config -e=development -app=ManagerServices</StartArguments>
   </PropertyGroup>
+  <PropertyGroup>
+    <ProjectView>ProjectFiles</ProjectView>
+  </PropertyGroup>
 </Project>

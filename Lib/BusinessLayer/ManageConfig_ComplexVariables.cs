@@ -1060,11 +1060,11 @@ namespace BusinessLayer
                     efConfig.value_name == appValue.valueName))
                 {
                     efConfig.element = appValue.configElement;
-                    efConfig.key = appValue.key ?? appValue.configElement;
                     efConfig.attribute = appValue.attribute ?? "";
                     efConfig.parent_element = appValue.configParentElement ?? "";
-                    efConfig.full_element = appValue.fullElement ?? "";
+                    efConfig.full_element = appValue.fullElement.Replace(efConfig.key, appValue.key) ?? "";
                     efConfig.value_name = appValue.valueName ?? "";
+                    efConfig.key = appValue.key ?? appValue.configElement;
 
                     // ToDo: Create XML element based on AppVar
                     // efConfig.full_element = getFullElement(appValue),
@@ -1072,6 +1072,7 @@ namespace BusinessLayer
                     efConfig.ConfigFile = efConfigFile;
                     //efConfig.create_date = efConfig.create_date;
                     efConfig.modify_date = DateTime.Now;
+                    efConfig.last_modify_user = this.userName;
                 }
                 foreach (var val in appValue.values)
                 {

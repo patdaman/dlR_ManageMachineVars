@@ -185,6 +185,8 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         var componentName;
         var componentEnvironment;
         var fileName;
+        var isNew;
+        var uploaded;
         var localComponent;
 
         vm.availableApplications = applications;
@@ -196,6 +198,8 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         vm.components = components;
         vm.environments = environments;
         vm.environment = environment;
+        vm.isNew = true;
+        vm.uploaded = false;
         //angular.forEach(vm.environments, function (value) {
         //    if (value.name === vm.environment)
         //        vm.componentEnvironment = value;
@@ -246,6 +250,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                             }
                         }
                     }
+                    vm.isNew = false;
                 });
             }
             else {
@@ -253,6 +258,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 vm.componentApplications = [];
                 vm.filePath = '';
                 vm.availableApplications = vm.applications;
+                vm.isNew = true;
             };
         };
 
@@ -274,7 +280,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                             title: "Add Component",
                             text: "No Component Name Supplied",
                             type: "error",
-                            confirmButtonText: "Cool"
+                            confirmButtonText: "Try Again"
                         });
                     }
                     else if (!vm.componentEnvironment) {
@@ -282,7 +288,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                             title: "Add Component",
                             text: "No Environment Supplied",
                             type: "error",
-                            confirmButtonText: "Cool"
+                            confirmButtonText: "D'oh!"
                         });
                     }
                     else {
@@ -335,6 +341,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                                         imageUrl: "/Assets/thumbs-up.jpg",
                                         confirmButtonText: "Cool"
                                     });
+                                    vm.uploaded = true;
                                 });
                             }
                             else {
@@ -385,6 +392,8 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             close({
                 save: true,
                 publish: true,
+                isNew: vm.isNew,
+                uploaded: vm.uploaded,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
                 environment: vm.componentEnvironment,
@@ -395,6 +404,8 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             $element.modal('hide');
             close({
                 save: true,
+                isNew: vm.isNew,
+                uploaded: vm.uploaded,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
                 environment: vm.componentEnvironment,
@@ -440,6 +451,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
         var applicationName;
         var localApplication;
         var release;
+        var isNew;
 
         vm.availableComponents = components;
         vm.applicationComponents = [];
@@ -451,6 +463,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
         vm.componentNames = "";
         vm.components = components;
         vm.environments = environments;
+        vm.isNew = true;
         vm.localApplication = {
             componentData: vm.applicationComponents,
             id: vm.id,
@@ -494,14 +507,15 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
                             vm.availableComponents.splice(i, 1);
                         }
                     }
-                }
+                };
                 vm.localApplication = {
                     componentData: vm.applicationComponents,
                     componentNames: vm.componentNames,
                     id: vm.applicationData.id,
                     release: vm.release,
                     applicationName: vm.applicationName,
-                }
+                };
+                vm.isNew = false;
             });
         };
 
@@ -527,6 +541,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
             close({
                 save: true,
                 publish: true,
+                isNew: vm.isNew,
                 applicationComponents: vm.localApplication.applicationComponents,
                 applicationName: vm.applicationName,
                 componentNames: vm.componentNames,
@@ -543,6 +558,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
             close({
                 save: true,
                 publish: false,
+                isNew: vm.isNew,
                 applicationComponents: vm.filteredApplicationComponents,
                 componentNames: vm.componentNames,
                 applicationName: vm.applicationName,

@@ -62,10 +62,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
         $scope.currentUser = $rootScope.UserName;
         $scope.displayApi = $rootScope.displayApi;
-        if ($rootScope.Admin === 'True')
-            $scope.Admin = true;
-        else
-            $scope.Admin = false;
+        $scope.Admin = true;
+        //if ($rootScope.Admin === 'True')
+        //    $scope.Admin = true;
+        //else
+        //    $scope.Admin = false;
         if ($rootScope.Engineer === 'True')
             $scope.Engineer = true;
         else
@@ -207,6 +208,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 field: 'applicationNames',
                 enableCellEdit: false,
                 visible: false,
+                //visible: true,
                 enableFiltering: false,
                 filter: {
                     term: '.',
@@ -440,7 +442,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 "attribute": rowEntity.attribute,
                 "key": rowEntity.key,
                 "valueName": rowEntity.valueName,
-                "last_modify_user": $rootScope.UserName,
+                "userName": $rootScope.UserName,
                 "values": rowEntity.values,
             });
             $http({
@@ -453,7 +455,10 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 }
             })
             .success(deferred.resolve)
-            .error(deferred.reject);
+            .error(deferred.reject)
+            .error(function () {
+                $scope.cancelEdit();
+            });
             return deferred.promise;
         };
 
@@ -489,7 +494,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             }
             $scope.filterComponent;
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-            $scope.expandValues();
+            //$scope.expandValues();
         };
         // Function call from Index page dropdown OnChange
         $scope.updateApplication = function () {
@@ -562,10 +567,13 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                     if (result.save) {
                         var deferred = $q.defer();
                         var applicationNames = [];
-                        applicationNames = result.componentApplications;
+                        applicationNames = result.componentApplications.map(function (item) {
+                            return item['name'].replace(/"/g, '').replace(/'/g, '')
+                                .replace(/\[/g, '').replace(/]/g, '');
+                        });
                         var data = JSON.stringify({
                             "componentName": result.componentName,
-                            "applications": applicationNames,
+                            "applications": result.componentApplications,
                             "filePath": result.filePath,
                             "last_modify_user": $rootScope.UserName,
                         });
@@ -579,10 +587,20 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         }).success(deferred.resolve)
                           .then(function () {
                               if (result.environment)
-                                $scope.environment = result.environment.value;
+                                  $scope.environment = result.environment.value;
                               $scope.component = result.componentName;
-                              $scope.refreshGrid();
-                          })
+                              if (result.uploaded)
+                                  $scope.refreshGrid();
+                              else {
+                                  $scope.updateComponent;
+                                  $scope.updateApplication;
+                                  angular.forEach($scope.gridOptions.data, function (row) {
+                                      if (result.componentName == row.component)
+                                          row.applicationNames = applicationNames.join();
+                                  });
+                                  $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                              };
+                          });
                         return deferred.promise;
                     }
                     if (result.publish) {
@@ -633,8 +651,16 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 'Content-Type': 'application/json'
                             }
                         }).success(deferred.resolve)
-                          .success(function () {
-                              $scope.refreshGrid();
+                          .then(function () {
+                              $scope.updateComponent;
+                              $scope.updateApplication;
+                              angular.forEach($scope.gridOptions.data, function (row) {
+                                  if (~result.componentNames.indexOf(row.component)) 
+                                      row.applicationNames += ', ' + result.applicationName
+                                  else if (~row.applicationNames.indexOf(result.applicationName))
+                                      row.applicationNames.replace(result.applicationName + ',','');
+                              });
+                              $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                           })
                         return deferred.promise;
                     }
