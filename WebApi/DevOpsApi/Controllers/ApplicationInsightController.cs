@@ -17,7 +17,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.Machine>>(HttpStatusCode.OK, appinsightProcessor.GetAllInsights());
+                return Request.CreateResponse<List<ViewModel.RootObject>>(HttpStatusCode.OK, appinsightProcessor.GetAllInsights());
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.Machine>>(HttpStatusCode.OK, appinsightProcessor.GetAllInsights(startDate, endDate));
+                return Request.CreateResponse<List<ViewModel.RootObject>>(HttpStatusCode.OK, appinsightProcessor.GetAllInsights(startDate, endDate));
             }
             catch (Exception ex)
             {
@@ -45,7 +45,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Items>(HttpStatusCode.OK, appinsightProcessor.GetMachineData(id));
+                return Request.CreateResponse<ViewModel.RootObject>(HttpStatusCode.OK, appinsightProcessor.GetMachineData(id));
             }
             catch (Exception ex)
             {
@@ -57,11 +57,11 @@ namespace DevOpsApi.Controllers
     [Authorize(Roles = "DevOps")]
 #endif
         [HttpPut]
-        public HttpResponseMessage Put(ViewModel.Items value)
+        public HttpResponseMessage Put(ViewModel.RootObject value)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Items>(HttpStatusCode.OK, appinsightProcessor.UpdateInsight(value));
+                return Request.CreateResponse<ViewModel.RootObject>(HttpStatusCode.OK, appinsightProcessor.UpdateInsight(value));
             }
             catch (Exception ex)
             {
@@ -74,11 +74,11 @@ namespace DevOpsApi.Controllers
     [Authorize(Roles = "DevOps")]
 #endif
         [HttpPost]
-        public HttpResponseMessage Post(ViewModel.Items value)
+        public HttpResponseMessage Post(ViewModel.RootObject value)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Items>(HttpStatusCode.OK, appinsightProcessor.CreateInsight(value));
+                return Request.CreateResponse<ViewModel.RootObject>(HttpStatusCode.OK, appinsightProcessor.CreateInsight(value));
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Items>(HttpStatusCode.OK, appinsightProcessor.DeleteInsight(id));
+                return Request.CreateResponse<ViewModel.RootObject>(HttpStatusCode.OK, appinsightProcessor.DeleteInsight(id));
             }
             catch (Exception ex)
             {

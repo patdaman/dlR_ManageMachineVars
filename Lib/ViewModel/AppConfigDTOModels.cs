@@ -5,43 +5,6 @@ using System.Web;
 
 namespace ViewModel
 {
-    public class Machine
-    {
-        public int id { get; set; }
-        public string machine_name { get; set; }
-        public string ip_address { get; set; }
-        public string location { get; set; }
-        public string usage { get; set; }
-        public System.DateTime create_date { get; set; }
-        public Nullable<System.DateTime> modify_date { get; set; }
-        public string last_modify_user { get; set; }
-        public bool active { get; set; }
-        public virtual List<ConfigVariableValue> ConfigVariableValues { get; set; }
-        public virtual Enum_Locations Enum_Locations { get; set; }
-        public virtual List<MachineComponentPath> MachineComponentPaths { get; set; }
-        public virtual List<EnvironmentDtoVariable> EnvironmentVariables { get; set; }
-
-        public Machine()
-        { }
-
-        public Machine(Machine m)
-        {
-            id = m.id;
-            machine_name = m.machine_name;
-            ip_address = m.ip_address;
-            location = m.location;
-            usage = m.usage;
-            create_date = m.create_date;
-            modify_date = m.modify_date;
-            last_modify_user = m.last_modify_user;
-            active = m.active;
-            //ConfigVariableValues = m.ConfigVariableValues;
-            //Enum_Locations = m.Enum_Locations;
-            //MachineComponentPaths = m.MachineComponentPaths;
-            //EnvironmentVariables = m.EnvironmentVariables;
-        }
-    }
-
     public class Enum_Locations
     {
         public string name { get; set; }
@@ -58,25 +21,6 @@ namespace ViewModel
             value = e.value;
             active = e.active;
             //Machines = e.Machines;
-        }
-    }
-
-    public class MachineGroup
-    {
-        public int id { get; set; }
-        public string group_name { get; set; }
-        public System.DateTime create_date { get; set; }
-        public Nullable<System.DateTime> modify_date { get; set; }
-
-        public MachineGroup()
-        { }
-
-        public MachineGroup(MachineGroup m)
-        {
-            id = m.id;
-            group_name = m.group_name;
-            create_date = m.create_date;
-            modify_date = m.modify_date;
         }
     }
 
@@ -104,14 +48,46 @@ namespace ViewModel
             modify_date = a.modify_date;
             last_modify_user = a.last_modify_user;
             active = a.active;
-            //Components = a.Components;
+            Components = a.Components;
             //EnvironmentVariables = a.EnvironmentVariables;
         }
         public Application(ApplicationDto a)
         {
+            Components = new List<Component>();
             id = a.id ?? 0;
             application_name = a.name;
+            if (a.components != null)
+            {
+                foreach (var c in a.components)
+                {
+                    Components.Add(new Component(c));
+                };
+            }
+            last_modify_user = a.last_modify_user ?? string.Empty;
+            active = true;
+        }
+    }
+
+    public class ApplicationDto
+    {
+        public ApplicationDto()
+        {
+            published = false;
+        }
+        public int? id { get; set; }
+        public string name { get; set; }
+        //public string components { get; set; }
+        public List<ComponentDto> components { get; set; }
+        public string release { get; set; }
+        public string last_modify_user { get; set; }
+        public bool published { get; set; }
+        public ApplicationDto(ApplicationDto a)
+        {
+            id = a.id;
+            name = a.name;
+            release = a.release;
             last_modify_user = a.last_modify_user;
+            published = a.published;
         }
     }
 
@@ -148,26 +124,36 @@ namespace ViewModel
 
         public Component(ComponentDto c)
         {
-            component_name = c.componentName;
-            relative_path = c.filePath;
-            create_date = DateTime.Now;
-            modify_date = DateTime.Now;
-            last_modify_user = c.last_modify_user;
+            id = c.id ?? 0;
+            component_name = c.componentName ?? string.Empty;
+            relative_path = c.filePath ?? string.Empty;
+            last_modify_user = c.last_modify_user ?? string.Empty;
             active = true;
             MachineComponentPaths = new List<MachineComponentPath>();
             Applications = new List<Application>();
-            ConfigVariables = new List<ConfigVariable>();
+            if (c.applications != null)
+            {
+                foreach (var a in c.applications)
+                {
+                    Applications.Add(new Application(a));
+                };
+            }
         }
     }
 
     public class ComponentDto
     {
-        public ComponentDto() { }
-
+        public ComponentDto()
+        {
+            published = false;
+        }
+        public int? id { get; set; }
         public string componentName { get; set; }
         public string filePath { get; set; }
         public string last_modify_user { get; set; }
+        public bool published { get; set; }
         public List<ApplicationDto> applications { get; set; }
+        //public string applications { get; set; }
 
         public ComponentDto(ComponentDto c)
         {
@@ -175,23 +161,7 @@ namespace ViewModel
             filePath = c.filePath;
             applications = c.applications;
             last_modify_user = c.last_modify_user;
-        }
-    }
-
-    public class ApplicationDto
-    {
-        public ApplicationDto() {}
-        public int? id { get; set; }
-        public string name { get; set; }
-        public string components { get; set; }
-        public string release { get; set; }
-        public string last_modify_user { get; set; }
-        public ApplicationDto(ApplicationDto a)
-        {
-            id = a.id;
-            name = a.name;
-            release = a.release;
-            last_modify_user = a.last_modify_user;
+            published = c.published;
         }
     }
 
@@ -221,27 +191,6 @@ namespace ViewModel
             last_modify_user = c.last_modify_user;
             root_element = c.root_element;
             //Component = c.Component;
-        }
-    }
-
-    public class MachineComponentPath
-    {
-        public int machine_id { get; set; }
-        public int component_id { get; set; }
-        public string config_path { get; set; }
-        public virtual Component Component { get; set; }
-        public virtual Machine Machine { get; set; }
-
-        public MachineComponentPath()
-        { }
-
-        public MachineComponentPath(MachineComponentPath m)
-        {
-            machine_id = m.machine_id;
-            component_id = m.component_id;
-            config_path = m.config_path;
-            //Component = m.Component;
-            //Machine = m.Machine;
         }
     }
 
@@ -333,40 +282,6 @@ namespace ViewModel
             name = e.name;
             value = e.value;
             active = e.active;
-            //ConfigVariableValues = e.ConfigVariableValues;
-        }
-    }
-
-    public class EnvironmentDtoVariable
-    {
-        public int id { get; set; }
-        public string key { get; set; }
-        public string value { get; set; }
-        public string type { get; set; }
-        public string path { get; set; }
-        public System.DateTime create_date { get; set; }
-        public Nullable<System.DateTime> modify_date { get; set; }
-        public string last_modify_user { get; set; }
-        public bool active { get; set; }
-        public virtual ICollection<Application> Applications { get; set; }
-        public virtual ICollection<Machine> Machines { get; set; }
-
-        public EnvironmentDtoVariable()
-        { }
-        
-        public EnvironmentDtoVariable(EnvironmentDtoVariable e)
-        {
-            id = e.id;
-            key = e.key;
-            value = e.value;
-            type = e.type;
-            path = e.path;
-            create_date = e.create_date;
-            modify_date = e.modify_date;
-            last_modify_user = e.last_modify_user;
-            active = e.active;
-            //Applications = e.Applications;
-            //Machines = e.Machines;
         }
     }
 }

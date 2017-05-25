@@ -118,6 +118,7 @@ namespace DevOpsApi.Controllers
                     environment = environment,
                     appName = applications.ToString().Replace("\"","").Replace("\'","").Replace("[","").Replace("]",""),
                     outputPath = saveFilePath,
+                    userName = userName,
                 };
                 try
                 {
@@ -156,6 +157,37 @@ namespace DevOpsApi.Controllers
                 }
             }
             return Ok();
+        }
+
+        public HttpResponseMessage Put (int applicationId, string environment, string userName = null)
+        {
+            try
+            {
+                return Post(applicationId, environment, userName);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        public HttpResponseMessage Post(int applicationId, string environment, string userName = null)
+        {
+            try
+            {
+                configProcessor = new BusinessLayer.ManageConfig_Files()
+                {
+                    appId = applicationId,
+                    environment = environment,
+                    userName = userName,
+                };
+                var response = Request.CreateResponse<ViewModel.ApplicationDto>(HttpStatusCode.OK, configProcessor.PublishApplicationFiles(applicationId, environment, userName));
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
         }
 
         ///-------------------------------------------------------------------------------------------------

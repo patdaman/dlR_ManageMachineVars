@@ -135,38 +135,57 @@ namespace BusinessLayer
                 DevOpsContext.Components.Add(new EFDataModel.DevOps.Component()
                 {
                     component_name = component.component_name,
-                    create_date = component.create_date,
-                    modify_date = component.modify_date ?? DateTime.Now,
-                    last_modify_user = this.userName,
+                    create_date = DateTime.Now,
+                    modify_date = DateTime.Now,
+                    last_modify_user = component.last_modify_user ?? this.userName ?? string.Empty,
                     MachineComponentPathMaps = new List<MachineComponentPathMap>(),
-                    active = component.active,
-                    relative_path = component.relative_path,
+                    active = true,
+                    relative_path = component.relative_path ?? string.Empty,
                     ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
                     ConfigVariables = new List<EFDataModel.DevOps.ConfigVariable>(),
-                    Applications = GetEfApplication(component.Applications),
+                    Applications = GetEfApplication(component.Applications) ?? new List<EFDataModel.DevOps.Application>(),
                 });
             else
             {
-                efComp.component_name = component.component_name;
-                efComp.create_date = component.create_date;
-                efComp.modify_date = component.modify_date ?? DateTime.Now;
-                efComp.last_modify_user = this.userName;
-                efComp.active = component.active;
-                efComp.relative_path = component.relative_path;
+                if ((efComp.component_name != component.component_name)
+                    || efComp.active != component.active
+                    || efComp.relative_path != component.relative_path)
+                {
+                    efComp.component_name = component.component_name;
+                    efComp.modify_date = component.modify_date ?? DateTime.Now;
+                    efComp.active = component.active;
+                    efComp.relative_path = component.relative_path;
+                }
                 var efApps = GetEfApplication(component.Applications);
                 var oldEfApps = efComp.Applications.Where(x => !efApps.Any(y => y.id == x.id)).ToList();
-                foreach (var oldApp in oldEfApps)
+                if (oldEfApps.Count() > 0)
                 {
-                    efComp.Applications.Remove(oldApp);
+                    foreach (var oldApp in oldEfApps)
+                    {
+                        efComp.Applications.Remove(oldApp);
+                    }
+                    efComp.modify_date = component.modify_date ?? DateTime.Now;
+                    efComp.last_modify_user = this.userName;
                 }
                 var newEfApps = efApps.Where(x => !efComp.Applications.Any(y => y.id == x.id)).ToList();
-                foreach (var newApp in newEfApps)
+                if (newEfApps.Count() > 0)
                 {
-                    efComp.Applications.Add(newApp);
+                    foreach (var newApp in newEfApps)
+                    {
+                        efComp.Applications.Add(newApp);
+                    }
+                    efComp.modify_date = component.modify_date ?? DateTime.Now;
+                    efComp.last_modify_user = this.userName;
                 }
             }
             DevOpsContext.SaveChanges();
             return GetComponent(component.component_name, true);
+        }
+
+        public ViewModel.Application AddUpdateApplication(ViewModel.ApplicationDto appDto)
+        {
+            ViewModel.Application newApp = new ViewModel.Application(appDto);
+            return AddUpdateApplication(newApp);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -198,22 +217,36 @@ namespace BusinessLayer
                 });
             else
             {
-                efApp.application_name = application.application_name;
-                efApp.create_date = application.create_date;
-                efApp.modify_date = application.modify_date ?? DateTime.Now;
-                efApp.last_modify_user = this.userName;
-                efApp.active = application.active;
-                efApp.release = application.release;
+                if ((efApp.application_name != application.application_name)
+                    || (efApp.active != application.active)
+                    || (efApp.release != application.release && !string.IsNullOrWhiteSpace(application.release)))
+                {
+                    efApp.application_name = application.application_name;
+                    efApp.modify_date = DateTime.Now;
+                    efApp.last_modify_user = application.last_modify_user ?? this.userName ?? string.Empty;
+                    efApp.active = application.active;
+                    efApp.release = application.release ?? string.Empty;
+                };
                 var efComps = GetEfComponent(application.Components);
                 var oldEfComps = efApp.Components.Where(x => !efComps.Any(y => y.id == x.id)).ToList();
-                foreach (var oldComp in oldEfComps)
+                if (oldEfComps.Count() > 0)
                 {
-                    efApp.Components.Remove(oldComp);
+                    foreach (var oldComp in oldEfComps)
+                    {
+                        efApp.Components.Remove(oldComp);
+                    }
+                    efApp.modify_date = DateTime.Now;
+                    efApp.last_modify_user = application.last_modify_user ?? this.userName ?? string.Empty;
                 }
                 var newEfComps = efComps.Where(x => !efApp.Components.Any(y => y.id == x.id)).ToList();
-                foreach (var newComp in newEfComps)
+                if (newEfComps.Count() > 0)
                 {
-                    efApp.Components.Add(newComp);
+                    foreach (var newComp in newEfComps)
+                    {
+                        efApp.Components.Add(newComp);
+                    }
+                    efApp.modify_date = DateTime.Now;
+                    efApp.last_modify_user = application.last_modify_user ?? this.userName ?? string.Empty;
                 }
             }
             DevOpsContext.SaveChanges();
@@ -406,11 +439,11 @@ namespace BusinessLayer
                 app = new EFDataModel.DevOps.Application()
                 {
                     application_name = vmApp.application_name,
-                    active = vmApp.active, // ?? true,
-                    create_date = vmApp.create_date, // ?? DateTime.Now,
-                    modify_date = vmApp.modify_date ?? DateTime.Now,
+                    active = true,
+                    create_date = DateTime.Now,
+                    modify_date = DateTime.Now,
                     last_modify_user = this.userName,
-                    release = vmApp.release,
+                    release = vmApp.release ?? string.Empty,
                     EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
                 };
             }
@@ -419,12 +452,35 @@ namespace BusinessLayer
                 app.id = vmApp.id;
                 app.active = vmApp.active;
                 app.application_name = vmApp.application_name;
-                app.create_date = vmApp.create_date;
                 app.modify_date = vmApp.modify_date ?? DateTime.Now;
-                app.last_modify_user = vmApp.last_modify_user;
-                app.release = vmApp.release;
+                app.last_modify_user = vmApp.last_modify_user ?? app.last_modify_user;
+                app.release = vmApp.release ?? app.release;
             }
             return app;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets applications from CSV. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/25/2017. </remarks>
+        ///
+        /// <param name="apps"> The apps. </param>
+        ///
+        /// <returns>   The applications from CSV. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public List<ViewModel.Application> GetApplicationsFromCsv(string apps)
+        {
+            List<string> appList = new List<string>();
+            List<ViewModel.Application> vmAppList = new List<ViewModel.Application>();
+            if (!string.IsNullOrWhiteSpace(apps))
+            {
+                appList = apps.Split(',').ToList();
+            }
+            foreach (string app in appList)
+            {
+                vmAppList.Add(GetApplication(app));
+            }
+            return vmAppList;
         }
 
         ///-------------------------------------------------------------------------------------------------

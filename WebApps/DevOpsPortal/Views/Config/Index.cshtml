@@ -26,7 +26,7 @@
             <input type="button" class="btn btn-md btn-info" ng-click="addComponent()" value="Add / Edit Component" />
 
             <input type="button" class="btn btn-md btn-info" ng-click="addApplication()" value="Add / Edit Application" />
-            <input ng-if="Admin&&selectedApplication" type="button" class="btn btn-md btn-warning" ng-click="publishApplication(selectedApplication)" value="Publish Application" />
+            <input ng-if="Admin" ng-disabled="!selectedEnvironment||!selectedApplication" type="button" class="btn btn-md btn-warning" ng-click="publishApplication(selectedApplication)" value="Publish Application" />
             <div id="prodEnvironment" ng-if="environment==='production'" class="prodWarning">{{environment}}!</div>
             <div class="pull-right">
                 User: <i><font color="red">{{currentUser}}</font></i>

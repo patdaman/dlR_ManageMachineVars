@@ -15,6 +15,7 @@ namespace BusinessLayer
     public class ManageConfig_Files
     {
         public AppConfigFunctions appConfigVars { get; private set; }
+        private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];
 
         public string userName { get; set; }
         public int? machineId { get; set; }
@@ -212,6 +213,56 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Publish application files. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/25/2017. </remarks>
+        ///
+        /// <param name="applicationId">    Identifier for the application. </param>
+        /// <param name="environment">      (Optional) The environment. </param>
+        /// <param name="userName">         Name of the user. </param>
+        ///
+        /// <returns>   An ApplicationDto. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ApplicationDto PublishApplicationFiles(int applicationId, string environment, string userName)
+        {
+            EFDataModel.DevOps.Application efApp = DevOpsContext.Applications.Where(x => x.id == applicationId).FirstOrDefault();
+            ViewModel.ApplicationDto appConfirm = new ApplicationDto()
+            {
+                id = efApp.id,
+                name = efApp.application_name,
+                release = efApp.release,
+                published = true,
+                last_modify_user = userName,
+                components = new List<ComponentDto>(),
+            };
+            List<EFDataModel.DevOps.Component> components = efApp.Components.ToList();
+            foreach (var c in components)
+            {
+                appConfirm.components.Add(new ComponentDto()
+                {
+                    componentName = c.component_name,
+                    filePath = c.relative_path,
+                    published = true,
+                });
+                string path = string.Format(ConfigFilePath, environment, c.component_name);
+                foreach (var f in c.ConfigFiles)
+                {
+                    string fileName = path + f.file_name;
+                    try
+                    {
+                        SaveFile(c.id, fileName, environment);
+                    }
+                    catch (Exception e)
+                    {
+                        appConfirm.components.Where(x => x.componentName == c.component_name).FirstOrDefault().published = false;
+                        appConfirm.published = false;
+                    }
+                }
+            }
+            return appConfirm;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Saves a file. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
@@ -253,14 +304,12 @@ namespace BusinessLayer
                     throw new Exception("No environment type provided file.");
                 else
                     environment = this.environment;
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
             if (File.Exists(outputPath))
             {
                 File.Delete(outputPath);
             }
             configFile = GetConfigFile(componentId);
-#if DEBUG
-            outputPath = string.Format(@"E:\ConfigFiles\{0}\{1}.config", this.environment, this.componentName);
-#endif
             configFile.Save(outputPath);
         }
 

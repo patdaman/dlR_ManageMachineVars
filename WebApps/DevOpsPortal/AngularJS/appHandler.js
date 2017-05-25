@@ -12,7 +12,7 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
             if (rejection.status === 401) {
                 swal({
                     title: "Access Denied",
-                    text: rejection.data.ExceptionMessage,
+                    text: rejection.data.Message,
                     type: "error",
                     configButtonText: "OK"
                 });
@@ -21,7 +21,7 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
             else {
                 swal({
                     title: "Application Error",
-                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.ExceptionMessage,
+                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.Message,
                     type: "error",
                     confirmButtonText: "Cool"
                 });
@@ -35,7 +35,7 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
             if (rejection.status === 401) {
                 swal({
                     title: "Access Denied",
-                    text: rejection.data.ExceptionMessage,
+                    text: rejection.data.Message,
                     type: "error",
                     configButtonText: "OK"
                 });
@@ -44,7 +44,7 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
             else {
                 swal({
                     title: "Application Error",
-                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.ExceptionMessage,
+                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.Message,
                     type: "error",
                     confirmButtonText: "Cool"
                 });

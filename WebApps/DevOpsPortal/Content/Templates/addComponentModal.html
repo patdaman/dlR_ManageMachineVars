@@ -21,6 +21,9 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label><input type="checkbox" ng-model="isGlobal" /> Global</label>
+                    </div>
+                    <div class="form-group">
                         <label><b>Application(s):</b></label>
                         <multi-select ng-model="componentApplications"
                                       available="availableApplications"
@@ -36,12 +39,9 @@
                     </div>
                     <br />
                     <div class="form-group">
-                        <div class="form-inline">
-                            <select name="selectEnvironment" ng-model="componentEnvironment" ng-options="c.name for c in environments" ng-change="selectEnvironment(componentEnvironment)">
-                                <option value="" style="color:red">Select Environment:</option>
-                            </select>
-                            <label><input type="checkbox" ng-model="isGlobal" />Global</label>
-                        </div>
+                        <select name="selectEnvironment" ng-model="componentEnvironment" ng-options="c.name for c in environments" ng-change="selectEnvironment(componentEnvironment)">
+                            <option value="" style="color:red">Select Environment:</option>
+                        </select>
                     </div>
                     <div ng-disabled="!(componentEnvironment) || (componentName === '')" ngf-drop ngf-select ng-model="files" class="drop-box"
                          ngf-drag-over-class="'dragover'" ngf-multiple="false" ngf-allow-dir="false"

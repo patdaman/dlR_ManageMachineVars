@@ -33,6 +33,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var modalSize;
         var displayFileSelect;
         var displayGetFile;
+        var publish;
+        var download;
 
         vm.Admin = Admin;
         vm.displayGetFile = false;
@@ -57,6 +59,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.configXml = '';
         vm.component = component;
         vm.modalSize = "modal-dialog modal-lg";
+        vm.download = false;
+        vm.publish = false;
 
         vm.updateFile = function (selectedFile) {
             vm.fileName = selectedFile.fileName;
@@ -115,37 +119,25 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.close = function () {
             $element.modal('hide');
             close({
-                publish: false,
-                download: false,
+                publish: vm.publish,
+                download: vm.download,
+                fileName: vm.selectedFile.fileName,
+                environment: vm.environment,
+                component: vm.component
             }, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
-            close({
-                publish: false,
-                download: false,
-            }, 500);
+            close({}, 500);
         };
         vm.publish = function () {
-            $element.modal('hide');
-            close({
-                publish: true,
-                download: false,
-                fileName: vm.selectedFile.fileName,
-                environment: vm.environment,
-                component: vm.component
-            }, 500);
-        }
+            vm.publish = true;
+            vm.close();
+        };
         vm.download = function () {
-            $element.modal('hide');
-            close({
-                publish: false,
-                download: true,
-                fileName: vm.selectedFile.fileName,
-                environment: vm.environment,
-                component: vm.component
-            }, 500);
-        }
+            vm.download = true;
+            vm.close();
+        };
     }]);
 
 ///-------------------------------------------------------------------------------------------------
@@ -189,6 +181,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         var uploaded;
         var isGlobal;
         var localComponent;
+        var publish;
 
         vm.availableApplications = applications;
         vm.componentApplications = [];
@@ -202,6 +195,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         vm.isNew = true;
         vm.uploaded = false;
         vm.isGlobal = false;
+        vm.publish = false;
 
         vm.selectEnvironment = function (environment) {
             vm.componentEnvironment = environment;
@@ -215,7 +209,6 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                     url: apiRelPath,
                     params: {
                         componentName: component.name,
-
                     },
                 }).then(function (result) {
                     vm.componentData = result.data;
@@ -237,10 +230,10 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                                 .replace(/\[/g, '').replace(/]/g, ''),
                         });
                     });
-                    vm.applicationNames = JSON.stringify(vm.componentApplications.map(function (item) {
+                    vm.applicationNames = vm.componentApplications.map(function (item) {
                         return item['name'].replace(/"/g, '').replace(/'/g, '')
                             .replace(/\[/g, '').replace(/]/g, '');
-                    }));
+                    });
                     for (var i = vm.availableApplications.length - 1; i >= 0; i--) {
                         for (var j = 0; j < vm.componentApplications.length; j++) {
                             if (vm.availableApplications[i] && (vm.availableApplications[i].name === vm.componentApplications[j].name)) {
@@ -301,6 +294,10 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                         },
                         function (isConfirm) {
                             if (isConfirm) {
+                                vm.applicationNames = vm.componentApplications.map(function (item) {
+                                    return item['name'].replace(/"/g, '').replace(/'/g, '')
+                                        .replace(/\[/g, '').replace(/]/g, '');
+                                });
                                 var jsonApps = JSON.stringify(vm.componentApplications.map(function (item) {
                                     return item['name'].replace(/"/g, '').replace(/'/g, '')
                                         .replace(/\[/g, '').replace(/]/g, '');
@@ -310,7 +307,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                                     params: {
                                         componentName: vm.componentName,
                                         environment: vm.componentEnvironment.name,
-                                        applications: jsonApps,
+                                        applications: vm.applicationNames,
                                         userName: $rootScope.UserName,
                                     },
                                     data: {
@@ -354,38 +351,32 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 };
             };
         };
-
         vm.close = function () {
             $element.modal('hide');
-            close({
-            }, 500);
+            close({}, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
-            close({
-            }, 500);
+            close({}, 500);
         };
         vm.publish = function () {
-            $element.modal('hide');
-            close({
-                save: true,
-                publish: true,
-                isNew: vm.isNew,
-                uploaded: vm.uploaded,
-                isGlobal: vm.isGlobal,
-                componentApplications: vm.componentApplications,
-                componentName: vm.componentName,
-                environment: vm.componentEnvironment,
-                filePath: vm.filePath,
-            }, 500);
-        }
+            vm.publish = true;
+            vm.save();
+        };
         vm.save = function () {
+            vm.applicationNames = vm.componentApplications.map(function (item) {
+                return item['name'].replace(/"/g, '').replace(/'/g, '')
+                    .replace(/\[/g, '').replace(/]/g, '');
+            });
+            var applicationString = vm.applicationNames.join(',');
             $element.modal('hide');
             close({
                 save: true,
+                publish: vm.publish,
                 isNew: vm.isNew,
                 uploaded: vm.uploaded,
                 isGlobal: vm.isGlobal,
+                applicationNames: applicationString,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
                 environment: vm.componentEnvironment,
@@ -477,10 +468,10 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
                             .replace(/"/g, '').replace(/'/g, ''),
                     });
                 });
-                vm.componentNames = JSON.stringify(vm.applicationComponents.map(function (item) {
+                vm.componentNames = vm.applicationComponents.map(function (item) {
                     return item['name'].replace(/"/g, '').replace(/'/g, '')
                         .replace(/\[/g, '').replace(/]/g, '');
-                }));
+                });
                 for (var i = vm.availableComponents.length - 1; i >= 0; i--) {
                     for (var j = 0; j < vm.applicationComponents.length; j++) {
                         if (vm.availableComponents[i] && (vm.availableComponents[i].name === vm.applicationComponents[j].name)) {
@@ -501,45 +492,22 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
 
         vm.close = function () {
             $element.modal('hide');
-            close({
-            }, 500);
+            close({}, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
-
-            close({
-                publish: false,
-                save: false,
-            }, 500);
+            close({}, 500);
         };
-        vm.publish = function () {
-            vm.componentNames = JSON.stringify(vm.applicationComponents.map(function (item) {
-                return item['name'].replace(/"/g, '').replace(/'/g, '')
-                    .replace(/\[/g, '').replace(/]/g, '');
-            }));
-            $element.modal('hide');
-            close({
-                save: true,
-                publish: true,
-                isNew: vm.isNew,
-                applicationComponents: vm.localApplication.applicationComponents,
-                applicationName: vm.applicationName,
-                componentNames: vm.componentNames,
-                id: vm.localApplication.id,
-                release: vm.release,
-            }, 500);
-        }
         vm.save = function () {
-            vm.componentNames = JSON.stringify(vm.applicationComponents.map(function (item) {
+            vm.componentNames = vm.applicationComponents.map(function (item) {
                 return item['name'].replace(/"/g, '').replace(/'/g, '')
                     .replace(/\[/g, '').replace(/]/g, '');
-            }));
+            });
             $element.modal('hide');
             close({
                 save: true,
-                publish: false,
                 isNew: vm.isNew,
-                applicationComponents: vm.filteredApplicationComponents,
+                applicationComponents: vm.applicationComponents,
                 componentNames: vm.componentNames,
                 applicationName: vm.applicationName,
                 id: vm.localApplication.id,
@@ -596,15 +564,11 @@ ConfigApp.controller('AddVar', ['$rootScope', '$scope', '$element',
         };
         vm.close = function () {
             $element.modal('hide');
-            close({
-                save: false,
-            }, 500);
+            close({}, 500);
         };
         vm.cancel = function () {
             $element.modal('hide');
-            close({
-                save: false,
-            }, 500);
+            close({}, 500);
         };
         vm.save = function () {
             if (vm.valueName === '') {
@@ -665,9 +629,7 @@ ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
 
         vm.close = function () {
             $element.modal('hide');
-            close({
-                save: false,
-            }, 500);
+            close({}, 500);
         };
         vm.save = function () {
             $element.modal('hide');

@@ -98,9 +98,7 @@ namespace DevOpsApi.Controllers
                 if (string.IsNullOrWhiteSpace(applicationModel.name))
                     throw new ArgumentNullException("Application Name must be provided.");
                 configProcessor.userName = applicationModel.last_modify_user;
-                ViewModel.Application newApp = configProcessor.GetApplication(applicationModel);
-                newApp.Components = configProcessor.GetComponentsFromCsv(applicationModel.components);
-                return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, configProcessor.AddUpdateApplication(newApp));
+                return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, configProcessor.AddUpdateApplication(applicationModel));
             }
             catch (Exception ex)
             {

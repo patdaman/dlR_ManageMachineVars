@@ -50,6 +50,7 @@
     <Compile Include="ApplicationInsightModels.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="LoggingModels.cs" />
+    <Compile Include="MachineModels.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="PerformanceModel.cs" />
     <Compile Include="PowershellModels.cs" />
