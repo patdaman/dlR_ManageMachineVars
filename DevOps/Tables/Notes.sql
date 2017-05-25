@@ -5,10 +5,12 @@
     [text]             VARCHAR (4000) NOT NULL,
     [create_date]      DATETIME       CONSTRAINT [DF_Notes_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date]      DATETIME       CONSTRAINT [DF_Notes_modify_date] DEFAULT (getdate()) NOT NULL,
-    [last_modify_user] VARCHAR (256)  CONSTRAINT [DF_Notes_last_modify_user] DEFAULT ('suser()') NOT NULL,
+    [last_modify_user] VARCHAR (256)  CONSTRAINT [DF_Notes_last_modify_user] DEFAULT (suser_name()) NOT NULL,
     CONSTRAINT [PK_Notes] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [IX_Notes] UNIQUE NONCLUSTERED ([note_id] ASC, [note_type] ASC, [create_date] ASC)
 );
+
+
 
 
 

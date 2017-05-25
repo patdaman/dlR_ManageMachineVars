@@ -280,7 +280,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 enableCellEdit: false,
                 visible: true,
                 enableFiltering: false
-            }
+            },
+            { field: 'isGlobal', visible: false, enableCellEdit: 'false' },
             ];
         };
 
@@ -430,6 +431,10 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         // Requests the key data save promise
         $scope.saveRowFunction = function (rowEntity) {
             var deferred = $q.defer();
+            if (rowEntity.isGlobal)
+                angular.forEach(rowEntity.values, function (value) {
+                    value.value = rowEntity.values[environmentIndex].value;
+                });
             var data = JSON.stringify({
                 "configvar_id": rowEntity.configvar_id,
                 "applicationNames": rowEntity.applicationNames,
@@ -500,8 +505,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         $scope.updateApplication = function () {
             if (!$scope.selectedApplication)
                 $scope.application = '';
-            else
+            else {
                 $scope.application = $scope.selectedApplication.value;
+                $scope.selectedComponent = null;
+                $scope.updateComponent();
+            }
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         };
 
@@ -575,6 +583,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                             "componentName": result.componentName,
                             "applications": result.componentApplications,
                             "filePath": result.filePath,
+                            "isGlobal": result.isGlobal,
                             "last_modify_user": $rootScope.UserName,
                         });
                         $http({
@@ -595,16 +604,22 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                   $scope.updateComponent;
                                   $scope.updateApplication;
                                   angular.forEach($scope.gridOptions.data, function (row) {
-                                      if (result.componentName == row.component)
+                                      if (result.componentName == row.component) {
                                           row.applicationNames = applicationNames.join();
+                                          row.isGlobal = result.isGlobal
+                                      }
                                   });
                                   $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                               };
-                          });
+                          })
+                        .error(
+                            swal({
+                                title: "Add Component",
+                                text: "Error Saving Component",
+                                type: "error",
+                                confirmButtonText: "D'oh!"
+                            }));
                         return deferred.promise;
-                    }
-                    if (result.publish) {
-                        
                     }
                     else {
                         $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
@@ -655,10 +670,10 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                               $scope.updateComponent;
                               $scope.updateApplication;
                               angular.forEach($scope.gridOptions.data, function (row) {
-                                  if (~result.componentNames.indexOf(row.component)) 
+                                  if (~result.componentNames.indexOf(row.component))
                                       row.applicationNames += ', ' + result.applicationName
                                   else if (~row.applicationNames.indexOf(result.applicationName))
-                                      row.applicationNames.replace(result.applicationName + ',','');
+                                      row.applicationNames.replace(result.applicationName + ',', '');
                               });
                               $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                           })
@@ -978,5 +993,88 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         console.log(ex);
                     }
                 });
-        }
+        };
+
+        $scope.publishApplication = function (selectedApplication) {
+            var componentNames = [];
+            var componentNameString;
+            if (!selectedApplication) {
+                swal({
+                    title: "Publish Application",
+                    text: "No Application Selected",
+                    type: "error",
+                    confirmButtonText: "D'oh!"
+                });
+            }
+            else if (!$scope.selectedEnvironment) {
+                swal({
+                    title: "Publish Application",
+                    text: "No Environment Selected",
+                    type: "error",
+                    confirmButtonText: "D'oh!"
+                });
+            }
+            else {
+                var componentNames = [];
+                $http({
+                    method: 'GET',
+                    url: "api:/ApplicationApi/",
+                    params: {
+                        applicationName: selectedApplication.name,
+                    },
+                }).then(function (result) {
+                    angular.forEach(result.data.Components, function (Components) {
+                        var name = Components.component_name;
+                        componentNames.push({
+                            name: name.replace(/\[/g, '').replace(/]/g, '')
+                                .replace(/"/g, '').replace(/'/g, ''),
+                        });
+                    });
+                    componentNames = componentNames.map(function (item) {
+                        return item['name'];
+                    });
+
+                    componentNameString = ' - ' + componentNames.join().replace(/,/g, '\n - ');
+                    swal({
+                        title: "Are you sure?",
+                        text: "Existing Component Files:\n" + componentNameString + "\nwill be overwritten in " + $scope.environment,
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AEDEF4",
+                        confirmButtonText: "Yes, upload it!",
+                        closeOnConfirm: false
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            var def = $q.defer();
+                            $http({
+                                method: 'POST',
+                                url: 'api:ApplicationApi',
+                                params: {
+                                    applicationId: selectedApplication.id,
+                                    environment: $scope.environment,
+                                },
+                            })
+                            .success(def.resolve)
+                            .success(
+                                swal({
+                                    title: "Publish" + $scope.application,
+                                    text: "Application Component Files:\n" + componentNameString + "\nwere successfully published",
+                                    type: "success",
+                                    imageUrl: "/Assets/thumbs-up.jpg",
+                                    confirmButtonText: "Cool"
+                                }))
+                            .error(def.reject)
+                            .error(
+                                swal({
+                                    title: "Publish" + $scope.application,
+                                    text: "Application ComponentFiles:\n" + componentNameString + "\nwere not published",
+                                    type: "error",
+                                    confirmButtonText: "D'oh!"
+                                }));
+                        };
+                    })
+                })
+            }
+        };
     }]);

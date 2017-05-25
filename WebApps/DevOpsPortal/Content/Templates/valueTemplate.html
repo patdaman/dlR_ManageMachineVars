@@ -1,4 +1,7 @@
-﻿<div ng-if="!row.groupHeader&&row.entity.key==''">
+﻿<div ng-if="row.groupHeader&&row.entity.isGlobal">
+    { Global Values }
+</div>
+<div ng-if="!row.groupHeader&&row.entity.key==''">
     <div class="ui-grid-cell-contents">
         {{row.entity.fullElement}}
     </div>
@@ -8,17 +11,22 @@
         { no value }
     </div>
 </div>
-<div ng-if="!row.groupHeader&&row.entity.key!=''&&(grid.appScope.environmentIndex===-1)">
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&(grid.appScope.environmentIndex===-1)&&(!row.entity.isGlobal)">
     <div class="ui-grid-cell-contents">
         { Please Select Environment }
     </div>
 </div>
-<div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value!=''" 
-     class="grid-tooltip" 
-     tooltip="{{row.entity.configParentElement}}<br />&nbsp;{{row.entity.fullElement}}<br />{{row.entity.configParentElement}}" 
-     tooltip-placement="right" 
-     popover-template="{{ row.entity.configElement }}" 
-     popover-placement="bottom" 
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&(grid.appScope.environmentIndex===-1)&&row.entity.isGlobal">
+    <div class="ui-grid-cell-contents">
+        { Please Select Any Environment }
+    </div>
+</div>
+<div ng-if="!row.groupHeader&&row.entity.key!=''&&row.entity.values[appScope.environmentIndex].value!=''"
+     class="grid-tooltip"
+     tooltip="{{row.entity.configParentElement}}<br />&nbsp;{{row.entity.fullElement}}<br />{{row.entity.configParentElement}}"
+     tooltip-placement="right"
+     popover-template="{{ row.entity.configElement }}"
+     popover-placement="bottom"
      popover-trigger="mouseenter">
     <div class="ui-grid-cell-contents">
         {{ COL_FIELD }}

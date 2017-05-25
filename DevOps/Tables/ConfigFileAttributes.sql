@@ -5,11 +5,13 @@
     [attribute_value]  VARCHAR (256) NULL,
     [create_date]      DATETIME      CONSTRAINT [DF_ConfigFileAttributes_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date]      DATETIME      CONSTRAINT [DF_ConfigFileAttributes_modify_date] DEFAULT (getdate()) NOT NULL,
-    [last_modify_user] VARCHAR (128) CONSTRAINT [DF_ConfigFileAttributes_last_modify_user] DEFAULT ('suser_name') NOT NULL,
+    [last_modify_user] VARCHAR (128) CONSTRAINT [DF_ConfigFileAttributes_last_modify_user] DEFAULT (suser_name()) NOT NULL,
     CONSTRAINT [PK_ConfigFileAttributes] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_ConfigFileAttributes_ConfigFileElements] FOREIGN KEY ([element_id]) REFERENCES [config].[ConfigFileElements] ([id]),
     CONSTRAINT [IX_ConfigFileAttributes] UNIQUE NONCLUSTERED ([element_id] ASC, [attribute_name] ASC)
 );
+
+
 
 
 

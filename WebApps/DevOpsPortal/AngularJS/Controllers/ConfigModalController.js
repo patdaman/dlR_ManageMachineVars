@@ -187,6 +187,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         var fileName;
         var isNew;
         var uploaded;
+        var isGlobal;
         var localComponent;
 
         vm.availableApplications = applications;
@@ -200,10 +201,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         vm.environment = environment;
         vm.isNew = true;
         vm.uploaded = false;
-        //angular.forEach(vm.environments, function (value) {
-        //    if (value.name === vm.environment)
-        //        vm.componentEnvironment = value;
-        //});
+        vm.isGlobal = false;
 
         vm.selectEnvironment = function (environment) {
             vm.componentEnvironment = environment;
@@ -332,7 +330,6 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                                         '% ' + evt.config.data.file.name + '\n' +
                                       $scope.log;
                                 })
-                                //.then(vm.uploadFile);
                                 .then(function () {
                                     swal({
                                         title: vm.componentName,
@@ -358,22 +355,6 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             };
         };
 
-        //vm.uploadFile = function () {
-        //    swal({
-        //        title: vm.componentName,
-        //        text: "Config File Added",
-        //        type: "success",
-        //        confirmButtonText: "Cool"
-        //    });
-        //    $element.modal('hide');
-        //    close({
-        //        componentApplications: vm.componentApplications,
-        //        componentName: vm.componentName,
-        //        environment: vm.componentEnvironment,
-        //        filePath: vm.filePath,
-        //        save: true,
-        //    }, 500);
-        //};
         vm.close = function () {
             $element.modal('hide');
             close({
@@ -381,10 +362,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         };
         vm.cancel = function () {
             $element.modal('hide');
-
             close({
-                publish: false,
-                save: false,
             }, 500);
         };
         vm.publish = function () {
@@ -394,6 +372,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 publish: true,
                 isNew: vm.isNew,
                 uploaded: vm.uploaded,
+                isGlobal: vm.isGlobal,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
                 environment: vm.componentEnvironment,
@@ -406,6 +385,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 save: true,
                 isNew: vm.isNew,
                 uploaded: vm.uploaded,
+                isGlobal: vm.isGlobal,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
                 environment: vm.componentEnvironment,

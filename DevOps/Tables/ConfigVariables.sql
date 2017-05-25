@@ -9,31 +9,10 @@
     [value_name]       VARCHAR (256)  NULL,
     [create_date]      DATETIME       CONSTRAINT [DF_ConfigVariables_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date]      DATETIME       CONSTRAINT [DF_ConfigVariables_modify_date] DEFAULT (getdate()) NOT NULL,
-    [last_modify_user] VARCHAR (128)  CONSTRAINT [DF_ConfigVariables_last_modify_user] DEFAULT ('suser_name') NOT NULL,
+    [last_modify_user] VARCHAR (128)  CONSTRAINT [DF_ConfigVariables_last_modify_user] DEFAULT (suser_name()) NOT NULL,
     [active]           BIT            CONSTRAINT [DF_ConfigVariables_active] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_ConfigVariables] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_ConfigVariables_ConfigFile] FOREIGN KEY ([configfile_id]) REFERENCES [config].[ConfigFile] ([id])
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+GO

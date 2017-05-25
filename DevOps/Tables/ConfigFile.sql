@@ -6,10 +6,12 @@
     [root_element]     VARCHAR (256) CONSTRAINT [DF_ConfigFile_root_element] DEFAULT ('appSettings') NOT NULL,
     [create_date]      DATETIME      CONSTRAINT [DF_ConfigFile_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date]      DATETIME      CONSTRAINT [DF_ConfigFile_modify_date] DEFAULT (getdate()) NOT NULL,
-    [last_modify_user] VARCHAR (128) CONSTRAINT [DF_ConfigFile_last_modify_user] DEFAULT ('suser_name') NOT NULL,
+    [last_modify_user] VARCHAR (128) CONSTRAINT [DF_ConfigFile_last_modify_user] DEFAULT (suser_name()) NOT NULL,
     CONSTRAINT [PK_ConfigFile] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_ConfigFile_Components] FOREIGN KEY ([component_id]) REFERENCES [config].[Components] ([id])
 );
+
+
 
 
 
