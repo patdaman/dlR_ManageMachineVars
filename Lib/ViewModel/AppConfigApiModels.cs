@@ -41,10 +41,12 @@ namespace ViewModel
         public string userName { get; set; }
         public List<ConfigVariableValue> values { get; set; }
         public bool hasNotes { get; set; }
+        public bool isGlobal { get; set; }
 
         public AppVar()
         {
             hasNotes = false;
+            isGlobal = false;
         }
         public AppVar(AppVar x)
         {
@@ -61,6 +63,7 @@ namespace ViewModel
             userName = x.userName;
             values = x.values;
             hasNotes = x.hasNotes;
+            isGlobal = x.isGlobal;
         }
 
         public AppVar(ConfigVariable x)
@@ -78,6 +81,7 @@ namespace ViewModel
             valueName = x.value_name;
             values = new List<ConfigVariableValue>();
             hasNotes = false;
+            isGlobal = false;
         }
     }
 
