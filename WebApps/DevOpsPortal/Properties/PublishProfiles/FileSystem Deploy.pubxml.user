@@ -13,13 +13,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/23/2017 11:00:13</publishTime>
     </File>
     <File Include="AngularJS/appHandler.js">
-      <publishTime>05/25/2017 13:47:34</publishTime>
+      <publishTime>05/26/2017 12:30:12</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigController.js">
-      <publishTime>05/25/2017 16:47:54</publishTime>
+      <publishTime>05/26/2017 12:25:53</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigModalController.js">
-      <publishTime>05/25/2017 13:57:17</publishTime>
+      <publishTime>05/26/2017 11:45:38</publishTime>
     </File>
     <File Include="AngularJS/Controllers/DashboardController.js">
       <publishTime>05/19/2017 10:07:32</publishTime>
@@ -187,10 +187,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/15/2017 16:50:33</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/25/2017 17:03:20</publishTime>
+      <publishTime>05/26/2017 12:41:27</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/25/2017 17:03:20</publishTime>
+      <publishTime>05/26/2017 12:41:27</publishTime>
     </File>
     <File Include="bin/Assets/404-150x150.png">
       <publishTime>02/07/2017 09:32:03</publishTime>
@@ -220,7 +220,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/23/2017 11:42:19</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>05/25/2017 17:02:36</publishTime>
+      <publishTime>05/26/2017 12:40:29</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/16/2017 09:32:54</publishTime>
@@ -250,7 +250,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/23/2017 10:30:19</publishTime>
     </File>
     <File Include="bin/Content/Templates/addComponentModal.html">
-      <publishTime>05/25/2017 15:20:38</publishTime>
+      <publishTime>05/26/2017 11:59:33</publishTime>
     </File>
     <File Include="bin/Content/Templates/addVariableModal.html">
       <publishTime>05/15/2017 10:18:37</publishTime>
@@ -292,10 +292,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/16/2017 09:29:57</publishTime>
     </File>
     <File Include="bin/Content/Templates/valueTemplate.html">
-      <publishTime>05/24/2017 16:35:45</publishTime>
+      <publishTime>05/26/2017 12:00:52</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.dll">
-      <publishTime>05/25/2017 17:03:13</publishTime>
+      <publishTime>05/26/2017 12:41:21</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.pdb">
       <publishTime>05/16/2017 14:01:51</publishTime>
@@ -511,7 +511,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/19/2017 16:47:21</publishTime>
     </File>
     <File Include="Content/Templates/addComponentModal.html">
-      <publishTime>05/25/2017 15:20:38</publishTime>
+      <publishTime>05/26/2017 11:59:33</publishTime>
     </File>
     <File Include="Content/Templates/addMachineModal.html">
       <publishTime>05/04/2017 17:18:44</publishTime>
@@ -559,7 +559,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/16/2017 09:29:57</publishTime>
     </File>
     <File Include="Content/Templates/valueTemplate.html">
-      <publishTime>05/24/2017 16:35:45</publishTime>
+      <publishTime>05/26/2017 12:00:52</publishTime>
     </File>
     <File Include="Content/themes/base/accordion.css">
       <publishTime>05/04/2017 17:10:20</publishTime>
@@ -736,7 +736,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/04/2017 17:10:28</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/25/2017 17:03:15</publishTime>
+      <publishTime>05/26/2017 12:41:23</publishTime>
     </File>
     <File Include="Scripts/angular-animate.js">
       <publishTime>04/04/2017 14:36:39</publishTime>

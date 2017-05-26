@@ -19,9 +19,14 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
                 $location.path('/home');
             }
             else {
+                var message;
+                if (rejection.data) {
+                    if (rejection.data.Message)
+                        message = rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.Message;
+                }
                 swal({
                     title: "Application Error",
-                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.Message,
+                    text: message,
                     type: "error",
                     confirmButtonText: "Cool"
                 });
@@ -42,9 +47,16 @@ appHandler.factory('httpAPIPathAdder', ['$q', '$location', function ($q, $locati
                 $location.path('/home');
             }
             else {
+                var message;
+                if (rejection.data) {
+                    if (rejection.data.Message)
+                        message = rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.Message;
+                }
+                else
+                    rejection.status + ': ' + rejection.statusText;
                 swal({
                     title: "Application Error",
-                    text: rejection.status + ': ' + rejection.statusText + '\n' + rejection.data.Message,
+                    text: message,
                     type: "error",
                     confirmButtonText: "Cool"
                 });

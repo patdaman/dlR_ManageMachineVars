@@ -8,9 +8,9 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
-#if RELEASE
-    [Authorize(Roles = "Engineers")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "Engineers")]
+//#endif
     public class ConfigValuesApiController : ApiController
     {
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();

@@ -1,6 +1,9 @@
 ﻿<div ng-if="row.groupHeader&&row.entity.isGlobal">
     { Global Values }
 </div>
+<!--<div ng-if="row.groupHeader&&!row.entity.isGlobal">
+    Application(s): {{row.entity.applicationNames}}
+</div>-->
 <div ng-if="!row.groupHeader&&row.entity.key==''">
     <div class="ui-grid-cell-contents">
         {{row.entity.fullElement}}

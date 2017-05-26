@@ -66,7 +66,7 @@ namespace DevOpsApi.Controllers
                                 FileName = fileName,
                                 CreationDate = DateTime.Now,
                             };
-                            //httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
+                            httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
                             httpResponseMessage.StatusCode = HttpStatusCode.OK;
                             return httpResponseMessage;
                         }
@@ -91,13 +91,11 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A Task&lt;IHttpActionResult&gt; </returns>
         ///-------------------------------------------------------------------------------------------------
-        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string applications, string userName, string action = null)
+        public async Task<IHttpActionResult> PostConfigFile(string componentName, string environment, string applications, string userName)
         {
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
 
-            if (string.IsNullOrWhiteSpace(action))
-                action = "import";
             var provider = new MultipartMemoryStreamProvider();
             await Request.Content.ReadAsMultipartAsync(provider);
             foreach (var file in provider.Contents)
@@ -128,27 +126,7 @@ namespace DevOpsApi.Controllers
                     {
                         throw new Exception("File type not valid: " + fileExt);
                     }
-                    if (action.Equals("publish"))
-                    {
-                        if (File.Exists(saveFilePath))
-                            try
-                            {
-                                File.Delete(saveFilePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("File Name already exists: " + fileName, ex);
-                            }
-                        using (var fileStream = File.Create(saveFilePath))
-                        {
-                            buffer.CopyTo(fileStream);
-                        }
-                        fileProcessor.PublishFile(configFile);
-                    }
-                    else
-                    {
-                        fileProcessor.UploadConfigFile(configFile);
-                    }
+                    fileProcessor.UploadConfigFile(configFile);
                 }
                 catch (Exception ex)
                 {
@@ -159,6 +137,18 @@ namespace DevOpsApi.Controllers
             return Ok();
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Puts. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <param name="applicationId">    Identifier for the application. </param>
+        /// <param name="environment">      (Optional)
+        ///                                                            The environment to get. </param>
+        /// <param name="userName">         (Optional) Name of the user. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Put (int applicationId, string environment, string userName = null)
         {
             try
@@ -171,6 +161,18 @@ namespace DevOpsApi.Controllers
             }
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Post this message. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <param name="applicationId">    Identifier for the application. </param>
+        /// <param name="environment">      (Optional)
+        ///                                                            The environment to get. </param>
+        /// <param name="userName">         (Optional) Name of the user. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Post(int applicationId, string environment, string userName = null)
         {
             try
@@ -188,68 +190,6 @@ namespace DevOpsApi.Controllers
             {
                 return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
             }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Puts. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="environment">  The environment to get. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        [HttpPut]
-        public HttpResponseMessage Put(string environment)
-        {
-            try
-            {
-                return Post(environment);
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Post this message. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="environment">  (Optional)
-        ///                                                        The environment to get. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        [HttpPost]
-        public HttpResponseMessage Post(string environment)
-        {
-            try
-            {
-                configProcessor = new BusinessLayer.ManageConfig_Files()
-                {
-                    environment = environment ?? string.Empty,
-                };
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                //var response = Request.CreateResponse<ViewModel.AttributeKeyValuePair>(HttpStatusCode.OK, configProcessor.PublishValue());
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        // DELETE: api/configValues/5
-        //  Rollback to previous publish...
-        //  Todo!!
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
-        [HttpDelete]
-        public void Delete(ViewModel.AppVar value)
-        {
         }
     }
 }

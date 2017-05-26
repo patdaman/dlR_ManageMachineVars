@@ -7,9 +7,9 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
-#if RELEASE
-    [Authorize(Roles = "Engineers")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "Engineers")]
+//#endif
     public class ComponentApiController : ApiController
     {
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
@@ -96,9 +96,10 @@ namespace DevOpsApi.Controllers
 
             try
             {
+                var publish = componentModel.published;
                 ViewModel.Component newComp = new ViewModel.Component(componentModel);
                 configProcessor.userName = componentModel.last_modify_user;
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(newComp));
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(newComp, publish));
             }
             catch (Exception ex)
             {

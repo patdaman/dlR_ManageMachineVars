@@ -124,7 +124,7 @@ namespace BusinessLayer
         ///
         /// <returns>   A ViewModel.Component. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ViewModel.Component AddUpdateComponent(ViewModel.Component component)
+        public ViewModel.Component AddUpdateComponent(ViewModel.Component component, bool? publish = false)
         {
             EFDataModel.DevOps.Component efComp;
             if (component.id != null && component.id != 0)
@@ -177,6 +177,10 @@ namespace BusinessLayer
                     efComp.modify_date = component.modify_date ?? DateTime.Now;
                     efComp.last_modify_user = this.userName;
                 }
+            }
+            if (publish ?? false)
+            {
+
             }
             DevOpsContext.SaveChanges();
             return GetComponent(component.component_name, true);
@@ -598,7 +602,7 @@ namespace BusinessLayer
                 {
                     component_name = vmComp.component_name,
                     active = vmComp.active, // ?? true,
-                    create_date = vmComp.create_date, // ?? DateTime.Now,
+                    create_date = DateTime.Now,
                     modify_date = vmComp.modify_date ?? DateTime.Now,
                     last_modify_user = vmComp.last_modify_user,
                     relative_path = vmComp.relative_path,

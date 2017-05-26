@@ -360,8 +360,47 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             close({}, 500);
         };
         vm.publish = function () {
-            vm.publish = true;
-            vm.save();
+            if (!vm.componentName) {
+                swal({
+                    title: "Publish Component",
+                    text: "No Component Selected",
+                    type: "error",
+                    confirmButtonText: "D'oh!"
+                });
+            }
+            else if (!vm.componentEnvironment) {
+                swal({
+                    title: "Publish Component",
+                    text: "No Environment Selected",
+                    type: "error",
+                    confirmButtonText: "D'oh!"
+                });
+            }
+            else {
+                var applicationNames = [];
+                var applicationNameString;
+                vm.applicationNames = vm.componentApplications.map(function (item) {
+                    return item['name'].replace(/"/g, '').replace(/'/g, '')
+                        .replace(/\[/g, '').replace(/]/g, '');
+                });
+                var applicationString = vm.applicationNames.join(',');
+                swal({
+                    title: "Are you sure?",
+                    text: "Existing Component Files for applications:\n" + applicationString + "\nwill be overwritten in " + $vm.componentEnvironment,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#AEDEF4",
+                    confirmButtonText: "Yes, publish them!",
+                    closeOnConfirm: false
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        vm.publish = true;
+                        vm.save();
+                    }
+
+                })
+            }
         };
         vm.save = function () {
             vm.applicationNames = vm.componentApplications.map(function (item) {

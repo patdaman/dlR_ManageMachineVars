@@ -112,17 +112,16 @@ namespace BusinessLayer
             DevOpsContext = new DevOpsEntities();
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Publish value. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <param name="value">    The value. </param>
+        ///
+        /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<AttributeKeyValuePair> PublishValue(List<AppVar> value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<AttributeKeyValuePair> GetPublishValues()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<AttributeKeyValuePair> PublishValue()
         {
             throw new NotImplementedException();
         }
@@ -137,6 +136,16 @@ namespace BusinessLayer
             throw new NotImplementedException();
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Uploads a configuration file. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <exception cref="Exception">    Thrown when an exception error condition occurs. </exception>
+        ///
+        /// <param name="configFile">   (Optional)
+        ///                             The configuration file. </param>
+        ///-------------------------------------------------------------------------------------------------
         public void UploadConfigFile(XDocument configFile = null)
         {
             if (configFile == null)
@@ -155,61 +164,6 @@ namespace BusinessLayer
                 userName = this.userName,
             };
             List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
-        }
-
-        public void PublishFile(XDocument configFile)
-        {
-            this.configFile = configFile;
-            if (this.componentId == null)
-            {
-                if (string.IsNullOrWhiteSpace(this.componentName))
-                    throw new Exception("No Component Provided.");
-                else
-                    PublishFile(this.componentName, this.environment);
-            }
-            else
-            {
-                PublishFile(this.componentId.Value, this.environment);
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Publish file. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
-        ///
-        /// <param name="componentName">    Name of the component. </param>
-        /// <param name="environment">      (Optional) The environment. </param>
-        ///-------------------------------------------------------------------------------------------------
-        public void PublishFile(string componentName, string environment = null)
-        {
-            var componentObject = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
-            PublishFile(componentObject.id, environment);
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Publish file. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
-        ///
-        /// <param name="componentId">  Identifier for the component. </param>
-        /// <param name="environment">  (Optional) The environment. </param>
-        ///
-        /// <returns>   A List&lt;AttributeKeyValuePair&gt; </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public void PublishFile(int componentId, string environment)
-        {
-            var componentObject = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
-            SaveFile(componentId, this.outputPath, environment);
-            foreach (var c in componentObject.ConfigVariables.ToList())
-            {
-                foreach (var cv in c.ConfigVariableValues.Where(x => x.environment_type == environment))
-                {
-                    cv.published = true;
-                    cv.published_date = DateTime.Now;
-                }
-            }
-            DevOpsContext.SaveChanges();
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -263,6 +217,44 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Publish component. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <param name="componentName">    Name of the component. </param>
+        /// <param name="environment">      (Optional) The environment. </param>
+        /// <param name="userName">         Name of the user. </param>
+        ///
+        /// <returns>   A ComponentDto. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public ComponentDto PublishComponent(string componentName, string environment, string userName)
+        {
+            EFDataModel.DevOps.Component efComp = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
+            ViewModel.ComponentDto compConfirm = new ComponentDto()
+            {
+                id = efComp.id,
+                componentName = efComp.component_name,
+                published = true,
+                last_modify_user = userName,
+                applications = new List<ApplicationDto>(),
+            };
+            string path = string.Format((ConfigFilePath + @"{0}\{1}\"), environment, efComp.component_name).Replace(@"\\", @"\");
+            foreach (var f in efComp.ConfigFiles)
+            {
+                string fileName = path + f.file_name;
+                try
+                {
+                    SaveFile(efComp.id, fileName, environment);
+                }
+                catch (Exception e)
+                {
+                    compConfirm.published = false;
+                }
+            }
+            return compConfirm;
+        }
+
+        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Saves a file. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/31/2017. </remarks>
@@ -304,12 +296,15 @@ namespace BusinessLayer
                     throw new Exception("No environment type provided file.");
                 else
                     environment = this.environment;
+            string fileName = Path.GetFileName(outputPath);
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new Exception("No file name for component id: " + componentId + " provided.");
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
             if (File.Exists(outputPath))
             {
                 File.Delete(outputPath);
             }
-            configFile = GetConfigFile(componentId, Path.GetFileName(outputPath));
+            configFile = GetConfigFile(componentId, fileName);
             configFile.Save(outputPath);
         }
 

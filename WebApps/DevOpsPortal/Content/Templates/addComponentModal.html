@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label><input type="checkbox" ng-model="isGlobal" /> Global</label>
+                        <label><input ng-disabled="Admin" type="checkbox" ng-model="isGlobal" /> Global</label>
                     </div>
                     <div class="form-group">
                         <label><b>Application(s):</b></label>
@@ -51,7 +51,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <!--<button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Import</button>-->
+                <button ng-if="Admin" ng-disabled="!(componentEnvironment) || (componentName === '')" type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Publish</button>
                 <button type="button" ng-click="save()" class="btn btn-md btn-primary">Save</button>
                 <button ng-disabled="uploaded" type="button" ng-click="cancel()" class="btn btn-md btn-danger">Cancel</button>
             </div>

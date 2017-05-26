@@ -7,9 +7,9 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
-#if RELEASE
-    [Authorize(Roles = "Engineers")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "Engineers")]
+//#endif
     public class MachineApiController : ApiController
     {
         BusinessLayer.ManageMachines machineProcessor = new BusinessLayer.ManageMachines();
