@@ -47,6 +47,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         var environments = [];
         var components = [];
         var applications = [];
+        var filteredComponents = [];
+        var filteredApplications = [];
 
         var selectedComponent;
         var component;
@@ -197,7 +199,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         };
         $scope.loadConfigObjects();
 
-        //$scope.gridOptions.columnDefs = [
         $scope.columnDefinition = function (valueOrdinal) {
             var valueColumn;
             if (valueOrdinal === -1)

@@ -198,7 +198,7 @@ namespace BusinessLayer
                     filePath = c.relative_path,
                     published = true,
                 });
-                string path = string.Format((ConfigFilePath + @"{0}\{1}\"), environment, c.component_name).Replace(@"\\", @"\");
+                string path = string.Format((ConfigFilePath + @"{0}\{1}\{2}\"), efApp.application_name, environment, c.component_name).Replace(@"\\", @"\");
                 foreach (var f in c.ConfigFiles)
                 {
                     string fileName = path + f.file_name;
@@ -238,17 +238,21 @@ namespace BusinessLayer
                 last_modify_user = userName,
                 applications = new List<ApplicationDto>(),
             };
-            string path = string.Format((ConfigFilePath + @"{0}\{1}\"), environment, efComp.component_name).Replace(@"\\", @"\");
-            foreach (var f in efComp.ConfigFiles)
+            foreach (var a in efComp.Applications)
             {
-                string fileName = path + f.file_name;
-                try
+                string applicationName = a.application_name;
+                string path = string.Format((ConfigFilePath + @"{0}\{1}\{2}\"), applicationName, environment, efComp.component_name).Replace(@"\\", @"\");
+                foreach (var f in efComp.ConfigFiles)
                 {
-                    SaveFile(efComp.id, fileName, environment);
-                }
-                catch (Exception e)
-                {
-                    compConfirm.published = false;
+                    string fileName = path + f.file_name;
+                    try
+                    {
+                        SaveFile(efComp.id, fileName, environment);
+                    }
+                    catch (Exception e)
+                    {
+                        compConfirm.published = false;
+                    }
                 }
             }
             return compConfirm;
