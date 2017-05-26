@@ -9,9 +9,9 @@ namespace DevOpsApi.Controllers
 {
     public class ApplicationApiController : ApiController
     {
-#if RELEASE
-    [Authorize(Roles = "Engineers")]
-#endif
+//#if RELEASE
+//    [Authorize(Roles = "Engineers")]
+//#endif
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
 
         ///-------------------------------------------------------------------------------------------------

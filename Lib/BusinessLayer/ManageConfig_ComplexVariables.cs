@@ -208,11 +208,11 @@ namespace BusinessLayer
                 DevOpsContext.Applications.Add(new EFDataModel.DevOps.Application()
                 {
                     application_name = application.application_name,
-                    create_date = application.create_date,
+                    create_date = DateTime.Now,
                     modify_date = application.modify_date ?? DateTime.Now,
-                    last_modify_user = this.userName,
-                    active = application.active,
-                    release = application.release,
+                    last_modify_user = application.last_modify_user ?? this.userName ?? string.Empty,
+                    active = true,
+                    release = application.release ?? string.Empty,
                     Components = GetEfComponent(application.Components),
                 });
             else

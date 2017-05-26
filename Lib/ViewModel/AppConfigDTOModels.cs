@@ -56,6 +56,7 @@ namespace ViewModel
             Components = new List<Component>();
             id = a.id ?? 0;
             application_name = a.name;
+            release = a.release ?? string.Empty;
             if (a.components != null)
             {
                 foreach (var c in a.components)

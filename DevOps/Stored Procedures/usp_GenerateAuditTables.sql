@@ -184,18 +184,20 @@ BEGIN --> 1
 			+ '		IF (' + CAST(@DropAuditTable AS VARCHAR(1)) + ' = 1) ' + @CRLF
 			+ '			 DROP TABLE ' + @TABLE_SCHEMA + '.' + @TableName + @AuditNameExtention + @CRLF
 			+ ' END ' + @CRLF
-PRINT @sql
-PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-IF @PrintOnly = 0
-
-		BEGIN TRY --> 2
+IF @PrintOnly = 1
+BEGIN
+	PRINT @sql
+	PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
+END
+ELSE
+BEGIN
+BEGIN TRY --> 2
 	EXEC (@sql)
-		END TRY --< 2
-
-		BEGIN CATCH --> 2
-			EXEC config.usp_InsertErrorDetails
-		END CATCH --< 2
-
+END TRY --< 2
+BEGIN CATCH --> 2
+	EXEC config.usp_InsertErrorDetails
+END CATCH --< 2
+END
 		SET @sql = ' IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME= ''' + @TableName + @AuditNameExtention + ''' AND TABLE_SCHEMA = ''' + @TABLE_SCHEMA + ''') ' + @CRLF
 			+ ' CREATE TABLE ' + @TABLE_SCHEMA + '.' + @TableName + @AuditNameExtention + @CRLF
 			+ ' ( AuditID [int]IDENTITY(1,1) NOT NULL ' + @CRLF
@@ -217,30 +219,36 @@ IF @PrintOnly = 0
 			+ ' (' + @CRLF
 			+ @SelectIndexKeys + @CRLF
 			+ ' )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ' + @CRLF
-PRINT @sql
-PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-
-		BEGIN TRY --> 3
-IF @PrintOnly = 0
+IF @PrintOnly = 1
+BEGIN
+	PRINT @sql
+	PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
+END
+ELSE
+BEGIN
+BEGIN TRY --> 3
 	EXEC (@sql)
-		END TRY --< 3
-
-		BEGIN CATCH --> 3
-			EXEC config.usp_InsertErrorDetails
-		END CATCH --< 3
-		
+END TRY --< 3
+BEGIN CATCH --> 3
+	EXEC config.usp_InsertErrorDetails
+END CATCH --< 3
+END		
 		SET @sql = 'IF OBJECT_ID (''' + @TABLE_SCHEMA + '.' + @TableName + '_changeLog'', ''TR'') IS NOT NULL DROP TRIGGER ' + @TABLE_SCHEMA + '.' + @TableName + '_changeLog'
+
+IF @PrintOnly = 1
+BEGIN
 PRINT @sql
 PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-
-		BEGIN TRY --> 3
-IF @PrintOnly = 0
+END
+ELSE
+BEGIN
+BEGIN TRY --> 3
 	EXEC (@sql)
-		END TRY --< 3
-
-		BEGIN CATCH --> 3
-			EXEC config.usp_InsertErrorDetails
-		END CATCH --< 3
+END TRY --< 3
+BEGIN CATCH --> 3
+	EXEC config.usp_InsertErrorDetails
+END CATCH --< 3
+END
 		SET @sql = 
 			' CREATE TRIGGER ' + @TABLE_SCHEMA + '.' + @TableName + '_changeLog ON ' + @TABLE_SCHEMA + '.' + @TableName + ' FOR ' + @TriggerEvents + @CRLF
 			+ ' AS ' + @CRLF
@@ -282,17 +290,19 @@ IF @PrintOnly = 0
 			+ '	 END ' + @CRLF
 			+ ' END ' + @CRLF
 			+ @CRLF
-PRINT @sql
-PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
-
-		BEGIN TRY --> 3
-IF @PrintOnly = 0
+IF @PrintOnly = 1
+BEGIN
+	PRINT @sql
+	PRINT ( @CRLF + @CRLF + ' GO ' + @CRLF + @CRLF)
+END
+ELSE
+BEGIN
+BEGIN TRY
 	EXEC (@sql)
-		END TRY --< 3
-
-		BEGIN CATCH --> 3
-			EXEC config.usp_InsertErrorDetails
-		END CATCH --< 3
-	END --> 2	
---END --< 1
+END TRY
+BEGIN CATCH
+	EXEC config.usp_InsertErrorDetails
+END CATCH 
+END 
+END --< 1
 

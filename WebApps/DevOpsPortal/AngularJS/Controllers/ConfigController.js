@@ -606,8 +606,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 if (result.uploaded)
                                     $scope.refreshGrid();
                                 else {
-                                    $scope.updateComponent;
-                                    $scope.updateApplication;
+                                    $scope.updateComponent();
+                                    $scope.updateApplication();
                                     angular.forEach($scope.gridOptions.data, function (row) {
                                         if (result.componentName == row.component) {
                                             row.applicationNames = applicationNames.join();
@@ -670,8 +670,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         }).success(deferred.resolve)
                         return deferred.promise
                           .then(function () {
-                              $scope.updateComponent;
-                              $scope.updateApplication;
+                              $scope.updateComponent();
+                              $scope.updateApplication();
                               angular.forEach($scope.gridOptions.data, function (row) {
                                   if (~result.componentNames.indexOf(row.component))
                                       row.applicationNames += ', ' + result.applicationName

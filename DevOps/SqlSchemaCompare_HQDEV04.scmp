@@ -946,6 +946,40 @@
       <Name>config</Name>
       <Name>ConfigVariables_changeLog</Name>
     </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Applications</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDmlTrigger, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Applications_changeLog</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Components</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDmlTrigger, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Components_changeLog</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Applications_audit</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlIndex, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Applications_audit</Name>
+      <Name>IX_Applications_audit_id</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Components_audit</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlIndex, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Components_audit</Name>
+      <Name>IX_Components_audit_id</Name>
+    </SelectedItem>
   </ExcludedSourceElements>
   <ExcludedTargetElements>
     <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -955,6 +989,14 @@
     <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>config</Name>
       <Name>ConfigVariables</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Applications</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>config</Name>
+      <Name>Components</Name>
     </SelectedItem>
   </ExcludedTargetElements>
 </SchemaComparison>

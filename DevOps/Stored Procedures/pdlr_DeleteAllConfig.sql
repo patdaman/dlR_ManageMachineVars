@@ -23,7 +23,52 @@ DELETE FROM [config].[ConfigFileAttributes];
 DELETE FROM [config].[ConfigVariableValue];
 DELETE FROM [config].[ConfigVariables];
 DELETE FROM [config].[ConfigFile];
-DELETE FROM [config].[Components];'
+DELETE FROM [config].[Components];
+EXEC [config].[usp_GenerateAuditTables]
+		@TableName = N''ConfigVariableValue'',
+		@Schema = NULL,
+		@ExcludedColumnCSV = N''last_modify_user,modify_date,create_date'',
+		@AuditNameExtention = NULL,
+		@OnInsert = 0,
+		@OnUpdate = 1,
+		@OnDelete = 1,
+		@PrintOnly = 0,
+		@DropAuditTable = 1
+		;
+EXEC [config].[usp_GenerateAuditTables]
+		@TableName = N''ConfigVariables'',
+		@Schema = NULL,
+		@ExcludedColumnCSV = N''last_modify_user,modify_date,create_date'',
+		@AuditNameExtention = NULL,
+		@OnInsert = 0,
+		@OnUpdate = 1,
+		@OnDelete = 1,
+		@PrintOnly = 0,
+		@DropAuditTable = 1
+		;
+EXEC [config].[usp_GenerateAuditTables]
+		@TableName = N''Components'',
+		@Schema = NULL,
+		@ExcludedColumnCSV = N''last_modify_user,modify_date,create_date'',
+		@AuditNameExtention = NULL,
+		@OnInsert = 0,
+		@OnUpdate = 1,
+		@OnDelete = 1,
+		@PrintOnly = 0,
+		@DropAuditTable = 1
+		;
+EXEC [config].[usp_GenerateAuditTables]
+		@TableName = N''Applications'',
+		@Schema = NULL,
+		@ExcludedColumnCSV = N''last_modify_user,modify_date,create_date'',
+		@AuditNameExtention = NULL,
+		@OnInsert = 0,
+		@OnUpdate = 1,
+		@OnDelete = 1,
+		@PrintOnly = 0,
+		@DropAuditTable = 1
+		;
+		'
 	IF @PrintOnly = 1
 	BEGIN
 		PRINT @SQL

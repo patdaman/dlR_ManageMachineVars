@@ -244,7 +244,7 @@ namespace BusinessLayer
                     filePath = c.relative_path,
                     published = true,
                 });
-                string path = string.Format(ConfigFilePath, environment, c.component_name);
+                string path = string.Format((ConfigFilePath + @"{0}\{1}\"), environment, c.component_name).Replace(@"\\", @"\");
                 foreach (var f in c.ConfigFiles)
                 {
                     string fileName = path + f.file_name;
@@ -309,7 +309,7 @@ namespace BusinessLayer
             {
                 File.Delete(outputPath);
             }
-            configFile = GetConfigFile(componentId);
+            configFile = GetConfigFile(componentId, Path.GetFileName(outputPath));
             configFile.Save(outputPath);
         }
 
