@@ -36,7 +36,7 @@
                 <button ng-if="!configXml==''" ngclipboard data-clipboard-target="#config" class="btn btn-md btn-info" style="float:left;">Copy To Clipboard</button>
                 <!--<a href="#" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</a>-->
                 <button ng-if="!configXml==''" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</button>
-                <button ng-if="Admin" type="button" ng-click="publish()" class="btn btn-danger">Publish</button>
+                <button ng-if="Admin&&!configXml==''" type="button" ng-click="publish()" class="btn btn-danger">Publish</button>
                 <button type="button" ng-click="close()" class="btn btn-md btn-danger">Close</button>
             </div>
         </div>

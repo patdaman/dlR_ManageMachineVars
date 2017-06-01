@@ -75,6 +75,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             else {
                 vm.fileName = '';
                 vm.filePath = '';
+                vm.configXml = '';
                 vm.displayGetFile = false;
             };
         };
@@ -88,6 +89,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             }
             else {
                 vm.environment = '';
+                vm.configXml = '';
                 vm.displayGetFile = false;
             };
         };

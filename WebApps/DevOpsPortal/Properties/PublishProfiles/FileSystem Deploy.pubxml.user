@@ -16,10 +16,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/26/2017 12:30:12</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigController.js">
-      <publishTime>05/30/2017 15:23:44</publishTime>
+      <publishTime>05/31/2017 19:33:47</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigModalController.js">
-      <publishTime>05/30/2017 12:15:12</publishTime>
+      <publishTime>05/31/2017 19:54:22</publishTime>
     </File>
     <File Include="AngularJS/Controllers/DashboardController.js">
       <publishTime>05/19/2017 10:07:32</publishTime>
@@ -187,10 +187,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/15/2017 16:50:33</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/30/2017 15:25:50</publishTime>
+      <publishTime>05/31/2017 19:54:41</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/30/2017 15:25:50</publishTime>
+      <publishTime>05/31/2017 19:54:41</publishTime>
     </File>
     <File Include="bin/Assets/404-150x150.png">
       <publishTime>02/07/2017 09:32:03</publishTime>
@@ -220,7 +220,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/23/2017 11:42:19</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>05/26/2017 13:32:03</publishTime>
+      <publishTime>05/31/2017 19:49:02</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/16/2017 09:32:54</publishTime>
@@ -253,7 +253,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/26/2017 11:59:33</publishTime>
     </File>
     <File Include="bin/Content/Templates/addVariableModal.html">
-      <publishTime>05/15/2017 10:18:37</publishTime>
+      <publishTime>05/31/2017 17:43:31</publishTime>
     </File>
     <File Include="bin/Content/Templates/basicCellTemplate.html">
       <publishTime>04/18/2017 11:33:26</publishTime>
@@ -295,7 +295,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/26/2017 12:00:52</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.dll">
-      <publishTime>05/26/2017 13:32:06</publishTime>
+      <publishTime>05/31/2017 19:49:36</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.pdb">
       <publishTime>05/16/2017 14:01:51</publishTime>
@@ -517,7 +517,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/04/2017 17:18:44</publishTime>
     </File>
     <File Include="Content/Templates/addVariableModal.html">
-      <publishTime>05/15/2017 10:18:37</publishTime>
+      <publishTime>05/31/2017 17:43:31</publishTime>
     </File>
     <File Include="Content/Templates/basicCellTemplate.html">
       <publishTime>04/18/2017 11:33:26</publishTime>
@@ -736,7 +736,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/04/2017 17:10:28</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/30/2017 15:25:45</publishTime>
+      <publishTime>05/31/2017 19:54:37</publishTime>
     </File>
     <File Include="Scripts/angular-animate.js">
       <publishTime>04/04/2017 14:36:39</publishTime>
