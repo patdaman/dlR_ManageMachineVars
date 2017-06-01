@@ -921,13 +921,14 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             var treeLevel = row.treeLevel;
             var componentGroupName;
             var componentFileName;
+            var def = $q.defer();
             angular.forEach(row.treeNode.aggregations, function (aggregation) {
                 if (aggregation.col.field === 'componentName')
                     componentGroupName = aggregation.groupVal;
                 if (aggregation.col.field === 'fileName')
                     componentFileName === aggregation.groupVal;
             });
-            var def = $q.defer();
+            var deferred = $q.defer();
             $http({
                 method: 'GET',
                 url: 'api:/ConfigApi',
@@ -935,7 +936,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                     componentName: componentGroupName,
                 }
             })
-            .success(def.resolve)
+            .success(deferred.resolve)
             .success(function (data) {
                 ModalService.showModal({
                     templateUrl: "/Content/Templates/configFileModal.html",
@@ -958,9 +959,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 fileEnvironment = result.environment;
                                 $scope.environment = fileEnvironment;
                             }
-                            if (result.downloadFile) {
-                                $scope.downloadFile(result.component, result.fileName, fileEnvironment)
-                            };
                             if (result.publishFile) {
                                 $scope.publishComponent(result.component, fileEnvironment, selectedComponent.applications)
                             };
@@ -1044,64 +1042,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 console.log(error);
             })
             return def.promise;
-        };
-
-        // Config File Download
-        $scope.downloadConfig = function (componentName, fileName) {
-            $scope.downloadFile(componentName, fileName, $scope.environment);
-        };
-
-        $scope.downloadFile = function (componentName, fileName, environment) {
-            //var def = $q.defer();
-            $http({
-                method: 'GET',
-                url: 'api:/ConfigPublishApi',
-                params: {
-                    componentName: componentName,
-                    environment: environment,
-                    fileName: fileName,
-                },
-                responseType: 'arraybuffer',
-                transformRequest: angular.identity,
-            })
-                //.success(def.resolve)
-                .success(function (data, status, headers) {
-                    headers = headers();
-
-                    var filename = headers['x-filename'];
-                    //var filename = fileName;
-                    var contentType = headers['content-type'];
-
-                    var linkElement = document.createElement('a');
-                    try {
-                        var blob = new Blob([data], { type: contentType });
-                        var url = window.URL.createObjectURL(blob);
-
-                        linkElement.setAttribute("download", filename);
-                        linkElement.setAttribute("href", url);
-                        linkElement.setAttribute("target", "_self");
-                        var clickEvent;
-
-                        //This is true only for IE,firefox
-                        if (document.createEvent) {
-                            // To create a mouse event , first we need to create an event and then initialize it.
-                            clickEvent = document.createEvent("MouseEvent");
-                            clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                            (linkElement[0] || linkElement).click();
-                        }
-                        else {
-                            clickEvent = new MouseEvent('click', {
-                                'view': window,
-                                'bubbles': true,
-                                'cancelable': true
-                            });
-                            (linkElement[0] || linkElement).dispatchEvent(clickEvent);
-                        };
-                    } catch (ex) {
-                        console.log(ex);
-                    }
-                })
-            //return def.promise;
         };
 
         $scope.publishApplication = function (selectedApplication) {

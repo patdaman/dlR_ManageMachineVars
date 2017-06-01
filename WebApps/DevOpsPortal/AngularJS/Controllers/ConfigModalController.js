@@ -18,9 +18,9 @@
 ///
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http', '$q',
+ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http', '$q', '$httpParamSerializer', 'FileSaver', 'Blob',
         'component', 'files', 'environments', 'environment', 'Admin', 'close',
-    function ($rootScope, $scope, $element, $http, $q,
+    function ($rootScope, $scope, $element, $http, $q, $httpParamSerializer, FileSaver, Blob,
         component, files, environments, environment, Admin, close) {
 
         //var vm = this;
@@ -32,12 +32,9 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var configXml;
         var modalSize;
         var displayFileSelect;
-        var displayGetFile;
         var publishFile;
-        var downloadFile;
 
         vm.Admin = Admin;
-        vm.displayGetFile = false;
         vm.environments = environments;
         vm.environment = environment;
         if (vm.environment)
@@ -59,7 +56,6 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.configXml = '';
         vm.component = component;
         vm.modalSize = "modal-dialog modal-lg";
-        vm.downloadFile = false;
         vm.publishFile = false;
 
         vm.updateFile = function (selectedFile) {
@@ -68,7 +64,6 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
                 vm.fileName = selectedFile.fileName;
                 vm.filePath = selectedFile.path;
                 if (vm.environment && vm.environment !== '') {
-                    //vm.displayGetFile = true;
                     vm.getFile();
                 };
             }
@@ -76,21 +71,18 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
                 vm.fileName = '';
                 vm.filePath = '';
                 vm.configXml = '';
-                vm.displayGetFile = false;
             };
         };
         vm.updateEnvironment = function (selectedVmEnvironment) {
             if (selectedVmEnvironment) {
                 vm.environment = selectedVmEnvironment.value;
                 if (vm.environment && vm.environment != '' && vm.fileName !== '') {
-                    //vm.displayGetFile = true;
                     vm.getFile();
                 };
             }
             else {
                 vm.environment = '';
                 vm.configXml = '';
-                vm.displayGetFile = false;
             };
         };
 
@@ -125,8 +117,13 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
                     vm.configXml = data.text,
                     vm.filePath = data.path,
                     vm.displayGetFile = false,
-                    vm.modalSize()
-                })
+                    vm.modalSize(),
+                    vm.params = {
+                        componentName: vm.component,
+                        environment: vm.environment,
+                        fileName: vm.fileName,
+                    }
+                });
             }
         };
 
@@ -142,8 +139,6 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             $element.modal('hide');
             close({
                 publish: vm.publishFile,
-                download: vm.downloadFile,
-                fileName: vm.fileName,
                 environment: vm.environment,
                 component: vm.component
             }, 500);
@@ -156,9 +151,9 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             vm.publishFile = true;
             vm.close();
         };
-        vm.download = function () {
-            vm.downloadFile = true;
-            vm.close();
+        vm.download = function (text) {
+            var data = new Blob([vm.configXml], { type: 'text/xml' });
+            FileSaver.saveAs(data, vm.fileName);
         };
     }]);
 

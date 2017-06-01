@@ -311,6 +311,7 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\AngularFileSaver\angular-file-saver.bundle.min.js" />
     <Content Include="Scripts\Blob.js" />
     <Content Include="Content\bootstrap-combined.min.css" />
     <Content Include="Scripts\bootstrap.js" />

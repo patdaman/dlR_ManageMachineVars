@@ -58,6 +58,8 @@ namespace DevOpsPortal
                       "~/Scripts/ngclipboard.min.js",
                       "~/Scripts/sweetalert.min.js"
                     ));
+            bundles.Add(new ScriptBundle("~/bundles/angularFileSaver")
+                    .Include("~/Scripts/AngularFileSaver/angular-file-saver.bundle.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app")
                     .IncludeDirectory("~/AngularJS", "*.js", true));

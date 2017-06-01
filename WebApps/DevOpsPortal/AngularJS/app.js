@@ -34,7 +34,8 @@ var ConfigApp = angular.module('ConfigApp',
             'ui.bootstrap',
             'ngAnimate',
             'angularModalService',
-            'EnumService'
+            'EnumService',
+            'ngFileSaver'
         ])
 
 var MachineApp = angular.module('MachineApp',

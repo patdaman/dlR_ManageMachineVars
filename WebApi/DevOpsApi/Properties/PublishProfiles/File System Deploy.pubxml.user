@@ -85,10 +85,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/11/2017 11:03:00</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>05/31/2017 19:49:12</publishTime>
+      <publishTime>06/01/2017 14:01:10</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>05/31/2017 19:49:12</publishTime>
+      <publishTime>06/01/2017 14:01:09</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
       <publishTime>05/31/2017 19:49:02</publishTime>
@@ -280,7 +280,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/27/2017 16:55:05</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/31/2017 19:49:07</publishTime>
+      <publishTime>06/01/2017 14:01:04</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>04/11/2017 12:37:40</publishTime>

@@ -23,7 +23,6 @@
                     <select ng-model="selectedVmEnvironment" ng-options="e.name for e in environments" ng-change="updateEnvironment(selectedVmEnvironment)" id="environmentSelect">
                         <option value="" style="color:red">Environment</option>
                     </select>
-                    <button ng-hide="!displayGetFile" type="button" class="btn btn-dark btn-primary" ng-click="getFile()">Get File</button>
                     <div ng-if="!configXml==''">
                         <p>
                             {{filePath}}
@@ -34,8 +33,7 @@
             </div>
             <div class="modal-footer">
                 <button ng-if="!configXml==''" ngclipboard data-clipboard-target="#config" class="btn btn-md btn-info" style="float:left;">Copy To Clipboard</button>
-                <!--<a href="#" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</a>-->
-                <button ng-if="!configXml==''" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</button>
+                <a href="#" type="button" class="btn btn-md btn-primary" ng-click="download()">Download</a>
                 <button ng-if="Admin&&!configXml==''" type="button" ng-click="publish()" class="btn btn-danger">Publish</button>
                 <button type="button" ng-click="close()" class="btn btn-md btn-danger">Close</button>
             </div>
