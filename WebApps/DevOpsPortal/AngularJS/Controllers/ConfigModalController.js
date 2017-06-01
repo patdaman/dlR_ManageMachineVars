@@ -34,7 +34,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var displayFileSelect;
         var displayGetFile;
         var publishFile;
-        var download;
+        var downloadFile;
 
         vm.Admin = Admin;
         vm.displayGetFile = false;
@@ -59,17 +59,37 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.configXml = '';
         vm.component = component;
         vm.modalSize = "modal-dialog modal-lg";
-        vm.download = false;
+        vm.downloadFile = false;
         vm.publishFile = false;
 
         vm.updateFile = function (selectedFile) {
-            vm.fileName = selectedFile.fileName;
-            vm.displayGetFile = true;
+            vm.selectedFile = selectedFile;
+            if (selectedFile) {
+                vm.fileName = selectedFile.fileName;
+                vm.filePath = selectedFile.path;
+                if (vm.environment && vm.environment !== '') {
+                    //vm.displayGetFile = true;
+                    vm.getFile();
+                };
+            }
+            else {
+                vm.fileName = '';
+                vm.filePath = '';
+                vm.displayGetFile = false;
+            };
         };
         vm.updateEnvironment = function (selectedVmEnvironment) {
-            vm.environment = selectedVmEnvironment.value;
-            if (vm.environment && vm.environment != '')
-                vm.displayGetFile = true;
+            if (selectedVmEnvironment) {
+                vm.environment = selectedVmEnvironment.value;
+                if (vm.environment && vm.environment != '' && vm.fileName !== '') {
+                    //vm.displayGetFile = true;
+                    vm.getFile();
+                };
+            }
+            else {
+                vm.environment = '';
+                vm.displayGetFile = false;
+            };
         };
 
         vm.modalSize = function () {
@@ -78,8 +98,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         };
 
         vm.getFile = function () {
-            if ((!vm.component || !vm.environment || !vm.selectedFile) &&
-                (vm.component !== '' || vm.environment !== '' || vm.selectedFile !== '')) {
+            if ((!vm.component || !vm.environment || !vm.fileName) &&
+                (vm.component !== '' || vm.environment !== '' || vm.fileName !== '')) {
                 swal({
                     title: "Data Missing",
                     text: "Null Value(s)",
@@ -95,7 +115,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
                     params: {
                         componentName: vm.component,
                         environment: vm.environment,
-                        fileName: vm.selectedFile.fileName,
+                        fileName: vm.fileName,
                     }
                 })
                 .success(def.resolve)
@@ -120,8 +140,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             $element.modal('hide');
             close({
                 publish: vm.publishFile,
-                download: vm.download,
-                fileName: vm.selectedFile.fileName,
+                download: vm.downloadFile,
+                fileName: vm.fileName,
                 environment: vm.environment,
                 component: vm.component
             }, 500);
@@ -135,7 +155,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             vm.close();
         };
         vm.download = function () {
-            vm.download = true;
+            vm.downloadFile = true;
             vm.close();
         };
     }]);

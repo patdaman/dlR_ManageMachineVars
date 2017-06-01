@@ -958,7 +958,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 fileEnvironment = result.environment;
                                 $scope.environment = fileEnvironment;
                             }
-                            if (result.download) {
+                            if (result.downloadFile) {
                                 $scope.downloadFile(result.component, result.fileName, fileEnvironment)
                             };
                             if (result.publishFile) {
