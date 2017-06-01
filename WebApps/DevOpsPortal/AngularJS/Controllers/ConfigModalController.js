@@ -33,7 +33,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var modalSize;
         var displayFileSelect;
         var displayGetFile;
-        var publish;
+        var publishFile;
         var download;
 
         vm.Admin = Admin;
@@ -60,7 +60,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.component = component;
         vm.modalSize = "modal-dialog modal-lg";
         vm.download = false;
-        vm.publish = false;
+        vm.publishFile = false;
 
         vm.updateFile = function (selectedFile) {
             vm.fileName = selectedFile.fileName;
@@ -119,7 +119,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.close = function () {
             $element.modal('hide');
             close({
-                publish: vm.publish,
+                publish: vm.publishFile,
                 download: vm.download,
                 fileName: vm.selectedFile.fileName,
                 environment: vm.environment,
@@ -131,7 +131,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             close({}, 500);
         };
         vm.publish = function () {
-            vm.publish = true;
+            vm.publishFile = true;
             vm.close();
         };
         vm.download = function () {
@@ -199,7 +199,6 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
 
         vm.selectEnvironment = function (environment) {
             vm.componentEnvironment = environment;
-            var test = vm.componentComponents;
         };
 
         vm.selectComponent = function (component) {

@@ -128,10 +128,16 @@ namespace BusinessLayer
         ///
         /// <returns>   A list of. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public ICollection<ViewModel.ConfigVariableValue> EfConfigValueListToVm(ICollection<EFDataModel.DevOps.ConfigVariableValue> EF, List<EFDataModel.DevOps.Enum_EnvironmentType> environments = null)
+        public List<ViewModel.ConfigVariableValue> EfConfigValueListToVm(ICollection<EFDataModel.DevOps.ConfigVariableValue> EF, List<EFDataModel.DevOps.Enum_EnvironmentType> environments = null, int? configVarId = null)
+        //public ICollection<ViewModel.ConfigVariableValue> EfConfigValueListToVm(ICollection<EFDataModel.DevOps.ConfigVariableValue> EF, List<EFDataModel.DevOps.Enum_EnvironmentType> environments = null)
         {
             var vm = new List<ViewModel.ConfigVariableValue>();
             var defaultVal = EF.FirstOrDefault();
+            int varId = configVarId ?? 0;
+            if (defaultVal != null && defaultVal.configvar_id != 0 && defaultVal.configvar_id != null)
+                varId = defaultVal.configvar_id;
+            if (varId == 0)
+                throw new ArgumentNullException("Config Variable Id not supplied in adding Config Variable Values");
             foreach (var e in environments.OrderBy(x => x.name))
             {
                 //vm.Add(ConfigValueEfToVm(x));
@@ -155,7 +161,7 @@ namespace BusinessLayer
                     vm.Add(new ViewModel.ConfigVariableValue()
                     {
                         id = null,
-                        configvar_id = defaultVal.configvar_id,
+                        configvar_id = varId,
                         environment = e.name.ToString(),
                         value = string.Empty,
                         create_date = null,

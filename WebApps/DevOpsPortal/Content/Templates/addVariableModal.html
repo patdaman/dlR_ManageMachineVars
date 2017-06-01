@@ -12,58 +12,61 @@
                     </select>
                 </div>
                 <br />
-                <div class="form-group"><b>Parent Element: </b>
-                    <select name="selectedParent" ng-model="parentElement" ng-options="p for p in parentRows"></select>
-                </div>
-                <!--<br />
-                <div class="form-group">
-                    <label><b>Parent Element:</b></label>
-                    <input id="parent" class="form-control" type="text" ng-model="parentElement">
-                </div>-->
-                <div class="form-group">
-                    <label>Key:</label>
-                    <input id="key" class="form-control" type="text" ng-model="key">
-                </div>
-                <div ng-if="!show || new">
-                    <h5>{{parentElement}}</h5>
-                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{key}&gt;{value}&lt;/{key}&gt;</h5>
-                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{key}}&gt;{value}&lt;/{{key}}&gt;</h5>
-                    <h5>{{parentElement}}</h5>
-                    <br />
-                </div>
-                <div ng-if="show || new">
-                    <div ng-if="!new">
-                        <div class="form-group">
-                            <h4><b>The following are required for XML formatting with attributes</b></h4>
-                            <h6>&lt;{Parent Element}&gt;</h6>
-                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{element} {attribute}:"{key}" {valueName}="{value}"&gt;</h6>
-                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;add key:"{key}" value="{value}"&gt;</h6>
-                            <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;db name:"{key}" connection_string="{value}"&gt;</h6>
-                            <h6>&lt;{Parent Element}&gt;</h6>
-                        </div>
-                        <div class="form-group">
-                            <label>Element:</label>
-                            <input id="element" class="form-control" type="text" ng-model="element">
-                        </div>
-                        <div class="form-group">
-                            <label>Key Name / Attribute:</label>
-                            <input id="keyName" class="form-control" type="text" ng-model="attribute">
-                        </div>
-                        <div class="form-group">
-                            <label>Value Name:</label>
-                            <input id="valueName" class="form-control" type="text" ng-model="valueName">
-                        </div>
+                <div ng-if="selectedFile">
+                    <div class="form-group">
+                        <b>Parent Element: </b>
+                        <select name="selectedParent" ng-model="parentElement" ng-options="p for p in parentRows"></select>
+                    </div>
+                    <!--<br />
+        <div class="form-group">
+            <label><b>Parent Element:</b></label>
+            <input id="parent" class="form-control" type="text" ng-model="parentElement">
+        </div>-->
+                    <div class="form-group">
+                        <label>Key:</label>
+                        <input id="key" class="form-control" type="text" ng-model="key">
+                    </div>
+                    <div ng-if="!show || new">
                         <h5>{{parentElement}}</h5>
-                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{attribute}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
-                        <h5>/{{parentElement}}</h5>
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{key}&gt;{value}&lt;/{key}&gt;</h5>
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{key}}&gt;{value}&lt;/{{key}}&gt;</h5>
+                        <h5>{{parentElement}}</h5>
+                        <br />
+                    </div>
+                    <div ng-if="show || new">
+                        <div ng-if="!new">
+                            <div class="form-group">
+                                <h4><b>The following are required for XML formatting with attributes</b></h4>
+                                <h6>&lt;{Parent Element}&gt;</h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{element} {attribute}:"{key}" {valueName}="{value}"&gt;</h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;add key:"{key}" value="{value}"&gt;</h6>
+                                <h6>&nbsp;&nbsp;&nbsp;&nbsp;&lt;db name:"{key}" connection_string="{value}"&gt;</h6>
+                                <h6>&lt;{Parent Element}&gt;</h6>
+                            </div>
+                            <div class="form-group">
+                                <label>Element:</label>
+                                <input id="element" class="form-control" type="text" ng-model="element">
+                            </div>
+                            <div class="form-group">
+                                <label>Key Name / Attribute:</label>
+                                <input id="keyName" class="form-control" type="text" ng-model="attribute">
+                            </div>
+                            <div class="form-group">
+                                <label>Value Name:</label>
+                                <input id="valueName" class="form-control" type="text" ng-model="valueName">
+                            </div>
+                            <h5>{{parentElement}}</h5>
+                            <h5>&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{element}} {{attribute}}:"{{key}}" {{valueName}}="{value}"&gt;</h5>
+                            <h5>/{{parentElement}}</h5>
+                        </div>
                     </div>
                 </div>
                 <br />
             </div>
             <div class="modal-footer">
                 <!--<button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Publish</button>-->
-                <button type="button" ng-click="save()" class="btn btn-md btn-primary">Save</button>
-                <button type="button" ng-click="close()" class="btn btn-md btn-danger">Cancel</button>
+                <button type="button" ng-disabled="selectedFile" ng-click="save()" class="btn btn-md btn-primary">Save</button>
+                <button type="button" ng-disabled="selectedFile" ng-click="close()" class="btn btn-md btn-danger">Cancel</button>
             </div>
         </div>
     </div>

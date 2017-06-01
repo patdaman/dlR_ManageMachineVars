@@ -929,10 +929,13 @@ namespace BusinessLayer
             var file = config.ConfigFile;
             if (file == null)
                 file = new EFDataModel.DevOps.ConfigFile();
-            var configVars = config.ConfigVariableValues;
-            if (configVars == null)
-                configVars = new List<EFDataModel.DevOps.ConfigVariableValue>();
-            return new ViewModel.ConfigVariable()
+            List<ViewModel.ConfigVariableValue> configVars = new List<ViewModel.ConfigVariableValue>();
+            if (config.ConfigVariableValues != null && config.ConfigVariableValues.Count() > 0)
+                configVars = EfToVmConverter.EfConfigValueListToVm(config.ConfigVariableValues, environments);
+            else
+                configVars = EfToVmConverter.EfConfigValueListToVm(new List<EFDataModel.DevOps.ConfigVariableValue>(), environments, config.configfile_id);
+            var configVariable = new ViewModel.ConfigVariable()
+            //return new ViewModel.ConfigVariable()
             {
                 id = config.id,
                 active = config.active,
@@ -946,9 +949,11 @@ namespace BusinessLayer
                 parent_element = config.parent_element,
                 full_element = config.full_element,
                 ConfigFile = EfToVmConverter.EfConfigFileToVm(file),
-                ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(configVars, environments),
+                ConfigVariableValues = configVars,
+                //ConfigVariableValues = EfToVmConverter.EfConfigValueListToVm(configVars, environments),
                 Components = EfToVmConverter.EfComponentListToVm(config.Components)
             };
+            return configVariable;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -1094,15 +1099,16 @@ namespace BusinessLayer
                 }
                 else
                 {
-                    efConfig.ConfigVariableValues.Add(new EFDataModel.DevOps.ConfigVariableValue()
-                    {
-                        create_date = DateTime.Now,
-                        modify_date = DateTime.Now,
-                        last_modify_user = this.userName,
-                        environment_type = "development",
-                        published = false,
-                        value = "",
-                    });
+                    //efConfig.ConfigVariableValues = new List<EFDataModel.DevOps.ConfigVariableValue>();
+                    //efConfig.ConfigVariableValues.Add(new EFDataModel.DevOps.ConfigVariableValue()
+                    //{
+                    //    create_date = DateTime.Now,
+                    //    modify_date = DateTime.Now,
+                    //    last_modify_user = this.userName,
+                    //    environment_type = "development",
+                    //    published = false,
+                    //    value = "",
+                    //});
                 }
                 efConfig.Components.Add(efComponent);
                 DevOpsContext.ConfigVariables.Add(efConfig);

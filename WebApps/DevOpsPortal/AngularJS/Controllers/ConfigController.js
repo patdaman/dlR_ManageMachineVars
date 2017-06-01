@@ -47,8 +47,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         var environments = [];
         var components = [];
         var applications = [];
+        var componentFilter = [];
+        var applicationFilter = [];
         var filteredComponents = [];
         var filteredApplications = [];
+        var componentExists;
 
         var selectedComponent;
         var component;
@@ -83,6 +86,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         $scope.canEdit = function () {
             return $scope.edit;
         };
+        $scope.componentFilter = [];
+        $scope.applicationFilter = [];
 
         /// Configure Config UI grid
         $scope.gridOptions = {
@@ -155,11 +160,13 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         $scope.filterApplication = function () {
             return $scope.application;
         };
+        $scope.filteredApplications = $scope.applications;
 
         $scope.component = '';
         $scope.filterComponent = function () {
             return $scope.component;
         };
+        $scope.filteredComponents = $scope.components;
 
         // List of environments:
         $scope.GetEnvironments = function () {
@@ -168,6 +175,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 $scope.environments = result;
                 $scope.subGridHeight = (result.length * 30) + 37;
                 $scope.gridOptions.expandableRowHeight = (result.length * 30) + 37;
+                if ($scope.environment && $scope.environment != '')
+                    angular.forEach($scope.environments, function (environments) {
+                        if (environments.value == $scope.environment)
+                            $scope.selectedenvironment = environment;
+                    });
             })
         };
 
@@ -189,6 +201,11 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             getObjectService.getConfigObjects('application')
             .then(function (result) {
                 $scope.applications = result;
+                if ($scope.application && $scope.application != '')
+                    angular.forEach($scope.applications, function (application) {
+                        if (application.value == $scope.application)
+                            $scope.selectedApplication = application;
+                    });
             })
         };
 
@@ -361,6 +378,37 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 $scope.gridOptions.data = data;
                 angular.forEach(data, function (data, index) {
                     data["index"] = index;
+                    $scope.componentExists = false;
+                    $scope.applicationExists = false;
+                    for (var i = 0; i < $scope.componentFilter.length; i++) {
+                        if ($scope.componentFilter[i].id === data.componentId) {
+                            $scope.componentExists = true;
+                            break;
+                        };
+                    };
+                    if (!$scope.componentExists) {
+                        $scope.componentFilter.push({
+                            id: data["componentId"],
+                            name: data["componentName"],
+                            value: data["componentName"],
+                            applications: data["applicationNames"].replace(/"/g, '').replace(/ /g, '').split(/,/),
+                        });
+                        for (var j = 0; j < $scope.componentFilter[$scope.componentFilter.length - 1].applications.length; j++) {
+                            for (var k = 0; k < $scope.applicationFilter.length; k++) {
+                                if ($scope.componentFilter[$scope.componentFilter.length - 1].applications[j] === $scope.applicationFilter[k].name) {
+                                    $scope.applicationFilter[k].components.push(data["componentName"].replace(/"/g, '').replace(/ /g, ''));
+                                    $scope.applicationExists = true;
+                                    break;
+                                };
+                            };
+                            if (!$scope.applicationExists) {
+                                $scope.applicationFilter.push({
+                                    name: $scope.componentFilter[$scope.componentFilter.length - 1].applications[j],
+                                    components: [data["componentName"].replace(/"/g, '').replace(/ /g, '')],
+                                });
+                            };
+                        }
+                    };
                 });
             });
         };
@@ -487,31 +535,76 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             };
             $scope.loadGridColumns();
         };
+        $scope.filterEnvironments = function (x) {
+            return true;
+        };
 
         // Function call from Index page dropdown OnChange
         $scope.updateComponent = function () {
             if (!$scope.selectedComponent) {
                 $scope.component = '';
                 $scope.gridOptions.columnDefs[2].visible = true;
+                $scope.filteredApplications = $scope.applications;
             }
             else {
                 $scope.component = $scope.selectedComponent.value;
                 $scope.gridOptions.columnDefs[2].visible = false;
                 $scope.expandValues();
+
             }
             //$scope.filterComponent;
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         };
+        $scope.filterComponents = function (c) {
+            var inApplication = false;
+            if ($scope.application !== '') {
+                for (var i = 0; i < $scope.applicationFilter.length; i++) {
+                    if ($scope.application === $scope.applicationFilter[i].name) {
+                        for (var j = 0; j < $scope.applicationFilter[i].components.length; j++) {
+                            if ($scope.applicationFilter[i].components[j] === c.name) {
+                                inApplication = true;
+                            };
+                        }
+                        break;
+                    };
+                }
+            }
+            else
+                inApplication = true;
+            return inApplication;
+        };
+
         // Function call from Index page dropdown OnChange
         $scope.updateApplication = function () {
-            if (!$scope.selectedApplication)
+            if (!$scope.selectedApplication) {
                 $scope.application = '';
+                $scope.filteredComponents = $scope.components;
+            }
             else {
                 $scope.application = $scope.selectedApplication.value;
                 $scope.selectedComponent = null;
                 $scope.updateComponent();
+
             }
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        };
+        $scope.filterApplications = function (a) {
+            var inComponent = false;
+            if ($scope.component !== '') {
+                for (var i = 0; i < $scope.componentFilter.length; i++) {
+                    if ($scope.component === $scope.componentFilter[i].name) {
+                        for (var j = 0; j < $scope.componentFilter[i].applications.length; j++) {
+                            if ($scope.componentFilter[i].applications[j] === a.name) {
+                                inComponent = true;
+                            };
+                        }
+                        break;
+                    };
+                };
+            }
+            else
+                inComponent = true;
+            return inComponent;
         };
 
         $scope.refreshGrid = function () {
@@ -796,7 +889,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                         "key": result.key,
                                         "valueName": result.valueName,
                                         "values": [],
-                                        "last_modify_user": $rootScope.UserName,
+                                        "userName": $rootScope.UserName,
                                     });
                                     $http({
                                         method: 'POST',
@@ -859,17 +952,17 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         modal.element.modal();
                         modal.close.then(function (result) {
                             var fileEnvironment;
-                            if (result.environment === '')
+                            if (!result.environment || result.environment === '')
                                 fileEnvironment = $scope.environment;
                             else {
                                 fileEnvironment = result.environment;
                                 $scope.environment = fileEnvironment;
                             }
                             if (result.download) {
-                                $scope.downloadConfig(result.component, result.fileName, fileEnvironment)
+                                $scope.downloadFile(result.component, result.fileName, fileEnvironment)
                             };
-                            if (result.publish) {
-                                $scope.downloadConfig(result.component, result.fileName, fileEnvironment)
+                            if (result.publishFile) {
+                                $scope.publishComponent(result.component, fileEnvironment, selectedComponent.applications)
                             };
                         });
                     })
@@ -959,7 +1052,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
         };
 
         $scope.downloadFile = function (componentName, fileName, environment) {
-            var def = $q.defer();
+            //var def = $q.defer();
             $http({
                 method: 'GET',
                 url: 'api:/ConfigPublishApi',
@@ -968,13 +1061,15 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                     environment: environment,
                     fileName: fileName,
                 },
-                responseType: 'arraybuffer'
+                responseType: 'arraybuffer',
+                transformRequest: angular.identity,
             })
-                .success(def.resolve)
+                //.success(def.resolve)
                 .success(function (data, status, headers) {
                     headers = headers();
 
                     var filename = headers['x-filename'];
+                    //var filename = fileName;
                     var contentType = headers['content-type'];
 
                     var linkElement = document.createElement('a');
@@ -982,8 +1077,9 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         var blob = new Blob([data], { type: contentType });
                         var url = window.URL.createObjectURL(blob);
 
-                        linkElement.setAttribute('href', url);
-                        linkElement.setAttribute('download', filename);
+                        linkElement.setAttribute("download", filename);
+                        linkElement.setAttribute("href", url);
+                        linkElement.setAttribute("target", "_self");
                         var clickEvent;
 
                         //This is true only for IE,firefox
@@ -991,6 +1087,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                             // To create a mouse event , first we need to create an event and then initialize it.
                             clickEvent = document.createEvent("MouseEvent");
                             clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                            (linkElement[0] || linkElement).click();
                         }
                         else {
                             clickEvent = new MouseEvent('click', {
@@ -998,13 +1095,13 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 'bubbles': true,
                                 'cancelable': true
                             });
-                        }
-                        linkElement.dispatchEvent(clickEvent)
+                            (linkElement[0] || linkElement).dispatchEvent(clickEvent);
+                        };
                     } catch (ex) {
                         console.log(ex);
                     }
                 })
-            return def.promise;
+            //return def.promise;
         };
 
         $scope.publishApplication = function (selectedApplication) {

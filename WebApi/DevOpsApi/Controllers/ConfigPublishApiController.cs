@@ -40,37 +40,40 @@ namespace DevOpsApi.Controllers
                 environment = environment,
                 fileName = fileName,
             };
+            MemoryStream memoryStream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(memoryStream);
+            HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
+
             try
             {
                 ConfigXml configFile = fileProcessor.GetConfigXml();
                 fileName = configFile.fileName;
                 if (string.IsNullOrWhiteSpace(fileName))
                     fileName = Path.GetFileName(configFile.path);
-                if (!fileName.EndsWith(".config") && (!fileName.EndsWith(".xml")))
+                if (!fileName.ToLower().EndsWith(".config") && (!fileName.ToLower().EndsWith(".xml")))
                     fileName = fileName + ".config";
                 if (configFile != null)
                 {
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        using (StreamWriter writer = new StreamWriter(memoryStream))
-                        {
+                    //using (MemoryStream memoryStream = new MemoryStream())
+                    //{
+                    //    using (StreamWriter writer = new StreamWriter(memoryStream))
+                    //    {
                             writer.Write(configFile.text);
                             writer.Flush();
                             memoryStream.Position = 0;
-                            HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
                             httpResponseMessage.Content = new ByteArrayContent(memoryStream.ToArray());
                             httpResponseMessage.Content.Headers.Add("x-filename", fileName);
                             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
                             httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
                             {
                                 FileName = fileName,
-                                CreationDate = DateTime.Now,
+                                //CreationDate = DateTime.Now,
                             };
                             httpResponseMessage.Content.Headers.ContentDisposition.FileName = fileName;
                             httpResponseMessage.StatusCode = HttpStatusCode.OK;
                             return httpResponseMessage;
-                        }
-                    }
+                    //    }
+                    //}
                 }
                 return this.Request.CreateResponse(HttpStatusCode.NotFound, "File not found.");
             }
