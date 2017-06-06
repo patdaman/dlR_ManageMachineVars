@@ -8,7 +8,7 @@ using ViewModel;
 
 namespace DevOpsApi.Controllers
 {
-    public class PowershellApiController : ApiController
+    public class PowershellApiController : BaseController
     {
         BusinessLayer.ManagePowershell_Scripts scriptProcessor = new BusinessLayer.ManagePowershell_Scripts();
 

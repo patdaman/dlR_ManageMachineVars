@@ -10,7 +10,7 @@ namespace DevOpsApi.Controllers
 //#if RELEASE
 //    [Authorize(Roles = "Engineers")]
 //#endif
-    public class NoteApiController : ApiController
+    public class NoteApiController : BaseController
     {
         BusinessLayer.ManageNotes noteProcessor = new BusinessLayer.ManageNotes();
 

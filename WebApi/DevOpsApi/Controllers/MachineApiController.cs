@@ -10,7 +10,7 @@ namespace DevOpsApi.Controllers
 //#if RELEASE
 //    [Authorize(Roles = "Engineers")]
 //#endif
-    public class MachineApiController : ApiController
+    public class MachineApiController : BaseController
     {
         BusinessLayer.ManageMachines machineProcessor = new BusinessLayer.ManageMachines();
 

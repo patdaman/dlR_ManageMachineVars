@@ -10,11 +10,11 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/angular")
-    @Scripts.Render("~/bundles/angularFileSaver")
     @Scripts.Render("~/bundles/codemirror")
     @Styles.Render("~/Content/codemirror")
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/app")
+    @Scripts.Render("~/bundles/toastr")
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -33,6 +33,7 @@
                         <li>@Html.ActionLink("Machine", "Index", "Machine")</li>
                         <li>@Html.ActionLink("Dashboard", "Index", "Dashboard")</li>
                         <li>@Html.ActionLink("Powershell", "Index", "Powershell")</li>
+                        <li>@Html.ActionLink("Board", "Index", "Board")</li>
                     @*}*@
                 </ul>
             </div>

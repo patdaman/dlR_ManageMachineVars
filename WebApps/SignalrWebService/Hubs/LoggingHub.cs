@@ -38,7 +38,7 @@ namespace SignalrWebService.Hubs
                 new ViewModel.Event(e));
         }
 
-        public override Task OnConnected()
+        public override System.Threading.Tasks.Task OnConnected()
         {
             return (base.OnConnected());
         }

@@ -13,8 +13,13 @@ namespace DevOpsPortal
                       "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                        "~/Scripts/jquery.signalR-{version}.js",
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/jquery-ui-{version}.js"
+                        ));
+
+            bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
+                        "~/Scripts/toastr.min.js"
                         ));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
@@ -56,10 +61,9 @@ namespace DevOpsPortal
                       "~/Scripts/angular-multi-select.min.js",
                       "~/Scripts/clipboard.min.js",
                       "~/Scripts/ngclipboard.min.js",
-                      "~/Scripts/sweetalert.min.js"
+                      "~/Scripts/sweetalert.min.js",
+                      "~/Scripts/AngularFileSaver/angular-file-saver.bundle.min.js"
                     ));
-            bundles.Add(new ScriptBundle("~/bundles/angularFileSaver")
-                    .Include("~/Scripts/AngularFileSaver/angular-file-saver.bundle.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app")
                     .IncludeDirectory("~/AngularJS", "*.js", true));
@@ -71,7 +75,8 @@ namespace DevOpsPortal
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      //"~/Content/bootstrap-combined.min.css",
-                     "~/Content/bootstrap.css",
+                     "~/Content/bootstrap.min.css",
+                     "~/Content/toastr.min.css",
                      "~/Content/sweetalert.css",
                      "~/Content/angular-multi-select.css",
                      "~/Content/ui-grid.css",

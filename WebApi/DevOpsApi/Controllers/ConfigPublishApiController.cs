@@ -15,7 +15,7 @@ namespace DevOpsApi.Controllers
 #if RELEASE
     [Authorize(Roles = "Engineers")]
 #endif
-    public class ConfigPublishApiController : ApiController
+    public class ConfigPublishApiController : BaseController
     {
         private BusinessLayer.ManageConfig_Files configProcessor { get; set; }
         private static string ConfigFilePath = System.Configuration.ConfigurationManager.AppSettings["ConfigFilePath"];

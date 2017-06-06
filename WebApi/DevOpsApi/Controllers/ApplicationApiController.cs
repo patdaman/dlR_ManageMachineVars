@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
-    public class ApplicationApiController : ApiController
+    public class ApplicationApiController : BaseController
     {
 //#if RELEASE
 //    [Authorize(Roles = "Engineers")]

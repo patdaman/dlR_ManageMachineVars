@@ -10,7 +10,7 @@ namespace DevOpsApi.Controllers
 //#if RELEASE
 //    [Authorize(Roles = "Engineers")]
 //#endif
-    public class LogApiController : ApiController
+    public class LogApiController : BaseController
     {
         BusinessLayer.ManageLogging logProcessor = new BusinessLayer.ManageLogging();
 

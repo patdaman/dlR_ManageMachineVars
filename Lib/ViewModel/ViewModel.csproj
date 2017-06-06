@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,6 +49,7 @@
     <Compile Include="AppConfigApiModels.cs" />
     <Compile Include="AppConfigFunctionModels.cs" />
     <Compile Include="ApplicationInsightModels.cs" />
+    <Compile Include="BoardModels.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="LoggingModels.cs" />
     <Compile Include="MachineModels.cs" />

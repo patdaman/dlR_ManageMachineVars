@@ -3,7 +3,7 @@
 var dashboardApp = angular.module('dashboardApp',
     ['ng.epoch', 'n3-pie-chart']);
 
-dashboardApp.value('backendServerUrl', 'http://localhost:41999/signalr/performance');
+dashboardApp.value('backendServerUrl', 'http://localhost:41998');
 
 var logApp = angular.module('logApp',
                             ['ui.grid',

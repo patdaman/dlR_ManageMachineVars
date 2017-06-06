@@ -24,8 +24,8 @@ namespace SignalrWebService
 
             PerformanceEngine performanceEngine = new PerformanceEngine(800);
             Task.Factory.StartNew(async () => await performanceEngine.OnPerformanceMonitor());
-            LogEngine logEngine = new LogEngine(5000);
-            Task.Factory.StartNew(async () => await logEngine.OnLogMonitor());
+            //LogEngine logEngine = new LogEngine(5000);
+            //Task.Factory.StartNew(async () => await logEngine.OnLogMonitor());
         }
     }
 }

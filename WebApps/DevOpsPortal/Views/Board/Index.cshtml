@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "DevOps Task Board";
+}
+<div ng-app="app" ng-strict-di>
+    <div style="width:80%;min-height:300px; margin: 0 auto 0 auto;">
+
+        <div class="row" ng-controller="boardCtrl">
+
+            <div ng-include="'/Content/Templates/busyModal.html'" ng-show="isLoading"></div>
+
+            <div class="col-lg-3 panel panel-primary colStyle" id="{{col.Id}}" board-drop="over"
+                 ng-repeat="col in columns">
+                <div class="panel-heading" style="margin-bottom: 10px;">
+                    <h3 class="panel-title">{{col.Name}}</h3>
+                </div>
+                <div class="thumbnail" draggable="true" board-dragg="task"
+                     ng-repeat="task in col.Tasks" style="margin-bottom: 10px;">
+                    <div class="caption">
+                        <h5><strong>{{task.Name}}</strong></h5>
+                        <p>{{task.Description}}</p>
+                        <p><a href="#" class="btn btn-primary btn-sm" role="button">Edit</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+       .colStyle {
+            margin-right: 10px;
+            width: 24%;
+            padding-top: 10px;
+            margin-top: 20px;
+            border: 1px solid orange;
+            min-height: 500px;
+        }
+
+        .busyIndicator .alert {
+            left: 40%;
+            top: 5%;
+            position: fixed;
+            z-index: 1050;
+            width: 400px;
+            height: 40px;
+            padding-left: 10px;
+            padding-top: 10px;
+            background-color: lightgreen;
+            color: black;
+            border-color: transparent;
+        }
+
+        .busyIndicator .backgroundMask {
+            top: 0;
+            left: 0;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+            background: black;
+            z-index: 1049;
+        }
+
+        .over {
+            background-color: #fff;
+            border: 2px dashed red;
+        }
+    </style>
+</div>

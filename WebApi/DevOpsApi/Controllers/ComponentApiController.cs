@@ -10,7 +10,7 @@ namespace DevOpsApi.Controllers
 //#if RELEASE
 //    [Authorize(Roles = "Engineers")]
 //#endif
-    public class ComponentApiController : ApiController
+    public class ComponentApiController : BaseController
     {
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
 

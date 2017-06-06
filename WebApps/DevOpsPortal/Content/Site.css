@@ -211,18 +211,19 @@ textarea {
 }
 
 /* Stack Trace panel size and color options */
-div.panel {
+/*div.panel {
     margin: 0px;
 	padding: 5px;
 	/*text-align: left;
 	background: #ddd;
 	border: solid 1px #fff;
-    max-width: 75%;*/
+    max-width: 75%;
 	display: none;
 }
+    */
 
 /* Instruction panel button */
-div.flip {
+/*div.flip {
     border: solid 1px #fff;
 }
 
@@ -233,7 +234,7 @@ div.flip {
 .flip:hover span{
     font-weight:bold;
     text-decoration:underline;
-}  
+}*/  
 
 .gridStyle {
   width: 99%;

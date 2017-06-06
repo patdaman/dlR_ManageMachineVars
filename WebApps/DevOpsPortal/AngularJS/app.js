@@ -84,11 +84,15 @@ var DashboardApp = angular.module('DashboardApp',
           'n3-pie-chart'
       ]);
 
+var boardApp = angular.module('boardApp', []);
+
 // Todo:
 // Get rid of these with
 // new values from $rootScope
-DashboardApp.value('backendServerUrl', 'http://localhost:41999/signalr/performance');
-LogApp.value('logBackendServerUrl', 'http://localhost:41999/signalr/logging');
+DashboardApp.value('backendServerUrl', SignalRPath + '/performance');
+LogApp.value('backendServerUrl', SignalRPath + '/logging');
+//boardApp.value('backendServerUrl', SignalRPath + '/board');
+boardApp.value('backendServerUrl', SignalRPath);
 
 var appHandler = angular.module('appHandler', []);
 
@@ -97,7 +101,8 @@ var appHandler = angular.module('appHandler', []);
 ///
 ///  ----------------------------------------------------------- ///
 var app = angular.module('app',
-    ['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp']);
+    //['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp']);
+    ['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp', 'boardApp']);
 
 app.run(['$rootScope', function ($rootScope) {
     $rootScope.ApiPath = ApiPath;
@@ -106,6 +111,7 @@ app.run(['$rootScope', function ($rootScope) {
     $rootScope.displayApi = DevOpsWebApp.DisplayApi;
     $rootScope.Admin = DevOpsWebApp.Admin;
     $rootScope.Engineer = DevOpsWebApp.Engineer;
+    $rootScope.signalRPath = DevOpsWebApp.SignalRPath;
 }]);
 
 ///  ----------------------------------------------------------- ///

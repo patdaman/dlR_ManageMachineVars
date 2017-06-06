@@ -132,6 +132,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BoardController.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\ConfigFileController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
@@ -147,13 +148,16 @@
   <ItemGroup>
     <Content Include="AngularJS\app.js" />
     <Content Include="AngularJS\appHandler.js" />
+    <Content Include="AngularJS\Controllers\boardController.js" />
     <Content Include="AngularJS\Controllers\ConfigModalController.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="AngularJS\Directives\boardDragDrop.js" />
     <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
+    <Content Include="AngularJS\Services\boardService.js" />
     <Content Include="AngularJS\Services\HubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
     <Content Include="Assets\404-150x150.png">
@@ -211,6 +215,7 @@
     <Content Include="Content\Templates\addVariableModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Templates\busyModal.html" />
     <Content Include="Content\Templates\configFileModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -287,6 +292,8 @@
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="Content\timeline.css" />
+    <Content Include="Content\toastr.css" />
+    <Content Include="Content\toastr.min.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Content\ui-grid.css" />
     <Content Include="Content\ui-grid.min.css" />
@@ -731,6 +738,8 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\jquery-ui-1.7.2.smoothness.css" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
     <None Include="Properties\PublishProfiles\FileSystem Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Local_FileSystem.pubxml" />
     <None Include="Properties\PublishProfiles\WebDeploy_HQDEV08.pubxml" />
@@ -755,6 +764,8 @@
     <Content Include="Scripts\jquery-1.12.4.min.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.2.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\ng-file-upload-all.js" />
     <Content Include="Scripts\ng-file-upload-all.min.js" />
@@ -768,6 +779,8 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Site.js" />
     <Content Include="Scripts\sweetalert.min.js" />
+    <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\ui-grid.js" />
     <Content Include="Scripts\ui-grid.min.js" />
     <Content Include="Scripts\vfs_fonts.js" />
@@ -799,6 +812,7 @@
     <Content Include="Views\Powershell\Results.cshtml" />
     <Content Include="Views\Shared\AngularDependancies.cshtml" />
     <Content Include="Scripts\jquery-1.12.4.min.map" />
+    <Content Include="Views\Board\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularJS\Controllers\ConfigController.js" />

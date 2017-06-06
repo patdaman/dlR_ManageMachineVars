@@ -28,11 +28,11 @@ namespace SignalrWebService.Logs
             _pollIntervalMillis = pollIntervalMillis;
         }
 
-        public async Task OnLogMonitor()
+        public async System.Threading.Tasks.Task OnLogMonitor()
         {
             while (true)
             {
-                await Task.Delay(_pollIntervalMillis);
+                await System.Threading.Tasks.Task.Delay(_pollIntervalMillis);
                 try
                 {
                     events.AddRange(logProcessor.GetAllLogs(DateTime.Now.AddMilliseconds(- (_pollIntervalMillis + 1000)), DateTime.MaxValue));
