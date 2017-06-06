@@ -163,7 +163,7 @@ namespace BusinessLayer
                 appName = this.appName,
                 userName = this.userName,
             };
-            List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
+            List<AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
         }
 
         ///-------------------------------------------------------------------------------------------------

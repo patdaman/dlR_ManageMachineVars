@@ -1,13 +1,33 @@
-﻿using static ViewModel.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ViewModel
+namespace CommonUtils.AppConfiguration
 {
+    public class KeyValuePair
+    {
+        public string parentElement;
+        public string element;
+        public string attribute;
+        public string key;
+        public string valueName;
+        public string value;
 
-    ///-------------------------------------------------------------------------------------------------
-    /// <summary>   A key value pair. </summary>
-    ///
-    /// <remarks>   Pdelosreyes, 2/9/2017. </remarks>
-    ///-------------------------------------------------------------------------------------------------
+        public KeyValuePair()
+        { }
+
+        public KeyValuePair(KeyValuePair a)
+        {
+            parentElement = a.parentElement;
+            element = a.element;
+            attribute = a.attribute;
+            key = a.key;
+            valueName = a.valueName;
+            value = a.value;
+        }
+    }
     public class AttributeKeyValuePair
     {
         public string parentElement;
@@ -49,5 +69,15 @@ namespace ViewModel
             result = c.result;
         }
     }
+    public enum ModifyResult
+    {
+        Created,
+        Updated,
+        Removed,
+        Failed,
+        AccessDenied,
+        NotFound,
+        Unknown,
+        Commented
+    }
 }
-

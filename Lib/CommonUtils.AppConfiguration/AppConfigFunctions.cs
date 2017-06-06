@@ -360,7 +360,7 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult RemoveKeyValue(string keyName, string appKey, bool forceDelete)
+        public ModifyResult RemoveKeyValue(string keyName, string appKey, bool forceDelete)
         {
             return RemoveKeyValue(keyName, appKey, String.Empty, forceDelete);
         }
@@ -378,7 +378,7 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult RemoveKeyValue(string keyName, string appKey, string element = null, bool forceDelete = false)
+        public ModifyResult RemoveKeyValue(string keyName, string appKey, string element = null, bool forceDelete = false)
         {
             foreach (XElement x in configFile.Descendants())
             {
@@ -392,23 +392,23 @@ namespace CommonUtils.AppConfiguration
                             if (forceDelete)
                             {
                                 x.Remove();
-                                return Enums.ModifyResult.Removed;
+                                return ModifyResult.Removed;
                             }
                             else
                             {
                                 x.ReplaceWith(new XComment(x.ToString()));
-                                return Enums.ModifyResult.Commented;
+                                return ModifyResult.Commented;
                             }
                         }
                         catch (Exception ex)
                         {
-                            return Enums.ModifyResult.Failed;
+                            return ModifyResult.Failed;
                             // this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
                         }
                     }
                 }
             }
-            return Enums.ModifyResult.NotFound;
+            return ModifyResult.NotFound;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -422,7 +422,7 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult AddKeyValue(string appKey, string value, string parent_element = null)
+        public ModifyResult AddKeyValue(string appKey, string value, string parent_element = null)
         {
             if (string.IsNullOrWhiteSpace(parent_element))
             {
@@ -445,9 +445,9 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public List<Enums.ModifyResult> AddKeyValue(List<AttributeKeyValuePair> keyValuePairs)
+        public List<ModifyResult> AddKeyValue(List<AttributeKeyValuePair> keyValuePairs)
         {
-            List<Enums.ModifyResult> results = new List<Enums.ModifyResult>();
+            List<ModifyResult> results = new List<ModifyResult>();
             foreach (var valuePair in keyValuePairs)
             {
                 results.Add(AddKeyValue(
@@ -479,7 +479,7 @@ namespace CommonUtils.AppConfiguration
         ///
         /// <returns>   An Enums.ModifyResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult AddKeyValue(string attribute, string appKey, string valueName, string value, string element, string full_element, string parent_element = null)
+        public ModifyResult AddKeyValue(string attribute, string appKey, string valueName, string value, string element, string full_element, string parent_element = null)
         {
 
             ///  This is driving me nuts
@@ -500,7 +500,7 @@ namespace CommonUtils.AppConfiguration
                             configFile.Add(new XElement(element, string.Empty));
                         else
                             configFile.Add(new XElement(element, value));
-                        return Enums.ModifyResult.Created;
+                        return ModifyResult.Created;
                     }
                     else
                     {
@@ -511,7 +511,7 @@ namespace CommonUtils.AppConfiguration
                             configFile.Add(new XElement(element,
                                   new XAttribute(attribute, appKey),
                                   new XAttribute(valueName, value)));
-                        return Enums.ModifyResult.Created;
+                        return ModifyResult.Created;
                     }
                 }
             }
@@ -551,12 +551,12 @@ namespace CommonUtils.AppConfiguration
                     else
                         parentElement.FirstOrDefault().Add(new XElement(element, value));
 
-                    return Enums.ModifyResult.Created;
+                    return ModifyResult.Created;
                 }
                 else
                 {
                     parentElement.Elements().Where(x => x.Name == element).FirstOrDefault().Value = value;
-                    return Enums.ModifyResult.Updated;
+                    return ModifyResult.Updated;
                 }
             }
 
@@ -574,12 +574,12 @@ namespace CommonUtils.AppConfiguration
                                 try
                                 {
                                     x.Attribute(valueName).Value = value;
-                                    return Enums.ModifyResult.Updated;
+                                    return ModifyResult.Updated;
                                 }
                                 catch (Exception ex)
                                 {
                                     // this.Logger.Error(ExamineException.GetInnerExceptionAndStackTrackMessage(ex));
-                                    return Enums.ModifyResult.Failed;
+                                    return ModifyResult.Failed;
                                 }
                             }
                         }
@@ -606,8 +606,8 @@ namespace CommonUtils.AppConfiguration
                 else
                     parentElement.FirstOrDefault().Add(new XElement(element, value));
             }
-            return Enums.ModifyResult.Created;
-            return Enums.ModifyResult.Failed;
+            return ModifyResult.Created;
+            return ModifyResult.Failed;
         }
     }
 }

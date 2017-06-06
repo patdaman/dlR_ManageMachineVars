@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfigModels.cs" />
     <Compile Include="AppConfiguration.cs" />
     <Compile Include="CommandLineConfigProvider.cs" />
     <Compile Include="ConfigFileConfigProvider.cs" />

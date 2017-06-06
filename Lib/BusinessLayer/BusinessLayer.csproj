@@ -56,6 +56,7 @@
     <Compile Include="ManageConfig_AppVariables.cs" />
     <Compile Include="ManageConfig_ComplexVariables.cs" />
     <Compile Include="ManageEnvironment_Variables.cs" />
+    <Compile Include="ManageIIS.cs" />
     <Compile Include="ManageLogging.cs" />
     <Compile Include="ManageMachines.cs" />
     <Compile Include="ManageNotes.cs" />

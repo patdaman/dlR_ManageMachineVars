@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonUtils.IISAdmin
+namespace BusinessLayer
 {
-    public class appModel
+    public class ManageIIS
     {
 
     }

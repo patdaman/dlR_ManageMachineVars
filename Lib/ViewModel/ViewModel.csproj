@@ -47,10 +47,8 @@
   <ItemGroup>
     <Compile Include="AppConfigDTOModels.cs" />
     <Compile Include="AppConfigApiModels.cs" />
-    <Compile Include="AppConfigFunctionModels.cs" />
     <Compile Include="ApplicationInsightModels.cs" />
     <Compile Include="BoardModels.cs" />
-    <Compile Include="Enums.cs" />
     <Compile Include="LoggingModels.cs" />
     <Compile Include="MachineModels.cs" />
     <Compile Include="Note.cs" />

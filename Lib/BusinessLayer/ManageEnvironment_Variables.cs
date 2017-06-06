@@ -52,7 +52,7 @@ namespace BusinessLayer
         ///
         /// <returns>   A ConfigVariableResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult RemoveEnvVariable(string key, string enVarType = null)
+        public ModifyResult RemoveEnvVariable(string key, string enVarType = null)
         {
             return enVars.RemoveEnvironmentVariable(key, enVarType);
         }
@@ -67,7 +67,7 @@ namespace BusinessLayer
         ///
         /// <returns>   A ConfigVariableResult. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public Enums.ModifyResult AddEnvVariable(string key, string value, string keyType = null)
+        public ModifyResult AddEnvVariable(string key, string value, string keyType = null)
         {
             return enVars.SetEnvironmentVariable(key, value, keyType);
         }

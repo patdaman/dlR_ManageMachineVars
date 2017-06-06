@@ -23,7 +23,7 @@ namespace ManageConfigVariables
         {
             ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path);
             AppConfigFunctions appConfigVars = new AppConfigFunctions(adminArgs.Path);
-            ViewModel.AttributeKeyValuePair configVars = appConfigVars.GetAppConfigValue(adminArgs.Key, adminArgs.Parent);
+            CommonUtils.AppConfiguration.AttributeKeyValuePair configVars = appConfigVars.GetAppConfigValue(adminArgs.Key, adminArgs.Parent);
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("Parent Attribute = {0}", configVars.parentElement);
             Console.WriteLine("Attribute = {0}", configVars.element);
@@ -175,7 +175,7 @@ namespace ManageConfigVariables
         public static void AddAllAppConfigVariables(AdminArgs adminArgs)
         {
             ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path);
-            List<ViewModel.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables(string.Empty);
+            List<CommonUtils.AppConfiguration.ConfigModifyResult> configVars = appConfigProcessor.AddAllAppConfigVariables(string.Empty);
             appConfigProcessor.configFile.Save(adminArgs.Path);
             foreach (var x in configVars)
             {
@@ -191,7 +191,7 @@ namespace ManageConfigVariables
             ManageConfig_AppVariables appConfigProcessor = new ManageConfig_AppVariables(adminArgs.Path, adminArgs.MachineName, 
                                                                                         adminArgs.ConfigEnvironment, 
                                                                                         adminArgs.ComponentName, adminArgs.ApplicationName);
-            List<ViewModel.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
+            List<CommonUtils.AppConfiguration.AttributeKeyValuePair> configVars = appConfigProcessor.ImportAllAppConfigVariablesToDb();
             Console.WriteLine("-------------------------------------------");
             foreach (var x in configVars)
             {
@@ -216,7 +216,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void AddAllEnvVariables(AdminArgs adminArgs)
         {
-            List<ViewModel.ConfigModifyResult> results = new List<ViewModel.ConfigModifyResult>();
+            List<CommonUtils.EnvironmentVariables.ConfigModifyResult> results = new List<CommonUtils.EnvironmentVariables.ConfigModifyResult>();
             ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             results = envProcessor.AddAllEnvVariables();
 
@@ -238,7 +238,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void RemoveAllEnvVariables(AdminArgs adminArgs)
         {
-            List<ViewModel.ConfigModifyResult> results = new List<ViewModel.ConfigModifyResult>();
+            List<CommonUtils.EnvironmentVariables.ConfigModifyResult> results = new List<CommonUtils.EnvironmentVariables.ConfigModifyResult>();
             ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             results = envProcessor.RemoveAllEnvVariables();
 
@@ -280,7 +280,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void RemoveEnvVariable(AdminArgs adminArgs)
         {
-            ViewModel.Enums.ModifyResult result;
+            CommonUtils.EnvironmentVariables.ModifyResult result;
             ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.RemoveEnvVariable(adminArgs.Key, adminArgs.Parent);
 
@@ -300,7 +300,7 @@ namespace ManageConfigVariables
         ///-------------------------------------------------------------------------------------------------
         public static void AddEnvVariable(AdminArgs adminArgs)
         {
-            ViewModel.Enums.ModifyResult result;
+            CommonUtils.EnvironmentVariables.ModifyResult result;
             ManageEnvironment_Variables envProcessor = new ManageEnvironment_Variables();
             result = envProcessor.AddEnvVariable(adminArgs.Key, adminArgs.Value, adminArgs.KeyType);
 
@@ -423,7 +423,7 @@ namespace ManageConfigVariables
                                                                             );
             try
             {
-                appConfigProcessor.PublishFile(adminArgs.ComponentName, adminArgs.ConfigEnvironment);
+                appConfigProcessor.PublishComponent(adminArgs.ComponentName, adminArgs.ConfigEnvironment, adminArgs.UserName);
             }
             catch (Exception e)
             {
