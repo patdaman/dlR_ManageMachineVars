@@ -7,20 +7,17 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
-//#if RELEASE
-//    [Authorize(Roles = "Engineers")]
-//#endif
-    public class MachineApiController : BaseController
+    public class IISApiController : BaseController
     {
-        BusinessLayer.ManageMachines machineProcessor = new BusinessLayer.ManageMachines();
+        BusinessLayer.ManageIIS iisProcessor = new BusinessLayer.ManageIIS();
 
-        // GET: api/Machine
+        // GET: api/IISApi
         [HttpGet]
         public HttpResponseMessage Get()
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.Machine>>(HttpStatusCode.OK, machineProcessor.GetAllMachines());
+                return Request.CreateResponse<List<ViewModel.IISMonitor>>(HttpStatusCode.OK, iisProcessor.GetAllApplications());
             }
             catch (Exception ex)
             {
@@ -28,13 +25,13 @@ namespace DevOpsApi.Controllers
             }
         }
 
-        // GET: api/Machine/5
+        // GET: api/IISApi/5
         [HttpGet]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(int machineId, string appName)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Machine>(HttpStatusCode.OK, machineProcessor.GetMachine(id));
+                return Request.CreateResponse<ViewModel.IISMonitor>(HttpStatusCode.OK, iisProcessor.GetApplication(machineId, appName));
             }
             catch (Exception ex)
             {
@@ -42,15 +39,16 @@ namespace DevOpsApi.Controllers
             }
         }
 
-//#if RELEASE
-//    [Authorize(Roles = "DevOps")]
-//#endif
+        // PUT: api/IISApi
+        //#if RELEASE
+        //    [Authorize(Roles = "DevOps")]
+        //#endif
         [HttpPut]
-        public HttpResponseMessage Put(ViewModel.Machine value)
+        public HttpResponseMessage Put(ViewModel.IISAppSettings value)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Machine>(HttpStatusCode.OK, machineProcessor.UpdateMachine(value));
+                return Request.CreateResponse<ViewModel.IISAppSettings>(HttpStatusCode.OK, iisProcessor.UpdateApplicationSetting(value));
             }
             catch (Exception ex)
             {
@@ -58,16 +56,16 @@ namespace DevOpsApi.Controllers
             }
         }
 
-        // POST: api/Machine
-//#if RELEASE
-//    [Authorize(Roles = "DevOps")]
-//#endif
+        // POST: api/IISApi
+        //#if RELEASE
+        //    [Authorize(Roles = "DevOps")]
+        //#endif
         [HttpPost]
-        public HttpResponseMessage Post(ViewModel.Machine value)
+        public HttpResponseMessage Post(ViewModel.IISAppSettings value)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Machine>(HttpStatusCode.OK, machineProcessor.CreateMachine(value));
+                return Request.CreateResponse<ViewModel.IISAppSettings>(HttpStatusCode.OK, iisProcessor.CreateApplicationSetting(value));
             }
             catch (Exception ex)
             {
@@ -75,13 +73,13 @@ namespace DevOpsApi.Controllers
             }
         }
 
-        // DELETE: api/Machine/5
+        // DELETE: api/IISApi/5
         [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Machine>(HttpStatusCode.OK, machineProcessor.DeleteMachine(id));
+                return Request.CreateResponse<ViewModel.IISAppSettings>(HttpStatusCode.OK, iisProcessor.DeleteApplicationSetting(id));
             }
             catch (Exception ex)
             {

@@ -239,6 +239,7 @@
     <Compile Include="Controllers\ConfigValuesApiController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IISApiController.cs" />
     <Compile Include="Controllers\LogApiController.cs" />
     <Compile Include="Controllers\MachineApiController.cs" />
     <Compile Include="Controllers\NoteApiController.cs" />

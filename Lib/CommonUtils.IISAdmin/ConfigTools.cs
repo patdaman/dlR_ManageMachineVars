@@ -1,8 +1,6 @@
 ﻿using Microsoft.Web.Administration;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Web.Configuration;
 
 namespace CommonUtils.IISAdmin
 {

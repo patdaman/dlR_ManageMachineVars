@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace DevOpsApi.Controllers
 {
-    public class ApplicationInsightController : ApiController
+    public class ApplicationInsightController : BaseController
     {
         BusinessLayer.ManageApplicationInsights appinsightProcessor = new BusinessLayer.ManageApplicationInsights();
 

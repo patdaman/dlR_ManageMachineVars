@@ -1,5 +1,7 @@
 ﻿using Microsoft.Web.Administration;
+using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 
 namespace CommonUtils.IISAdmin
@@ -7,8 +9,16 @@ namespace CommonUtils.IISAdmin
     public class SiteTools
     {
         public string machineName { get; set; }
-        public static ServerManager server;
+        private static ServerManager server;
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Constructor. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 6/7/2017. </remarks>
+        ///
+        /// <param name="machineName">  (Optional)
+        ///                             Name of the machine. </param>
+        ///-------------------------------------------------------------------------------------------------
         public SiteTools(string machineName = null)
         {
             if (!string.IsNullOrWhiteSpace(machineName))
@@ -19,81 +29,162 @@ namespace CommonUtils.IISAdmin
                 server = ServerManager.OpenRemote(this.machineName);
         }
 
-        public static SiteCollection GetAllSites(string machineName)
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all sites. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 6/7/2017. </remarks>
+        ///
+        /// <param name="machineName">  Name of the machine. </param>
+        ///
+        /// <returns>   all sites. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public static List<WebSite> GetAllSites(string machineName = null)
         {
-            return server.Sites;
+            if (!string.IsNullOrWhiteSpace(machineName))
+                server = ServerManager.OpenRemote(machineName);
+            else if (server == null)
+                server = new ServerManager();
+            List<WebSite> sites = new List<WebSite>();
+            foreach (var site in server.Sites)
+            {
+                sites.Add(new WebSite(site));
+            };
+            return sites;
         }
 
-        public string GetAppPoolName(Site site)
+        public static WebSite GetSite(string siteName)
         {
-            ApplicationDefaults defaults = site.ApplicationDefaults;
-            return defaults.ApplicationPoolName;
+            return new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault());
         }
 
-        public static BindingCollection GetSiteBindings(Site site)
+        public static WebSite AddUpdateWebSite(WebSite site)
         {
-            return site.Bindings;
+            Site mySite = server.Sites.Where(x => x.Name == site.name).FirstOrDefault();
+            if (mySite == null)
+            {
+                mySite = CreateSite(site.serverName, site.ipAddress, site.siteId, site.name, site.hostName, site.physicalPath);
+            }
+            else
+            {
+                if (site.state.ToLower().StartsWith("stop"))
+                    mySite.Stop();
+                if (site.state.ToLower().StartsWith("start"))
+                    mySite.Start();
+                if (site.active == true)
+                    mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "true";
+                if (site.active == false)
+                    mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "false";
+            }
+
+            return new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
         }
 
-        public static ObjectState GetSiteState(Site site)
+        public static Site CreateSite(string computerName, 
+                                         string computerIp, 
+                                         string siteID, 
+                                         string siteName, 
+                                         string hostName,
+                                         string physicalPath, 
+                                         string port = "443", 
+                                         bool ssl = true, 
+                                         string username = null, 
+                                         string password = null,
+                                         string loggingDir = null,
+                                         string applicationPool = "DefaultAppPool")
         {
-            return site.State;
+            try
+            {
+                string http = "http";
+                if (ssl)
+                    http = "https";
+                string bindinginfo = computerIp + ":" + port + ":" + hostName;
+
+                if (server.Sites.Where(x => x.Name == siteName).FirstOrDefault() == null)
+                {
+                    Site mySite = server.Sites.Add(siteName.ToString(), http, bindinginfo, physicalPath);
+                    mySite.ApplicationDefaults.ApplicationPoolName = applicationPool;
+                    mySite.TraceFailedRequestsLogging.Enabled = true;
+                    mySite.TraceFailedRequestsLogging.Directory = loggingDir;
+                    server.CommitChanges();
+                    server.Sites.Where(x => x.Name == siteName).FirstOrDefault().Start();
+                }
+                else
+                {
+                    throw new Exception("Name should be unique, " + siteName + " already exists.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed in CreateSite", ex);
+            }
+            return GetSite(siteName);
         }
 
-        public static ApplicationCollection GetSiteApplications(Site site)
-        { 
-            return site.Applications;
+        public WebAppPoolModel GetAppPool(string appPoolName)
+        {
+            return new WebAppPoolModel(server.ApplicationPools.Where(x => x.Name == appPoolName).FirstOrDefault());
         }
 
-        public static List<WebAppPoolModel> GetApplicationPoolSettings()
+        public static List<WebAppPoolModel> GetApplicationPools()
         {
             List<WebAppPoolModel> pools = new List<WebAppPoolModel>();
-            ApplicationPoolCollection applicationPools = server.ApplicationPools;
-            foreach (ApplicationPool pool in applicationPools)
+            foreach (ApplicationPool pool in server.ApplicationPools)
             {
-                pools.Add(new WebAppPoolModel()
-                {
-                    autoStart = pool.AutoStart,
-                    workers = pool.WorkerProcesses,
-                    runtime = pool.ManagedRuntimeVersion,
-                    appPoolName = pool.Name,
-                    identityType = pool.ProcessModel.IdentityType,
-                    userName = pool.ProcessModel.UserName,
-                    password = pool.ProcessModel.Password,
-                });
+                pools.Add(new WebAppPoolModel(pool));
             }
             return pools;
         }
 
-        public ApplicationPool AddUpdateApplicationPool(string appPoolName, string managedRuntimeVersion = "v4.0", ProcessModelIdentityType identityType = ProcessModelIdentityType.NetworkService)
+        public WebAppPoolModel AddUpdateApplicationPool(string appPoolName, string managedRuntimeVersion = "v4.0", string identityType = "NetworkService", bool autoStart = true)
+        {
+            return AddUpdateApplicationPool(new WebAppPoolModel()
+            {
+                name = appPoolName,
+                runtimeVersion = managedRuntimeVersion,
+                identityType = identityType,
+                autoStart = autoStart,
+            });
+        }
+
+        public WebAppPoolModel AddUpdateApplicationPool(WebAppPoolModel appPoolModel)
         {
             ApplicationPool myApplicationPool = null;
             if (server.ApplicationPools != null && server.ApplicationPools.Count > 0)
             {
-                if (server.ApplicationPools.FirstOrDefault(p => p.Name == appPoolName) == null)
+                myApplicationPool = server.ApplicationPools.FirstOrDefault(p => p.Name == appPoolModel.name);
+                if (myApplicationPool != null)
                 {
-                    //if we find the pool already there, we will get a reference to it for update
-                    myApplicationPool = server.ApplicationPools.FirstOrDefault(p => p.Name == appPoolName);
+                    myApplicationPool = server.ApplicationPools.FirstOrDefault(p => p.Name == appPoolModel.name);
                 }
                 else
                 {
-                    //if the pool is not already there we will create it
-                    myApplicationPool = server.ApplicationPools.Add(appPoolName);
+                    myApplicationPool = server.ApplicationPools.Add(appPoolModel.name);
                 }
             }
             else
             {
-                //if the pool is not already there we will create it
-                myApplicationPool = server.ApplicationPools.Add(appPoolName);
+                myApplicationPool = server.ApplicationPools.Add(appPoolModel.name);
             }
-
             if (myApplicationPool != null)
             {
-                myApplicationPool.ProcessModel.IdentityType = identityType;
-                myApplicationPool.ManagedRuntimeVersion = managedRuntimeVersion;
-                server.CommitChanges();
+                ProcessModelIdentityType identityEnum = new ProcessModelIdentityType();
+                Enum.TryParse<ProcessModelIdentityType>(appPoolModel.identityType, true, out identityEnum);
+                if (myApplicationPool.ProcessModel.IdentityType != identityEnum
+                    || myApplicationPool.ManagedRuntimeVersion != appPoolModel.runtimeVersion
+                    || myApplicationPool.AutoStart != appPoolModel.autoStart
+                    || myApplicationPool.State.ToString().ToLower() != appPoolModel.state.ToLower())
+                {
+                    myApplicationPool.ProcessModel.IdentityType = identityEnum;
+                    myApplicationPool.ManagedRuntimeVersion = appPoolModel.runtimeVersion;
+                    myApplicationPool.AutoStart = appPoolModel.autoStart;
+                    if (appPoolModel.state.ToLower().StartsWith("stop"))
+                        myApplicationPool.Stop();
+                    if (appPoolModel.state.ToLower().StartsWith("start"))
+                        myApplicationPool.Start();
+                    server.CommitChanges();
+                }
             }
-            return server.ApplicationPools.Where(x => x.Name == appPoolName).FirstOrDefault();
+            return new WebAppPoolModel(server.ApplicationPools.Where(x => x.Name == appPoolModel.name).FirstOrDefault());
         }
     }
 }

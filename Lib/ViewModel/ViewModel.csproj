@@ -49,10 +49,11 @@
     <Compile Include="AppConfigApiModels.cs" />
     <Compile Include="ApplicationInsightModels.cs" />
     <Compile Include="BoardModels.cs" />
+    <Compile Include="IISMonitoringModels.cs" />
     <Compile Include="LoggingModels.cs" />
     <Compile Include="MachineModels.cs" />
-    <Compile Include="Note.cs" />
-    <Compile Include="PerformanceModel.cs" />
+    <Compile Include="NoteModels.cs" />
+    <Compile Include="PerformanceModels.cs" />
     <Compile Include="PowershellModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

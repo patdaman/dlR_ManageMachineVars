@@ -76,6 +76,10 @@
       <Project>{684bc424-e89c-44d1-8194-7c9754957e28}</Project>
       <Name>CommonUtils.EnvVariables</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CommonUtils.IISAdmin\CommonUtils.IISAdmin.csproj">
+      <Project>{b1c90dee-9e55-447a-9767-f46db219d3e5}</Project>
+      <Name>CommonUtils.IISAdmin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommonUtils.Powershell\CommonUtils.Powershell.csproj">
       <Project>{c583a486-da8c-49d4-a1ee-1353ba094315}</Project>
       <Name>CommonUtils.Powershell</Name>
