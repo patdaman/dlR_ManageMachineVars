@@ -1,7 +1,7 @@
 ﻿'use strict'
 
-MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants',
-    '$log', '$timeout', '$q', '$interval', 'ModalService',
+MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$log',
+    '$timeout', '$q', '$interval', 'ModalService', 'uiGridConstants',
     function ($scope, $http, uiGridConstants,
     $log, $timeout, $q, $interval, ModalService) {
         $scope.title = "Machine Configuration ";
@@ -23,14 +23,14 @@ MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants'
         var active;
 
         var environments = [];
-        var components = [];
+        //var components = [];
         var applications = [];
 
-        var componentId;
-        var componentName;
+        //var componentId;
+        //var componentName;
 
-        var selectedComponent;
-        var component;
+        //var selectedComponent;
+        //var component;
         var selectedApplication;
         var application;
         var selectedEnvironment;
@@ -46,7 +46,7 @@ MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants'
             return $scope.environment;
         };
         $scope.application = '';
-        $scope.component = '';
+        //$scope.component = '';
         $scope.dateTimeString = function () {
             date: 'yyyy-MM-dd_HH:mm(Z)'
             return date;
@@ -121,40 +121,31 @@ MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants'
             { field: 'machine_name', width: '20%' },
             { field: 'uri', width: '20%' },
             { field: 'ip_address', width: '10%' },
-            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
-            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120 },
+            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
+            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
             {
                 field: 'active',
                 type: 'boolean',
                 enableFiltering: false,
                 width: 80
             },
-            //{ field: 'Enum_Locations', visible: false },
-            //{ field: 'MachineComponentPaths', visible: false },
-            //{ field: 'EnvironmentVariables', visible: true },
-
-                {
-                    field: "Action",
-                    width: 80,
-                    groupable: false,
-                    filterable: false,
-                    sortable: false,
-                    enableCellEdit: false,
-                    enableFiltering: false,
-                    cellTemplate: '/Content/Templates/machineActionsTemplate.html'
-                }
+            { field: 'm_Locations', visible: false },
+            {
+                field: "Action",
+                width: 80,
+                groupable: false,
+                filterable: false,
+                sortable: false,
+                enableCellEdit: false,
+                enableFiltering: false,
+                cellTemplate: '/Content/Templates/machineActionsTemplate.html'
+            }
             ],
         };
 
         $scope.filterOptions = {
             filterText: "",
             useExternalFilter: true
-        };
-
-        $scope.gridOptions.sortInfo = {
-            fields: ['machine_name', 'usage'],
-            directions: ['asc'],
-            columns: [0, 1]
         };
 
         $scope.changeGroupBy = function (group1, group2) {
@@ -185,17 +176,6 @@ MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants'
             $scope.environments = result.data;
         });
 
-        // List of components:
-        $http({
-            method: 'GET',
-            url: 'api:/ConfigValuesApi',
-            params: {
-                type: "component"
-            },
-        }).then(function (result) {
-            $scope.components = result.data;
-        });
-
         // List of applications:
         $http({
             method: 'GET',
@@ -210,11 +190,6 @@ MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants'
         // Function call from Index page dropdown OnChange
         $scope.updateEnvironment = function () {
             $scope.environment = $scope.selectedEnvironment.value;
-            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-        };
-        // Function call from Index page dropdown OnChange
-        $scope.updateComponent = function () {
-            $scope.component = $scope.selectedComponent;
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
         };
         // Function call from Index page dropdown OnChange
@@ -325,5 +300,133 @@ MachineApp.controller('MachineController', ['$scope', '$http', 'uiGridConstants'
                 swal("Oops...", Message, "error");
                 console.log(error)
             });
+        };
+
+        // Displays modal window containing the currently selected Component's config elements
+        // - Note that this only applies to the first (highest) Grouped object
+        // - In our case the Component Name row 
+        $scope.machineDetail = function (row) {
+            var treeLevel = row.treeLevel;
+            var machineName;
+            machineName = row.entity.machine_name;
+            //var componentFileName;
+            var def = $q.defer();
+            //angular.forEach(row.treeNode.aggregations, function (aggregation) {
+            //    if (aggregation.col.field === 'componentName')
+            //        componentGroupName = aggregation.groupVal;
+            //});
+            var deferred = $q.defer();
+            $http({
+                method: 'GET',
+                url: 'api:/IISApi',
+                params: {
+                    machineName: machineName,
+                }
+            })
+            .success(deferred.resolve)
+            .success(function (data) {
+                ModalService.showModal({
+                    templateUrl: "/Content/Templates/configFileModal.html",
+                    controller: "ConfigViewer",
+                    inputs: {
+                        component: componentGroupName,
+                        files: data,
+                        environments: $scope.environments,
+                        environment: $scope.environment,
+                        Admin: $scope.Admin,
+                    }
+                })
+                    .then(function (modal) {
+                        modal.element.modal();
+                        modal.close.then(function (result) {
+                            var fileEnvironment;
+                            if (!result.environment || result.environment === '')
+                                fileEnvironment = $scope.environment;
+                            else {
+                                fileEnvironment = result.environment;
+                                $scope.environment = fileEnvironment;
+                            }
+                            if (result.publishFile) {
+                                $scope.publishComponent(result.component, fileEnvironment, selectedComponent.applications)
+                            };
+                        });
+                    })
+            })
+            .error(function (error) {
+                console.log(error);
+            })
+            return def.promise
+        };
+
+        $scope.getNote = function (row) {
+            var localRow = row;
+            var configVarId = row.entity.configvar_id;
+            var key = row.entity.key;
+            var fullElement = row.entity.fullElement;
+            var componentName = row.entity.componentName;
+            var componentFileName = row.entity.fileName;
+            var noteText;
+            var def = $q.defer();
+            $http({
+                method: 'GET',
+                url: 'api:/NoteApi',
+                params: {
+                    noteType: 'machine',
+                    id: configVarId,
+                    createDate: '1900-01-01'
+                    //componentName: componentName,
+                }
+            })
+            .success(def.resolve)
+            .success(function (data) {
+                var singleData = data[0];
+                ModalService.showModal({
+                    templateUrl: "/Content/Templates/noteModal.html",
+                    controller: "noteViewer",
+                    inputs: {
+                        componentName: componentName,
+                        key: key,
+                        fullElement: fullElement,
+                        configVarId: configVarId,
+                        createDate: singleData.createDate,
+                        lastModifiedUser: singleData.userName,
+                        lastModifiedDate: singleData.modifyDate,
+                        noteText: singleData.noteText,
+                        //createDate: data.createDate,
+                        //lastModifiedUser: data.userName,
+                        //lastModifiedDate: data.modifyDate,
+                        //noteText: data.noteText,
+                    }
+                })
+                    .then(function (modal) {
+                        modal.element.modal();
+                        modal.close.then(function (result) {
+                            if (result.save) {
+                                var deferred = $q.defer();
+                                var data = JSON.stringify({
+                                    noteId: result.configVarId,
+                                    noteType: 'machine',
+                                    noteText: result.noteText,
+                                    userName: $rootScope.UserName,
+                                });
+                                $http({
+                                    method: 'POST',
+                                    url: 'api:/NoteApi/',
+                                    data: data,
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                }).success(deferred.resolve)
+                                  .success(function () {
+                                      localRow.entity.hasNotes = true;
+                                  })
+                            }
+                        });
+                    })
+            })
+            .error(function (error) {
+                console.log(error);
+            })
+            return def.promise;
         };
     }]);

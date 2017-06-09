@@ -38,7 +38,7 @@ namespace CommonUtils.IISAdmin
         ///
         /// <returns>   all sites. </returns>
         ///-------------------------------------------------------------------------------------------------
-        public static List<WebSite> GetAllSites(string machineName = null)
+        public List<WebSite> GetAllSites(string machineName = null)
         {
             if (!string.IsNullOrWhiteSpace(machineName))
                 server = ServerManager.OpenRemote(machineName);
@@ -52,12 +52,12 @@ namespace CommonUtils.IISAdmin
             return sites;
         }
 
-        public static WebSite GetSite(string siteName)
+        public WebSite GetSite(string siteName)
         {
             return new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault());
         }
 
-        public static WebSite AddUpdateWebSite(WebSite site)
+        public WebSite AddUpdateWebSite(WebSite site)
         {
             Site mySite = server.Sites.Where(x => x.Name == site.name).FirstOrDefault();
             if (mySite == null)
@@ -79,7 +79,7 @@ namespace CommonUtils.IISAdmin
             return new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
         }
 
-        public static Site CreateSite(string computerName, 
+        public Site CreateSite(string computerName, 
                                          string computerIp, 
                                          string siteID, 
                                          string siteName, 
@@ -117,7 +117,8 @@ namespace CommonUtils.IISAdmin
             {
                 throw new Exception("Failed in CreateSite", ex);
             }
-            return GetSite(siteName);
+            return server.Sites.Where(x => x.Name == siteName).FirstOrDefault();
+            //return GetSite(siteName);
         }
 
         public WebAppPoolModel GetAppPool(string appPoolName)
@@ -125,7 +126,7 @@ namespace CommonUtils.IISAdmin
             return new WebAppPoolModel(server.ApplicationPools.Where(x => x.Name == appPoolName).FirstOrDefault());
         }
 
-        public static List<WebAppPoolModel> GetApplicationPools()
+        public List<WebAppPoolModel> GetApplicationPools()
         {
             List<WebAppPoolModel> pools = new List<WebAppPoolModel>();
             foreach (ApplicationPool pool in server.ApplicationPools)

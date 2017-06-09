@@ -17,13 +17,41 @@ namespace ViewModel
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
         public bool machineActive { get; set; }
-        public List<IISMonitor> Monitors { get; set; } 
-        public List<Application> Applications {get; set; }
+        public List<IISMonitor> Monitors { get; set; }
+        public List<Application> Applications { get; set; }
 
         public WebAppDto(WebAppDto x)
         {
 
         }
+    }
+
+    public class IISAppSettings
+    {
+        public IISAppSettings() { }
+        public string siteId { get; set; }
+        public string name { get; set; }
+        public string serverName { get; set; }
+        public string ipAddress { get; set; }
+        public string hostName { get; set; }
+        public string appPoolName { get; set; }
+        public string physicalPath { get; set; }
+        public string state { get; set; }
+        public Nullable<bool> active { get; set; }
+        public List<SiteBinding> bindings { get; set; }
+
+        public IISAppSettings(IISAppSettings x)
+        {
+
+        }
+    }
+
+    public class SiteBinding
+    {
+        public SiteBinding() { }
+        public string host { get; set; }
+        public string bindingInformation { get; set; }
+        public string bindingProtocol { get; set; }
     }
 
     public class IISMonitor
@@ -32,19 +60,7 @@ namespace ViewModel
         { }
 
 
-        public IISMonitor(IISMonitor x)
-        {
-
-        }
-    }
-
-    public class IISAppSettings
-    {
-        public IISAppSettings()
-        { }
-
-
-        public IISAppSettings(IISAppSettings x)
+        public IISMonitor(IISAppSettings x)
         {
 
         }
@@ -55,7 +71,7 @@ namespace ViewModel
         public bool autoStart { get; set; }
         public string runtime { get; set; }
         public string appPoolName { get; set; }
-        public ProcessIdentityType identityType { get; set; }
+        public string identityType { get; set; }
         public string userName { get; set; }
         public string password { get; set; }
         public IISWorkerProcess workerProcess { get; set; }
@@ -75,14 +91,5 @@ namespace ViewModel
         {
 
         }
-    }
-
-    public enum ProcessIdentityType
-    {
-        LocalSystem = 0,
-        LocalService = 1,
-        NetworkService = 2,
-        SpecificUser = 3,
-        ApplicationPoolIdentity = 4
     }
 }

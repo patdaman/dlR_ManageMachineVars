@@ -17,7 +17,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.IISMonitor>>(HttpStatusCode.OK, iisProcessor.GetAllApplications());
+                return Request.CreateResponse<List<ViewModel.IISAppSettings>>(HttpStatusCode.OK, iisProcessor.GetAllApplications());
             }
             catch (Exception ex)
             {
@@ -27,11 +27,25 @@ namespace DevOpsApi.Controllers
 
         // GET: api/IISApi/5
         [HttpGet]
-        public HttpResponseMessage Get(int machineId, string appName)
+        public HttpResponseMessage Get(string machineName)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.IISMonitor>(HttpStatusCode.OK, iisProcessor.GetApplication(machineId, appName));
+                return Request.CreateResponse<List<ViewModel.IISAppSettings>>(HttpStatusCode.OK, iisProcessor.GetMachineApps(machineName));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        // GET: api/IISApi/5
+        [HttpGet]
+        public HttpResponseMessage Get(string machineName, string appName)
+        {
+            try
+            {
+                return Request.CreateResponse<ViewModel.IISAppSettings>(HttpStatusCode.OK, iisProcessor.GetApplication(machineName, appName));
             }
             catch (Exception ex)
             {
