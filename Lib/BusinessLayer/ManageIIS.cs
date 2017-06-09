@@ -12,12 +12,14 @@ namespace BusinessLayer
     public class ManageIIS
     {
         public string machineName { get; set; }
-        public static SiteTools _siteTools = new SiteTools();
+        public static SiteTools _siteTools;
 
         public ManageIIS(string machineName = null)
         {
             if (!string.IsNullOrWhiteSpace(machineName))
                 this.machineName = machineName;
+            string currentDomain = Environment.UserDomainName;
+            string currentUser = Environment.UserName;
         }
 
         public List<IISAppSettings> GetAllApplications()
@@ -29,23 +31,31 @@ namespace BusinessLayer
             //{
             //    machineApps.AddRange(GetMachineApps(machine.machine_name));
             //}
-            machineApps.AddRange(GetMachineApps("hqdev08.dev.corp.printable.com"));
+            machineApps.AddRange(GetMachineApps());
             return machineApps;
         }
 
-        public List<IISAppSettings> GetMachineApps(string machineName)
+        public List<IISAppSettings> GetMachineApps(string machineName = null)
         {
+            if (!string.IsNullOrWhiteSpace(machineName))
+                this.machineName = machineName;
+            if (_siteTools == null)
+                _siteTools = new SiteTools(this.machineName);
             List<IISAppSettings> machineApps = new List<IISAppSettings>();
             List<WebSite> machineSites = _siteTools.GetAllSites(machineName);
             foreach (WebSite site in machineSites)
             {
-                machineApps.Add(GetApplication(machineName, site.name));
+                machineApps.Add(GetApplication(site.name, machineName));
             }
             return machineApps;
         }
 
-        public IISAppSettings GetApplication(string machineName, string appName)
+        public IISAppSettings GetApplication(string appName, string machineName = null)
         {
+            if (!string.IsNullOrWhiteSpace(machineName))
+                this.machineName = machineName;
+            if (_siteTools == null)
+                _siteTools = new SiteTools(this.machineName);
             WebSite siteProperties = _siteTools.GetSite(appName);
             IISAppSettings machineApps = new IISAppSettings()
             {

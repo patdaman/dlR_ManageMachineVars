@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
+using System.Net;
 
 namespace CommonUtils.IISAdmin
 {
@@ -41,13 +42,24 @@ namespace CommonUtils.IISAdmin
         public List<WebSite> GetAllSites(string machineName = null)
         {
             if (!string.IsNullOrWhiteSpace(machineName))
-                server = ServerManager.OpenRemote(machineName);
-            else if (server == null)
-                server = new ServerManager();
+            {
+                if (this.machineName != machineName)
+                {
+                    server = new ServerManager(machineName);
+                    this.machineName = machineName;
+                }
+            }
+            if (string.IsNullOrWhiteSpace(this.machineName))
+                machineName = Environment.MachineName;
+            IPAddress[] ips = Dns.GetHostAddresses(machineName);
             List<WebSite> sites = new List<WebSite>();
             foreach (var site in server.Sites)
             {
-                sites.Add(new WebSite(site));
+                sites.Add(new WebSite(site)
+                {
+                    serverName = machineName ?? Environment.MachineName,
+                    ipAddress = ips[1].ToString(),
+                });
             };
             return sites;
         }
@@ -79,15 +91,15 @@ namespace CommonUtils.IISAdmin
             return new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
         }
 
-        public Site CreateSite(string computerName, 
-                                         string computerIp, 
-                                         string siteID, 
-                                         string siteName, 
+        public Site CreateSite(string computerName,
+                                         string computerIp,
+                                         string siteID,
+                                         string siteName,
                                          string hostName,
-                                         string physicalPath, 
-                                         string port = "443", 
-                                         bool ssl = true, 
-                                         string username = null, 
+                                         string physicalPath,
+                                         string port = "443",
+                                         bool ssl = true,
+                                         string username = null,
                                          string password = null,
                                          string loggingDir = null,
                                          string applicationPool = "DefaultAppPool")

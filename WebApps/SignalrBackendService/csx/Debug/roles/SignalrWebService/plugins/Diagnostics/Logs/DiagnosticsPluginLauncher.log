@@ -1,0 +1,15 @@
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Emulator config file set to C:\Users\pdelosreyes\Documents\GitHub\dlR_ManageAppVars\WebApps\SignalrBackendService\csx\Debug\roles\SignalrWebService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] DiagnosticsStoreRootPath set to: C:\Users\pdelosreyes\AppData\Local\dftmp\Resources\927a95c4-3ad3-4945-ba9f-1ef402bef2de
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Loading config file: C:\Users\pdelosreyes\Documents\GitHub\dlR_ManageAppVars\WebApps\SignalrBackendService\csx\Debug\roles\SignalrWebService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Config file to read: C:\Users\pdelosreyes\Documents\GitHub\dlR_ManageAppVars\WebApps\SignalrBackendService\csx\Debug\roles\SignalrWebService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Checking VM Type
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Emulator config file set to C:\Users\pdelosreyes\Documents\GitHub\dlR_ManageAppVars\WebApps\SignalrBackendService\csx\Debug\roles\SignalrWebService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Extension set to Emulator Mode
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Reading XML configuration file
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Bypassing private config decryption
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Stopping the running plugin, if any
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] No DiagnosticsPlugin is running.
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Killing any DiagnosticsPlugin that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Killing any MonAgentHost that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Diagnostics plugin stopped successfully
+DiagnosticsPluginLauncher.exe Information: 0 : [6/6/2017 11:18:05 PM] Resetting DiagnosticPlugin
