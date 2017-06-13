@@ -1,16 +1,21 @@
 ﻿using Microsoft.Web.Administration;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace CommonUtils.IISAdmin
 {
-    public class SiteTools
+    public class SiteTools : IDisposable
     {
         public string machineName { get; set; }
         private static ServerManager server;
+
+        private bool disposed = false;
+        private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Constructor. </summary>
@@ -24,6 +29,7 @@ namespace CommonUtils.IISAdmin
         {
             if (!string.IsNullOrWhiteSpace(machineName))
                 this.machineName = machineName;
+
             if (string.IsNullOrWhiteSpace(this.machineName))
                 server = new ServerManager();
             else
@@ -45,13 +51,13 @@ namespace CommonUtils.IISAdmin
             {
                 if (this.machineName != machineName)
                 {
-                    server = new ServerManager(machineName);
+                    server = ServerManager.OpenRemote(machineName);
                     this.machineName = machineName;
                 }
             }
             if (string.IsNullOrWhiteSpace(this.machineName))
                 machineName = Environment.MachineName;
-            IPAddress[] ips = Dns.GetHostAddresses(machineName);
+            IPAddress[] ips = Dns.GetHostAddresses(this.machineName);
             List<WebSite> sites = new List<WebSite>();
             foreach (var site in server.Sites)
             {
@@ -198,6 +204,21 @@ namespace CommonUtils.IISAdmin
                 }
             }
             return new WebAppPoolModel(server.ApplicationPools.Where(x => x.Name == appPoolModel.name).FirstOrDefault());
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+            if (disposing)
+                handle.Dispose();
+            disposed = true;
         }
     }
 }
