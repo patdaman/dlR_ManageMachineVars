@@ -41,14 +41,28 @@ namespace BusinessLayer
                 this.machineName = machineName;
             List<IISAppSettings> machineApps;
             List<WebSite> machineSites;
-            using (var _siteTools = new SiteTools(this.machineName))
+            try
             {
+                _siteTools = new SiteTools(this.machineName);
                 machineApps = new List<IISAppSettings>();
                 machineSites = _siteTools.GetAllSites(machineName);
                 foreach (WebSite site in machineSites)
                 {
-                    machineApps.Add(GetApplication(site.name, machineName));
+                    IISAppSettings app = GetApplication(site.name, machineName);
+                    app.ipAddress = site.ipAddress;
+                    app.serverName = site.serverName;
+                    app.state = site.state;
+                    app.active = site.active;
+                    machineApps.Add(app);
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                _siteTools.Dispose();
             }
             return machineApps;
         }

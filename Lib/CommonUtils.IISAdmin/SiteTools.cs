@@ -65,7 +65,7 @@ namespace CommonUtils.IISAdmin
                 sites.Add(new WebSite(site)
                 {
                     serverName = machineName ?? Environment.MachineName,
-                    ipAddress = ips[1].ToString(),
+                    ipAddress = ips[0].ToString(),
                 });
             };
             return sites;
