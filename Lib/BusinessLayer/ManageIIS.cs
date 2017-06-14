@@ -31,7 +31,7 @@ namespace BusinessLayer
             //{
             //    machineApps.AddRange(GetMachineApps(machine.machine_name));
             //}
-            machineApps.AddRange(GetMachineApps("hqdev08.dev.corp.printable.com"));
+            machineApps.AddRange(GetMachineApps("hal9000"));
             return machineApps;
         }
 
@@ -97,6 +97,8 @@ namespace BusinessLayer
 
         public IISAppSettings UpdateApplicationSetting(IISAppSettings value)
         {
+            WebSite siteProperties = _siteTools.GetSite(value.name);
+
             throw new NotImplementedException();
         }
 
