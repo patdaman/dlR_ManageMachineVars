@@ -140,4 +140,18 @@ namespace CommonUtils.IISAdmin
             host = x.Host;
         }
     }
+
+    public class WindowsUser
+    {
+        public WindowsUser() { }
+        public string userName { get; set; }
+        public string password { get; set; }
+        public string domain { get; set; }
+        public WindowsUser(WindowsUser x)
+        {
+            userName = x.userName;
+            password = x.password;
+            domain = x.domain;
+        }
+    }
 }

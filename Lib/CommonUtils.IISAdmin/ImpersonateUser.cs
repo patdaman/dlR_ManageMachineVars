@@ -20,11 +20,13 @@ namespace CommonUtils.IISAdmin
         // If you incorporate this code into a DLL, be sure to demand FullTrust.
         [PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
         //public WindowsIdentity GetUser(string domainName, string userName, string password)
-        public WindowsImpersonationContext GetUser(string domainName, string userName, string password)
+        public WindowsImpersonationContext GetUser(string userName, string password, string domainName = null)
         {
             WindowsIdentity newId;
             WindowsImpersonationContext impersonatedUser;
             SafeTokenHandle safeTokenHandle;
+            if (string.IsNullOrWhiteSpace(domainName))
+                domainName = Environment.UserDomainName;
             try
             {
                 const int LOGON32_PROVIDER_DEFAULT = 0;

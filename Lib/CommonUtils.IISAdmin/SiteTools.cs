@@ -6,6 +6,7 @@ using System.DirectoryServices;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace CommonUtils.IISAdmin
 {
@@ -16,6 +17,7 @@ namespace CommonUtils.IISAdmin
 
         private bool disposed = false;
         private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        private static WindowsImpersonationContext domainUser;
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Constructor. </summary>
@@ -27,13 +29,7 @@ namespace CommonUtils.IISAdmin
         ///-------------------------------------------------------------------------------------------------
         public SiteTools(string machineName = null)
         {
-            if (!string.IsNullOrWhiteSpace(machineName))
-                this.machineName = machineName;
-
-            if (string.IsNullOrWhiteSpace(this.machineName))
-                server = new ServerManager();
-            else
-                server = ServerManager.OpenRemote(this.machineName);
+            server = GetServerManager(machineName);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -51,12 +47,17 @@ namespace CommonUtils.IISAdmin
             {
                 if (this.machineName != machineName)
                 {
-                    server = ServerManager.OpenRemote(machineName);
                     this.machineName = machineName;
                 }
+                if (server == null)
+                    server = GetServerManager(this.machineName);
             }
             if (string.IsNullOrWhiteSpace(this.machineName))
+            {
                 machineName = Environment.MachineName;
+                if (server == null)
+                    server = GetServerManager();
+            }
             IPAddress[] ips = Dns.GetHostAddresses(this.machineName);
             List<WebSite> sites = new List<WebSite>();
             foreach (var site in server.Sites)
@@ -219,6 +220,38 @@ namespace CommonUtils.IISAdmin
             if (disposing)
                 handle.Dispose();
             disposed = true;
+        }
+
+        private ServerManager GetServerManager(string machineName = null)
+        {
+            if (!string.IsNullOrWhiteSpace(machineName))
+                this.machineName = machineName;
+
+            if (string.IsNullOrWhiteSpace(this.machineName))
+                return new ServerManager();
+            else
+            {
+
+                domainUser = GetWindowsUser();
+                return ServerManager.OpenRemote(this.machineName);
+            }
+        }
+
+        private WindowsImpersonationContext GetWindowsUser()
+        {
+            WindowsUser user = new WindowsUser()
+            {
+                userName = "pdelosreyes",
+                password = "Patman7474!",
+                domain = "printable",
+            };
+            return GetWindowsUser(user);
+        }
+
+        private WindowsImpersonationContext GetWindowsUser(WindowsUser windowsUser)
+        {
+            var user = new ImpersonateUser();
+            return user.GetUser(windowsUser.userName, windowsUser.password, windowsUser.domain);
         }
     }
 }
