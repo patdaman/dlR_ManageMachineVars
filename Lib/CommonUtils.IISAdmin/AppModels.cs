@@ -83,7 +83,7 @@ namespace CommonUtils.IISAdmin
             {
                 webApplications.Add(new WebApplication(app));
             }
-            //state = site.State.ToString();
+            state = site.State.ToString();
             siteId = site.Id.ToString();
             physicalPath = webApplications.FirstOrDefault().VirtualDirectories.FirstOrDefault().PhysicalPath;
         }
