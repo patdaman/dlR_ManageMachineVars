@@ -50,6 +50,14 @@ namespace CommonUtils.IISAdmin
 
     public class ConfigKeyValue
     {
+        private ConfigurationAttribute key1;
+
+        public ConfigKeyValue(ConfigurationAttribute key)
+        {
+            this.key = key.Name;
+            this.value = key.Value.ToString();
+        }
+
         public string key { get; set; }
         public string value { get; set; }
     }
@@ -67,6 +75,7 @@ namespace CommonUtils.IISAdmin
         public string state { get; set; }
         public Nullable<bool> active { get; set; }
         public List<Binding> bindings { get; set; }
+        public List<ConfigKeyValue> configKeys { get; set; }
         public List<WebApplication> webApplications { get; set; }
 
         public WebSite(Site site)
@@ -83,7 +92,13 @@ namespace CommonUtils.IISAdmin
             {
                 webApplications.Add(new WebApplication(app));
             }
-            //state = site.State.ToString();
+            var appSettings = site.GetWebConfiguration().GetSection("AppSettings");
+            configKeys = new List<ConfigKeyValue>();
+            foreach (var key in appSettings.Attributes)
+            {
+                configKeys.Add(new ConfigKeyValue(key));
+            }
+            state = site.State.ToString();
             siteId = site.Id.ToString();
             physicalPath = webApplications.FirstOrDefault().VirtualDirectories.FirstOrDefault().PhysicalPath;
         }

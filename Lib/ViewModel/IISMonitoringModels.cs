@@ -39,11 +39,18 @@ namespace ViewModel
         public string state { get; set; }
         public Nullable<bool> active { get; set; }
         public List<SiteBinding> bindings { get; set; }
+        public List<ConfigKeyVal> configKeys { get; set; }
 
         public IISAppSettings(IISAppSettings x)
         {
 
         }
+    }
+
+    public class ConfigKeyVal
+    {
+        public string key { get; set; }
+        public string value { get; set; }
     }
 
     public class SiteBinding

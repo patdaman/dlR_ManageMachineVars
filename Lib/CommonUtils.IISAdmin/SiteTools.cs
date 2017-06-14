@@ -14,6 +14,7 @@ namespace CommonUtils.IISAdmin
     {
         public string machineName { get; set; }
         private static ServerManager server;
+        private static ConfigTools configTool = new ConfigTools();
 
         private bool disposed = false;
         private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
@@ -239,11 +240,17 @@ namespace CommonUtils.IISAdmin
 
         private WindowsImpersonationContext GetWindowsUser()
         {
+            //WindowsUser user = new WindowsUser()
+            //{
+            //    userName = "pdelosreyes",
+            //    password = "Patman7474!",
+            //    domain = "printable",
+            //};
             WindowsUser user = new WindowsUser()
             {
-                userName = "pdelosreyes",
+                userName = "patman",
                 password = "Patman7474!",
-                domain = "printable",
+                domain = "hal9000",
             };
             return GetWindowsUser(user);
         }
