@@ -12,15 +12,14 @@ namespace ViewModel
         public string machine_name { get; set; }
         public string ip_address { get; set; }
         public string location { get; set; }
-        public string usage { get; set; }
+        public string environment { get; set; }
+        public string uri { get; set; }
         public System.DateTime create_date { get; set; }
         public Nullable<System.DateTime> modify_date { get; set; }
         public string last_modify_user { get; set; }
         public bool active { get; set; }
-        public virtual List<ConfigVariableValue> ConfigVariableValues { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }
         public virtual List<MachineComponentPath> MachineComponentPaths { get; set; }
-        public virtual List<EnvironmentDtoVariable> EnvironmentVariables { get; set; }
 
         public Machine()
         { }
@@ -31,15 +30,11 @@ namespace ViewModel
             machine_name = m.machine_name;
             ip_address = m.ip_address;
             location = m.location;
-            usage = m.usage;
+            environment = m.environment;
             create_date = m.create_date;
             modify_date = m.modify_date;
             last_modify_user = m.last_modify_user;
             active = m.active;
-            //ConfigVariableValues = m.ConfigVariableValues;
-            //Enum_Locations = m.Enum_Locations;
-            //MachineComponentPaths = m.MachineComponentPaths;
-            //EnvironmentVariables = m.EnvironmentVariables;
         }
     }
 

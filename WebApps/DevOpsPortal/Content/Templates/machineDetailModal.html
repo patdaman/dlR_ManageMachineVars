@@ -1,0 +1,26 @@
+﻿<div class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title">{{machineName}}</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <b>File Name:</b>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-click="publish()" class="btn btn-dark btn-warning" style="float:left;">Publish</button>
+                <button type="button" ng-disabled="machineChange" ng-click="save()" class="btn btn-md btn-primary">Save</button>
+                <button type="button" ng-disabled="selectedFile" ng-click="close()" class="btn btn-md btn-danger">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('.modal-content').resizable({
+            alsoResize: ".modal-header, .modal-body, .modal-footer"
+        });
+        $('.modal-dialog').draggable();
+    </script>
+</div>

@@ -76,7 +76,7 @@ namespace BusinessLayer
                     machine_name = machine.machine_name,
                     ip_address = machine.ip_address,
                     location = machine.location,
-                    usage = machine.usage,
+                    environment = machine.usage,
                     create_date = machine.create_date,
                     modify_date = machine.modify_date,
                     last_modify_user = machine.last_modify_user,

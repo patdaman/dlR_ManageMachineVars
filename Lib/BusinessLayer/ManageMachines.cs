@@ -35,7 +35,7 @@ namespace BusinessLayer
                     machine_name = machine.machine_name,
                     ip_address = machine.ip_address,
                     location = machine.location,
-                    usage = machine.usage,
+                    environment = machine.usage,
                     create_date = machine.create_date,
                     modify_date = machine.modify_date,
                     active = machine.active
@@ -69,7 +69,7 @@ namespace BusinessLayer
                 machine_name = EFMachine.machine_name,
                 ip_address = EFMachine.ip_address,
                 location = EFMachine.location,
-                usage = EFMachine.usage,
+                environment = EFMachine.usage,
                 create_date = EFMachine.create_date,
                 modify_date = EFMachine.modify_date,
                 active = EFMachine.active

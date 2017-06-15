@@ -1,4 +1,4 @@
-﻿boardApp.service('boardService', ['$http', '$q', '$rootScope', 'backendHubProxy',
+﻿BoardApp.service('boardService', ['$http', '$q', '$rootScope', 'backendHubProxy',
     function ($http, $q, $rootScope, backendHubProxy) {
         var proxy = null;
         var proxyService = null;

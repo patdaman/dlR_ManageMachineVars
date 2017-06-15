@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace ViewModel
 {
@@ -20,7 +18,6 @@ namespace ViewModel
             name = e.name;
             value = e.value;
             active = e.active;
-            //Machines = e.Machines;
         }
     }
 
@@ -49,7 +46,6 @@ namespace ViewModel
             last_modify_user = a.last_modify_user;
             active = a.active;
             Components = a.Components;
-            //EnvironmentVariables = a.EnvironmentVariables;
         }
         public Application(ApplicationDto a)
         {
@@ -77,7 +73,6 @@ namespace ViewModel
         }
         public int? id { get; set; }
         public string name { get; set; }
-        //public string components { get; set; }
         public List<ComponentDto> components { get; set; }
         public string release { get; set; }
         public string last_modify_user { get; set; }
@@ -118,9 +113,6 @@ namespace ViewModel
             modify_date = c.modify_date;
             last_modify_user = c.last_modify_user;
             active = c.active;
-            //MachineComponentPaths = c.MachineComponentPaths;
-            //Applications = c.Applications;
-            //ConfigVariables = c.ConfigVariables;
         }
 
         public Component(ComponentDto c)
@@ -154,7 +146,6 @@ namespace ViewModel
         public string last_modify_user { get; set; }
         public bool published { get; set; }
         public List<ApplicationDto> applications { get; set; }
-        //public string applications { get; set; }
 
         public ComponentDto(ComponentDto c)
         {
@@ -179,7 +170,6 @@ namespace ViewModel
         public string last_modify_user { get; set; }
         public string root_element { get; set; }
         public Component Component { get; set; }
-        //public ICollection<ConfigFileElement> ConfigFileElements { get; set; }
         
         public ConfigFile(ConfigFile c)
         {
@@ -191,7 +181,6 @@ namespace ViewModel
             modify_date = c.modify_date;
             last_modify_user = c.last_modify_user;
             root_element = c.root_element;
-            //Component = c.Component;
         }
     }
 
@@ -228,8 +217,6 @@ namespace ViewModel
             modify_date = c.modify_date;
             last_modify_user = c.last_modify_user;
             active = c.active;
-            //ConfigVariableValues = c.ConfigVariableValues;
-            //Components = c.Components;
             ConfigFile = c.ConfigFile;
         }
     }
@@ -262,9 +249,6 @@ namespace ViewModel
             last_modify_user = c.last_modify_user;
             publish_date = c.publish_date;
             published = c.published;
-            //ConfigVariable = c.ConfigVariable;
-            //Enum_EnvironmentType = c.Enum_EnvironmentType;
-            //Machine = c.Machine;
         }
     }
 

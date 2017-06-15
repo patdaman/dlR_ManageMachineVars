@@ -1,9 +1,9 @@
 ﻿'use strict'
 
-MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$log',
-    '$timeout', '$q', '$interval', 'ModalService', 'uiGridConstants',
-    function ($scope, $http, uiGridConstants,
-    $log, $timeout, $q, $interval, ModalService) {
+MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'uiGridConstants',
+    '$log', '$timeout', '$q', '$interval', 'ModalService', 'getObjectService',
+    function ($rootScope, $scope, $http, uiGridConstants,
+    $log, $timeout, $q, $interval, ModalService, getObjectService) {
         $scope.title = "Machine Configuration ";
 
         var vm = $scope;
@@ -14,31 +14,49 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
         var rowId;
 
         var data = [];
-        var id;
+        var machine_id;
         var machine_name;
-        var location;
-        var usage;
+        var location_name;
         var create_date;
         var modify_date;
         var active;
 
         var environments = [];
-        //var components = [];
         var applications = [];
+        var machineFilter = [];
+        var applicationFilter = [];
+        var locationFilter = [];
+        var filteredMachines = [];
+        var filteredApplications = [];
+        var filteredLocations = [];
 
-        //var componentId;
-        //var componentName;
-
-        //var selectedComponent;
-        //var component;
         var selectedApplication;
         var application;
         var selectedEnvironment;
         var environment;
+        var selectedMachine;
+        var machine;
+        var selectedLocation;
+        var location;
+
+        var selectedRow;
+
+        var bypassEditCancel;
 
         /// Display current API path and link to Help page
         $scope.ApiBaseUrl = ApiPath;
         $scope.ApiBaseUrlHelp = $scope.ApiBaseUrl.slice(0, -4) + '/Help';
+        $scope.currentUser = $rootScope.UserName;
+        $scope.displayApi = $rootScope.displayApi;
+        $scope.Admin = true;
+        //if ($rootScope.Admin === 'True')
+        //    $scope.Admin = true;
+        //else
+        //    $scope.Admin = false;
+        if ($rootScope.Engineer === 'True')
+            $scope.Engineer = true;
+        else
+            $scope.Engineer = false;
 
         /// Grid Filters
         $scope.environment = '';
@@ -46,11 +64,20 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
             return $scope.environment;
         };
         $scope.application = '';
-        //$scope.component = '';
         $scope.dateTimeString = function () {
             date: 'yyyy-MM-dd_HH:mm(Z)'
             return date;
         }
+        $scope.selectedRow = "";
+        $scope.bypassEditCancel = true;
+        $scope.edit = false;
+        $scope.canEdit = function () {
+            return $scope.edit;
+        };
+        $scope.machineFilter = [];
+        $scope.applicationFilter = [];
+        $scope.locationFilter = [];
+        $scope.environmentFilter = [];
 
         $scope.gridOptions = {
             enablePaging: true,
@@ -63,26 +90,26 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
             enableSorting: true,
             enableFiltering: true,
 
-        enableGridMenu: true,
-        exporterMenuCsv: true,
-        exporterMenuPdf: true,
-        exporterCsvFilename: 'Machines' + $scope.dateTimeString + '.csv',
-        exporterPdfDefaultStyle: { fontSize: 9 },
-        exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
-        exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
-        exporterPdfHeader: { text: "Marcom Central - Server Configuration", style: 'headerStyle' },
-        exporterPdfFooter: function (currentPage, pageCount) {
-            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-        },
-        exporterPdfCustomFormatter: function (docDefinition) {
-            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
-            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
-            return docDefinition;
-        },
-        exporterPdfOrientation: 'landscape',
-        exporterPdfPageSize: 'LETTER',
-        exporterPdfMaxGridWidth: 500,
-        exporterSuppressColumns: ['Action'],
+            enableGridMenu: true,
+            exporterMenuCsv: true,
+            exporterMenuPdf: true,
+            exporterCsvFilename: 'Machines' + $scope.dateTimeString + '.csv',
+            exporterPdfDefaultStyle: { fontSize: 9 },
+            exporterPdfTableStyle: { margin: [20, 10, 20, 20] },
+            exporterPdfTableHeaderStyle: { fontSize: 10, bold: true, italics: true, color: 'red' },
+            exporterPdfHeader: { text: "Marcom Central - Server Configuration", style: 'headerStyle' },
+            exporterPdfFooter: function (currentPage, pageCount) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfCustomFormatter: function (docDefinition) {
+                docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+                docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+                return docDefinition;
+            },
+            exporterPdfOrientation: 'landscape',
+            exporterPdfPageSize: 'LETTER',
+            exporterPdfMaxGridWidth: 500,
+            exporterSuppressColumns: ['Action'],
 
             treeRowHeaderAlwaysVisible: false,
 
@@ -91,13 +118,114 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
             enableRowSelection: true,
             enableRowHeaderSelection: true,
             enableMultiselect: true,
+        }
+
+        // List of environments:
+        $scope.GetEnvironments = function () {
+            getObjectService.getConfigObjects('environment')
+            .then(function (result) {
+                $scope.environments = result;
+                if ($scope.environment && $scope.environment != '')
+                    angular.forEach($scope.environments, function (environments) {
+                        if (environments.value == $scope.environment)
+                            $scope.selectedenvironment = environment;
+                    });
+            })
+        };
+
+        // List of applications:
+        $scope.GetApplications = function () {
+            getObjectService.getConfigObjects('application')
+            .then(function (result) {
+                $scope.applications = result;
+                if ($scope.application && $scope.application != '')
+                    angular.forEach($scope.applications, function (application) {
+                        if (application.value == $scope.application)
+                            $scope.selectedApplication = application;
+                    });
+            })
+        };
+
+        // List of locations:
+        $scope.GetLocations = function () {
+            getObjectService.getConfigObjects('location')
+            .then(function (result) {
+                $scope.locations = result;
+                if ($scope.location && $scope.location != '')
+                    angular.forEach($scope.locations, function (location) {
+                        if (location.value == $scope.location)
+                            $scope.selectedApplication = location;
+                    });
+            })
+        };
+
+        // List of machines:
+        $scope.GetMachines = function () {
+            getObjectService.getConfigObjects('machine')
+            .then(function (result) {
+                $scope.machines = result;
+                if ($scope.machine && $scope.machine != '')
+                    angular.forEach($scope.machines, function (machine) {
+                        if (machine.value == $scope.machine)
+                            $scope.selectedApplication = machine;
+                    });
+            })
+        };
+
+        // Function call from Index page dropdown OnChange
+        $scope.updateEnvironment = function () {
+            $scope.environment = $scope.selectedEnvironment.value;
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        };
+
+        // Function call from Index page dropdown OnChange
+        $scope.updateLocation = function () {
+            if (!$scope.selectedLocation) {
+                $scope.location = '';
+            }
+            else {
+                $scope.location = $scope.selectedLocation.value;
+            }
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        };
+
+        // Function call from Index page dropdown OnChange
+        $scope.updateMachine = function () {
+            if (!$scope.selectedMachine) {
+                $scope.machine = '';
+            }
+            else {
+                $scope.machine = $scope.selectedMachine.value;
+            }
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        };
+
+        // Function call from Index page dropdown OnChange
+        $scope.updateApplication = function () {
+            if (!$scope.selectedApplication) {
+                $scope.application = '';
+            }
+            else {
+                $scope.application = $scope.selectedApplication.value;
+            }
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+        };
+
+        $scope.loadConfigObjects = function () {
+            $scope.GetApplications();
+            $scope.GetEnvironments();
+            $scope.GetLocations();
+            $scope.GetMachines();
+        };
+        $scope.loadConfigObjects();
 
         //column definitions
-        columnDefs: [
+        $scope.columnDefinition = function () {
+            return [
             { field: 'id', visible: false },
             {
-                field: 'usage',
-                width: '10%',
+                field: 'environment',
+                width: 170,
                 visible: true,
                 enableFiltering: false,
                 filter: {
@@ -116,87 +244,81 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
                 //grouping: { groupPriority: 1 },
                 sort: { priority: 1, direction: 'asc' },
                 groupable: true,
-                width: '15%'
+                width: 170
             },
-            { field: 'machine_name', width: '20%' },
+            {
+                field: 'machine_name',
+                width: '20%',
+                enableFiltering: true,
+                groupable: false,
+                cellTemplate: '/Content/Templates/machineTemplate.html'
+            },
             { field: 'uri', width: '20%' },
-            { field: 'ip_address', width: '10%' },
-            { field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
-            { field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
+            { field: 'ip_address', width: 170 },
+            //{ field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
+            //{ field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
+            { field: 'create_date', enableCellEdit: false, visible: false },
+            { field: 'modify_date', enableCellEdit: false, visible: false },
             {
                 field: 'active',
                 type: 'boolean',
                 enableFiltering: false,
                 width: 80
             },
-            { field: 'm_Locations', visible: false },
+            { field: 'last_modify_user', visible: false },
             {
-                field: "Action",
-                width: 80,
+                field: "Actions",
+                width: 150,
                 groupable: false,
                 filterable: false,
                 sortable: false,
                 enableCellEdit: false,
                 enableFiltering: false,
                 cellTemplate: '/Content/Templates/machineActionsTemplate.html'
-            }
-            ],
+            },
+            ];
         };
 
-        $scope.filterOptions = {
-            filterText: "",
-            useExternalFilter: true
+        $scope.loadGridColumns = function () {
+            $scope.gridOptions.columnDefs = new Array();
+            $scope.gridOptions.columnDefs = $scope.columnDefinition();
+        };
+        $scope.loadGridColumns();
+
+        $scope.gridOptions.onRegisterApi = function (gridApi) {
+            $scope.gridApi = gridApi;
+            //$scope.gridApi.core.addRowHeaderColumn({ name: 'rowHeaderCol', displayName: '', width: 26, cellTemplate: '/Content/Templates/expandButtonTemplate.html' });
+            gridApi.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+                if ($scope.bypassEditCancel === false) {
+                    //if ((!newRowCol.row.entity.key) || newRowCol.row.entity.key == "" || newRowCol.row.entity.configvar_id !== $scope.var_id) {
+                    if (newRowCol.row.entity.id !== $scope.machine_id) {
+                        $scope.cancelEdit();
+                        if (oldRowCol !== null && oldRowCol !== "undefined") {
+                            oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                        }
+                    }
+                }
+                $scope.var_id = newRowCol.row.entity.configvar_id;
+            })
+            gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
         };
 
-        $scope.changeGroupBy = function (group1, group2) {
-            $scope.gridOptions.$gridScope.configGroups = [];
-            $scope.gridOptions.$gridScope.configGroups.push(group1);
-            $scope.gridOptions.$gridScope.configGroups.push(group2);
-            $scope.gridOptions.groupBy();
-        }
-        $scope.clearGroupBy = function () {
-            $scope.gridOptions.$gridScope.configGroups = [];
-            $scope.gridOptions.groupBy();
-        }
+        //$scope.changeGroupBy = function (group1, group2) {
+        //    $scope.gridOptions.$gridScope.configGroups = [];
+        //    $scope.gridOptions.$gridScope.configGroups.push(group1);
+        //    $scope.gridOptions.$gridScope.configGroups.push(group2);
+        //    $scope.gridOptions.groupBy();
+        //}
+        //$scope.clearGroupBy = function () {
+        //    $scope.gridOptions.$gridScope.configGroups = [];
+        //    $scope.gridOptions.groupBy();
+        //}
 
         //api that is called every time
         // when data is modified on grid for sorting
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
         }
-
-        // List of environments:
-        $http({
-            method: 'GET',
-            url: 'api:/ConfigValuesApi',
-            params: {
-                type: "environment"
-            },
-        }).then(function (result) {
-            $scope.environments = result.data;
-        });
-
-        // List of applications:
-        $http({
-            method: 'GET',
-            url: 'api:/ConfigValuesApi',
-            params: {
-                type: "application"
-            },
-        }).then(function (result) {
-            $scope.applications = result.data;
-        });
-
-        // Function call from Index page dropdown OnChange
-        $scope.updateEnvironment = function () {
-            $scope.environment = $scope.selectedEnvironment.value;
-            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-        };
-        // Function call from Index page dropdown OnChange
-        $scope.updateApplication = function () {
-            $scope.application = $scope.selectedApplication;
-            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-        };
 
         $scope.loadGrid = function () {
             var def = $q.defer();
@@ -216,7 +338,49 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
                     swal("Oops..", "Error occured while loading grid", "error");
                 });
         };
-        $scope.loadGrid;
+        $scope.loadGrid();
+
+        // Entered the edit row functionality of either the main grid or the expandable grid based on row entity
+        $scope.editCell = function (row) {
+            $scope.gridApi.grid.cellNav.clearFocus();
+            $scope.gridApi.grid.cellNav.focusedCells = [];
+            $scope.machine_id = row.entity.machine_id;
+            row.grid.appScope.gridApi.grid.cellNav.clearFocus();
+            row.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
+            $scope.rowId = row.entity.index;
+            $scope.edit = true;
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+            $scope.canEdit();
+            if ($scope.selectedRow !== "") {
+                $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.clearFocus();
+                $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
+                $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
+            }
+            $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[13]);
+            $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
+            $scope.selectedRow = row;
+            $scope.bypassEditCancel = false;
+        };
+
+        // Cancel editable grid option if conditions met:
+        //  - Click on a different row
+        //  - Cancel button is pressed
+        $scope.cancelEdit = function () {
+            $scope.edit = false;
+            $scope.gridApi.grid.cellNav.clearFocus();
+            $scope.gridApi.grid.cellNav.focusedCells = [];
+            if ($scope.selectedEntity && $scope.selectedEntity !== $scope.selectedRow.entity) {
+                $scope.selectedRow.entity = $scope.selectedEntity;
+            }
+            var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
+            var dataRows = gridRows.map(function (gridRow) {
+                return gridRow.entity;
+            });
+            $scope.gridApi.rowEdit.setRowsClean(dataRows);
+            $scope.canEdit();
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+            $scope.bypassEditCancel = true;
+        };
 
         //save form data
         $scope.save = function (row) {
@@ -239,8 +403,49 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
             });
         };
 
+        // Refresh Grid
+        $scope.refreshGrid = function () {
+            $scope.gridOptions.data.length = 0;
+            $scope.loadConfigObjects();
+            $timeout(function () {
+                $scope.gridOptions.data = $scope.loadGrid();
+                $scope.$apply();
+            })
+            .then(function () {
+                if ($scope.environment !== '' && (!$scope.selectedEnvironment || ($scope.selectedEnvironment.value != $scope.environment))) {
+                    angular.forEach($scope.environments, function (environments) {
+                        if (environments.value == $scope.environment)
+                            $scope.selectedEnvironment = environments;
+                    });
+                    $scope.updateEnvironment();
+                }
+                if ($scope.application !== '' && (!$scope.selectedApplication || ($scope.selectedApplication.value != $scope.application))) {
+                    angular.forEach($scope.applications, function (applications) {
+                        if (applications.value == $scope.application)
+                            $scope.selectedApplication = applications;
+                    });
+                    $scope.updateApplication();
+                }
+                if ($scope.location !== '' && (!$scope.selectedLocation || ($scope.selectedLocation.value != $scope.location))) {
+                    angular.forEach($scope.locations, function (locations) {
+                        if (locations.value == $scope.location)
+                            $scope.selectedLocation = locations;
+                    });
+                    $scope.updateLocation();
+                }
+                if ($scope.machine !== '' && (!$scope.selectedMachine || ($scope.selectedMachine.value != $scope.machine))) {
+                    angular.forEach($scope.machines, function (machines) {
+                        if (machines.value == $scope.machine)
+                            $scope.selectedMachine = machines;
+                    });
+                    $scope.updateMachine();
+                }
+            });
+        };
+
         //get single record by ID
         $scope.get = function (machineId) {
+            var record;
             var def = $q.defer();
             $http({
                 method: 'GET',
@@ -248,7 +453,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
             })
             .success(def.resolve)
             .success(function (data) {
-                var record = data;
+                record = data;
                 def.resolve;
             })
             .error(function (error) {
@@ -258,6 +463,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
                 swal("Oops...", Message, "error");
                 console.log(error);
             });
+            return record;
         };
 
         //update Machine data
@@ -326,29 +532,16 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
             .success(deferred.resolve)
             .success(function (data) {
                 ModalService.showModal({
-                    templateUrl: "/Content/Templates/configFileModal.html",
-                    controller: "ConfigViewer",
+                    templateUrl: "/Content/Templates/machineDetailModal.html",
+                    controller: "MachineDetail",
                     inputs: {
-                        component: componentGroupName,
-                        files: data,
-                        environments: $scope.environments,
-                        environment: $scope.environment,
-                        Admin: $scope.Admin,
+                        machineData: row,
                     }
                 })
                     .then(function (modal) {
                         modal.element.modal();
                         modal.close.then(function (result) {
-                            var fileEnvironment;
-                            if (!result.environment || result.environment === '')
-                                fileEnvironment = $scope.environment;
-                            else {
-                                fileEnvironment = result.environment;
-                                $scope.environment = fileEnvironment;
-                            }
-                            if (result.publishFile) {
-                                $scope.publishComponent(result.component, fileEnvironment, selectedComponent.applications)
-                            };
+                            var machine;
                         });
                     })
             })
@@ -360,11 +553,8 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
 
         $scope.getNote = function (row) {
             var localRow = row;
-            var configVarId = row.entity.configvar_id;
-            var key = row.entity.key;
-            var fullElement = row.entity.fullElement;
-            var componentName = row.entity.componentName;
-            var componentFileName = row.entity.fileName;
+            var machine_id = row.entity.id;
+            var machineName = row.entity.machine_name;
             var noteText;
             var def = $q.defer();
             $http({
@@ -372,9 +562,8 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
                 url: 'api:/NoteApi',
                 params: {
                     noteType: 'machine',
-                    id: configVarId,
+                    id: machine_id,
                     createDate: '1900-01-01'
-                    //componentName: componentName,
                 }
             })
             .success(def.resolve)
@@ -384,18 +573,13 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
                     templateUrl: "/Content/Templates/noteModal.html",
                     controller: "noteViewer",
                     inputs: {
-                        componentName: componentName,
-                        key: key,
-                        fullElement: fullElement,
-                        configVarId: configVarId,
+                        machineName: machineName,
+                        machine_id: machine_id,
                         createDate: singleData.createDate,
                         lastModifiedUser: singleData.userName,
                         lastModifiedDate: singleData.modifyDate,
                         noteText: singleData.noteText,
-                        //createDate: data.createDate,
-                        //lastModifiedUser: data.userName,
-                        //lastModifiedDate: data.modifyDate,
-                        //noteText: data.noteText,
+                        title: machineName,
                     }
                 })
                     .then(function (modal) {
@@ -404,7 +588,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', '$l
                             if (result.save) {
                                 var deferred = $q.defer();
                                 var data = JSON.stringify({
-                                    noteId: result.configVarId,
+                                    noteId: result.machine_id,
                                     noteType: 'machine',
                                     noteText: result.noteText,
                                     userName: $rootScope.UserName,

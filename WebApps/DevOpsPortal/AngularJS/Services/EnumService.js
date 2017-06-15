@@ -3,7 +3,6 @@ EnumService.service('getObjectService', ['$http', '$rootScope', function ($http,
     this.getConfigObjects = function (type) {
         return $http({
             method: 'get',
-            //url: ('api:/ConfigValuesApi'),
             url: ($rootScope.EnumPath),
             params: {
                 type: type,

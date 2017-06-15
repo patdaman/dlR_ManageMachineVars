@@ -37,6 +37,7 @@ namespace ViewModel
         public string appPoolName { get; set; }
         public string physicalPath { get; set; }
         public string state { get; set; }
+        public string message { get; set; }
         public Nullable<bool> active { get; set; }
         public List<SiteBinding> bindings { get; set; }
         public List<ConfigKeyVal> configKeys { get; set; }

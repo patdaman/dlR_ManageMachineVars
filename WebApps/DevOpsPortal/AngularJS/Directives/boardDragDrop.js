@@ -1,4 +1,4 @@
-﻿boardApp.directive('boardDragg', function () {
+﻿BoardApp.directive('boardDragg', function () {
     return {
         link: function ($scope, element, attrs) {
 

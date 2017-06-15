@@ -18,8 +18,6 @@ namespace BusinessLayer
         {
             if (!string.IsNullOrWhiteSpace(machineName))
                 this.machineName = machineName;
-            string currentDomain = Environment.UserDomainName;
-            string currentUser = Environment.UserName;
         }
 
         public List<IISAppSettings> GetAllApplications()
@@ -31,7 +29,19 @@ namespace BusinessLayer
             //{
             //    machineApps.AddRange(GetMachineApps(machine.machine_name));
             //}
-            machineApps.AddRange(GetMachineApps("hal9000"));
+            try
+            {
+                //machineApps.AddRange(GetMachineApps("hal9000"));
+                //machineApps.AddRange(GetMachineApps("hqdev08.dev.corp.printable.com"));
+                //machineApps.AddRange(GetMachineApps("sdapp02.dc.pti.com"));
+                machineApps.AddRange(GetMachineApps("sdmgr02.dc.pti.com"));
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+                if (ex.InnerException != null)
+                    message = message + Environment.NewLine + ex.InnerException.Message.ToString() ?? "";
+            }
             return machineApps;
         }
 
@@ -39,20 +49,44 @@ namespace BusinessLayer
         {
             if (!string.IsNullOrWhiteSpace(machineName))
                 this.machineName = machineName;
-            List<IISAppSettings> machineApps;
+            List<IISAppSettings> machineApps = new List<IISAppSettings>();
             List<WebSite> machineSites;
+            string userName;
+            string password;
+            string domain;
             try
             {
-                _siteTools = new SiteTools(this.machineName);
-                machineApps = new List<IISAppSettings>();
+
+                /// For Testing purposes
+                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                ///  !! Repair / Remove when deployed !!
+                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                userName = "pdelosreyes";
+                password = "Patman7474!";
+                domain = "printable";
+                //this._impersonateUser = new WindowsUser()
+                //{
+                //    userName = "patman",
+                //    password = "Patman7474!",
+                //    domain = "hal9000",
+                //};
+                //userName = "root";
+                //password = "ok2m40tK!";
+                //domain = "dc";
+                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                ///  !! Repair / Remove when deployed !!
+                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                _siteTools = new SiteTools(this.machineName)
+                {
+                    userName = userName,
+                    password = password,
+                    domain = domain,
+                };
                 machineSites = _siteTools.GetAllSites(machineName);
                 foreach (WebSite site in machineSites)
                 {
-                    IISAppSettings app = GetApplication(site.name, machineName);
-                    app.ipAddress = site.ipAddress;
-                    app.serverName = site.serverName;
-                    app.state = site.state;
-                    app.active = site.active;
+                    IISAppSettings app = GetApplication(site);
                     machineApps.Add(app);
                 }
             }
@@ -67,9 +101,14 @@ namespace BusinessLayer
             return machineApps;
         }
 
-        public IISAppSettings GetApplication(string appName, string machineName = null)
+        public IISAppSettings GetApplication(string machineName, string appName)
         {
-            WebSite siteProperties = _siteTools.GetSite(appName);
+            WebSite siteProperties = _siteTools.GetSite(appName, true);
+            return GetApplication(siteProperties);
+        }
+
+        public IISAppSettings GetApplication(WebSite siteProperties)
+        {
             IISAppSettings machineApps = new IISAppSettings()
             {
                 active = siteProperties.active,
@@ -77,29 +116,51 @@ namespace BusinessLayer
                 hostName = siteProperties.hostName,
                 ipAddress = siteProperties.ipAddress,
                 name = siteProperties.name,
+                message = siteProperties.message,
                 physicalPath = siteProperties.physicalPath,
                 serverName = siteProperties.serverName,
                 siteId = siteProperties.siteId,
                 state = siteProperties.state,
-                bindings = new List<SiteBinding>(),
+                bindings = ConvertBindings(siteProperties.bindings),
+                configKeys = ConvertConfigValues(siteProperties.configKeys),
             };
-            foreach (var binding in siteProperties.bindings)
+            return machineApps;
+        }
+
+        private List<SiteBinding> ConvertBindings(List<Binding> iisBindings)
+        {
+            List<SiteBinding> vmBindings = new List<SiteBinding>();
+            foreach (var binding in iisBindings)
             {
-                machineApps.bindings.Add(new SiteBinding()
+                vmBindings.Add(new SiteBinding()
                 {
                     bindingInformation = binding.bindingInformation,
                     bindingProtocol = binding.bindingProtocol,
                     host = binding.host,
                 });
             };
-            return machineApps;
+            return vmBindings;
+        }
+
+        private List<ConfigKeyVal> ConvertConfigValues(List<ConfigKeyValue> iisConfig, bool? detail = null)
+        {
+            List<ConfigKeyVal> vmConfig = new List<ConfigKeyVal>();
+            foreach (var config in iisConfig)
+            {
+                vmConfig.Add(new ConfigKeyVal()
+                {
+                    key = config.key,
+                    value = config.value,
+                });
+            }
+            return vmConfig;
         }
 
         public IISAppSettings UpdateApplicationSetting(IISAppSettings value)
         {
-            WebSite siteProperties = _siteTools.GetSite(value.name);
-
-            throw new NotImplementedException();
+            WebSite siteProperties = _siteTools.GetSite(value.name, true);
+            WebSite updateSiteProperties = _siteTools.AddUpdateWebSite(siteProperties);
+            return GetApplication(updateSiteProperties);
         }
 
         public IISAppSettings CreateApplicationSetting(IISAppSettings value)

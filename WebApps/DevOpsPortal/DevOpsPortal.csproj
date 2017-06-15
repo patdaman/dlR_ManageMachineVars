@@ -148,16 +148,17 @@
   <ItemGroup>
     <Content Include="AngularJS\app.js" />
     <Content Include="AngularJS\appHandler.js" />
-    <Content Include="AngularJS\Controllers\boardController.js" />
+    <Content Include="AngularJS\Controllers\BoardController.js" />
     <Content Include="AngularJS\Controllers\ConfigModalController.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
+    <Content Include="AngularJS\Controllers\MachineModalController.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="AngularJS\Directives\boardDragDrop.js" />
+    <Content Include="AngularJS\Directives\BoardDragDrop.js" />
     <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
-    <Content Include="AngularJS\Services\boardService.js" />
+    <Content Include="AngularJS\Services\BoardService.js" />
     <Content Include="AngularJS\Services\HubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />
     <Content Include="Assets\404-150x150.png">
@@ -234,6 +235,10 @@
     <Content Include="Content\Templates\machineActionsTemplate.html" />
     <Content Include="Content\Templates\codeMirror.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\machineDetailModal.html" />
+    <Content Include="Content\Templates\machineTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\noteModal.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

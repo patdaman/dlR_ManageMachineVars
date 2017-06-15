@@ -50,7 +50,7 @@ var MachineApp = angular.module('MachineApp',
             'ui.grid.rowEdit',
             'ui.grid.pinning',
             'ui.grid.exporter',
-            //'ngclipboard',
+            'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
             'angularModalService',
@@ -71,7 +71,7 @@ var PowershellApp = angular.module('PowershellApp',
         [
             'ngFileUpload',
             'ui.codemirror',
-            //'ngclipboard',
+            'ngclipboard',
             'ui.bootstrap',
             'ngAnimate',
             'angularModalService',
@@ -84,15 +84,15 @@ var DashboardApp = angular.module('DashboardApp',
           'n3-pie-chart'
       ]);
 
-var boardApp = angular.module('boardApp', []);
+var BoardApp = angular.module('BoardApp', []);
 
 // Todo:
 // Get rid of these with
 // new values from $rootScope
 DashboardApp.value('backendServerUrl', SignalRPath + '/performance');
 LogApp.value('backendServerUrl', SignalRPath + '/logging');
-//boardApp.value('backendServerUrl', SignalRPath + '/board');
-boardApp.value('backendServerUrl', SignalRPath);
+//BoardApp.value('backendServerUrl', SignalRPath + '/board');
+BoardApp.value('backendServerUrl', SignalRPath);
 
 var appHandler = angular.module('appHandler', []);
 
@@ -102,7 +102,7 @@ var appHandler = angular.module('appHandler', []);
 ///  ----------------------------------------------------------- ///
 var app = angular.module('app',
     //['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp']);
-    ['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp', 'boardApp']);
+    ['appHandler', 'ConfigApp', 'MachineApp', 'PowershellApp', 'BoardApp']);
 
 app.run(['$rootScope', function ($rootScope) {
     $rootScope.ApiPath = ApiPath;

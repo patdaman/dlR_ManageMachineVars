@@ -15,8 +15,11 @@
             <select ng-model="selectedApplication" ng-options="a.name for a in applications" ng-change="updateApplication()">
                 <option value="" style="color:red">Application</option>
             </select>
-            <select ng-model="selectedComponent" ng-options="c.name for c in components" ng-change="updateComponent()">
-                <option value="" style="color:red">Component</option>
+            <select ng-model="selectedLocation" ng-options="l.name for l in locations" ng-change="updateLocation()">
+                <option value="" style="color:red">Location</option>
+            </select>
+            <select ng-model="selectedMachine" ng-options="m.name for m in machines" ng-change="updateMachine()">
+                <option value="" style="color:red">Machine</option>
             </select>
 
             <input type="button" class="btn btn-small" ng-click="addMachine()" value="Add / Edit Machine" />

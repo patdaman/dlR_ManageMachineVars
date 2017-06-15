@@ -13,9 +13,13 @@ namespace CommonUtils.IISAdmin
     public class SiteTools : IDisposable
     {
         public string machineName { get; set; }
+        public string userName { get; set; }
+        public string password { get; set; }
+        public string domain { get; set; }
+
+        private WindowsUser _impersonateUser { get; set; }
         private static ServerManager server;
         private static ConfigTools configTool = new ConfigTools();
-
         private bool disposed = false;
         private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
         private static WindowsImpersonationContext domainUser;
@@ -30,7 +34,8 @@ namespace CommonUtils.IISAdmin
         ///-------------------------------------------------------------------------------------------------
         public SiteTools(string machineName = null)
         {
-            server = GetServerManager(machineName);
+            if (!string.IsNullOrWhiteSpace(machineName))
+                this.machineName = machineName;
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -72,9 +77,9 @@ namespace CommonUtils.IISAdmin
             return sites;
         }
 
-        public WebSite GetSite(string siteName)
+        public WebSite GetSite(string siteName, bool detail = false)
         {
-            return new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault());
+            return new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault(), detail);
         }
 
         public WebSite AddUpdateWebSite(WebSite site)
@@ -240,19 +245,15 @@ namespace CommonUtils.IISAdmin
 
         private WindowsImpersonationContext GetWindowsUser()
         {
-            //WindowsUser user = new WindowsUser()
-            //{
-            //    userName = "pdelosreyes",
-            //    password = "Patman7474!",
-            //    domain = "printable",
-            //};
-            WindowsUser user = new WindowsUser()
+            this._impersonateUser = new WindowsUser()
             {
-                userName = "patman",
-                password = "Patman7474!",
-                domain = "hal9000",
+                userName = this.userName,
+                password = this.password,
+                domain = this.domain,
             };
-            return GetWindowsUser(user);
+            if (string.IsNullOrWhiteSpace(this._impersonateUser.domain))
+                this._impersonateUser.domain = Environment.UserDomainName;
+            return GetWindowsUser(this._impersonateUser);
         }
 
         private WindowsImpersonationContext GetWindowsUser(WindowsUser windowsUser)

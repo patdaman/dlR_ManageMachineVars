@@ -42,7 +42,7 @@ signalRApp.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', functio
     return backendHubProxyFactory;
 }]);
 
-boardApp.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', function ($rootScope, backendServerUrl) {
+BoardApp.factory('backendHubProxy', ['$rootScope', 'backendServerUrl', function ($rootScope, backendServerUrl) {
     function backendHubProxyFactory(serverUrl, hubName, startOptions) {
         var connection = $.hubConnection(backendServerUrl);
         var proxy = connection.createHubProxy(hubName);

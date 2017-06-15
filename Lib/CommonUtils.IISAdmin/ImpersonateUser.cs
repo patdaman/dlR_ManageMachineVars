@@ -29,11 +29,16 @@ namespace CommonUtils.IISAdmin
                 domainName = Environment.UserDomainName;
             try
             {
-                const int LOGON32_PROVIDER_DEFAULT = 0;
-                const int LOGON32_LOGON_INTERACTIVE = 2;
+                //const int LOGON32_PROVIDER_DEFAULT = 0;
+                //const int LOGON32_LOGON_INTERACTIVE = 2;
+                //bool returnValue = LogonUser(userName, domainName, password,
+                //    LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT,
+                //    out safeTokenHandle);
+                const int LOGON_TYPE_NEW_CREDENTIALS = 9;
+                const int LOGON32_PROVIDER_WINNT50 = 3;
                 bool returnValue = LogonUser(userName, domainName, password,
-                    LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT,
-                    out safeTokenHandle);
+                            LOGON_TYPE_NEW_CREDENTIALS, LOGON32_PROVIDER_WINNT50,
+                            out safeTokenHandle);
                 if (false == returnValue)
                 {
                     int ret = Marshal.GetLastWin32Error();

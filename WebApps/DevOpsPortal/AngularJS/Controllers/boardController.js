@@ -1,4 +1,4 @@
-﻿boardApp.controller('boardCtrl', ['$scope', 'boardService', function ($scope, boardService) {
+﻿BoardApp.controller('BoardCtrl', ['$scope', 'boardService', function ($scope, boardService) {
     // Model
     $scope.columns = [];
     $scope.isLoading = false;

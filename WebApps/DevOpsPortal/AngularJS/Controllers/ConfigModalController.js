@@ -664,10 +664,10 @@ ConfigApp.controller('AddVar', ['$rootScope', '$scope', '$element',
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
         'componentName', 'key', 'fullElement', 'configVarId', 'createDate',
-        'lastModifiedUser', 'lastModifiedDate', 'noteText',
+        'lastModifiedUser', 'lastModifiedDate', 'noteText', 'title',
     function ($rootScope, $scope, $element, close,
         componentName, key, fullElement, configVarId, createDate,
-        lastModifiedUser, lastModifiedDate, noteText) {
+        lastModifiedUser, lastModifiedDate, noteText, title) {
 
         var vm = $scope;
         var save;
@@ -681,6 +681,7 @@ ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
         vm.lastModifiedDate = lastModifiedDate;
         vm.lastModifiedUser = lastModifiedUser;
         vm.modalSize = "modal-dialog modal-md";
+        vm.title = title;
 
         vm.close = function () {
             $element.modal('hide');

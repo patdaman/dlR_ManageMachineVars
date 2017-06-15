@@ -269,6 +269,23 @@ namespace BusinessLayer
         public List<NameValuePair> GetDropDownValues(string type)
         {
             List<NameValuePair> values = new List<NameValuePair>();
+            //switch (type.ToLower())
+            //{
+            //    case "comp":
+            //        break;
+            //    case "env":
+            //        break;
+            //    case "app":
+            //        break;
+            //    case "machine":
+            //        break;
+            //    case "usage":
+            //        break;
+            //    case "location":
+            //        break;
+            //    default:
+            //        throw new ArgumentException("Invalid value type requested.");
+            //}
             if (type.ToLower().StartsWith("comp"))
             {
                 var components = DevOpsContext.Components.ToList();
@@ -316,6 +333,20 @@ namespace BusinessLayer
                         name = m.machine_name,
                         value = m.machine_name,
                         active = m.active,
+                    });
+                }
+            }
+            else if (type.ToLower().StartsWith("location"))
+            {
+                var locations = DevOpsContext.Enum_Locations.ToList();
+                foreach (var l in locations)
+                {
+                    values.Add(new NameValuePair()
+                    {
+                        id = 0,
+                        name = l.name,
+                        value = l.value,
+                        active = l.active,
                     });
                 }
             }

@@ -50,16 +50,16 @@ namespace CommonUtils.IISAdmin
 
     public class ConfigKeyValue
     {
-        private ConfigurationAttribute key1;
-
-        public ConfigKeyValue(ConfigurationAttribute key)
-        {
-            this.key = key.Name;
-            this.value = key.Value.ToString();
-        }
-
+        public ConfigKeyValue() { }
         public string key { get; set; }
         public string value { get; set; }
+        public ConfigKeyValue(ConfigurationElement key)
+        {
+            if (key.Attributes[0] != null)
+                this.key = key.Attributes[0].Value.ToString();
+            if (key.Attributes[1] != null)
+                this.value = key.Attributes[1].Value.ToString();
+        }
     }
 
     public class WebSite
@@ -74,11 +74,12 @@ namespace CommonUtils.IISAdmin
         public string physicalPath { get; set; }
         public string state { get; set; }
         public Nullable<bool> active { get; set; }
+        public string message { get; set; }
         public List<Binding> bindings { get; set; }
         public List<ConfigKeyValue> configKeys { get; set; }
         public List<WebApplication> webApplications { get; set; }
 
-        public WebSite(Site site)
+        public WebSite(Site site, bool? detail = null)
         {
             name = site.Name;
             appPoolName = site.ApplicationDefaults.ApplicationPoolName;
@@ -92,14 +93,66 @@ namespace CommonUtils.IISAdmin
             {
                 webApplications.Add(new WebApplication(app));
             }
-            var appSettings = site.GetWebConfiguration().GetSection("AppSettings");
             configKeys = new List<ConfigKeyValue>();
-            foreach (var key in appSettings.Attributes)
+            Configuration config = site.GetWebConfiguration();
+            try
             {
-                configKeys.Add(new ConfigKeyValue(key));
+                if (config.GetSection("appSettings") != null)
+                {
+                    ConfigurationSection appSettings = config.GetSection("appSettings");
+                    ConfigurationElementCollection appSettingsCollection = appSettings.GetCollection();
+                    foreach (var key in appSettingsCollection)
+                    {
+                        configKeys.Add(new ConfigKeyValue(key));
+                        if (key.Attributes[1] != null && key.Attributes[0].Value.ToString() == "Application.KeepAlive")
+                        {
+                            if (key.Attributes[1].Value.ToString() == "true")
+                            {
+                                this.active = true;
+                            }
+                            else
+                            {
+                                this.active = false;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                configKeys.Add(new ConfigKeyValue()
+                {
+                    key = "Exception Occured",
+                    value = ex.Message,
+                });
+            }
+            if (detail != null && detail.Value)
+            {
+                try
+                {
+                    var temp = new List<ConfigurationElement>();
+                    if (config.GetSection("configSections") != null)
+                    {
+                        ConfigurationSection ConfigSections = config.GetSection("configSections");
+                        foreach (var configFiles in ConfigSections.GetCollection())
+                        {
+                            temp.Add(configFiles);
+                            var whatever = configFiles.ChildElements;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    configKeys.Add(new ConfigKeyValue()
+                    {
+                        key = "Exception Occured",
+                        value = ex.Message,
+                    });
+                }
             }
             state = site.State.ToString();
             siteId = site.Id.ToString();
+            message = "Successfully retrieved at " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
             physicalPath = webApplications.FirstOrDefault().VirtualDirectories.FirstOrDefault().PhysicalPath;
         }
     }
