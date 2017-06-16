@@ -19,6 +19,7 @@ namespace ViewModel
         public string last_modify_user { get; set; }
         public bool active { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }
+        public virtual List<Application> Applications { get; set; }
         public virtual List<MachineComponentPath> MachineComponentPaths { get; set; }
 
         public Machine()

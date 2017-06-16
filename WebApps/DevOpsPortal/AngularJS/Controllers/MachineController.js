@@ -116,8 +116,8 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             enableCellSelection: true,
             enableCellEditOnFocus: true,
             enableRowSelection: true,
-            enableRowHeaderSelection: true,
-            enableMultiselect: true,
+            enableRowHeaderSelection: false,
+            enableMultiselect: false,
         }
 
         // List of environments:
@@ -289,17 +289,27 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             $scope.gridApi = gridApi;
             //$scope.gridApi.core.addRowHeaderColumn({ name: 'rowHeaderCol', displayName: '', width: 26, cellTemplate: '/Content/Templates/expandButtonTemplate.html' });
             gridApi.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
-                if ($scope.bypassEditCancel === false) {
-                    //if ((!newRowCol.row.entity.key) || newRowCol.row.entity.key == "" || newRowCol.row.entity.configvar_id !== $scope.var_id) {
-                    if (newRowCol.row.entity.id !== $scope.machine_id) {
-                        $scope.cancelEdit();
-                        if (oldRowCol !== null && oldRowCol !== "undefined") {
-                            oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-                        }
+                if (!oldRowCol || (oldRowCol.row !== newRowCol.row)) {
+                    gridApi.selection.selectRow(newRowCol.row.entity);
+                    if (oldRowCol) {
+                        gridApi.selection.unSelectRow(oldRowCol.row.entity);
+                        oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                     }
                 }
-                $scope.var_id = newRowCol.row.entity.configvar_id;
-            })
+                if ($scope.bypassEditCancel === false) {
+                    if (newRowCol.row.entity.id !== $scope.machine_id) {
+                        $scope.cancelEdit();
+                    }
+                }
+                else {
+                    if (newRowCol.row.treeLevel === 0) {
+                        var field = newRowCol.col.colDef.field;
+                        if (field !== "treeBaseRowHeaderCol" && field !== "Actions")
+                            $scope.machineDetail(newRowCol.row);
+                    }
+                }
+                $scope.machine_id = newRowCol.row.entity.id;
+            });
             gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
         };
 
@@ -313,12 +323,6 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         //    $scope.gridOptions.$gridScope.configGroups = [];
         //    $scope.gridOptions.groupBy();
         //}
-
-        //api that is called every time
-        // when data is modified on grid for sorting
-        $scope.gridOptions.onRegisterApi = function (gridApi) {
-            $scope.gridApi = gridApi;
-        }
 
         $scope.loadGrid = function () {
             var def = $q.defer();
@@ -514,19 +518,22 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         $scope.machineDetail = function (row) {
             var treeLevel = row.treeLevel;
             var machineName;
+            var machineId;
             machineName = row.entity.machine_name;
-            //var componentFileName;
+            machineId = row.entity.id;
             var def = $q.defer();
             //angular.forEach(row.treeNode.aggregations, function (aggregation) {
             //    if (aggregation.col.field === 'componentName')
             //        componentGroupName = aggregation.groupVal;
             //});
             var deferred = $q.defer();
+
             $http({
                 method: 'GET',
-                url: 'api:/IISApi',
+                //url: 'api:/IISApi',
+                url: 'api:/MachineApi',
                 params: {
-                    machineName: machineName,
+                    machineName: machineId,
                 }
             })
             .success(deferred.resolve)
@@ -535,7 +542,8 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                     templateUrl: "/Content/Templates/machineDetailModal.html",
                     controller: "MachineDetail",
                     inputs: {
-                        machineData: row,
+                        machineData: data,
+                        //machineData: row,
                     }
                 })
                     .then(function (modal) {

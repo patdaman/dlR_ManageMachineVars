@@ -247,7 +247,16 @@ textarea {
   width: 100%;
   float: right;
 }
-
+.ui-grid-row {
+    cursor: pointer;
+}
+.ui-grid-row:hover 
+  .ui-grid-cell {
+    background-color: #CCC;
+}
+.ui-grid-cell-focus {
+    background-color: #c9dde1;
+}
 .above-grid {
     width: 99%;
     height: 28px;

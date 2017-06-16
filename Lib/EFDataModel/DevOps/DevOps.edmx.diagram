@@ -15,7 +15,7 @@
         <EntityTypeShape EntityType="DevOpsModel.Enum_Locations" Width="1.5" PointX="9" PointY="13.5" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.EnvironmentVariable" Width="1.5" PointX="6" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.MachineComponentPathMap" Width="1.5" PointX="8.25" PointY="5.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="DevOpsModel.Machine" Width="1.5" PointX="11.25" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DevOpsModel.Machine" Width="1.5" PointX="11.25" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.ServerGroup" Width="1.5" PointX="13.5" PointY="5.25" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.Device" Width="1.5" PointX="0.75" PointY="13.25" IsExpanded="true" />
         <EntityTypeShape EntityType="DevOpsModel.Event" Width="1.5" PointX="3" PointY="13.25" IsExpanded="true" />
@@ -42,6 +42,7 @@
         <AssociationConnector Association="DevOpsModel.FK_ConfigVariables_ConfigFile" />
         <EntityTypeShape EntityType="DevOpsModel.Note" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="DevOpsModel.vi_ConfigVariables" Width="1.5" PointX="11.375" PointY="12.75" />
+        <AssociationConnector Association="DevOpsModel.MachineApplicationMap" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

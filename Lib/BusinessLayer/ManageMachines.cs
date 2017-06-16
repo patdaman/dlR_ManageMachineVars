@@ -29,6 +29,11 @@ namespace BusinessLayer
                                select machines).ToList();
             foreach (var machine in allMachines)
             {
+                List<ViewModel.Application> applications = new List<ViewModel.Application>();
+                foreach (var app in machine.Applications)
+                {
+
+                };
                 machineModels.Add(new ViewModel.Machine()
                 {
                     id = machine.id,
@@ -38,7 +43,8 @@ namespace BusinessLayer
                     environment = machine.usage,
                     create_date = machine.create_date,
                     modify_date = machine.modify_date,
-                    active = machine.active
+                    active = machine.active,
+                    Applications = applications,
                 });
             }
             return machineModels;

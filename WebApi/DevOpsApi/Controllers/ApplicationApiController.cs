@@ -13,6 +13,8 @@ namespace DevOpsApi.Controllers
 //    [Authorize(Roles = "Engineers")]
 //#endif
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
+        BusinessLayer.ManageApplications appProcessor = new BusinessLayer.ManageApplications();
+
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets the get. </summary>
@@ -26,7 +28,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.Application>>(HttpStatusCode.OK, configProcessor.GetApplication());
+                return Request.CreateResponse<List<ViewModel.Application>>(HttpStatusCode.OK, appProcessor.GetApplication());
             }
             catch (Exception ex)
             {
@@ -49,7 +51,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, configProcessor.GetApplication(applicationId));
+                return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, appProcessor.GetApplication(applicationId));
             }
             catch (Exception ex)
             {
@@ -70,7 +72,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, configProcessor.GetApplication(applicationName));
+                return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, appProcessor.GetApplication(applicationName));
             }
             catch (Exception ex)
             {
@@ -99,72 +101,6 @@ namespace DevOpsApi.Controllers
                     throw new ArgumentNullException("Application Name must be provided.");
                 configProcessor.userName = applicationModel.last_modify_user;
                 return Request.CreateResponse<ViewModel.Application>(HttpStatusCode.OK, configProcessor.AddUpdateApplication(applicationModel));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Puts the given value. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="component">    . </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Put(ViewModel.Component component)
-        //{
-        //    try
-        //    {
-        //        return Post(component);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Post this message. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="component">    . </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///
-        /// ### <param name="value">    . </param>
-        ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Post(ViewModel.Component component)
-        //{
-        //    try
-        //    {
-        //        var response = Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(component));
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Deletes the given ID. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="id">   The Identifier to delete. </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public HttpResponseMessage Delete(int componentId)
-        {
-            try
-            {
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.DeleteComponent(componentId));
             }
             catch (Exception ex)
             {

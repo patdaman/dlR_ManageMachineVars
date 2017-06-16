@@ -13,6 +13,7 @@ namespace DevOpsApi.Controllers
     public class ComponentApiController : BaseController
     {
         BusinessLayer.ManageConfig_ComplexVariables configProcessor = new BusinessLayer.ManageConfig_ComplexVariables();
+        BusinessLayer.ManageComponents compProcessor = new BusinessLayer.ManageComponents();
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets the get. </summary>
@@ -26,7 +27,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.Component>>(HttpStatusCode.OK, configProcessor.GetComponent());
+                return Request.CreateResponse<List<ViewModel.Component>>(HttpStatusCode.OK, compProcessor.GetComponent());
             }
             catch (Exception ex)
             {
@@ -49,7 +50,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.GetComponent(componentId));
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, compProcessor.GetComponent(componentId));
             }
             catch (Exception ex)
             {
@@ -71,7 +72,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.GetComponent(componentName, excludeValues));
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, compProcessor.GetComponent(componentName, excludeValues));
             }
             catch (Exception ex)
             {
@@ -108,51 +109,6 @@ namespace DevOpsApi.Controllers
         }
 
         ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Puts the given value. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="component">    . </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Put(ViewModel.Component component)
-        //{
-        //    try
-        //    {
-        //        return Post(component);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Post this message. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
-        ///
-        /// <param name="component">    . </param>
-        ///
-        /// <returns>   A HttpResponseMessage. </returns>
-        ///
-        /// ### <param name="value">    . </param>
-        ///-------------------------------------------------------------------------------------------------
-        //public HttpResponseMessage Post(ViewModel.Component component)
-        //{
-        //    try
-        //    {
-        //        var response = Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.AddUpdateComponent(component));
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
-
-        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Deletes the given ID. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/30/2017. </remarks>
@@ -165,7 +121,7 @@ namespace DevOpsApi.Controllers
         {
             try
             {
-                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, configProcessor.DeleteComponent(componentId));
+                return Request.CreateResponse<ViewModel.Component>(HttpStatusCode.OK, compProcessor.DeleteComponent(componentId));
             }
             catch (Exception ex)
             {

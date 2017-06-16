@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="ConvertObjects_Reflection.cs" />
     <Compile Include="ManageApplicationInsights.cs" />
+    <Compile Include="ManageApplications.cs" />
+    <Compile Include="ManageComponents.cs" />
     <Compile Include="ManageConfig_Files.cs" />
     <Compile Include="ManageConfig_AppVariables.cs" />
     <Compile Include="ManageConfig_ComplexVariables.cs" />

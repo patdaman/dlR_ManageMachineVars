@@ -158,6 +158,14 @@
           <Property Name="modify_date" Type="datetime" Nullable="false" />
           <Property Name="active" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="MachineApplicationMap">
+          <Key>
+            <PropertyRef Name="machine_id" />
+            <PropertyRef Name="application_id" />
+          </Key>
+          <Property Name="machine_id" Type="int" Nullable="false" />
+          <Property Name="application_id" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="MachineComponentPathMap">
           <Key>
             <PropertyRef Name="machine_id" />
@@ -460,6 +468,32 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MachineApplicationMap_Applications">
+          <End Role="Applications" Type="Self.Applications" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="MachineApplicationMap" Type="Self.MachineApplicationMap" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Applications">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachineApplicationMap">
+              <PropertyRef Name="application_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MachineApplicationMap_Machines">
+          <End Role="Machines" Type="Self.Machines" Multiplicity="1" />
+          <End Role="MachineApplicationMap" Type="Self.MachineApplicationMap" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machines">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="MachineApplicationMap">
+              <PropertyRef Name="machine_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MachineComponentPath_Components">
           <End Role="Components" Type="Self.Components" Multiplicity="1" />
           <End Role="MachineComponentPathMap" Type="Self.MachineComponentPathMap" Multiplicity="*" />
@@ -571,6 +605,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="Enum_EnvironmentVariableType" EntityType="Self.Enum_EnvironmentVariableType" Schema="config" store:Type="Tables" />
           <EntitySet Name="Enum_Locations" EntityType="Self.Enum_Locations" Schema="config" store:Type="Tables" />
           <EntitySet Name="EnvironmentVariables" EntityType="Self.EnvironmentVariables" Schema="config" store:Type="Tables" />
+          <EntitySet Name="MachineApplicationMap" EntityType="Self.MachineApplicationMap" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachineComponentPathMap" EntityType="Self.MachineComponentPathMap" Schema="config" store:Type="Tables" />
           <EntitySet Name="Machines" EntityType="Self.Machines" Schema="config" store:Type="Tables" />
           <EntitySet Name="MachinesServerGroupsMap" EntityType="Self.MachinesServerGroupsMap" Schema="config" store:Type="Tables" />
@@ -659,6 +694,14 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="Devices" EntitySet="Devices" />
             <End Role="Events" EntitySet="Events" />
           </AssociationSet>
+          <AssociationSet Name="FK_MachineApplicationMap_Applications" Association="Self.FK_MachineApplicationMap_Applications">
+            <End Role="Applications" EntitySet="Applications" />
+            <End Role="MachineApplicationMap" EntitySet="MachineApplicationMap" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MachineApplicationMap_Machines" Association="Self.FK_MachineApplicationMap_Machines">
+            <End Role="Machines" EntitySet="Machines" />
+            <End Role="MachineApplicationMap" EntitySet="MachineApplicationMap" />
+          </AssociationSet>
           <AssociationSet Name="FK_MachineComponentPath_Components" Association="Self.FK_MachineComponentPath_Components">
             <End Role="Components" EntitySet="Components" />
             <End Role="MachineComponentPathMap" EntitySet="MachineComponentPathMap" />
@@ -709,6 +752,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="Components" Relationship="Self.AppComponents" FromRole="Applications" ToRole="Components" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="Self.ApplicationEnvironmentVariables" FromRole="Applications" ToRole="EnvironmentVariables" />
           <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Machines" Relationship="DevOpsModel.MachineApplicationMap" FromRole="Application" ToRole="Machine" />
         </EntityType>
         <EntityType Name="Component">
           <Key>
@@ -843,6 +887,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="ServerGroups" Relationship="Self.MachinesServerGroupsMap" FromRole="Machines" ToRole="ServerGroups" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="Self.MachineVariablesMap" FromRole="Machines" ToRole="EnvironmentVariables" />
           <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Applications" Relationship="DevOpsModel.MachineApplicationMap" FromRole="Machine" ToRole="Application" />
         </EntityType>
         <EntityType Name="ServerGroup">
           <Key>
@@ -1104,6 +1149,10 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           </AssociationSet>
           <EntitySet Name="Notes" EntityType="DevOpsModel.Note" />
           <EntitySet Name="vi_ConfigVariables" EntityType="DevOpsModel.vi_ConfigVariables" />
+          <AssociationSet Name="MachineApplicationMap" Association="DevOpsModel.MachineApplicationMap">
+            <End Role="Application" EntitySet="Applications" />
+            <End Role="Machine" EntitySet="Machines" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="ConfigVariable">
           <Key>
@@ -1229,6 +1278,10 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <Property Name="published_date" Type="DateTime" Precision="3" />
           <Property Name="published" Type="Boolean" />
         </EntityType>
+        <Association Name="MachineApplicationMap">
+          <End Type="DevOpsModel.Application" Role="Application" Multiplicity="*" />
+          <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1537,6 +1590,14 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="MachineApplicationMap" TypeName="DevOpsModel.MachineApplicationMap" StoreEntitySet="MachineApplicationMap">
+            <EndProperty Name="Machine">
+              <ScalarProperty Name="id" ColumnName="machine_id" />
+            </EndProperty>
+            <EndProperty Name="Application">
+              <ScalarProperty Name="id" ColumnName="application_id" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

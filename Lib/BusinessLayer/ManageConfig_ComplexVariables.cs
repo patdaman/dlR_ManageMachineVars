@@ -12,6 +12,8 @@ namespace BusinessLayer
     {
         public string userName { get; set; }
         DevOpsEntities DevOpsContext;
+        ManageApplications appManager;
+        ManageComponents compManager;
         ConvertObjects_Reflection EfToVmConverter = new ConvertObjects_Reflection();
 
         ///-------------------------------------------------------------------------------------------------
@@ -22,17 +24,23 @@ namespace BusinessLayer
         public ManageConfig_ComplexVariables()
         {
             DevOpsContext = new DevOpsEntities();
+            appManager = new ManageApplications(DevOpsContext);
+            compManager = new ManageComponents(DevOpsContext);
             // EfToVmConverter = new ConvertObjects();
         }
 
         public ManageConfig_ComplexVariables(DevOpsEntities entities)
         {
             DevOpsContext = entities;
+            appManager = new ManageApplications(DevOpsContext);
+            compManager = new ManageComponents(DevOpsContext);
         }
 
         public ManageConfig_ComplexVariables(string conn)
         {
             DevOpsContext = new DevOpsEntities(conn);
+            appManager = new ManageApplications(DevOpsContext);
+            compManager = new ManageComponents(DevOpsContext);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -52,67 +60,6 @@ namespace BusinessLayer
             //enVars = GetAllEnVariables();
 
             return allVars;
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets the application. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 4/27/2017. </remarks>
-        ///
-        /// <returns>   The application. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public List<ViewModel.Application> GetApplication()
-        {
-            List<ViewModel.Application> applications = new List<ViewModel.Application>();
-            var efApplications = DevOpsContext.Applications.ToList();
-            foreach (var c in efApplications)
-            {
-                applications.Add(ReturnApplicationVariable(c));
-            }
-            return applications;
-        }
-
-        public ViewModel.Application GetApplication(int id)
-        {
-            var efApplication = DevOpsContext.Applications.Where(x => x.id == id).FirstOrDefault();
-            return ReturnApplicationVariable(efApplication);
-        }
-
-        public ViewModel.Application GetApplication(string applicationName)
-        {
-            var efApplication = DevOpsContext.Applications.Where(x => x.application_name == applicationName).FirstOrDefault();
-            return ReturnApplicationVariable(efApplication);
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets the component. </summary>
-        ///
-        /// <remarks>   Patman, 4/14/2017. </remarks>
-        ///
-        /// <returns>   The component. </returns>
-        ///-------------------------------------------------------------------------------------------------
-
-        public List<ViewModel.Component> GetComponent()
-        {
-            List<ViewModel.Component> components = new List<ViewModel.Component>();
-            var efComponents = DevOpsContext.Components.ToList();
-            foreach (var c in efComponents)
-            {
-                components.Add(ReturnComponentVariable(c));
-            }
-            return components;
-        }
-
-        public ViewModel.Component GetComponent(int componentId, bool noVal = false)
-        {
-            var efComponent = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
-            return ReturnComponentVariable(efComponent, noVal);
-        }
-
-        public ViewModel.Component GetComponent(string componentName, bool noVal = false)
-        {
-            var efComponent = DevOpsContext.Components.Where(x => x.component_name == componentName).FirstOrDefault();
-            return ReturnComponentVariable(efComponent, noVal);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -143,7 +90,7 @@ namespace BusinessLayer
                     relative_path = component.relative_path ?? string.Empty,
                     ConfigFiles = new List<EFDataModel.DevOps.ConfigFile>(),
                     ConfigVariables = new List<EFDataModel.DevOps.ConfigVariable>(),
-                    Applications = GetEfApplication(component.Applications) ?? new List<EFDataModel.DevOps.Application>(),
+                    Applications = appManager.GetEfApplication(component.Applications) ?? new List<EFDataModel.DevOps.Application>(),
                 });
             else
             {
@@ -156,7 +103,7 @@ namespace BusinessLayer
                     efComp.active = component.active;
                     efComp.relative_path = component.relative_path;
                 }
-                var efApps = GetEfApplication(component.Applications);
+                var efApps = appManager.GetEfApplication(component.Applications);
                 var oldEfApps = efComp.Applications.Where(x => !efApps.Any(y => y.id == x.id)).ToList();
                 if (oldEfApps.Count() > 0)
                 {
@@ -183,7 +130,7 @@ namespace BusinessLayer
 
             }
             DevOpsContext.SaveChanges();
-            return GetComponent(component.component_name, true);
+            return compManager.GetComponent(component.component_name, true);
         }
 
         public ViewModel.Application AddUpdateApplication(ViewModel.ApplicationDto appDto)
@@ -217,7 +164,7 @@ namespace BusinessLayer
                     last_modify_user = application.last_modify_user ?? this.userName ?? string.Empty,
                     active = true,
                     release = application.release ?? string.Empty,
-                    Components = GetEfComponent(application.Components),
+                    Components = compManager.GetEfComponent(application.Components),
                 });
             else
             {
@@ -231,7 +178,7 @@ namespace BusinessLayer
                     efApp.active = application.active;
                     efApp.release = application.release ?? string.Empty;
                 };
-                var efComps = GetEfComponent(application.Components);
+                var efComps = compManager.GetEfComponent(application.Components);
                 var oldEfComps = efApp.Components.Where(x => !efComps.Any(y => y.id == x.id)).ToList();
                 if (oldEfComps.Count() > 0)
                 {
@@ -254,7 +201,7 @@ namespace BusinessLayer
                 }
             }
             DevOpsContext.SaveChanges();
-            return GetApplication(application.application_name);
+            return appManager.GetApplication(application.application_name);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -356,302 +303,6 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets an application. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 4/20/2017. </remarks>
-        ///
-        /// <param name="apps"> The apps. </param>
-        ///
-        /// <returns>   The application. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public List<ViewModel.Application> GetApplication(List<ApplicationDto> apps)
-        {
-            List<ViewModel.Application> vmApps = new List<ViewModel.Application>();
-            if (apps.Count > 0)
-            {
-                //List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => apps.Select(y => y.name).FirstOrDefault().Contains(x.application_name)).ToList();
-                List<string> appList = new List<string>();
-
-                foreach (var vmApp in apps)
-                {
-                    var app = DevOpsContext.Applications.Where(x => x.application_name.Contains(vmApp.name)).FirstOrDefault();
-                    //var app = efApps.Where(x => x.application_name == vmApp.name).FirstOrDefault();
-                    if (app == null)
-                    {
-                        vmApps.Add(new ViewModel.Application(vmApp)
-                        {
-                            active = true,
-                            create_date = DateTime.Now,
-                            modify_date = DateTime.Now,
-                            last_modify_user = this.userName,
-                            release = vmApp.release ?? string.Empty,
-                            EnvironmentVariables = new List<EnvironmentDtoVariable>(),
-                        });
-                    }
-                    else
-                    {
-                        vmApps.Add(new ViewModel.Application()
-                        {
-                            id = app.id,
-                            active = app.active,
-                            application_name = app.application_name,
-                            create_date = app.create_date,
-                            modify_date = app.modify_date,
-                            last_modify_user = app.last_modify_user,
-                            release = app.release,
-                            EnvironmentVariables = new List<EnvironmentDtoVariable>(),
-                        });
-                    }
-                }
-            }
-            return vmApps;
-        }
-
-        public List<ViewModel.Component> GetComponent(ApplicationDto applicationModel)
-        {
-            var comps = new List<ViewModel.Component>();
-            // todo:
-            //  Make this work!
-            return comps;
-        }
-
-        public ViewModel.Application GetApplication(ApplicationDto appDto)
-        {
-            var app = DevOpsContext.Applications.Where(x => x.application_name.Contains(appDto.name)).FirstOrDefault();
-            if (app == null)
-            {
-                return new ViewModel.Application(appDto)
-                {
-                    active = true,
-                    create_date = DateTime.Now,
-                    modify_date = DateTime.Now,
-                    last_modify_user = this.userName,
-                    release = string.Empty,
-                    EnvironmentVariables = new List<EnvironmentDtoVariable>(),
-                };
-            }
-            else
-            {
-                return new ViewModel.Application()
-                {
-                    id = app.id,
-                    active = app.active,
-                    application_name = app.application_name,
-                    create_date = app.create_date,
-                    modify_date = app.modify_date,
-                    last_modify_user = app.last_modify_user,
-                    release = app.release,
-                    EnvironmentVariables = new List<EnvironmentDtoVariable>(),
-                };
-            }
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets ef application. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 4/20/2017. </remarks>
-        ///
-        /// <param name="vmApps">   The view model apps. </param>
-        ///
-        /// <returns>   The ef application. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public List<EFDataModel.DevOps.Application> GetEfApplication(List<ViewModel.Application> vmApps)
-        {
-            List<EFDataModel.DevOps.Application> efApps = new List<EFDataModel.DevOps.Application>();
-            foreach (var vmApp in vmApps)
-            {
-                efApps.Add(GetEfApplication(vmApp));
-            }
-            return efApps;
-        }
-
-        public EFDataModel.DevOps.Application GetEfApplication(ViewModel.Application vmApp)
-        {
-            EFDataModel.DevOps.Application app;
-            app = DevOpsContext.Applications.Where(x => x.application_name == vmApp.application_name).FirstOrDefault();
-            if (app == null)
-            {
-                app = new EFDataModel.DevOps.Application()
-                {
-                    application_name = vmApp.application_name,
-                    active = true,
-                    create_date = DateTime.Now,
-                    modify_date = DateTime.Now,
-                    last_modify_user = this.userName,
-                    release = vmApp.release ?? string.Empty,
-                    EnvironmentVariables = new List<EFDataModel.DevOps.EnvironmentVariable>(),
-                };
-            }
-            else
-            {
-                app.id = vmApp.id;
-                app.active = vmApp.active;
-                app.application_name = vmApp.application_name;
-                app.modify_date = vmApp.modify_date ?? DateTime.Now;
-                app.last_modify_user = vmApp.last_modify_user ?? app.last_modify_user;
-                app.release = vmApp.release ?? app.release;
-            }
-            return app;
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets applications from CSV. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 5/25/2017. </remarks>
-        ///
-        /// <param name="apps"> The apps. </param>
-        ///
-        /// <returns>   The applications from CSV. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public List<ViewModel.Application> GetApplicationsFromCsv(string apps)
-        {
-            List<string> appList = new List<string>();
-            List<ViewModel.Application> vmAppList = new List<ViewModel.Application>();
-            if (!string.IsNullOrWhiteSpace(apps))
-            {
-                appList = apps.Split(',').ToList();
-            }
-            foreach (string app in appList)
-            {
-                vmAppList.Add(GetApplication(app));
-            }
-            return vmAppList;
-        }
-
-        ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Gets a component. </summary>
-        ///
-        /// <remarks>   Pdelosreyes, 4/27/2017. </remarks>
-        ///
-        /// <param name="comps">    The comps. </param>
-        ///
-        /// <returns>   The component. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public List<ViewModel.Component> GetComponentsFromCsv(string comps)
-        {
-            List<string> compList = new List<string>();
-            List<ViewModel.Component> vmCompList = new List<ViewModel.Component>();
-            if (!string.IsNullOrWhiteSpace(comps))
-            {
-                compList = comps.Split(',').ToList();
-            }
-            foreach (string comp in compList)
-            {
-                vmCompList.Add(GetComponent(comp));
-            }
-            return vmCompList;
-        }
-
-        public ViewModel.Component GetComponent(string compName)
-        {
-            var comp = DevOpsContext.Components.Where(x => x.component_name.Contains(compName)).FirstOrDefault();
-            if (comp == null)
-            {
-                return new ViewModel.Component()
-                {
-                    component_name = compName,
-                    active = true,
-                    create_date = DateTime.Now,
-                    modify_date = DateTime.Now,
-                    last_modify_user = this.userName,
-                    relative_path = "",
-                };
-            }
-            else
-            {
-                return new ViewModel.Component()
-                {
-                    id = comp.id,
-                    active = comp.active,
-                    component_name = comp.component_name,
-                    create_date = comp.create_date,
-                    modify_date = comp.modify_date,
-                    last_modify_user = comp.last_modify_user,
-                    relative_path = comp.relative_path,
-                };
-            }
-        }
-
-        public List<ViewModel.Component> GetComponent(List<ComponentDto> comps)
-        {
-            List<ViewModel.Component> vmComps = new List<ViewModel.Component>();
-            if (comps.Count > 0)
-            {
-                foreach (var vmComp in comps)
-                {
-                    vmComps.Add(GetComponent(vmComp.componentName));
-                }
-            }
-            return vmComps;
-        }
-
-        public ViewModel.Component GetComponent(ComponentDto comp)
-        {
-            var component = DevOpsContext.Components.Where(x => x.component_name.Contains(comp.componentName)).FirstOrDefault();
-            if (component == null)
-            {
-                return new ViewModel.Component(comp)
-                {
-                    active = true,
-                    create_date = DateTime.Now,
-                    modify_date = DateTime.Now,
-                    relative_path = "",
-                };
-            }
-            else
-            {
-                return new ViewModel.Component(comp)
-                {
-                    id = component.id,
-                    active = component.active,
-                    component_name = component.component_name,
-                    create_date = component.create_date,
-                    modify_date = component.modify_date,
-                    last_modify_user = component.last_modify_user,
-                    relative_path = component.relative_path,
-                };
-            }
-        }
-
-        public List<EFDataModel.DevOps.Component> GetEfComponent(List<ViewModel.Component> vmComps)
-        {
-            List<EFDataModel.DevOps.Component> efComps = new List<EFDataModel.DevOps.Component>();
-            foreach (var vmComp in vmComps)
-            {
-                efComps.Add(GetEfComponent(vmComp));
-            }
-            return efComps;
-        }
-
-        public EFDataModel.DevOps.Component GetEfComponent(ViewModel.Component vmComp)
-        {
-            EFDataModel.DevOps.Component comp;
-            comp = DevOpsContext.Components.Where(x => x.component_name == vmComp.component_name).FirstOrDefault();
-            if (comp == null)
-            {
-                comp = new EFDataModel.DevOps.Component()
-                {
-                    component_name = vmComp.component_name,
-                    active = vmComp.active, // ?? true,
-                    create_date = DateTime.Now,
-                    modify_date = vmComp.modify_date ?? DateTime.Now,
-                    last_modify_user = vmComp.last_modify_user,
-                    relative_path = vmComp.relative_path,
-                };
-            }
-            else
-            {
-                comp.id = vmComp.id;
-                comp.active = vmComp.active;
-                comp.component_name = vmComp.component_name;
-                comp.create_date = vmComp.create_date;
-                comp.modify_date = vmComp.modify_date ?? DateTime.Now;
-                comp.last_modify_user = vmComp.last_modify_user;
-                comp.relative_path = vmComp.relative_path;
-            }
-            return comp;
-        }
-        ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all machine configuration variables. </summary>
         ///
         /// <remarks>   Pdelosreyes, 3/17/2017. </remarks>
@@ -669,7 +320,6 @@ namespace BusinessLayer
                 foreach (var vc in varComponents)
                 {
                     ViewModel.ConfigVariable configVar = ReturnConfigVariable(appVar);
-                    //if (configVar.attribute != configVar.key && !string.IsNullOrWhiteSpace(configVar.value_name))
                     if (!string.IsNullOrWhiteSpace(configVar.parent_element))
                     {
                         AppVar appVarModel = new AppVar(configVar);
@@ -681,7 +331,6 @@ namespace BusinessLayer
                             if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
                                 appVarModel.applicationNames = app.application_name;
                             else
-                                //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                                 appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                         }
                         if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
@@ -853,62 +502,8 @@ namespace BusinessLayer
         }
 
         ///-------------------------------------------------------------------------------------------------
-        /// <summary>   Deletes the component described by componentId. </summary>
-        ///
-        /// <remarks>   Patman, 4/14/2017. </remarks>
-        ///
-        /// <param name="componentId">  Identifier for the component. </param>
-        ///
-        /// <returns>   A ViewModel.Component. </returns>
-        ///-------------------------------------------------------------------------------------------------
-        public ViewModel.Component DeleteComponent(int componentId)
-        {
-            var comp = DevOpsContext.Components.Where(x => x.id == componentId).FirstOrDefault();
-            DevOpsContext.Components.Remove(comp);
-            DevOpsContext.SaveChanges();
-            return new ViewModel.Component();
-        }
-
-        ///-------------------------------------------------------------------------------------------------
         //  <section> Begin Private Methods </section>
         ///-------------------------------------------------------------------------------------------------
-
-
-        private ViewModel.Component ReturnComponentVariable(EFDataModel.DevOps.Component component, bool noVal = false)
-        {
-            if (noVal)
-            {
-                return new ViewModel.Component()
-                {
-                    id = component.id,
-                    active = component.active,
-                    component_name = component.component_name,
-                    create_date = component.create_date,
-                    relative_path = component.relative_path,
-                    modify_date = component.modify_date,
-                    last_modify_user = component.last_modify_user,
-                    MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
-                    Applications = EfToVmConverter.EfAppListToVm(component.Applications),
-                    ConfigVariables = new List<ViewModel.ConfigVariable>(),
-                };
-            }
-            else
-            {
-                return new ViewModel.Component()
-                {
-                    id = component.id,
-                    active = component.active,
-                    component_name = component.component_name,
-                    create_date = component.create_date,
-                    relative_path = component.relative_path,
-                    modify_date = component.modify_date,
-                    last_modify_user = component.last_modify_user,
-                    MachineComponentPaths = EfToVmConverter.EfMachineComponentPathListToVm(component.MachineComponentPathMaps),
-                    Applications = EfToVmConverter.EfAppListToVm(component.Applications),
-                    ConfigVariables = EfToVmConverter.EfConfigListToVm(component.ConfigVariables).ToList(),
-                };
-            }
-        }
 
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets configuration values. </summary>
@@ -966,7 +561,6 @@ namespace BusinessLayer
             else
                 configVars = EfToVmConverter.EfConfigValueListToVm(new List<EFDataModel.DevOps.ConfigVariableValue>(), environments, config.configfile_id);
             var configVariable = new ViewModel.ConfigVariable()
-            //return new ViewModel.ConfigVariable()
             {
                 id = config.id,
                 active = config.active,
@@ -1038,7 +632,6 @@ namespace BusinessLayer
                     if (string.IsNullOrWhiteSpace(appVarModel.applicationNames))
                         appVarModel.applicationNames = app.application_name;
                     else
-                        //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                         appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", app.application_name);
                 }
                 appVarModel.values.AddRange(configVar.ConfigVariableValues.OrderBy(x => x.environment));
@@ -1236,7 +829,6 @@ namespace BusinessLayer
                                                                         && x.value_name == appValue.valueName
                                                                         && x.parent_element == appValue.configParentElement)
                                                            .FirstOrDefault();
-            //EFDataModel.DevOps.Component varComponent = efConfigVar.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
             var varComponent = efConfigVar.Components.Where(y => y.id == appValue.componentId).FirstOrDefault();
             ViewModel.ConfigVariable configVar = ReturnConfigVariable(efConfigVar);
             AppVar appVar = new AppVar(configVar);
@@ -1248,7 +840,6 @@ namespace BusinessLayer
                 if (string.IsNullOrWhiteSpace(appVar.applicationNames))
                     appVar.applicationNames = app.application_name;
                 else
-                    //appVarModel.applicationNames = string.Concat(appVarModel.applicationNames, ", ", Environment.NewLine, app.application_name);
                     appVar.applicationNames = string.Concat(appVar.applicationNames, ", ", app.application_name);
             }
             appVar.values.AddRange(configVar.ConfigVariableValues);
