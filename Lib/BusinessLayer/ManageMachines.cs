@@ -8,11 +8,24 @@ namespace BusinessLayer
 {
     public class ManageMachines
     {
-        DevOpsEntities DevOpsContext = new DevOpsEntities();
+        public string userName { get; set; }
+        DevOpsEntities DevOpsContext;
+        ManageApplications appManager;
 
-        public List<SystemInfo> GetAllMachineInfo()
+        public ManageMachines()
         {
-            throw new NotImplementedException();
+            DevOpsContext = new DevOpsEntities();
+            ManageApplications appManager = new ManageApplications(DevOpsContext);
+        }
+        public ManageMachines(DevOpsEntities devOpsContext)
+        {
+            DevOpsContext = devOpsContext;
+            ManageApplications appManager = new ManageApplications(DevOpsContext);
+        }
+        public ManageMachines(string conn)
+        {
+            DevOpsContext = new DevOpsEntities(conn);
+            ManageApplications appManager = new ManageApplications(DevOpsContext);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -29,23 +42,7 @@ namespace BusinessLayer
                                select machines).ToList();
             foreach (var machine in allMachines)
             {
-                List<ViewModel.Application> applications = new List<ViewModel.Application>();
-                foreach (var app in machine.Applications)
-                {
-
-                };
-                machineModels.Add(new ViewModel.Machine()
-                {
-                    id = machine.id,
-                    machine_name = machine.machine_name,
-                    ip_address = machine.ip_address,
-                    location = machine.location,
-                    environment = machine.usage,
-                    create_date = machine.create_date,
-                    modify_date = machine.modify_date,
-                    active = machine.active,
-                    Applications = applications,
-                });
+                machineModels.Add(ReturnVmMachine(machine));
             }
             return machineModels;
         }
@@ -69,18 +66,7 @@ namespace BusinessLayer
             var EFMachine = (from machine in DevOpsContext.Machines
                              where machine.id == id
                              select machine).FirstOrDefault();
-            var machineModel = new ViewModel.Machine()
-            {
-                id = EFMachine.id,
-                machine_name = EFMachine.machine_name,
-                ip_address = EFMachine.ip_address,
-                location = EFMachine.location,
-                environment = EFMachine.usage,
-                create_date = EFMachine.create_date,
-                modify_date = EFMachine.modify_date,
-                active = EFMachine.active
-            };
-            return machineModel;
+            return ReturnVmMachine(EFMachine);
         }
 
         ///-------------------------------------------------------------------------------------------------
@@ -123,6 +109,27 @@ namespace BusinessLayer
         public ViewModel.Machine DeleteMachine(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private ViewModel.Machine ReturnVmMachine(EFDataModel.DevOps.Machine efMachine)
+        {
+            List<ViewModel.Application> vmApplications = new List<ViewModel.Application>();
+            foreach (var app in efMachine.Applications)
+            {
+                vmApplications.Add(appManager.ReturnApplicationVariable(app));
+            }
+            return new ViewModel.Machine()
+            {
+                id = efMachine.id,
+                machine_name = efMachine.machine_name,
+                ip_address = efMachine.ip_address,
+                location = efMachine.location,
+                environment = efMachine.usage,
+                create_date = efMachine.create_date,
+                modify_date = efMachine.modify_date,
+                active = efMachine.active,
+                Applications = vmApplications,
+            };
         }
     }
 }

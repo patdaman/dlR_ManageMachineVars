@@ -40,7 +40,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         var location;
 
         var selectedRow;
-
+        var canEdit;
         var bypassEditCancel;
 
         /// Display current API path and link to Help page
@@ -57,6 +57,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             $scope.Engineer = true;
         else
             $scope.Engineer = false;
+        $scope.canEdit = false;
 
         /// Grid Filters
         $scope.environment = '';
@@ -238,12 +239,14 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                 grouping: { groupPriority: 0 },
                 sort: { priority: 0, direction: 'asc' },
                 groupable: true,
+                cellEditableCondition: $scope.canEdit,
             },
             {
                 field: 'location',
                 //grouping: { groupPriority: 1 },
                 sort: { priority: 1, direction: 'asc' },
                 groupable: true,
+                cellEditableCondition: $scope.canEdit,
                 width: 170
             },
             {
@@ -251,18 +254,26 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                 width: '20%',
                 enableFiltering: true,
                 groupable: false,
-                cellTemplate: '/Content/Templates/machineTemplate.html'
+                //cellTemplate: '/Content/Templates/machineTemplate.html'
             },
-            { field: 'uri', width: '20%' },
-            { field: 'ip_address', width: 170 },
-            //{ field: 'create_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
-            //{ field: 'modify_date', enableCellEdit: false, cellFilter: 'date:"MM-dd-yyyy"', width: 120, visible: false },
+            {
+                field: 'uri',
+                width: '20%',
+                enableCellEdit: false,
+            },
+            {
+                field: 'ip_address',
+                width: 170,
+                enableCellEdit: false,
+                //cellEditableCondition: $scope.canEdit,
+            },
             { field: 'create_date', enableCellEdit: false, visible: false },
             { field: 'modify_date', enableCellEdit: false, visible: false },
             {
                 field: 'active',
                 type: 'boolean',
-                enableFiltering: false,
+                cellEditableCondition: $scope.canEdit,
+                enableFiltering: true,
                 width: 80
             },
             { field: 'last_modify_user', visible: false },
@@ -290,10 +301,17 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             //$scope.gridApi.core.addRowHeaderColumn({ name: 'rowHeaderCol', displayName: '', width: 26, cellTemplate: '/Content/Templates/expandButtonTemplate.html' });
             gridApi.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
                 if (!oldRowCol || (oldRowCol.row !== newRowCol.row)) {
-                    gridApi.selection.selectRow(newRowCol.row.entity);
-                    if (oldRowCol) {
-                        gridApi.selection.unSelectRow(oldRowCol.row.entity);
-                        oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                    gridApi.expandable.expandRow(newRowCol.row.entity);
+                    if (newRowCol.row.entity.environment) {
+                        gridApi.selection.clearSelectedRows();
+                        gridApi.selection.selectRow(newRowCol.row.entity);
+                    }
+                    else {
+                        gridApi.treeBase.expandRow(newRowCol.row);
+                    }
+                    if (oldRowCol && (oldRowCol.row.entity.environment || !newRowCol.row.entity.environment)) {
+                        gridApi.treeBase.collapseRow(oldRowCol.row);
+                        gridApi.expandable.collapseRow(oldRowCol.row);
                     }
                 }
                 if ($scope.bypassEditCancel === false) {
@@ -301,12 +319,15 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                         $scope.cancelEdit();
                     }
                 }
+                else if (newRowCol.row.entity.machine_name) {
+                    var field = newRowCol.col.colDef.field;
+                    if (field !== "treeBaseRowHeaderCol" && field !== "Actions")
+                        $scope.machineDetail(newRowCol.row);
+                }
                 else {
-                    if (newRowCol.row.treeLevel === 0) {
-                        var field = newRowCol.col.colDef.field;
-                        if (field !== "treeBaseRowHeaderCol" && field !== "Actions")
-                            $scope.machineDetail(newRowCol.row);
-                    }
+                    gridApi.grid.cellNav.clearFocus();
+                    gridApi.grid.cellNav.focusedCells = [];
+                    gridApi.grid.cellNav.lastRowCol = null;
                 }
                 $scope.machine_id = newRowCol.row.entity.id;
             });

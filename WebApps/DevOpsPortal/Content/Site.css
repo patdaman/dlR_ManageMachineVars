@@ -254,7 +254,7 @@ textarea {
   .ui-grid-cell {
     background-color: #CCC;
 }
-.ui-grid-cell-focus {
+.ui-grid-row-selected .ui-grid-cell-focus {
     background-color: #c9dde1;
 }
 .above-grid {

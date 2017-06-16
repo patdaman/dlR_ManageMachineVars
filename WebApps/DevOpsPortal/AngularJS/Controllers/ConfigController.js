@@ -314,9 +314,9 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             $scope.gridApi.core.addRowHeaderColumn({ name: 'rowHeaderCol', displayName: '', width: 26, cellTemplate: '/Content/Templates/expandButtonTemplate.html' });
             gridApi.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
                 if (!oldRowCol || (oldRowCol.row !== newRowCol.row)) {
+                    gridApi.selection.clearSelectedRows();
                     gridApi.selection.selectRow(newRowCol.row.entity);
-                    if (oldRowCol) {
-                        gridApi.selection.unSelectRow(oldRowCol.row.entity);
+                    if (oldRowCol && oldRowCol.row.entity.environment) {
                         oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
                     }
                 }

@@ -129,7 +129,7 @@ namespace BusinessLayer
         ///
         /// <returns>   The application variable. </returns>
         ///-------------------------------------------------------------------------------------------------
-        private ViewModel.Application ReturnApplicationVariable(EFDataModel.DevOps.Application a)
+        public ViewModel.Application ReturnApplicationVariable(EFDataModel.DevOps.Application a)
         {
             return new ViewModel.Application()
             {

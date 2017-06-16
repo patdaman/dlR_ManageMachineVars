@@ -158,7 +158,7 @@ namespace BusinessLayer
             return new ViewModel.Component();
         }
 
-        private ViewModel.Component ReturnComponentVariable(EFDataModel.DevOps.Component component, bool noVal = false)
+        public ViewModel.Component ReturnComponentVariable(EFDataModel.DevOps.Component component, bool noVal = false)
         {
             if (noVal)
             {
