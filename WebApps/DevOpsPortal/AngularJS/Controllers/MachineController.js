@@ -547,24 +547,23 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             //    if (aggregation.col.field === 'componentName')
             //        componentGroupName = aggregation.groupVal;
             //});
-            var deferred = $q.defer();
-
-            $http({
-                method: 'GET',
-                //url: 'api:/IISApi',
-                url: 'api:/MachineApi',
-                params: {
-                    machineName: machineId,
-                }
-            })
-            .success(deferred.resolve)
-            .success(function (data) {
+            //var deferred = $q.defer();
+            //$http({
+            //    method: 'GET',
+            //    //url: 'api:/IISApi',
+            //    url: 'api:/MachineApi',
+            //    params: {
+            //        id: machineId,
+            //    }
+            //})
+            //.success(deferred.resolve)
+            //.success(function (data) {
                 ModalService.showModal({
                     templateUrl: "/Content/Templates/machineDetailModal.html",
                     controller: "MachineDetail",
                     inputs: {
-                        machineData: data,
-                        //machineData: row,
+                        //machineData: data,
+                        machineData: row.entity,
                     }
                 })
                     .then(function (modal) {
@@ -573,10 +572,10 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                             var machine;
                         });
                     })
-            })
-            .error(function (error) {
-                console.log(error);
-            })
+            //})
+            //.error(function (error) {
+            //    console.log(error);
+            //})
             return def.promise
         };
 

@@ -10,7 +10,7 @@ using System.Security.Principal;
 
 namespace CommonUtils.IISAdmin
 {
-    public class SiteTools : IDisposable
+    public class SiteTools/* : Base*/
     {
         public string machineName { get; set; }
         public string userName { get; set; }
@@ -51,57 +51,67 @@ namespace CommonUtils.IISAdmin
         {
             if (!string.IsNullOrWhiteSpace(machineName))
             {
-                if (this.machineName != machineName)
-                {
-                    this.machineName = machineName;
-                }
-                if (server == null)
-                    server = GetServerManager(this.machineName);
+                this.machineName = machineName;
             }
             if (string.IsNullOrWhiteSpace(this.machineName))
             {
                 machineName = Environment.MachineName;
-                if (server == null)
-                    server = GetServerManager();
             }
             IPAddress[] ips = Dns.GetHostAddresses(this.machineName);
             List<WebSite> sites = new List<WebSite>();
-            foreach (var site in server.Sites)
+            using (server = GetServerManager(this.machineName))
             {
-                sites.Add(new WebSite(site)
+                foreach (var site in server.Sites)
                 {
-                    serverName = machineName ?? Environment.MachineName,
-                    ipAddress = ips[0].ToString(),
-                });
-            };
+                    sites.Add(new WebSite(site)
+                    {
+                        serverName = machineName ?? Environment.MachineName,
+                        ipAddress = ips[0].ToString(),
+                    });
+                };
+            }
             return sites;
         }
 
         public WebSite GetSite(string siteName, bool detail = false)
         {
-            return new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault(), detail);
+            IPAddress[] ips = Dns.GetHostAddresses(this.machineName);
+            WebSite site = new WebSite();
+            using (server = GetServerManager(this.machineName))
+            {
+                site = new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault(), detail)
+                {
+                    serverName = this.machineName ?? Environment.MachineName,
+                    ipAddress = ips[0].ToString(),
+                };
+            }
+            return site;
         }
 
         public WebSite AddUpdateWebSite(WebSite site)
         {
-            Site mySite = server.Sites.Where(x => x.Name == site.name).FirstOrDefault();
-            if (mySite == null)
+            WebSite newSite = new WebSite();
+            using (server = GetServerManager(this.machineName))
             {
-                mySite = CreateSite(site.serverName, site.ipAddress, site.siteId, site.name, site.hostName, site.physicalPath);
+                Site mySite = server.Sites.Where(x => x.Name == site.name).FirstOrDefault();
+                if (mySite == null)
+                {
+                    mySite = CreateSite(site.serverName, site.ipAddress, site.siteId, site.name, site.hostName, site.physicalPath);
+                }
+                else
+                {
+                    if (site.state.ToLower().StartsWith("stop"))
+                        mySite.Stop();
+                    if (site.state.ToLower().StartsWith("start"))
+                        mySite.Start();
+                    if (site.active == true)
+                        mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "true";
+                    if (site.active == false)
+                        mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "false";
+                }
+                newSite = new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
             }
-            else
-            {
-                if (site.state.ToLower().StartsWith("stop"))
-                    mySite.Stop();
-                if (site.state.ToLower().StartsWith("start"))
-                    mySite.Start();
-                if (site.active == true)
-                    mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "true";
-                if (site.active == false)
-                    mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "false";
-            }
-
-            return new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
+            return newSite;
         }
 
         public Site CreateSite(string computerName,
@@ -142,6 +152,7 @@ namespace CommonUtils.IISAdmin
             {
                 throw new Exception("Failed in CreateSite", ex);
             }
+
             return server.Sites.Where(x => x.Name == siteName).FirstOrDefault();
             //return GetSite(siteName);
         }
@@ -224,7 +235,11 @@ namespace CommonUtils.IISAdmin
             if (disposed)
                 return;
             if (disposing)
+            {
+                if (domainUser != null)
+                    domainUser.Dispose();
                 handle.Dispose();
+            }
             disposed = true;
         }
 

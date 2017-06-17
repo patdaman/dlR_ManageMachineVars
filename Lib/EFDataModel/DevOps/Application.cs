@@ -19,7 +19,7 @@ namespace EFDataModel.DevOps
         {
             this.Components = new HashSet<Component>();
             this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
-            this.Machines = new HashSet<Machine>();
+            this.MachineApplicationMaps = new HashSet<MachineApplicationMap>();
         }
     
         public int id { get; set; }
@@ -35,6 +35,6 @@ namespace EFDataModel.DevOps
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Machine> Machines { get; set; }
+        public virtual ICollection<MachineApplicationMap> MachineApplicationMaps { get; set; }
     }
 }

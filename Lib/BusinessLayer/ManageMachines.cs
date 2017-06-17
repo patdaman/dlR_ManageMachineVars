@@ -47,7 +47,7 @@ namespace BusinessLayer
             return machineModels;
         }
 
-        public List<ViewModel.Event> GetAllMachineInfo(string machineName)
+        public List<ViewModel.Event> GetAllMachineInfo(string machineName = null)
         {
             throw new NotImplementedException();
         }
@@ -114,7 +114,7 @@ namespace BusinessLayer
         private ViewModel.Machine ReturnVmMachine(EFDataModel.DevOps.Machine efMachine)
         {
             List<ViewModel.Application> vmApplications = new List<ViewModel.Application>();
-            foreach (var app in efMachine.Applications)
+            foreach (var app in efMachine.MachineApplicationMaps.Where(x => x.active == true).ToList().Select(y => y.Application).ToList())
             {
                 vmApplications.Add(appManager.ReturnApplicationVariable(app));
             }
@@ -124,7 +124,8 @@ namespace BusinessLayer
                 machine_name = efMachine.machine_name,
                 ip_address = efMachine.ip_address,
                 location = efMachine.location,
-                environment = efMachine.usage,
+                environment = efMachine.environment,
+                uri = efMachine.uri,
                 create_date = efMachine.create_date,
                 modify_date = efMachine.modify_date,
                 active = efMachine.active,

@@ -142,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppModels.cs" />
+    <Compile Include="Base.cs" />
     <Compile Include="ConfigTools.cs" />
     <Compile Include="ImpersonateUser.cs" />
     <Compile Include="SiteTools.cs" />

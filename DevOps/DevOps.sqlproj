@@ -105,6 +105,7 @@
     <Build Include="Tables\Notes.sql" />
     <Build Include="Tables\ConfigVariableValue_audit.sql" />
     <Build Include="Tables\ConfigVariables_audit.sql" />
+    <Build Include="Tables\MachineApplicationMap_1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

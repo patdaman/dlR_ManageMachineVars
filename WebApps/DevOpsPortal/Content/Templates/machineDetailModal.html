@@ -6,8 +6,14 @@
                 <h2 class="modal-title">{{machineName}}</h2>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <b>File Name:</b>
+                <div class="form-inline">
+                    <label class="mr-sm-2" for="appSelect">
+                        <b>Select an Application: </b>
+                    </label>
+                    <select id="appSelect" ng-model="selectedApplication" ng-options="a.application_name for a in applications" ng-change="updateApplication()">
+                        <option value="" style="color:red">All</option>
+                    </select>
+                    <button type="button" ng-click="viewApplications()" class="btn btn-dark btn-warning" style="float:left;">View Current Application Settings</button>
                 </div>
             </div>
             <div class="modal-footer">

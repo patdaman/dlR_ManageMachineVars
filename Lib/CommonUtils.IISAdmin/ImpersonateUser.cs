@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -8,8 +9,12 @@ using System.Security.Principal;
 
 namespace CommonUtils.IISAdmin
 {
-    public class ImpersonateUser
+    [PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
+    public class ImpersonateUser : IDisposable
     {
+        private WindowsImpersonationContext impersonatedUser;
+        private SafeTokenHandle safeTokenHandle;
+
         [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool LogonUser(String lpszUsername, String lpszDomain, String lpszPassword,
         int dwLogonType, int dwLogonProvider, out SafeTokenHandle phToken);
@@ -17,14 +22,10 @@ namespace CommonUtils.IISAdmin
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public extern static bool CloseHandle(IntPtr handle);
 
-        // If you incorporate this code into a DLL, be sure to demand FullTrust.
-        [PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
         //public WindowsIdentity GetUser(string domainName, string userName, string password)
         public WindowsImpersonationContext GetUser(string userName, string password, string domainName = null)
         {
             WindowsIdentity newId;
-            WindowsImpersonationContext impersonatedUser;
-            SafeTokenHandle safeTokenHandle;
             if (string.IsNullOrWhiteSpace(domainName))
                 domainName = Environment.UserDomainName;
             try
@@ -49,12 +50,19 @@ namespace CommonUtils.IISAdmin
             }
             catch (Exception ex)
             {
+                Dispose();
                 throw new Exception("Exception occurred impersonating Domain user ", ex);
             }
             //return newId;
             return impersonatedUser;
         }
+        public void Dispose()
+        {
+            this.impersonatedUser.Dispose();
+            this.safeTokenHandle.Dispose();
+        }
     }
+
     public sealed class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         private SafeTokenHandle()

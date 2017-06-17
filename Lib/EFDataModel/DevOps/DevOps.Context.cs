@@ -35,7 +35,6 @@ namespace EFDataModel.DevOps
         public virtual DbSet<Enum_Locations> Enum_Locations { get; set; }
         public virtual DbSet<EnvironmentVariable> EnvironmentVariables { get; set; }
         public virtual DbSet<MachineComponentPathMap> MachineComponentPathMaps { get; set; }
-        public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<ServerGroup> ServerGroups { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Event> Events { get; set; }
@@ -45,5 +44,7 @@ namespace EFDataModel.DevOps
         public virtual DbSet<ConfigFile> ConfigFiles { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
         public virtual DbSet<vi_ConfigVariables> vi_ConfigVariables { get; set; }
+        public virtual DbSet<MachineApplicationMap> MachineApplicationMaps { get; set; }
+        public virtual DbSet<Machine> Machines { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace SignalrWebService.Controllers
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.SystemInfo>>(HttpStatusCode.OK, machineProcessor.GetAllMachineInfo());
+                //return Request.CreateResponse<List<ViewModel.SystemInfo>>(HttpStatusCode.OK, machineProcessor.GetAllMachineInfo());
+                return Request.CreateResponse<List<ViewModel.Event>>(HttpStatusCode.OK, machineProcessor.GetAllMachineInfo());
             }
             catch (Exception ex)
             {

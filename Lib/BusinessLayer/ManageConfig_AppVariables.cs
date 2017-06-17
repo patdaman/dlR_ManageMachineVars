@@ -830,7 +830,7 @@ namespace BusinessLayer
                                                                     where mac.machine_name == machineName
                                                                     select mac);
             IQueryable<EFDataModel.DevOps.Machine> envMachineObjects = (from mac in DevOpsContext.Machines
-                                                                        where mac.usage == environment
+                                                                        where mac.environment == environment
                                                                         select mac);
             IQueryable<EFDataModel.DevOps.Application> appObject = (from app in DevOpsContext.Applications
                                                                     where app.id == appId

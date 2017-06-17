@@ -96,7 +96,7 @@ namespace BusinessLayer
             }
             finally
             {
-                _siteTools.Dispose();
+                _siteTools.Dispose(true);
             }
             return machineApps;
         }

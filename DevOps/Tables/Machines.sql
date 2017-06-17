@@ -3,16 +3,19 @@
     [machine_name]     VARCHAR (128) NOT NULL,
     [ip_address]       VARCHAR (128) NULL,
     [location]         VARCHAR (128) NOT NULL,
-    [usage]            VARCHAR (128) NOT NULL,
+    [environment]      VARCHAR (128) NOT NULL,
+    [uri]              VARCHAR (256) NULL,
     [create_date]      DATETIME      CONSTRAINT [DF_Machines_create_date] DEFAULT (getdate()) NOT NULL,
     [modify_date]      DATETIME      CONSTRAINT [DF_Machines_modify_date] DEFAULT (getdate()) NOT NULL,
     [last_modify_user] VARCHAR (128) CONSTRAINT [DF_Machines_last_modify_user] DEFAULT (suser_name()) NOT NULL,
     [active]           BIT           CONSTRAINT [DF_Machines_active] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_Machines] PRIMARY KEY CLUSTERED ([id] ASC),
-    CONSTRAINT [FK_Machines_Enum_EnvironmentType] FOREIGN KEY ([usage]) REFERENCES [config].[Enum_EnvironmentType] ([name]),
+    CONSTRAINT [FK_Machines_Enum_EnvironmentType] FOREIGN KEY ([environment]) REFERENCES [config].[Enum_EnvironmentType] ([name]),
     CONSTRAINT [FK_Machines_Enum_Locations] FOREIGN KEY ([location]) REFERENCES [config].[Enum_Locations] ([name]),
     CONSTRAINT [IX_Machines_MachineName] UNIQUE NONCLUSTERED ([machine_name] ASC)
 );
+
+
 
 
 
