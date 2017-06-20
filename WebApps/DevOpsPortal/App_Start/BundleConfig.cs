@@ -51,6 +51,8 @@ namespace DevOpsPortal
                       "~/Scripts/angular-ui-router.js",
                       "~/Scripts/angular-modal-service.js",
                       "~/Scripts/angular-resource.js",
+                      "~/Scripts/angular-material/angular-material.min.js",
+                      "~/Scripts/angular-aria/angular-aria.min.js",
                       "~/Scripts/csv.js",
                       "~/Scripts/pdfmake.js",
                       "~/Scripts/vfs_fonts.js",
@@ -75,6 +77,7 @@ namespace DevOpsPortal
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      //"~/Content/bootstrap-combined.min.css",
+                     "~/Content/angular-material.min.css",
                      "~/Content/bootstrap.min.css",
                      "~/Content/toastr.min.css",
                      "~/Content/sweetalert.css",

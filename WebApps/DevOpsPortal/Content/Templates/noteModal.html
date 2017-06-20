@@ -9,10 +9,10 @@
                 <h2 class="modal-title">{{title}}</h2>
             </div>
             <div class="modal-body">
-                <div class="form-group display-element">
-                    {{fullElement}}
+                <div id="header" class="form-group display-element">
+                    {{header}}
                 </div>
-                <div class="form-group" ng-if="lastModifiedDate">
+                <div id="lastModified" class="form-group" ng-if="lastModifiedDate">
                     Last Modified: {{lastModifiedDate}} - {{lastModifiedUser}}
                 </div>
                 <div class="form-group">

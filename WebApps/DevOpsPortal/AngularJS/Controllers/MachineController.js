@@ -468,50 +468,6 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             });
         };
 
-        //get single record by ID
-        $scope.get = function (machineId) {
-            var record;
-            var def = $q.defer();
-            $http({
-                method: 'GET',
-                url: apiRelPath + '/' + machineId,
-            })
-            .success(def.resolve)
-            .success(function (data) {
-                record = data;
-                def.resolve;
-            })
-            .error(function (error) {
-                var Message = "Error occured while getting record";
-                if (error.Message)
-                    Message = Message + ":\n" + error.Message
-                swal("Oops...", Message, "error");
-                console.log(error);
-            });
-            return record;
-        };
-
-        //update Machine data
-        $scope.update = function (row) {
-            var def = $q.defer();
-            var machineEntity = JSON.stringify(row.entity);
-            $http({
-                method: 'put',
-                url: apiRelPath,
-                //url: "api:/MachineApi" + Machine.id,
-                //data: Machine
-                data: machineEntity,
-            })
-            .success(def.resolve)
-            .success(function (d) {
-                loadMachines();
-                swal("Record updated successfully");
-            })
-            .error(function () {
-                High("Opps...", "Error occured while updating", "error");
-            });
-        };
-
         //delete Machine record
         $scope.delete = function (deleteId) {
             var def = $q.defer;
@@ -601,8 +557,8 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                     templateUrl: "/Content/Templates/noteModal.html",
                     controller: "noteViewer",
                     inputs: {
-                        machineName: machineName,
-                        machine_id: machine_id,
+                        header: machineName,
+                        varId: machine_id,
                         createDate: singleData.createDate,
                         lastModifiedUser: singleData.userName,
                         lastModifiedDate: singleData.modifyDate,

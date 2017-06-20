@@ -313,26 +313,26 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             $scope.gridApi = gridApi;
             $scope.gridApi.core.addRowHeaderColumn({ name: 'rowHeaderCol', displayName: '', width: 26, cellTemplate: '/Content/Templates/expandButtonTemplate.html' });
             gridApi.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
-                if (!oldRowCol || (oldRowCol.row !== newRowCol.row)) {
-                    gridApi.selection.clearSelectedRows();
-                    gridApi.selection.selectRow(newRowCol.row.entity);
-                    if (oldRowCol && oldRowCol.row.entity.environment) {
-                        oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
-                    }
-                }
+                //if (!oldRowCol || (oldRowCol.row !== newRowCol.row)) {
+                //    gridApi.selection.clearSelectedRows();
+                //    gridApi.selection.selectRow(newRowCol.row.entity);
+                //    if (oldRowCol && oldRowCol.row.entity.environment) {
+                //        oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                //    }
+                //}
                 if ($scope.bypassEditCancel === false) {
                     if ((!newRowCol.row.entity.key) || newRowCol.row.entity.key == "" || newRowCol.row.entity.configvar_id !== $scope.var_id) {
                         $scope.cancelEdit();
                     }
                 }
-                else {
-                    if (newRowCol.row.treeLevel === 0) {
-                        if (newRowCol.row.isExpanded)
-                            newRowCol.row.isExpanded = false;
-                        else
-                            newRowCol.row.isExpanded = true;
-                    }
-                };
+                //else {
+                //    if (newRowCol.row.treeLevel && newRowCol.row.treeLevel == 0) {
+                //        if (newRowCol.row.isExpanded)
+                //            newRowCol.row.isExpanded = false;
+                //        else
+                //            newRowCol.row.isExpanded = true;
+                //    }
+                //};
                 $scope.var_id = newRowCol.row.entity.configvar_id;
             })
             gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
@@ -1010,10 +1010,9 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                     templateUrl: "/Content/Templates/noteModal.html",
                     controller: "noteViewer",
                     inputs: {
-                        componentName: componentName,
-                        key: key,
-                        fullElement: fullElement,
-                        configVarId: configVarId,
+                        title: componentName,
+                        header: fullElement,
+                        varId: configVarId,
                         createDate: singleData.createDate,
                         lastModifiedUser: singleData.userName,
                         lastModifiedDate: singleData.modifyDate,
@@ -1030,7 +1029,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                             if (result.save) {
                                 var deferred = $q.defer();
                                 var data = JSON.stringify({
-                                    noteId: result.configVarId,
+                                    noteId: result.varId,
                                     noteType: 'configvariables',
                                     noteText: result.noteText,
                                     userName: $rootScope.UserName,

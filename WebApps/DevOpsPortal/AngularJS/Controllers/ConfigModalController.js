@@ -663,10 +663,10 @@ ConfigApp.controller('AddVar', ['$rootScope', '$scope', '$element',
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
 ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
-        'componentName', 'key', 'fullElement', 'configVarId', 'createDate',
+        'componentName', 'header', 'varId', 'createDate',
         'lastModifiedUser', 'lastModifiedDate', 'noteText', 'title',
     function ($rootScope, $scope, $element, close,
-        componentName, key, fullElement, configVarId, createDate,
+        componentName, header, varId, createDate,
         lastModifiedUser, lastModifiedDate, noteText, title) {
 
         var vm = $scope;
@@ -674,9 +674,8 @@ ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
         var modalSize;
 
         vm.componentName = componentName;
-        vm.key = key;
-        vm.fullElement = fullElement;
-        vm.configVarId = configVarId;
+        vm.header = header;
+        vm.varId = varId;
         vm.noteText = noteText;
         vm.lastModifiedDate = lastModifiedDate;
         vm.lastModifiedUser = lastModifiedUser;
@@ -691,7 +690,7 @@ ConfigApp.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
             $element.modal('hide');
             close({
                 save: true,
-                configVarId: vm.configVarId,
+                configVarId: vm.varId,
                 noteText: vm.noteText,
             }, 500);
         };

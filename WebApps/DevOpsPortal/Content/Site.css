@@ -425,3 +425,31 @@ li {
   display: none;
   z-index: 99999; 
 }
+
+.arrow {
+  width: 0; 
+	height: 0;
+    margin-top: 4px;
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+  
+  position: absolute;
+}
+
+.arrow-right {
+	border-left: 8px solid #000;
+  right: 0;
+}
+
+.arrow-left {
+	border-right: 8px solid #000; 
+  left: 0;
+}
+
+.arrowContainer {
+  margin-left: 30%;
+  font-size: 16px;
+  position: relative;
+  width: 18%;
+  text-align: center;
+}

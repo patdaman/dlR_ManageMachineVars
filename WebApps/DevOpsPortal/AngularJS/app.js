@@ -54,7 +54,8 @@ var MachineApp = angular.module('MachineApp',
             'ui.bootstrap',
             'ngAnimate',
             'angularModalService',
-            'EnumService'
+            'EnumService',
+            'ngMaterial'
         ]);
 
 var LogApp = angular.module('LogApp',

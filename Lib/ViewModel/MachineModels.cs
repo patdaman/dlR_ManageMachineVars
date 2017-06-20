@@ -18,12 +18,16 @@ namespace ViewModel
         public Nullable<System.DateTime> modify_date { get; set; }
         public string last_modify_user { get; set; }
         public bool active { get; set; }
+        public bool hasNotes { get; set; }
         public virtual Enum_Locations Enum_Locations { get; set; }
         public virtual List<Application> Applications { get; set; }
         public virtual List<MachineComponentPath> MachineComponentPaths { get; set; }
 
         public Machine()
-        { }
+        {
+            active = false;
+            hasNotes = false;
+        }
 
         public Machine(Machine m)
         {
@@ -36,6 +40,7 @@ namespace ViewModel
             modify_date = m.modify_date;
             last_modify_user = m.last_modify_user;
             active = m.active;
+            hasNotes = m.hasNotes;
         }
     }
 
