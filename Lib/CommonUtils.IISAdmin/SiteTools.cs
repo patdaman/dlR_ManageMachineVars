@@ -100,15 +100,36 @@ namespace CommonUtils.IISAdmin
                 }
                 else
                 {
-                    if (site.state.ToLower().StartsWith("stop"))
-                        mySite.Stop();
-                    if (site.state.ToLower().StartsWith("start"))
-                        mySite.Start();
-                    if (site.active == true)
-                        mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "true";
                     if (site.active == false)
-                        mySite.Attributes.Where(x => x.Name.EndsWith("KeepAlive")).FirstOrDefault().Value = "false";
+                    //if (site.state.ToLower().StartsWith("stop"))
+                        mySite.Stop();
+                    if (site.active == true)
+                        mySite.Start();
+                    Configuration config = mySite.GetWebConfiguration();
+                    try
+                    {
+                        if (config.GetSection("appSettings") != null)
+                        {
+                            ConfigurationSection appSettings = config.GetSection("appSettings");
+                            ConfigurationElementCollection appSettingsCollection = appSettings.GetCollection();
+                            foreach (var key in appSettingsCollection)
+                            {
+                                if (key.Attributes[1] != null && key.Attributes[0].Value.ToString().EndsWith("KeepAlive"))
+                                {
+                                    if (site.keepAlive == true)
+                                        key.Attributes[1].Value = "true";
+                                    if (site.keepAlive == false)
+                                        key.Attributes[1].Value = "false";
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        newSite.message = ex.Message;
+                    }
                 }
+                server.CommitChanges();
                 newSite = new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
             }
             return newSite;

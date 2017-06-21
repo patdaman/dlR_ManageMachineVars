@@ -60,6 +60,11 @@ namespace CommonUtils.IISAdmin
             if (key.Attributes[1] != null)
                 this.value = key.Attributes[1].Value.ToString();
         }
+        public ConfigKeyValue(string newKey, string newValue)
+        {
+            key = newKey;
+            value = newValue;
+        }
     }
 
     public class WebSite
@@ -74,6 +79,7 @@ namespace CommonUtils.IISAdmin
         public string physicalPath { get; set; }
         public string state { get; set; }
         public Nullable<bool> active { get; set; }
+        public Nullable<bool> keepAlive { get; set; }
         public string message { get; set; }
         public List<Binding> bindings { get; set; }
         public List<ConfigKeyValue> configKeys { get; set; }
@@ -97,25 +103,26 @@ namespace CommonUtils.IISAdmin
             Configuration config = site.GetWebConfiguration();
             try
             {
+                bool keeps = false;
                 if (config.GetSection("appSettings") != null)
                 {
                     ConfigurationSection appSettings = config.GetSection("appSettings");
                     ConfigurationElementCollection appSettingsCollection = appSettings.GetCollection();
+
                     foreach (var key in appSettingsCollection)
                     {
                         configKeys.Add(new ConfigKeyValue(key));
                         if (key.Attributes[1] != null && key.Attributes[0].Value.ToString() == "Application.KeepAlive")
                         {
+                            keeps = true;
                             if (key.Attributes[1].Value.ToString() == "true")
                             {
-                                this.active = true;
-                            }
-                            else
-                            {
-                                this.active = false;
+                                this.keepAlive = true;
                             }
                         }
                     }
+                    if (this.keepAlive == null && keeps)
+                        this.keepAlive = false;
                 }
             }
             catch (Exception ex)
@@ -151,6 +158,10 @@ namespace CommonUtils.IISAdmin
                 }
             }
             state = site.State.ToString();
+            if (this.state == "Started" || this.state == "Starting")
+                this.active = true;
+            else
+                this.active = false;
             siteId = site.Id.ToString();
             message = "Successfully retrieved at " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
             physicalPath = webApplications.FirstOrDefault().VirtualDirectories.FirstOrDefault().PhysicalPath;

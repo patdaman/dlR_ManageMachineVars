@@ -122,7 +122,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AngularJS\Models\" />
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Base\" />
@@ -158,6 +157,7 @@
     <Content Include="AngularJS\Directives\BoardDragDrop.js" />
     <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
+    <Content Include="AngularJS\Models\IISSettingModel.js" />
     <Content Include="AngularJS\Services\BoardService.js" />
     <Content Include="AngularJS\Services\HubService.js" />
     <Content Include="AngularJS\Services\GridRowEditService.js" />

@@ -3,22 +3,24 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h2 class="modal-title">{{machineName}}</h2>
+                <h2 class="modal-title">{{machineName}} - {{environment}}</h2>
             </div>
             <div class="modal-body">
                 <div class="form" id="machineApp">
                     <div class="form-inline">
-                        <label class="mr-sm-2" for="appSelect">
-                            <b>Select an Application: </b>
-                        </label>
-                        &nbsp;
-                        <select id="appSelect" ng-model="selectedApplication" ng-options="a.application_name for a in applications" ng-change="updateSite()">
-                            <option value="" style="color:red">All</option>
-                        </select>
-                        &nbsp;&nbsp;
-                        <button type="button" ng-click="viewApplications()" class="btn btn-dark btn-warning">View Current Application Settings</button>
+                        <div> 
+                            <!--<div ng-if="!siteName">-->
+                            <select id="appSelect" ng-model="selectedApplication" ng-options="a.application_name for a in applications" ng-change="updateSite()">
+                                <option value="" style="color:red">All Applications</option>
+                            </select>
+                        </div>
+                        <p />
                         <div ng-if="siteName">
+                            <select ng-model="selectedSite" ng-options="s.name for s in sites" ng-change="siteData(selectedSite.index)">
+                                <option value="" style="color:red">Select Site</option>
+                            </select>
                             <div><h4><b>Site id:</b> {{siteId}} &nbsp;&nbsp; <b>Name:</b> {{siteName}}</h4></div>
+                            <div><b>{{state}}</b></div>
                             <div>{{appMessage}}</div>
                         </div>
                     </div>
@@ -32,11 +34,11 @@
                         <form id="appDetail" style="width:50%">
                             <!--<div id="appDetail" class="form">-->
                             <b>
-                                <md-switch ng-model="keepAlive" ng-disabled="keepAlive=='n/a'" aria-label="" ng-true-value="'OK'" ng-false-value="'Inactive'">
-                                    Keep Alive: {{keepAlive}}
+                                <md-switch ng-model="changeKeepAlive" ng-change="updateKeepAlive()" ng-disabled="changeKeepAlive=='n/a'" aria-label="" ng-true-value="'OK'" ng-false-value="'Inactive'">
+                                    Keep Alive: {{changeKeepAlive}}
                                 </md-switch>
-                                <md-switch ng-model="state" ng-change="stopStartSite()" aria-label="" ng-true-value="'Started'" ng-false-value="'Stopped'">
-                                    {{state}}
+                                <md-switch ng-model="changeState" ng-change="stopStartSite()" aria-label="" ng-true-value="'Started'" ng-false-value="'Stopped'">
+                                    {{changeState}}
                                 </md-switch>
                             </b>
                             <div><b>App Pool:</b> {{appPoolName}}</div>
@@ -62,11 +64,11 @@
                                 </table>
                             </div>
                             <div ng-if="pages!=0&&pages!=1" class="arrowContainer">
-                                <!--<a class="arrow arrow-left" role="button" ng-disabled="pageNumber()==1" ng-click="previous()" />-->
-                                <a class="arrow arrow-left" role="button" ng-click="previous()" />
+                                <a class="arrow arrow-left" role="button" ng-disabled="page()=='1'" ng-click="previous()" />
+                                <!--<a class="arrow arrow-left" role="button" ng-click="previous()" />-->
                                 <span class="header-label">{{page()}} / {{pages}}</span>
-                                <!--<a class="arrow arrow-right" role="button" ng-disabled="pageNumber()==pages" ng-click="next()" />-->
-                                <a class="arrow arrow-right" role="button" ng-click="next()" />
+                                <a class="arrow arrow-right" role="button" ng-disabled="page()==pages" ng-click="next()" />
+                                <!--<a class="arrow arrow-right" role="button" ng-click="next()" />-->
                             </div>
                         </form>
                     </div>

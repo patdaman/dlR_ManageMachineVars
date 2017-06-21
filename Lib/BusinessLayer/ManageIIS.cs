@@ -109,9 +109,15 @@ namespace BusinessLayer
 
         public IISAppSettings GetApplication(WebSite siteProperties)
         {
+            //bool keepAlive = false;
+            //if (siteProperties.configKeys.Contains(new ConfigKeyValue("Application.KeepAlive", "true")))
+            //{
+            //    keepAlive = true;
+            //}
             IISAppSettings machineApps = new IISAppSettings()
             {
                 active = siteProperties.active,
+                keepAlive = siteProperties.keepAlive,
                 appPoolName = siteProperties.appPoolName,
                 hostName = siteProperties.hostName,
                 ipAddress = siteProperties.ipAddress,
@@ -158,9 +164,56 @@ namespace BusinessLayer
 
         public IISAppSettings UpdateApplicationSetting(IISAppSettings value)
         {
-            WebSite siteProperties = _siteTools.GetSite(value.name, true);
-            WebSite updateSiteProperties = _siteTools.AddUpdateWebSite(siteProperties);
+            //WebSite siteProperties = _siteTools.GetSite(value.name, true);
+            //WebSite updateSiteProperties = _siteTools.AddUpdateWebSite(siteProperties);
+
+            WebSite dto = new WebSite()
+            {
+                active = value.active,
+                appPoolName = value.appPoolName,
+                bindings = GetIISBindings(value.bindings),
+                configKeys = GetIISConfigKeys(value.configKeys),
+                hostName = value.hostName,
+                ipAddress = value.ipAddress,
+                keepAlive = value.keepAlive,
+                message = value.message,
+                name = value.name,
+                physicalPath = value.physicalPath,
+                serverName = value.serverName,
+                siteId = value.siteId,
+                state = value.state,
+            };
+            WebSite updateSiteProperties = _siteTools.AddUpdateWebSite(dto);
             return GetApplication(updateSiteProperties);
+        }
+
+        private List<Binding> GetIISBindings(List<SiteBinding> vmBindings)
+        {
+            List<Binding> iisBindings = new List<Binding>();
+            foreach (var b in vmBindings)
+            {
+                iisBindings.Add(new Binding()
+                {
+                    bindingInformation = b.bindingInformation,
+                    bindingProtocol = b.bindingProtocol,
+                    host = b.host,
+                });
+            }
+            return iisBindings;
+        }
+
+        private List<ConfigKeyValue> GetIISConfigKeys(List<ConfigKeyVal> vmConfigKeys)
+        {
+            List<ConfigKeyValue> IISConfigKeys = new List<ConfigKeyValue>();
+            foreach (var c in vmConfigKeys)
+            {
+                IISConfigKeys.Add(new ConfigKeyValue()
+                {
+                    key = c.key,
+                    value = c.value,
+                });
+            }
+            return IISConfigKeys;
         }
 
         public IISAppSettings CreateApplicationSetting(IISAppSettings value)

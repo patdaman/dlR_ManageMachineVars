@@ -14,6 +14,8 @@
         var configVars;
         var selectedApplication;
         var applications;
+        var selectedSite;
+        var sites = [];
 
         var viewAppDetail;
         var viewMachineDetail;
@@ -26,13 +28,19 @@
         var appMessage;
         var active;
         var physicalPath;
+        var hostName;
+        var serverName;
         var siteId;
         var siteName;
         var state;
+        var changeState;
+        var keepAlive;
+        var changeKeepAlive;
         var configKeys = [];
         var bindings = [];
 
         vm.machineData = machineData;
+        vm.sites = [];
         vm.machineName = machineData.machine_name;
         vm.environment = machineData.environment;
         vm.uri = machineData.uri;
@@ -41,9 +49,6 @@
         vm.appIndex = 0;
         vm.viewAppDetail = 'no';
         vm.viewMachineDetail = true;
-        vm.viewNav = false;
-        vm.keepAlive = 'n/a';
-        vm.stopStart = 'Stopped';
 
         vm.page = function () {
             return '' + (vm.appIndex + 1)
@@ -69,8 +74,15 @@
             vm.getIisData(params)
             .then(function (data) {
                 vm.machineApps = data;
-                vm.pages = data.length;
-                vm.siteData();
+                angular.forEach(data, function (data, index) {
+                    var name = data.name;
+                    vm.sites.push({
+                        index: index,
+                        name: name,
+                    });
+                });
+                vm.pages = '' + data.length;
+                vm.siteData(vm.appIndex);
             });
         };
 
@@ -82,86 +94,182 @@
                 params: params
             })
             .success(def.resolve)
-            .success(function () {
-                viewAppDetail = 'yes';
-            })
             .error(function (error) {
                 console.log(error);
             })
             return def.promise;
         };
 
-        vm.siteData = function () {
-
-            vm.appPoolName = vm.machineApps[vm.appIndex].appPoolName;
-            vm.active = vm.machineApps[vm.appIndex].active;
-            if (vm.active)
-                vm.keepAlive = 'OK';
-            vm.appMessage = vm.machineApps[vm.appIndex].message;
-            vm.physicalPath = vm.machineApps[vm.appIndex].physicalPath;
-            vm.siteId = vm.machineApps[vm.appIndex].siteId;
-            vm.siteName = vm.machineApps[vm.appIndex].name;
-            vm.state = vm.machineApps[vm.appIndex].state;
-            vm.configKeys = vm.machineApps[vm.appIndex].configKeys;
-            vm.bindings = vm.machineApps[vm.appIndex].bindings;
-        }
+        vm.siteData = function (index) {
+            vm.appIndex = index;
+            vm.appPoolName = vm.machineApps[index].appPoolName;
+            vm.active = vm.machineApps[index].active;
+            if (vm.active == true)
+                vm.changeState = 'Started';
+            else
+                vm.changeState = 'Stopped';
+            vm.keepAlive = vm.machineApps[index].keepAlive;
+            if (vm.keepAlive == true)
+                vm.changeKeepAlive = 'OK';
+            else if (vm.keepAlive == false)
+                vm.changeKeepAlive = 'Inactive';
+            else
+                vm.changeKeepAlive = 'n/a'
+            vm.appMessage = vm.machineApps[index].message;
+            vm.physicalPath = vm.machineApps[index].physicalPath;
+            vm.siteId = vm.machineApps[index].siteId;
+            vm.siteName = vm.machineApps[index].name;
+            vm.state = vm.machineApps[index].state;
+            vm.configKeys = vm.machineApps[index].configKeys;
+            vm.bindings = vm.machineApps[index].bindings;
+            vm.hostName = vm.machineApps[index].hostName;
+            vm.ipAddress = vm.machineApps[index].ipAddress;
+            vm.serverName = vm.machineApps[index].serverName;
+        };
 
         vm.stopStartSite = function () {
             var message;
-            if (vm.state == 'Started')
+            if (vm.changeState == 'Stopped')
                 message = vm.siteName + " will be stopped!";
             else
                 message = vm.siteName + " will be started";
+            //if (vm.updateSiteWarning(message)) {
             swal({
                 title: "Are you sure?",
                 text: message,
                 type: "warning",
                 showCancelButton: true,
                 //confirmButtonColor: "#AEDEF4",
-                confirmButtonText: "Yes, stop it!",
+                confirmButtonText: "Yes!",
+                closeOnConfirm: false
+            },
+            function (isConfirm) {
+                if (isConfirm)
+                    if (vm.changeState == 'Stopped') {
+                        vm.active = true;
+                        message = vm.siteName + ' has been started';
+                    }
+                    else {
+                        vm.active = false;
+                        message = vm.siteName + ' has been stopped';
+                    };
+                vm.updateSite()
+                .then(function () {
+                    vm.confirmSiteChange(message);
+                });
+            });
+        };
+
+        vm.updateKeepAlive = function () {
+            var message;
+            if (vm.keepAlive == false)
+                message = vm.siteName + " will be added to server pool";
+            else
+                message = vm.siteName + " will be removed from server pool";
+            //if (vm.updateSiteWarning(message)) {
+            swal({
+                title: "Are you sure?",
+                text: message,
+                type: "warning",
+                showCancelButton: true,
+                //confirmButtonColor: "#AEDEF4",
+                confirmButtonText: "Yes!",
                 closeOnConfirm: false
             },
             function (isConfirm) {
                 if (isConfirm) {
-                    vm.updateSite(vm.siteName)
+                    if (vm.keepAlive == false) {
+                        vm.keepAlive = true;
+                        message = vm.siteName + ' has been added to server pool';
+                    }
+                    else {
+                        vm.keepAlive = false;
+                        message = vm.siteName + ' has been removed from server pool';
+                    };
+                    vm.updateSite()
                     .then(function () {
-                        message = vm.siteName + " " + vm.state;
-                        swal({
-                            title: vm.siteName,
-                            text: message,
-                            type: "success",
-                            imageUrl: "/Assets/thumbs-up.jpg",
-                            confirmButtonText: "Cool"
-                        });
-                        vm.viewApplications();
-                    });
-                }
-                else {
-                    swal({
-                        title: "Stop / Start " + vm.siteName,
-                        text: vm.siteName + " status not changed",
-                        type: "warning",
-                        confirmButtonText: "Cool"
+                        vm.confirmSiteChange(message);
                     });
                 };
-            });
-        }
+            })
+        };
 
-        vm.updateSite = function (siteName) {
-            if (!selectedApplication)
-                vm.viewAppDetail = 'yes';
+        vm.confirmSiteChange = function (message) {
+            swal({
+                title: vm.siteName,
+                text: message,
+                type: "success",
+                imageUrl: "/Assets/thumbs-up.jpg",
+                confirmButtonText: "Cool"
+            });
+        };
+
+        vm.updateSite = function () {
+
+            // REFACTOR!
+            //  Use OO Model!!
+            var data;
+            data = {
+                hostName: vm.hostName,
+                ipAddress: vm.ipAddress,
+                message: vm.appMessage,
+                serverName: vm.serverName,
+                appPoolName: vm.appPoolName,
+                active: vm.active,
+                keepAlive: vm.keepAlive,
+                physicalPath: vm.physicalPath,
+                siteId: vm.siteId,
+                name: vm.siteName,
+                state: vm.state,
+                configKeys: vm.configKeys,
+                bindings: vm.bindings,
+            };
+            // end refactor
+
+            var def = $q.defer();
+            $http({
+                method: 'PUT',
+                url: 'api:/IISApi',
+                data: data,
+            })
+            .success(def.resolve)
+            .success(function (data) {
+
+                // Refactor!
+                // use OO model
+                vm.machineApps[vm.appIndex].appPoolName = data.appPoolName;
+                vm.machineApps[vm.appIndex].active = data.active;
+                vm.machineApps[vm.appIndex].keepAlive = data.keepAlive;
+                vm.machineApps[vm.appIndex].message = data.appMessage;
+                vm.machineApps[vm.appIndex].physicalPath = data.physicalPath;
+                vm.machineApps[vm.appIndex].siteId = data.siteId;
+                vm.machineApps[vm.appIndex].name = data.siteName;
+                vm.machineApps[vm.appIndex].state = data.state;
+                vm.machineApps[vm.appIndex].configKeys = data.configKeys;
+                vm.machineApps[vm.appIndex].bindings = data.bindings;
+                vm.machineApps[vm.appIndex].hostName = data.hostName;
+                vm.machineApps[vm.appIndex].ipAddress = data.ipAddress;
+                vm.machineApps[vm.appIndex].serverName = data.serverName;
+                // end refactor
+
+                vm.siteData(vm.appIndex);
+            })
+            .error(function (error) {
+                console.log(error);
+            })
+            return def.promise;
         }
 
         vm.previous = function () {
             if (vm.appIndex != 0) {
                 vm.appIndex = vm.appIndex - 1;
-                vm.siteData();
+                vm.siteData(vm.appIndex);
             }
         }
         vm.next = function () {
             if (vm.appIndex != vm.pages) {
                 vm.appIndex = vm.appIndex + 1;
-                vm.siteData();
+                vm.siteData(vm.appIndex);
             }
         }
         vm.refresh = function (application) {
@@ -183,6 +291,7 @@
                 publish: vm.publish,
             }, 500);
         };
+        vm.viewApplications();
     }])
 
 .controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
