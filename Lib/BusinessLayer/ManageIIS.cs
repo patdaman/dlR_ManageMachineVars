@@ -22,27 +22,39 @@ namespace BusinessLayer
                 this.machineName = machineName;
         }
 
-        public List<IISAppSettings> GetAllApplications()
+        public List<IISAppSettings> GetAllApplications(string environment = null)
         {
             DevOpsEntities devOpsContext = new DevOpsEntities();
             List<EFDataModel.DevOps.Machine> efMachines = devOpsContext.Machines.ToList();
             List<IISAppSettings> machineApps = new List<IISAppSettings>();
-            //foreach (var machine in efMachines)
-            //{
-            //    machineApps.AddRange(GetMachineApps(machine.machine_name));
-            //}
-            try
+            foreach (var machine in efMachines)
             {
-                //machineApps.AddRange(GetMachineApps("hal9000"));
-                //machineApps.AddRange(GetMachineApps("hqdev08.dev.corp.printable.com"));
-                //machineApps.AddRange(GetMachineApps("sdapp02.dc.pti.com"));
-                machineApps.AddRange(GetMachineApps("sdmgr02.dc.pti.com"));
-            }
-            catch (Exception ex)
-            {
-                string message = ex.Message.ToString();
-                if (ex.InnerException != null)
-                    message = message + Environment.NewLine + ex.InnerException.Message.ToString() ?? "";
+                try
+                {
+                    machineApps.AddRange(GetMachineApps(machine.machine_name));
+                }
+                catch (Exception ex)
+                {
+                    string message = ex.Message.ToString();
+                    if (ex.InnerException != null)
+                        message = message + Environment.NewLine + ex.InnerException.Message.ToString() ?? "";
+                    machineApps.Add(new IISAppSettings()
+                    {
+                        active = null,
+                        appPoolName = "unknown",
+                        ipAddress = machine.ip_address ?? "unknown",
+                        keepAlive = null,
+                        bindings = new List<SiteBinding>(),
+                        configKeys = new List<ConfigKeyVal>(),
+                        hostName = string.Empty,
+                        message = message,
+                        name = "Unknown",
+                        serverName = machine.machine_name,
+                        physicalPath = "n/a",
+                        state = "Unknown",
+                        siteId = "n/a",
+                    });
+                }
             }
             return machineApps;
         }
@@ -53,50 +65,20 @@ namespace BusinessLayer
                 this.machineName = machineName;
             List<IISAppSettings> machineApps = new List<IISAppSettings>();
             List<WebSite> machineSites;
-            string userName;
-            string password;
-            string domain;
             try
             {
-
-                /// For Testing purposes
-                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                ///  !! Repair / Remove when deployed !!
-                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                userName = "pdelosreyes";
-                password = "Patman7474!";
-                domain = "printable";
-                //this._impersonateUser = new WindowsUser()
-                //{
-                //    userName = "patman",
-                //    password = "Patman7474!",
-                //    domain = "hal9000",
-                //};
-                //userName = "root";
-                //password = "ok2m40tK!";
-                //domain = "dc";
-                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                ///  !! Repair / Remove when deployed !!
-                ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
                 var l_configSettings = (DomainUserSection)WebConfigurationManager.GetSection("DomainUserSection");
-
+                List<DomainUser> rootUsers = new List<DomainUser>();
                 foreach (var l_element in l_configSettings.DomainUsers.AsEnumerable())
                 {
-                    Console.WriteLine(l_element.Key);
-
-                    foreach (var l_subElement in l_element.UserDetails.AsEnumerable())
-                    {
-                        Console.WriteLine(l_subElement.Key);
-                    }
-
+                    rootUsers.Add(l_element);
                 }
-
+                DomainUser _domainUser = rootUsers.Where(x => this.machineName.Contains(x.uri.Value)).FirstOrDefault();
                 _siteTools = new SiteTools(this.machineName)
                 {
-                    userName = userName,
-                    password = password,
-                    domain = domain,
+                    userName = _domainUser.username.Value,
+                    password = _domainUser.password.Value,
+                    domain = _domainUser.domain.Value,
                 };
                 machineSites = _siteTools.GetAllSites(machineName);
                 foreach (WebSite site in machineSites)

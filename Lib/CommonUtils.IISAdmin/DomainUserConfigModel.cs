@@ -11,10 +11,7 @@ namespace CommonUtils.IISAdmin
         [ConfigurationProperty("DomainUsers", IsRequired = true)]
         public DomainUserElementCollection DomainUsers
         {
-            get
-            {
-                return base["DomainUsers"] as DomainUserElementCollection;
-            }
+            get { return base["DomainUsers"] as DomainUserElementCollection; }
         }
     }
 
@@ -29,16 +26,13 @@ namespace CommonUtils.IISAdmin
         {
             var l_configElement = element as DomainUser;
             if (l_configElement != null)
-                return l_configElement.Key;
+                return l_configElement.id;
             else
                 return null;
         }
         public DomainUser this[int index]
         {
-            get
-            {
-                return BaseGet(index) as DomainUser;
-            }
+            get { return BaseGet(index) as DomainUser; }
         }
         #region IEnumerable<ConfigElement> Members
         IEnumerator<DomainUser> IEnumerable<DomainUser>.GetEnumerator()
@@ -52,86 +46,67 @@ namespace CommonUtils.IISAdmin
 
     public class DomainUser : ConfigurationElement
     {
-        [ConfigurationProperty("key", IsKey = true, IsRequired = true)]
-        public string Key
+        [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
+        public string id
         {
-            get
-            {
-                return base["key"] as string;
-            }
-            set
-            {
-                base["key"] = value;
-            }
+            get { return base["id"] as string; }
+            set { base["id"] = value; }
         }
-        [ConfigurationProperty("UserDetails")]
-        public ConfigUserDetailsCollection UserDetails
-        {
-            get
-            {
-                return base["UserDetails"] as ConfigUserDetailsCollection;
-            }
-        }
+        [ConfigurationProperty("uri")]
+        public Uri uri { get { return (Uri)this["uri"]; } }
+        [ConfigurationProperty("domain")]
+        public Domain domain { get { return (Domain)this["domain"]; } }
+        [ConfigurationProperty("environment")]
+        public SiteEnvironment environment { get { return (SiteEnvironment)this["environment"]; } }
+        [ConfigurationProperty("username")]
+        public Username username { get { return (Username)this["username"]; } }
+        [ConfigurationProperty("password")]
+        public Password password { get { return (Password)this["password"]; } }
     }
-
-    [ConfigurationCollection(typeof(UserDetail), AddItemName = "UserDetail")]
-    public class ConfigUserDetailsCollection : ConfigurationElementCollection, IEnumerable<UserDetail>
+    public class Uri : ConfigurationElement
     {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new UserDetail();
-        }
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            var l_configElement = element as UserDetail;
-            if (l_configElement != null)
-                return l_configElement.Key;
-            else
-                return null;
-        }
-        public UserDetail this[int index]
-        {
-            get
-            {
-                return BaseGet(index) as UserDetail;
-            }
-        }
-
-        #region IEnumerable<UserDetail> Members
-        IEnumerator<UserDetail> IEnumerable<UserDetail>.GetEnumerator()
-        {
-            return (from i in Enumerable.Range(0, this.Count)
-                    select this[i])
-                    .GetEnumerator();
-        }
-        #endregion
-    }
-
-    public class UserDetail : ConfigurationElement
-    {
-        [ConfigurationProperty("key", IsKey = true, IsRequired = true)]
-        public string Key
-        {
-            get
-            {
-                return base["key"] as string;
-            }
-            set
-            {
-                base["key"] = value;
-            }
-        }
-        [ConfigurationProperty("value", IsKey = false, IsRequired = false)]
+        [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
         public string Value
         {
-            get
-            {
-                return base["value"] as string;
-            }
-            set
-            {
-                base["value"] = value;
-            }
+            get { return base["value"] as string; }
+            set { base["value"] = value; }
+        }
+    }
+    public class Domain : ConfigurationElement
+    {
+        [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return base["value"] as string; }
+            set { base["value"] = value; }
+        }
+    }
+    public class SiteEnvironment : ConfigurationElement
+    {
+        [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return base["value"] as string; }
+            set { base["value"] = value; }
+        }
+    }
+    public class Username : ConfigurationElement
+    {
+        [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return base["value"] as string; }
+            set { base["value"] = value; }
+        }
+    }
+
+    public class Password : ConfigurationElement
+    {
+        [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return base["value"] as string; }
+            set { base["value"] = value; }
         }
     }
 }

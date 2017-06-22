@@ -103,6 +103,11 @@ namespace CommonUtils.IISAdmin
             Configuration config = site.GetWebConfiguration();
             try
             {
+                //List<ConfigurationSection> configSections = new List<ConfigurationSection>();
+                //foreach (var section in config.RootSectionGroup.Sections)
+                //{
+                //    configSections.Add(config.GetSection(section.Name));
+                //}
                 bool keeps = false;
                 if (config.GetSection("appSettings") != null)
                 {

@@ -20,7 +20,6 @@
 
         var viewAppDetail;
         var viewMachineDetail;
-        var keepAlive;
         var pages;
 
         var machineApps = [];
@@ -39,6 +38,8 @@
         var changeKeepAlive;
         var configKeys = [];
         var bindings = [];
+        var keysCollapsed;
+        var bindingsCollapsed;
 
         vm.machineData = machineData;
         vm.sites = [];
@@ -50,6 +51,8 @@
         vm.appIndex = 0;
         vm.viewAppDetail = 'no';
         vm.viewMachineDetail = true;
+        vm.keysCollapsed = false;
+        vm.bindingsCollapsed = true;
 
         vm.page = function () {
             return '' + (vm.appIndex + 1)
