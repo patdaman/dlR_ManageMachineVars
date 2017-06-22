@@ -25,7 +25,7 @@
             <input type="button" class="btn btn-small" ng-click="addMachine()" value="Add / Edit Machine" />
             <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
 
-            <div ui-grid="gridOptions"
+            <div cg-busy="myPromise" ui-grid="gridOptions"
                  ui-grid-grouping ui-grid-exporter ui-grid-selection
                  ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
                  ui-grid-pagination ui-grid-cellNav ui-grid-expandable

@@ -5,7 +5,7 @@
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h2 class="modal-title">{{componentName}}</h2>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" cg-busy="myPromise">
                 <div class="form-group"><b>File Name:</b>
                     <select ng-model="selectedFile" ng-options="f.fileName for f in files" ng-change="updateFile(selectedFile)">
                         <option value="" style="color:red">File</option>
@@ -17,11 +17,6 @@
                         <b>Parent Element: </b>
                         <select name="selectedParent" ng-model="parentElement" ng-options="p for p in parentRows"></select>
                     </div>
-                    <!--<br />
-        <div class="form-group">
-            <label><b>Parent Element:</b></label>
-            <input id="parent" class="form-control" type="text" ng-model="parentElement">
-        </div>-->
                     <div class="form-group">
                         <label>Key:</label>
                         <input id="key" class="form-control" type="text" ng-model="key">

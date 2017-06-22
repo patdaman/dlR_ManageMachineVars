@@ -33,6 +33,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         var modalSize;
         var displayFileSelect;
         var publishFile;
+        var myPromise;
 
         vm.Admin = Admin;
         vm.environments = environments;
@@ -103,7 +104,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
             }
             else {
                 var def = $q.defer();
-                $http({
+                vm.myPromise = $http({
                     method: 'GET',
                     url: 'api:/ConfigApi',
                     params: {
@@ -186,6 +187,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
 
         var apiRelPath = "api:/ComponentApi";
         var vm = $scope;
+        var myPromise;
         var componentData;
         var componentComponents;
         var filePath = filePath;
@@ -220,7 +222,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
 
         vm.selectComponent = function (component) {
             if (component) {
-                $http({
+                vm.myPromise = $http({
                     method: 'GET',
                     url: apiRelPath,
                     params: {
@@ -413,10 +415,9 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                     if (isConfirm) {
                         vm.publish = true;
                         vm.save();
-                    }
-
-                })
-            }
+                    };
+                });
+            };
         };
         vm.save = function () {
             vm.applicationNames = vm.componentApplications.map(function (item) {
@@ -467,6 +468,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
 
         var apiRelPath = "api:/ApplicationApi";
         var vm = $scope;
+        var myPromise;
         var applicationData;
         var applicationApplications;
         var availableComponents = [];
@@ -499,7 +501,7 @@ ConfigApp.controller('AddApplication', ['$rootScope', '$scope', '$element', '$ht
         }
 
         vm.selectApplication = function (application) {
-            $http({
+            vm.myPromise = $http({
                 method: 'GET',
                 url: apiRelPath,
                 params: {

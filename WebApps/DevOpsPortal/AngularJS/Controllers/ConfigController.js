@@ -26,6 +26,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
         var apiRelPath = "api:/ConfigApi";
         var data = [];
+        var myPromise;
         var i;
 
         var rowIndex;
@@ -340,7 +341,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
         $scope.loadGrid = function () {
             var def = $q.defer();
-            $http({
+            $scope.myPromise = $http({
                 method: 'GET',
                 url: apiRelPath,
             })
@@ -478,8 +479,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
 
         // Grid save function
         $scope.saveRow = function (row) {
-            var promise = $scope.saveRowFunction(row.entity);
-            $scope.gridApi.rowEdit.setSavePromise(row.entity, promise);
+            $scope.myPromise = $scope.saveRowFunction(row.entity);
+            $scope.gridApi.rowEdit.setSavePromise(row.entity, $scope.myPromise);
             var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
             var dataRows = gridRows.map(function (gridRow) {
                 return gridRow.entity;

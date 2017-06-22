@@ -8,7 +8,7 @@
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h2 class="modal-title">{{component}}</h2>
             </div>
-            <div class="modal-body">
+            <div class="modal-body"  cg-busy="myPromise">
                 <form class="form-inline">
                     <label ng-if="!selectedFile.fileName && displayFileSelect" class="mr-sm-2" for="fileSelect">
                         <b>Select a File: </b>

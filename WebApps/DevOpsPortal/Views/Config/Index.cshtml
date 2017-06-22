@@ -34,11 +34,13 @@
                 User: <i><font color="red">{{currentUser}}</font></i>
             </div>
         </div>
-        <div ui-grid="gridOptions"
-             ui-grid-grouping ui-grid-exporter ui-grid-selection
-             ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
-             ui-grid-pagination ui-grid-cellNav ui-grid-expandable
-             class="gridStyle">
+        <div cg-busy="myPromise">
+            <div ui-grid="gridOptions"
+                 ui-grid-grouping ui-grid-exporter ui-grid-selection
+                 ui-grid-resize-columns ui-grid-edit ui-grid-row-edit
+                 ui-grid-pagination ui-grid-cellNav ui-grid-expandable
+                 class="gridStyle">
+            </div>
         </div>
     </div>
 </div>

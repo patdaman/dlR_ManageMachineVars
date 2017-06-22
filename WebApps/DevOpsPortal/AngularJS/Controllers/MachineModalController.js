@@ -1,11 +1,12 @@
 ﻿MachineApp.controller('MachineDetail', ['$rootScope', '$scope', '$element',
-    '$q', '$httpParamSerializer', '$http',
+    '$q', '$httpParamSerializer', '$http', '$timeout',
     'close', 'machineData',
     function ($rootScope, $scope, $element,
-        $q, $httpParamSerializer, $http,
+        $q, $httpParamSerializer, $http, $timeout,
         close, machineData) {
 
         var vm = $scope;
+        var myPromise;
         var save = false;
         var publish = false;
         var machineName;
@@ -88,7 +89,7 @@
 
         vm.getIisData = function (params) {
             var def = $q.defer();
-            $http({
+            vm.myPromise = $http({
                 method: 'GET',
                 url: 'api:/IISApi',
                 params: params
@@ -106,14 +107,14 @@
             vm.active = vm.machineApps[index].active;
             if (vm.active == true)
                 vm.changeState = 'Started';
-            else
+            else 
                 vm.changeState = 'Stopped';
             vm.keepAlive = vm.machineApps[index].keepAlive;
             if (vm.keepAlive == true)
                 vm.changeKeepAlive = 'OK';
             else if (vm.keepAlive == false)
                 vm.changeKeepAlive = 'Inactive';
-            else
+            else 
                 vm.changeKeepAlive = 'n/a'
             vm.appMessage = vm.machineApps[index].message;
             vm.physicalPath = vm.machineApps[index].physicalPath;
@@ -129,7 +130,7 @@
 
         vm.stopStartSite = function () {
             var message;
-            if (vm.changeState == 'Stopped')
+            if (vm.active == true)
                 message = vm.siteName + " will be stopped!";
             else
                 message = vm.siteName + " will be started";
@@ -141,11 +142,11 @@
                 showCancelButton: true,
                 //confirmButtonColor: "#AEDEF4",
                 confirmButtonText: "Yes!",
-                closeOnConfirm: false
+                closeOnConfirm: true
             },
             function (isConfirm) {
-                if (isConfirm)
-                    if (vm.changeState == 'Stopped') {
+                if (isConfirm) {
+                    if (vm.active == false) {
                         vm.active = true;
                         message = vm.siteName + ' has been started';
                     }
@@ -153,10 +154,21 @@
                         vm.active = false;
                         message = vm.siteName + ' has been stopped';
                     };
-                vm.updateSite()
-                .then(function () {
-                    vm.confirmSiteChange(message);
-                });
+                    vm.updateSite()
+                    .then(function () {
+                        swal({
+                            title: vm.siteName,
+                            text: message,
+                            type: "success",
+                            imageUrl: "/Assets/thumbs-up.jpg",
+                            confirmButtonText: "Cool"
+                        });
+                    });
+                }
+                else {
+                    vm.$apply();
+                    vm.siteData(vm.appIndex);
+                };
             });
         };
 
@@ -174,7 +186,7 @@
                 showCancelButton: true,
                 //confirmButtonColor: "#AEDEF4",
                 confirmButtonText: "Yes!",
-                closeOnConfirm: false
+                closeOnConfirm: true
             },
             function (isConfirm) {
                 if (isConfirm) {
@@ -188,10 +200,20 @@
                     };
                     vm.updateSite()
                     .then(function () {
-                        vm.confirmSiteChange(message);
+                        swal({
+                            title: vm.siteName,
+                            text: message,
+                            type: "success",
+                            imageUrl: "/Assets/thumbs-up.jpg",
+                            confirmButtonText: "Cool"
+                        });
                     });
+                }
+                else {
+                    vm.$apply();
+                    vm.siteData(vm.appIndex);
                 };
-            })
+            });
         };
 
         vm.confirmSiteChange = function (message) {
@@ -227,13 +249,17 @@
             // end refactor
 
             var def = $q.defer();
-            $http({
+            vm.myPromise = $http({
                 method: 'PUT',
                 url: 'api:/IISApi',
                 data: data,
             })
             .success(def.resolve)
-            .success(function (data) {
+            .error(function () {
+                vm.viewApplications();
+            })
+            return def.promise
+            .then(function (data) {
 
                 // Refactor!
                 // use OO model
@@ -243,7 +269,7 @@
                 vm.machineApps[vm.appIndex].message = data.appMessage;
                 vm.machineApps[vm.appIndex].physicalPath = data.physicalPath;
                 vm.machineApps[vm.appIndex].siteId = data.siteId;
-                vm.machineApps[vm.appIndex].name = data.siteName;
+                vm.machineApps[vm.appIndex].siteName = data.name;
                 vm.machineApps[vm.appIndex].state = data.state;
                 vm.machineApps[vm.appIndex].configKeys = data.configKeys;
                 vm.machineApps[vm.appIndex].bindings = data.bindings;
@@ -251,13 +277,8 @@
                 vm.machineApps[vm.appIndex].ipAddress = data.ipAddress;
                 vm.machineApps[vm.appIndex].serverName = data.serverName;
                 // end refactor
-
                 vm.siteData(vm.appIndex);
-            })
-            .error(function (error) {
-                console.log(error);
-            })
-            return def.promise;
+            });
         }
 
         vm.previous = function () {

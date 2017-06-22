@@ -5,11 +5,10 @@
                 <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h2 class="modal-title">{{machineName}} - {{environment}}</h2>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" cg-busy="myPromise">
                 <div class="form" id="machineApp">
                     <div class="form-inline">
                         <div> 
-                            <!--<div ng-if="!siteName">-->
                             <select id="appSelect" ng-model="selectedApplication" ng-options="a.application_name for a in applications" ng-change="updateSite()">
                                 <option value="" style="color:red">All Applications</option>
                             </select>
@@ -32,12 +31,11 @@
 
                     <div ng-if="siteName">
                         <form id="appDetail" style="width:50%">
-                            <!--<div id="appDetail" class="form">-->
                             <b>
-                                <md-switch ng-model="changeKeepAlive" ng-change="updateKeepAlive()" ng-disabled="changeKeepAlive=='n/a'" aria-label="" ng-true-value="'OK'" ng-false-value="'Inactive'">
+                                <md-switch ng-model="keepAlive" ng-change="updateKeepAlive()" ng-disabled="changeKeepAlive=='n/a'" aria-label="Keep Alive: ">
                                     Keep Alive: {{changeKeepAlive}}
                                 </md-switch>
-                                <md-switch ng-model="changeState" ng-change="stopStartSite()" aria-label="" ng-true-value="'Started'" ng-false-value="'Stopped'">
+                                <md-switch ng-model="active" ng-change="stopStartSite()" aria-label="">
                                     {{changeState}}
                                 </md-switch>
                             </b>

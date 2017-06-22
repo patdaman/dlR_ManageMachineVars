@@ -35,7 +35,8 @@ var ConfigApp = angular.module('ConfigApp',
             'ngAnimate',
             'angularModalService',
             'EnumService',
-            'ngFileSaver'
+            'ngFileSaver',
+            'cgBusy'
         ])
 
 var MachineApp = angular.module('MachineApp',
@@ -55,7 +56,8 @@ var MachineApp = angular.module('MachineApp',
             'ngAnimate',
             'angularModalService',
             'EnumService',
-            'ngMaterial'
+            'ngMaterial',
+            'cgBusy'
         ]);
 
 var LogApp = angular.module('LogApp',
@@ -65,7 +67,8 @@ var LogApp = angular.module('LogApp',
             'ui.grid.expandable',
             'ui.grid.selection',
             'ui.grid.pinning',
-            'EnumService'
+            'EnumService',
+            'cgBusy'
         ]);
 
 var PowershellApp = angular.module('PowershellApp',
@@ -76,13 +79,15 @@ var PowershellApp = angular.module('PowershellApp',
             'ui.bootstrap',
             'ngAnimate',
             'angularModalService',
-            'EnumService'
+            'EnumService',
+            'cgBusy'
         ]);
 
 var DashboardApp = angular.module('DashboardApp',
       [
           'ng.epoch',
-          'n3-pie-chart'
+          'n3-pie-chart',
+          'cgBusy'
       ]);
 
 var BoardApp = angular.module('BoardApp', []);

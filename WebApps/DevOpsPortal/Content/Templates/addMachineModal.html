@@ -3,13 +3,6 @@
 }
 
 <h2>Machine Editor</h2>
-<script>
-    $(document).ready(function () {
-        $(".flip").click(function () {
-            $(".panel").slideToggle("slow");
-        });
-    });
-</script>
 
 <div ng-app="app" ng-controller="MachineController as vm">
     <form class="input" ng-submit="submit()" role="form">
@@ -47,7 +40,5 @@
          ui-grid-pagination ui-grid-cellNav ui-grid-expandable></div>
 </div>
 <script>
-    $('.modal-content').resizable({
-    });
     $('.modal-dialog').draggable();
 </script>

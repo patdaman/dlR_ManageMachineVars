@@ -64,7 +64,8 @@ namespace DevOpsPortal
                       "~/Scripts/clipboard.min.js",
                       "~/Scripts/ngclipboard.min.js",
                       "~/Scripts/sweetalert.min.js",
-                      "~/Scripts/AngularFileSaver/angular-file-saver.bundle.min.js"
+                      "~/Scripts/AngularFileSaver/angular-file-saver.bundle.min.js",
+                      "~/Scripts/angular-busy.min.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/app")
@@ -77,6 +78,7 @@ namespace DevOpsPortal
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                      //"~/Content/bootstrap-combined.min.css",
+                     "~/Content/angular-busy.min.css",
                      "~/Content/angular-material.min.css",
                      "~/Content/bootstrap.min.css",
                      "~/Content/toastr.min.css",

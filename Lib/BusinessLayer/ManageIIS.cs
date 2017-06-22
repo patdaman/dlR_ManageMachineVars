@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ViewModel;
 using CommonUtils.IISAdmin;
 using EFDataModel.DevOps;
+using System.Configuration;
+using System.Web.Configuration;
 
 namespace BusinessLayer
 {
@@ -76,6 +78,19 @@ namespace BusinessLayer
                 ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 ///  !! Repair / Remove when deployed !!
                 ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                var l_configSettings = (DomainUserSection)WebConfigurationManager.GetSection("DomainUserSection");
+
+                foreach (var l_element in l_configSettings.DomainUsers.AsEnumerable())
+                {
+                    Console.WriteLine(l_element.Key);
+
+                    foreach (var l_subElement in l_element.UserDetails.AsEnumerable())
+                    {
+                        Console.WriteLine(l_subElement.Key);
+                    }
+
+                }
 
                 _siteTools = new SiteTools(this.machineName)
                 {

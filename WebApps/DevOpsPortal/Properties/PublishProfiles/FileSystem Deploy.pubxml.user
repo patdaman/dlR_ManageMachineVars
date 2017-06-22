@@ -10,16 +10,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="AngularJS/app.js">
-      <publishTime>06/01/2017 13:35:55</publishTime>
+      <publishTime>06/19/2017 14:49:05</publishTime>
     </File>
     <File Include="AngularJS/appHandler.js">
       <publishTime>05/26/2017 12:30:12</publishTime>
     </File>
+    <File Include="AngularJS/Controllers/BoardController.js">
+      <publishTime>06/14/2017 15:25:45</publishTime>
+    </File>
     <File Include="AngularJS/Controllers/ConfigController.js">
-      <publishTime>06/01/2017 13:54:56</publishTime>
+      <publishTime>06/19/2017 12:36:24</publishTime>
     </File>
     <File Include="AngularJS/Controllers/ConfigModalController.js">
-      <publishTime>06/01/2017 13:57:02</publishTime>
+      <publishTime>06/19/2017 11:49:20</publishTime>
     </File>
     <File Include="AngularJS/Controllers/DashboardController.js">
       <publishTime>05/19/2017 10:07:32</publishTime>
@@ -28,7 +31,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/02/2017 00:12:16</publishTime>
     </File>
     <File Include="AngularJS/Controllers/MachineController.js">
-      <publishTime>05/19/2017 10:07:32</publishTime>
+      <publishTime>06/19/2017 11:56:47</publishTime>
+    </File>
+    <File Include="AngularJS/Controllers/MachineModalController.js">
+      <publishTime>06/20/2017 17:11:07</publishTime>
     </File>
     <File Include="AngularJS/Controllers/PowershellController.js">
       <publishTime>05/16/2017 17:40:06</publishTime>
@@ -36,11 +42,20 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="AngularJS/Directives/appDirectives.js">
       <publishTime>05/09/2017 10:01:38</publishTime>
     </File>
+    <File Include="AngularJS/Directives/BoardDragDrop.js">
+      <publishTime>06/14/2017 15:26:14</publishTime>
+    </File>
     <File Include="AngularJS/Directives/ConfigDirectives.js">
       <publishTime>06/01/2017 12:31:35</publishTime>
     </File>
     <File Include="AngularJS/Directives/powershellCodeMirror.js">
       <publishTime>05/09/2017 10:02:05</publishTime>
+    </File>
+    <File Include="AngularJS/Models/IISSettingModel.js">
+      <publishTime>06/20/2017 10:35:07</publishTime>
+    </File>
+    <File Include="AngularJS/Services/BoardService.js">
+      <publishTime>06/14/2017 15:26:31</publishTime>
     </File>
     <File Include="AngularJS/Services/ConfigService.js">
       <publishTime>05/15/2017 09:54:59</publishTime>
@@ -52,13 +67,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/06/2017 16:35:08</publishTime>
     </File>
     <File Include="AngularJS/Services/EnumService.js">
-      <publishTime>05/18/2017 10:52:29</publishTime>
+      <publishTime>06/14/2017 15:38:11</publishTime>
     </File>
     <File Include="AngularJS/Services/GridRowEditService.js">
       <publishTime>05/16/2017 14:37:24</publishTime>
     </File>
     <File Include="AngularJS/Services/HubService.js">
-      <publishTime>05/19/2017 10:07:32</publishTime>
+      <publishTime>06/14/2017 15:30:48</publishTime>
     </File>
     <File Include="AngularJS/Services/IHttpService.js">
       <publishTime>04/25/2017 11:19:36</publishTime>
@@ -181,16 +196,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
     <File Include="bin/ApiLib.dll">
-      <publishTime>05/25/2017 17:02:36</publishTime>
+      <publishTime>06/20/2017 17:25:26</publishTime>
     </File>
     <File Include="bin/ApiLib.pdb">
       <publishTime>05/15/2017 16:50:33</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>06/01/2017 14:01:46</publishTime>
+      <publishTime>06/20/2017 17:27:09</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>06/01/2017 14:01:45</publishTime>
+      <publishTime>06/20/2017 17:27:09</publishTime>
     </File>
     <File Include="bin/Assets/404-150x150.png">
       <publishTime>02/07/2017 09:32:03</publishTime>
@@ -220,13 +235,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/23/2017 11:42:19</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>05/31/2017 19:49:02</publishTime>
+      <publishTime>06/20/2017 17:25:26</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/16/2017 09:32:54</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.dll">
-      <publishTime>05/25/2017 17:02:36</publishTime>
+      <publishTime>06/20/2017 17:25:25</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.pdb">
       <publishTime>05/15/2017 16:50:33</publishTime>
@@ -237,6 +252,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/CommonUtils.Exception.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
+    <File Include="bin/CommonUtils.IISAdmin.dll">
+      <publishTime>06/20/2017 17:25:25</publishTime>
+    </File>
     <File Include="bin/CommonUtils.Powershell.dll">
       <publishTime>05/16/2017 17:41:44</publishTime>
     </File>
@@ -244,7 +262,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/Content/Site.css">
-      <publishTime>05/23/2017 11:05:16</publishTime>
+      <publishTime>06/19/2017 17:33:07</publishTime>
     </File>
     <File Include="bin/Content/Templates/actionsTemplate.html">
       <publishTime>05/23/2017 10:30:19</publishTime>
@@ -276,8 +294,11 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/Content/Templates/keyTemplate.html">
       <publishTime>05/18/2017 14:16:14</publishTime>
     </File>
+    <File Include="bin/Content/Templates/machineTemplate.html">
+      <publishTime>06/14/2017 17:33:22</publishTime>
+    </File>
     <File Include="bin/Content/Templates/noteModal.html">
-      <publishTime>05/15/2017 17:09:51</publishTime>
+      <publishTime>06/19/2017 10:12:55</publishTime>
     </File>
     <File Include="bin/Content/Templates/powershellExcecuteModal.html">
       <publishTime>05/04/2017 17:19:13</publishTime>
@@ -295,13 +316,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/26/2017 12:00:52</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.dll">
-      <publishTime>06/01/2017 14:01:37</publishTime>
+      <publishTime>06/20/2017 17:27:00</publishTime>
     </File>
     <File Include="bin/DevOpsPortal.pdb">
       <publishTime>05/16/2017 14:01:51</publishTime>
     </File>
     <File Include="bin/EFDataModel.dll">
-      <publishTime>05/25/2017 16:18:14</publishTime>
+      <publishTime>06/20/2017 17:25:25</publishTime>
     </File>
     <File Include="bin/EFDataModel.pdb">
       <publishTime>05/15/2017 17:28:12</publishTime>
@@ -320,6 +341,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
       <publishTime>06/15/2015 03:06:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Administration.dll">
+      <publishTime>03/08/2017 11:54:09</publishTime>
     </File>
     <File Include="bin/Microsoft.Web.Infrastructure.dll">
       <publishTime>04/23/2012 16:23:58</publishTime>
@@ -364,7 +388,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/18/2015 21:19:46</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.dll">
-      <publishTime>05/25/2017 17:02:36</publishTime>
+      <publishTime>06/20/2017 17:25:26</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.pdb">
       <publishTime>05/15/2017 16:50:33</publishTime>
@@ -421,13 +445,34 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2015 04:04:30</publishTime>
     </File>
     <File Include="bin/ViewModel.dll">
-      <publishTime>05/25/2017 17:02:35</publishTime>
+      <publishTime>06/20/2017 17:25:25</publishTime>
     </File>
     <File Include="bin/ViewModel.pdb">
       <publishTime>05/15/2017 16:50:32</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>09/10/2013 18:28:38</publishTime>
+    </File>
+    <File Include="Content/angular-material.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Content/angular-material.layout-attributes.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Content/angular-material.layout-attributes.min.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Content/angular-material.layouts.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Content/angular-material.layouts.ie_fixes.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Content/angular-material.layouts.min.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Content/angular-material.min.css">
+      <publishTime>06/19/2017 14:46:30</publishTime>
     </File>
     <File Include="Content/angular-multi-select.css">
       <publishTime>05/02/2017 11:30:31</publishTime>
@@ -496,7 +541,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/08/2017 17:38:11</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>05/23/2017 11:05:16</publishTime>
+      <publishTime>06/19/2017 17:33:07</publishTime>
     </File>
     <File Include="Content/site_dashboard.css">
       <publishTime>04/04/2017 14:25:06</publishTime>
@@ -522,6 +567,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Content/Templates/basicCellTemplate.html">
       <publishTime>04/18/2017 11:33:26</publishTime>
     </File>
+    <File Include="Content/Templates/busyModal.html">
+      <publishTime>06/01/2017 15:23:02</publishTime>
+    </File>
     <File Include="Content/Templates/codeMirror.html">
       <publishTime>05/01/2017 16:37:37</publishTime>
     </File>
@@ -541,10 +589,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/18/2017 14:16:14</publishTime>
     </File>
     <File Include="Content/Templates/machineActionsTemplate.html">
-      <publishTime>05/01/2017 11:29:15</publishTime>
+      <publishTime>06/08/2017 11:14:49</publishTime>
+    </File>
+    <File Include="Content/Templates/machineDetailModal.html">
+      <publishTime>06/20/2017 16:18:22</publishTime>
+    </File>
+    <File Include="Content/Templates/machineTemplate.html">
+      <publishTime>06/14/2017 17:33:22</publishTime>
     </File>
     <File Include="Content/Templates/noteModal.html">
-      <publishTime>05/15/2017 17:09:51</publishTime>
+      <publishTime>06/19/2017 10:12:55</publishTime>
     </File>
     <File Include="Content/Templates/powershellExcecuteModal.html">
       <publishTime>05/04/2017 17:19:13</publishTime>
@@ -687,6 +741,18 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Content/timeline.css">
       <publishTime>04/04/2017 14:25:06</publishTime>
     </File>
+    <File Include="Content/toastr.css">
+      <publishTime>06/01/2017 15:27:24</publishTime>
+    </File>
+    <File Include="Content/toastr.less">
+      <publishTime>06/01/2017 15:27:24</publishTime>
+    </File>
+    <File Include="Content/toastr.min.css">
+      <publishTime>06/01/2017 15:27:24</publishTime>
+    </File>
+    <File Include="Content/toastr.scss">
+      <publishTime>06/01/2017 15:27:24</publishTime>
+    </File>
     <File Include="Content/ui-bootstrap-csp.css">
       <publishTime>04/04/2017 16:11:43</publishTime>
     </File>
@@ -733,10 +799,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/25/2017 16:31:49</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>06/01/2017 12:25:36</publishTime>
+      <publishTime>06/19/2017 14:46:30</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>06/01/2017 14:01:40</publishTime>
+      <publishTime>06/20/2017 17:27:04</publishTime>
     </File>
     <File Include="Scripts/angular-animate.js">
       <publishTime>04/04/2017 14:36:39</publishTime>
@@ -746,6 +812,33 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Scripts/angular-animate.min.js.map">
       <publishTime>04/04/2017 14:36:39</publishTime>
+    </File>
+    <File Include="Scripts/angular-animate/angular-animate.js">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Scripts/angular-animate/angular-animate.min.js">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Scripts/angular-animate/angular-animate.min.js.map">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Scripts/angular-aria/angular-aria.js">
+      <publishTime>06/19/2017 14:46:30</publishTime>
+    </File>
+    <File Include="Scripts/angular-aria/angular-aria.min.js">
+      <publishTime>06/19/2017 14:46:29</publishTime>
+    </File>
+    <File Include="Scripts/angular-aria/angular-aria.min.js.map">
+      <publishTime>06/19/2017 14:46:29</publishTime>
+    </File>
+    <File Include="Scripts/angular-material/angular-material-mocks.js">
+      <publishTime>06/19/2017 14:46:29</publishTime>
+    </File>
+    <File Include="Scripts/angular-material/angular-material.js">
+      <publishTime>06/19/2017 14:46:29</publishTime>
+    </File>
+    <File Include="Scripts/angular-material/angular-material.min.js">
+      <publishTime>06/19/2017 14:46:29</publishTime>
     </File>
     <File Include="Scripts/angular-mocks.js">
       <publishTime>04/19/2017 14:00:51</publishTime>
@@ -788,6 +881,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Scripts/angular.min.js.map">
       <publishTime>04/19/2017 14:00:51</publishTime>
+    </File>
+    <File Include="Scripts/angular/angular.js">
+      <publishTime>06/19/2017 14:46:29</publishTime>
+    </File>
+    <File Include="Scripts/angular/angular.min.js">
+      <publishTime>06/19/2017 14:46:28</publishTime>
     </File>
     <File Include="Scripts/AngularFileSaver/angular-file-saver.bundle.min.js">
       <publishTime>06/01/2017 13:02:30</publishTime>
@@ -2079,6 +2178,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/jquery-ui-1.12.1.min.js">
       <publishTime>05/04/2017 17:10:19</publishTime>
     </File>
+    <File Include="Scripts/jquery.signalR-2.2.2.js">
+      <publishTime>06/01/2017 16:06:38</publishTime>
+    </File>
+    <File Include="Scripts/jquery.signalR-2.2.2.min.js">
+      <publishTime>06/01/2017 16:06:38</publishTime>
+    </File>
     <File Include="Scripts/lodash.core.js">
       <publishTime>04/10/2017 14:31:50</publishTime>
     </File>
@@ -2130,6 +2235,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/sweetalert.min.js">
       <publishTime>05/09/2017 13:03:18</publishTime>
     </File>
+    <File Include="Scripts/toastr.js">
+      <publishTime>06/01/2017 15:27:24</publishTime>
+    </File>
+    <File Include="Scripts/toastr.min.js">
+      <publishTime>06/01/2017 15:27:24</publishTime>
+    </File>
     <File Include="Scripts/ui-grid.js">
       <publishTime>04/19/2017 14:02:51</publishTime>
     </File>
@@ -2140,7 +2251,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 14:24:06</publishTime>
     </File>
     <File Include="Scripts/_references.js">
-      <publishTime>06/01/2017 14:00:09</publishTime>
+      <publishTime>06/20/2017 10:18:38</publishTime>
+    </File>
+    <File Include="Views/Board/Index.cshtml">
+      <publishTime>06/14/2017 15:28:43</publishTime>
     </File>
     <File Include="Views/Config/Index.cshtml">
       <publishTime>05/30/2017 14:45:41</publishTime>
@@ -2164,7 +2278,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 12:14:35</publishTime>
     </File>
     <File Include="Views/Machine/Index.cshtml">
-      <publishTime>05/19/2017 10:07:33</publishTime>
+      <publishTime>06/15/2017 14:45:44</publishTime>
     </File>
     <File Include="Views/Powershell/Index.cshtml">
       <publishTime>05/16/2017 17:31:03</publishTime>
@@ -2173,13 +2287,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 12:14:35</publishTime>
     </File>
     <File Include="Views/Shared/AngularDependancies.cshtml">
-      <publishTime>05/23/2017 10:45:31</publishTime>
+      <publishTime>06/05/2017 12:40:54</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>04/04/2017 11:28:39</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>06/01/2017 13:35:37</publishTime>
+      <publishTime>06/05/2017 16:15:01</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/04/2017 11:28:39</publishTime>
@@ -2188,7 +2302,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/04/2017 11:28:39</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>06/01/2017 14:01:40</publishTime>
+      <publishTime>06/20/2017 17:27:03</publishTime>
     </File>
   </ItemGroup>
 </Project>

@@ -51,6 +51,7 @@ namespace ViewModel
 
     public class ConfigKeyVal
     {
+        public string application { get; set; }
         public string key { get; set; }
         public string value { get; set; }
     }

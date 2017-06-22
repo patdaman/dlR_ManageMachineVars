@@ -9,6 +9,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         var vm = $scope;
 
         var apiRelPath = "api:/MachineApi";
+        var myPromise;
 
         var rowIndex;
         var rowId;
@@ -251,14 +252,14 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             },
             {
                 field: 'machine_name',
-                width: '20%',
+                //width: '20%',
                 enableFiltering: true,
                 groupable: false,
                 //cellTemplate: '/Content/Templates/machineTemplate.html'
             },
             {
                 field: 'uri',
-                width: '20%',
+                //width: '20%',
                 enableCellEdit: false,
             },
             {
@@ -347,7 +348,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
 
         $scope.loadGrid = function () {
             var def = $q.defer();
-            $http({
+            $scope.myPromise = $http({
                 method: 'GET',
                 url: apiRelPath,
             })
@@ -411,7 +412,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         $scope.save = function (row) {
             var machineEntity = JSON.stringify(row.entity);
             var def = $q.defer;
-            $http({
+            $scope.myPromise = $http({
                 method: 'post',
                 url: 'api:/MachineApi',
                 //data: Machine
