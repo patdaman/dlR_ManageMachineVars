@@ -42,6 +42,10 @@ namespace DevOpsPortal
                       "~/Scripts/codemirror/theme/eclipse.css",
                       "~/Scripts/codemirror/theme/abcdef.css",
                       "~/Scripts/codemirror/theme/rubyblue.css",
+                      "~/Scripts/codemirror/theme/elegant.css",
+                      "~/Scripts/codemirror/theme/blackboard.css",
+                      "~/Scripts/codemirror/theme/hopscotch.css",
+                      "~/Scripts/codemirror/theme/dracula.css",
                       "~/Scripts/codemirror/theme/solarized.css"
                     ));
 

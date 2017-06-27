@@ -54,6 +54,8 @@ namespace CommonUtils.IISAdmin
         }
         [ConfigurationProperty("uri")]
         public Uri uri { get { return (Uri)this["uri"]; } }
+        [ConfigurationProperty("ipprefix")]
+        public IpPrefix ipprefix { get { return (IpPrefix)this["ipprefix"]; } }
         [ConfigurationProperty("domain")]
         public Domain domain { get { return (Domain)this["domain"]; } }
         [ConfigurationProperty("environment")]
@@ -64,6 +66,15 @@ namespace CommonUtils.IISAdmin
         public Password password { get { return (Password)this["password"]; } }
     }
     public class Uri : ConfigurationElement
+    {
+        [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return base["value"] as string; }
+            set { base["value"] = value; }
+        }
+    }
+    public class IpPrefix : ConfigurationElement
     {
         [ConfigurationProperty("value", IsKey = true, IsRequired = true)]
         public string Value

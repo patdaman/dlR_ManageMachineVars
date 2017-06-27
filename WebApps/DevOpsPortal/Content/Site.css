@@ -267,8 +267,9 @@ textarea {
 .grid-tooltip {
   overflow: visible;
   z-index: 9999999;
-  float: left;
+  /*float: left;*/
 }
+
 div[disabled] {
   display:none;
 }
@@ -452,4 +453,32 @@ li {
   position: relative;
   width: 18%;
   text-align: center;
+}
+
+i.detail {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    margin-top: 7px;
+    margin-bottom: 0px;
+    padding: 2px;
+}
+
+i.detail.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+i.detail.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+
+i.detail.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+i.detail.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }

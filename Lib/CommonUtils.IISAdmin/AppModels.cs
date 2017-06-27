@@ -104,7 +104,7 @@ namespace CommonUtils.IISAdmin
             try
             {
                 //List<ConfigurationSection> configSections = new List<ConfigurationSection>();
-                //foreach (var section in config.RootSectionGroup.Sections)
+                //foreach (var section in config.RootSectionGroup.SectionGroups)
                 //{
                 //    configSections.Add(config.GetSection(section.Name));
                 //}

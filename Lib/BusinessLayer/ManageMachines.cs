@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using ViewModel;
 
 namespace BusinessLayer
@@ -184,25 +186,60 @@ namespace BusinessLayer
         ///-------------------------------------------------------------------------------------------------
         private EFDataModel.DevOps.Machine ReturnEfMachine(ViewModel.Machine vmMachine)
         {
-            EFDataModel.DevOps.Machine efMachine = DevOpsContext.Machines.Where(x => x.machine_name == vmMachine.machine_name).FirstOrDefault();
+            EFDataModel.DevOps.Machine efMachine;
+            if (vmMachine.id != null && vmMachine.id != 0)
+                efMachine = DevOpsContext.Machines.Where(x => x.machine_name == vmMachine.machine_name).FirstOrDefault();
+            else
+                efMachine = DevOpsContext.Machines.Where(x => x.id == vmMachine.id).FirstOrDefault();
             List<EFDataModel.DevOps.MachineApplicationMap> efApplicationMaps = new List<MachineApplicationMap>();
+            List<EFDataModel.DevOps.Application> efApps = new List<EFDataModel.DevOps.Application>();
+            List<EFDataModel.DevOps.Enum_EnvironmentType> environments = DevOpsContext.Enum_EnvironmentType.ToList();
+            List<EFDataModel.DevOps.Enum_Locations> locations = DevOpsContext.Enum_Locations.ToList();
+            string ipString = vmMachine.ip_address ?? string.Empty;
+            string machineUrl;
+            string newEnvironment = null;
+            string newLocation = null;
+            if (string.IsNullOrWhiteSpace(vmMachine.uri))
+                machineUrl = vmMachine.machine_name;
+            else
+                machineUrl = vmMachine.machine_name + "." + vmMachine.uri;
+            if (!string.IsNullOrWhiteSpace(vmMachine.environment))
+                newEnvironment = environments.Where(x => x.value == vmMachine.environment).FirstOrDefault().value;
+            if (!string.IsNullOrWhiteSpace(vmMachine.location))
+                newLocation = locations.Where(x => x.value == vmMachine.location).FirstOrDefault().value;
+            try
+            {
+                IPAddress[] ips = Dns.GetHostAddresses(machineUrl);
+                foreach (var ip in ips)
+                {
+                    Match match = Regex.Match(ip.ToString(), @"((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
+                    if (match.Success)
+                        ipString = match.Value;
+                    break;
+                }
+            }
+            catch
+            { }
             if (efMachine == null)
             {
-                foreach (var app in vmMachine.Applications)
+                if (vmMachine.Applications != null)
                 {
-                    efApplicationMaps.Add(new MachineApplicationMap()
+                    foreach (var app in vmMachine.Applications)
                     {
-                        active = app.active,
-                        application_id = app.id,
-                    });
+                        efApplicationMaps.Add(new MachineApplicationMap()
+                        {
+                            active = app.active,
+                            application_id = app.id,
+                        });
+                    }
                 }
                 return new EFDataModel.DevOps.Machine()
                 {
                     id = 0,
                     machine_name = vmMachine.machine_name,
-                    ip_address = vmMachine.ip_address,
-                    location = vmMachine.location,
-                    environment = vmMachine.environment,
+                    ip_address = ipString,
+                    location = newLocation,
+                    environment = newEnvironment,
                     uri = vmMachine.uri,
                     create_date = vmMachine.create_date,
                     modify_date = vmMachine.modify_date ?? DateTime.Now,
@@ -212,26 +249,40 @@ namespace BusinessLayer
             }
             else
             {
-                List<EFDataModel.DevOps.Application> efApps = DevOpsContext.Applications.Where(x => vmMachine.Applications.Select(y => y.application_name).ToList().Contains(x.application_name)).ToList();
-                efApplicationMaps = ReturnEfMachineAppPathMap(efMachine.id);
+                if (vmMachine.Applications != null)
+                {
+                    List<string> vmApps = vmMachine.Applications.Select(x => x.application_name).ToList();
+                    efApps = DevOpsContext.Applications.Where(x => vmApps.Contains(x.application_name)).ToList();
+                    efApplicationMaps = ReturnEfMachineAppPathMap(efMachine.id);
+                    foreach (var app in efApps.Where(x => !efApplicationMaps.Select(y => y.application_id).ToList().Contains(x.id)).ToList())
+                    {
+                        efMachine.MachineApplicationMaps.Add(new MachineApplicationMap()
+                        {
+                            application_id = app.id,
+                            active = vmMachine.Applications.Where(x => x.application_name == app.application_name).Select(y => y.active).FirstOrDefault(),
+                        });
+                        efApps.Remove(app);
+                    }
+                }
                 foreach (var app in efApplicationMaps.Where(x => efApps.Any(y => y.id == x.application_id)).ToList())
                 {
                     efMachine.MachineApplicationMaps.Remove(app);
                     efApplicationMaps.Remove(app);
                 }
-                foreach (var app in efApps.Where(x => !efApplicationMaps.Select(y => y.application_id).ToList().Contains(x.id)).ToList())
-                {
-                    efMachine.MachineApplicationMaps.Add(new MachineApplicationMap()
-                    {
-                        application_id = app.id,
-                        active = vmMachine.Applications.Where(x => x.application_name == app.application_name).Select(y => y.active).FirstOrDefault(),
-                    });
-                    efApps.Remove(app);
-                }
                 foreach (var app in efApps)
                 {
                     app.active = vmMachine.Applications.Where(x => x.application_name == app.application_name).Select(y => y.active).FirstOrDefault();
                 }
+                efMachine.location = newLocation;
+                efMachine.environment = newEnvironment;
+                efMachine.uri = vmMachine.uri;
+                efMachine.modify_date = DateTime.Now;
+                efMachine.active = vmMachine.active;
+                efMachine.ip_address = ipString;
+                if (string.IsNullOrWhiteSpace(vmMachine.last_modify_user))
+                    efMachine.last_modify_user = Environment.UserName;
+                else
+                    efMachine.last_modify_user = vmMachine.last_modify_user;
             }
             return efMachine;
         }

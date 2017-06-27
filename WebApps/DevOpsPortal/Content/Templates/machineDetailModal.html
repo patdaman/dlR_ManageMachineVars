@@ -8,7 +8,7 @@
             <div class="modal-body" cg-busy="myPromise">
                 <div class="form" id="machineApp">
                     <div class="form-inline">
-                        <div> 
+                        <div>
                             <select id="appSelect" ng-model="selectedApplication" ng-options="a.application_name for a in applications" ng-change="updateSite()">
                                 <option value="" style="color:red">All Applications</option>
                             </select>
@@ -46,8 +46,9 @@
                             <br />
                             <div ng-if="bindings">
                                 <div>
-                                    <button ng-click="bindingsCollapsed = !bindingsCollapsed">+</button>
-                                    <b> Bindings</b>
+                                    <b>Bindings&nbsp;</b>
+                                    <i class="arrow detail right" ng-if="bindingsCollapsed" ng-click="collapseBindings()" />
+                                    <i class="arrow detail down" ng-if="!bindingsCollapsed" ng-click="collapseBindings()" />
                                 </div>
                                 <div ng-show="!bindingsCollapsed">
                                     <table class="table" style="width:85%">
@@ -60,8 +61,9 @@
                             <br />
                             <div ng-if="configKeys">
                                 <div>
-                                    <button ng-click="keysCollapsed = !keysCollapsed">+</button>
-                                    <b>Keys</b>
+                                    <b>Keys&nbsp;</b>
+                                    <i class="arrow detail right" ng-if="keysCollapsed" ng-click="collapseKeys()" />
+                                    <i class="arrow detail down" ng-if="!keysCollapsed" ng-click="collapseKeys()" />
                                 </div>
                                 <div ng-show="!keysCollapsed">
                                     <table class="table" style="width:85%">
