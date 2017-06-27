@@ -21,13 +21,13 @@
                             <label>Location</label>
                             <md-select ng-model="machineLocation" required md-no-asterisk="true">
                                 <md-option><em>Location</em></md-option>
-                                <md-option ng-repeat="value in locations" ng-value="value" />
+                                <md-option ng-repeat="location in locations" ng-value="location.value" />
                             </md-select>
                         </md-input-container>
                         <md-input-container>
                             <label>Environment</label>
                             <md-select ng-model="machineEnvironment" required md-no-asterisk="true">
-                                <md-option ng-repeat="value in environments" ng-value="value" />
+                                <md-option ng-repeat="environment in environments" ng-value="environment.value" />
                             </md-select>
                         </md-input-container>
                     </div>

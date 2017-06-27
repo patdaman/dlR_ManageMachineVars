@@ -219,7 +219,9 @@ namespace BusinessLayer
                 }
             }
             catch
-            { }
+            {
+                ipString = vmMachine.ip_address ?? string.Empty;
+            }
             if (efMachine == null)
             {
                 if (vmMachine.Applications != null)

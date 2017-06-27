@@ -1,0 +1,151 @@
+﻿<div class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title">{{machineName}} - {{environment}}</h2>
+            </div>
+            <div class="modal-body" cg-busy="myPromise">
+                
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom>
+                            <md-tab label="Site Details">
+                                <md-content class="md-padding">
+
+                                    <div class="form" id="machineApp">
+                                        <div class="form-inline">
+                                            <div>
+                                                <select id="appSelect" ng-model="selectedApplication" ng-options="a.application_name for a in applications" ng-change="updateSite()">
+                                                    <option value="" style="color:red">All Applications</option>
+                                                </select>
+                                            </div>
+                                            <p />
+                                            <div ng-if="siteName">
+                                                <div ng-if="pages!='0'&&pages!='1'">
+                                                    <select ng-model="selectedSite" ng-options="s.name for s in sites" ng-change="siteData(selectedSite.index)">
+                                                        <option value="" style="color:red">Select Site</option>
+                                                    </select>
+                                                </div>
+                                                <div><h4><b>Site id:</b> {{siteId}} &nbsp;&nbsp; <b>Name:</b> {{siteName}}</h4></div>
+                                                <div><b>{{state}}</b></div>
+                                                <div>{{appMessage}}</div>
+                                            </div>
+                                        </div>
+                                        <div ng-if="siteName">
+                                            <form id="appDetail" style="width:50%">
+                                                <b>
+                                                    <md-switch ng-model="keepAlive" ng-change="updateKeepAlive()" ng-disabled="changeKeepAlive=='n/a'" aria-label="Keep Alive: ">
+                                                        Keep Alive: {{changeKeepAlive}}
+                                                    </md-switch>
+                                                    <md-switch ng-model="active" ng-change="stopStartSite()" aria-label="">
+                                                        {{changeState}}
+                                                    </md-switch>
+                                                </b>
+                                                <div><b>App Pool:</b> {{appPoolName}}</div>
+                                                <div><b>Physical Path:</b> {{physicalPath}}</div>
+                                                <br />
+                                                <div ng-if="bindings">
+                                                    <div>
+                                                        <b>Bindings&nbsp;</b>
+                                                        <i class="arrow detail right" ng-if="bindingsCollapsed" ng-click="collapseBindings()" />
+                                                        <i class="arrow detail down" ng-if="!bindingsCollapsed" ng-click="collapseBindings()" />
+                                                    </div>
+                                                    <div ng-show="!bindingsCollapsed">
+                                                        <table class="table" style="width:85%">
+                                                            <tr id="bindings" ng-repeat="b in bindings" style="height:20px;">
+                                                                <td ng-repeat="data in b">{{data}}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <div ng-if="configKeys">
+                                                    <div>
+                                                        <b>Keys&nbsp;</b>
+                                                        <i class="arrow detail right" ng-if="keysCollapsed" ng-click="collapseKeys()" />
+                                                        <i class="arrow detail down" ng-if="!keysCollapsed" ng-click="collapseKeys()" />
+                                                    </div>
+                                                    <div ng-show="!keysCollapsed">
+                                                        <table class="table" style="width:85%">
+                                                            <tr id="keys" ng-repeat="c in configKeys" style="height:20px;">
+                                                                <td ng-repeat="key in c">{{key}}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div ng-if="pages!=0&&pages!=1" class="arrowContainer">
+                                                    <a class="arrow arrow-left" role="button" ng-disabled="page()=='1'" ng-click="previous()" />
+                                                    <!--<a class="arrow arrow-left" role="button" ng-click="previous()" />-->
+                                                    <span class="header-label">{{page()}} / {{pages}}</span>
+                                                    <a class="arrow arrow-right" role="button" ng-disabled="page()==pages" ng-click="next()" />
+                                                    <!--<a class="arrow arrow-right" role="button" ng-click="next()" />-->
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="two">
+                                <md-content class="md-padding">
+                                    <h1 class="md-display-2">Tab Two</h1>
+
+                                    
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Edit Machine">
+                                <md-content class="md-padding">
+                                    <form name="machineForm">
+                                        <div class="form-group">
+                                            <label><b>Machine Name</b></label>
+                                            <input id="inputs" class="form-control" type="text" ng-model="vm.machine_name">
+                                        </div>
+                                        <div class="form-inline">
+                                            <md-input-container>
+                                                <md-checkbox ng-model="active" aria-label="Active">
+                                                    Active
+                                                </md-checkbox>
+                                            </md-input-container>
+                                            <md-input-container>
+                                                <label>Location</label>
+                                                <md-select ng-model="machineLocation" required md-no-asterisk="true">
+                                                    <md-option><em>Location</em></md-option>
+                                                    <md-option ng-repeat="location in locations" ng-value="location.value" />
+                                                </md-select>
+                                            </md-input-container>
+                                            <md-input-container>
+                                                <label>Environment</label>
+                                                <md-select ng-model="machineEnvironment" required md-no-asterisk="true">
+                                                    <md-option ng-repeat="environment in environments" ng-value="environment.value" />
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                        <div class="form-group">
+                                            <label><b>Application(s):</b></label>
+                                            <multi-select ng-model="machineApplications"
+                                                          available="availableApplications"
+                                                          selected-label="Current"
+                                                          available-label="Available"
+                                                          display-attr="name">
+                                            </multi-select>
+                                        </div>
+                                    </form>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-disabled="!siteName" ng-click="viewApplications()" class="btn btn-dark btn-warning" style="float:left;">Refresh</button>
+                <button type="button" ng-disabled="machineChange" ng-click="save()" class="btn btn-md btn-primary">Save</button>
+                <button type="button" ng-disabled="selectedFile" ng-click="close()" class="btn btn-md btn-danger">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('.modal-dialog').draggable();
+    </script>
+</div>

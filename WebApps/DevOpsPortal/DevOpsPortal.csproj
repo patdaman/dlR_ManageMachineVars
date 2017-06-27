@@ -150,6 +150,7 @@
     <Content Include="AngularJS\Controllers\BoardController.js" />
     <Content Include="AngularJS\Controllers\ConfigModalController.js" />
     <Content Include="AngularJS\Controllers\DashboardController.js" />
+    <Content Include="AngularJS\Controllers\MachineDetailController.js" />
     <Content Include="AngularJS\Controllers\MachineModalController.js" />
     <Content Include="AngularJS\Controllers\PowershellController.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -247,6 +248,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\machineDetailModal.html" />
+    <Content Include="Content\Templates\machineModal.html" />
     <Content Include="Content\Templates\machineTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

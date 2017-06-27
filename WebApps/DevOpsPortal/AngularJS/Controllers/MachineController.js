@@ -561,28 +561,55 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             var treeLevel = row.treeLevel;
             var machineName;
             var machineId;
+            var singleData;
+            var def = $q.defer();
             machineName = row.entity.machine_name;
             machineId = row.entity.id;
-            var def = $q.defer();
-            ModalService.showModal({
-                templateUrl: "/Content/Templates/machineDetailModal.html",
-                controller: "MachineDetail",
-                inputs: {
-                    //machineData: data,
-                    machineData: row.entity,
+            $http({
+                method: 'GET',
+                url: 'api:/NoteApi',
+                params: {
+                    noteType: 'machine',
+                    id: machine_id,
+                    createDate: '1900-01-01'
                 }
             })
-                .then(function (modal) {
-                    modal.element.modal();
-                    modal.close.then(function (result) {
-                        var machine;
-                    });
+            .success(function (data) {
+                singleData = data[0];
+                ModalService.showModal({
+                    templateUrl: "/Content/Templates/machineModal.html",
+                    controller: "MachineDetailController",
+                    //templateUrl: "/Content/Templates/machineDetailModal.html",
+                    //controller: "MachineDetail",
+                    inputs: {
+                        //machineData: data,
+                        machineData: row.entity,
+                        machineApplications: [],
+                        locations: $scope.locations,
+                        applications: $scope.applications,
+                        environments: $scope.environments,
+                        environment: $scope.selectedEnvironment,
+                        header: machineName,
+                        varId: machine_id,
+                        createDate: singleData.createDate,
+                        lastModifiedUser: singleData.userName,
+                        lastModifiedDate: singleData.modifyDate,
+                        noteText: singleData.noteText,
+                        title: machineName,
+                    }
                 })
-            //})
-            //.error(function (error) {
-            //    console.log(error);
-            //})
-            return def.promise
+                    .then(function (modal) {
+                        modal.element.modal();
+                        modal.close.then(function (result) {
+                            var machine;
+                        });
+                    })
+                //})
+                //.error(function (error) {
+                //    console.log(error);
+                //})
+            })
+            return def.promise;
         };
 
         $scope.addMachine = function (row) {

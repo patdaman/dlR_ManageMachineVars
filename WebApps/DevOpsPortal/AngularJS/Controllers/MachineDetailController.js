@@ -1,9 +1,15 @@
-﻿MachineApp.controller('MachineDetail', ['$rootScope', '$scope', '$element',
+﻿MachineApp.controller('MachineDetailController', ['$rootScope', '$scope', '$element',
     '$q', '$httpParamSerializer', '$http', '$timeout',
-    'close', 'machineData',
+    'close', 'machineData', 'machineApplications',
+    'locations', 'applications', 'environments', 'environment',
+    'header', 'varId', 'noteText', 'title',
+    'createDate', 'lastModifiedUser', 'lastModifiedDate',
     function ($rootScope, $scope, $element,
         $q, $httpParamSerializer, $http, $timeout,
-        close, machineData) {
+        close, machineData, machineApplications,
+        locations, applications, environments, environment,
+        header, varId, noteText, title,
+        createDate, lastModifiedUser, lastModifiedDate) {
 
         var vm = $scope;
         var myPromise;
@@ -41,6 +47,16 @@
         var keysCollapsed;
         var bindingsCollapsed;
 
+        var myPromise;
+        var availableApplications = [];
+        var machineId;
+        var machineEnvironment;
+        var machineLocation;
+        var active;
+        var save;
+        var saveMachine;
+        var deleteMachine;
+
         vm.machineData = machineData;
         vm.sites = [];
         vm.machineName = machineData.machine_name;
@@ -53,6 +69,26 @@
         vm.viewMachineDetail = true;
         vm.keysCollapsed = false;
         vm.bindingsCollapsed = true;
+
+        vm.active = true;
+        vm.saveMachine = false;
+        vm.deleteMachine = false;
+
+        vm.availableApplications = applications;
+        vm.machineApplications = machineApplications;
+        vm.machineEnvironment = environment;
+        vm.applications = applications;
+        vm.environments = environments.map(function (value) { return { environment: value }; });
+        vm.environment = environment;
+
+        vm.save = false;
+        vm.header = header;
+        vm.varId = varId;
+        vm.noteText = "";
+        vm.lastModifiedDate = lastModifiedDate;
+        vm.lastModifiedUser = lastModifiedUser;
+        vm.noteText = noteText;
+        vm.title = title;
 
         vm.page = function () {
             return '' + (vm.appIndex + 1)
@@ -117,14 +153,14 @@
             vm.active = vm.machineApps[index].active;
             if (vm.active == true)
                 vm.changeState = 'Started';
-            else 
+            else
                 vm.changeState = 'Stopped';
             vm.keepAlive = vm.machineApps[index].keepAlive;
             if (vm.keepAlive == true)
                 vm.changeKeepAlive = 'OK';
             else if (vm.keepAlive == false)
                 vm.changeKeepAlive = 'Inactive';
-            else 
+            else
                 vm.changeKeepAlive = 'n/a'
             vm.appMessage = vm.machineApps[index].message;
             vm.physicalPath = vm.machineApps[index].physicalPath;
@@ -324,85 +360,3 @@
         };
         vm.viewApplications();
     }])
-
-.controller('AddMachine', ['$rootScope', '$scope', '$element', '$http', '$timeout', 'close',
-    'machineData', 'locations', 'machineApplications', 'applications', 'environments', 'environment',
-    function ($rootScope, $scope, $element, $http, $timeout, close,
-        machineData, locations, machineApplications, applications, environments, environment) {
-
-        var apiRelPath = "api:/MachineApi";
-        var vm = $scope;
-        var myPromise;
-        var availableApplications = [];
-        var machineId;
-        var machineEnvironment;
-        var machineLocation;
-        var active;
-        var saveMachine;
-        var deleteMachine;
-
-        vm.active = true;
-        vm.saveMachine = false;
-        vm.deleteMachine = false;
-
-        vm.availableApplications = applications;
-        vm.machineApplications = machineApplications;
-        vm.machineEnvironment = environment;
-        vm.applications = applications;
-        vm.environments = environments.map(function (value) { return { environment: value }; });
-        vm.environment = environment;
-
-        vm.delete = function () {
-
-        };
-        vm.close = function () {
-            $element.modal('hide');
-            close({}, 500);
-        };
-        vm.cancel = function () {
-            $element.modal('hide');
-
-            vm.close();
-        };
-        vm.save = function () {
-            $element.modal('hide');
-            close({
-                save: vm.save,
-                publish: vm.publish,
-            }, 500);
-        };
-    }])
-
-.controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',
-        'header', 'varId', 'noteText', 'title',
-        'createDate', 'lastModifiedUser', 'lastModifiedDate',
-    function ($rootScope, $scope, $element, close,
-        header, varId, noteText, title,
-        createDate, lastModifiedUser, lastModifiedDate) {
-
-        var vm = $scope;
-        var save;
-        var modalSize;
-
-        vm.header = header;
-        vm.varId = varId;
-        vm.noteText = "";
-        vm.lastModifiedDate = lastModifiedDate;
-        vm.lastModifiedUser = lastModifiedUser;
-        vm.noteText = noteText;
-        vm.modalSize = "modal-dialog modal-md";
-        vm.title = title;
-
-        vm.close = function () {
-            $element.modal('hide');
-            close({}, 500);
-        };
-        vm.save = function () {
-            $element.modal('hide');
-            close({
-                save: true,
-                machine_id: vm.varId,
-                noteText: vm.noteText,
-            }, 500);
-        };
-    }]);
