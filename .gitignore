@@ -14,3 +14,4 @@
 *.VC.opendb
 *.VC.db
 /DevOps/DevOps.dbmdl
+/packages/*
