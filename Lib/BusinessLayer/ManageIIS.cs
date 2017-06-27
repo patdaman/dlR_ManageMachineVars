@@ -65,15 +65,9 @@ namespace BusinessLayer
                 this.machineName = machineName;
             List<IISAppSettings> machineApps = new List<IISAppSettings>();
             List<WebSite> machineSites;
+            DomainUser _domainUser = GetDomainUser(this.machineName);
             try
             {
-                var l_configSettings = (DomainUserSection)WebConfigurationManager.GetSection("DomainUserSection");
-                List<DomainUser> rootUsers = new List<DomainUser>();
-                foreach (var l_element in l_configSettings.DomainUsers.AsEnumerable())
-                {
-                    rootUsers.Add(l_element);
-                }
-                DomainUser _domainUser = rootUsers.Where(x => this.machineName.Contains(x.uri.Value)).FirstOrDefault();
                 _siteTools = new SiteTools(this.machineName)
                 {
                     userName = _domainUser.username.Value,
@@ -128,6 +122,17 @@ namespace BusinessLayer
                 configKeys = ConvertConfigValues(siteProperties.configKeys),
             };
             return machineApps;
+        }
+
+        private DomainUser GetDomainUser(string machineName)
+        {
+            var l_configSettings = (DomainUserSection)WebConfigurationManager.GetSection("DomainUserSection");
+            List<DomainUser> rootUsers = new List<DomainUser>();
+            foreach (var l_element in l_configSettings.DomainUsers.AsEnumerable())
+            {
+                rootUsers.Add(l_element);
+            }
+            return rootUsers.Where(x => machineName.EndsWith(x.uri.Value)).FirstOrDefault();
         }
 
         private List<SiteBinding> ConvertBindings(List<Binding> iisBindings)
