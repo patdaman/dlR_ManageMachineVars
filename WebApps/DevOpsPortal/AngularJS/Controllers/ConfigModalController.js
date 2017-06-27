@@ -200,7 +200,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         var uploaded;
         var isGlobal;
         var localComponent;
-        var publish;
+        var toPublish;
 
         vm.availableApplications = applications;
         vm.componentApplications = [];
@@ -214,7 +214,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
         vm.isNew = true;
         vm.uploaded = false;
         vm.isGlobal = false;
-        vm.publish = false;
+        vm.toPublish = false;
 
         vm.selectEnvironment = function (environment) {
             vm.componentEnvironment = environment;
@@ -413,7 +413,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 },
                 function (isConfirm) {
                     if (isConfirm) {
-                        vm.publish = true;
+                        vm.toPublish = true;
                         vm.save();
                     };
                 });
@@ -428,7 +428,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
             $element.modal('hide');
             close({
                 save: true,
-                publish: vm.publish,
+                toPublish: vm.toPublish,
                 isNew: vm.isNew,
                 uploaded: vm.uploaded,
                 isGlobal: vm.isGlobal,

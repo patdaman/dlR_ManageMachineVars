@@ -275,9 +275,6 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 cellEditableCondition: $scope.canEdit,
                 width: '20%',
                 enableFiltering: true,
-                //cellToolTip: function (row) {
-                //    return row.entity.configElement;
-                //},
                 visible: true,
                 cellToolTip: true,
                 cellTemplate: '/Content/Templates/keyTemplate.html'
@@ -522,6 +519,9 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 }
             })
             .success(deferred.resolve)
+            .success(function (data) {
+                $scope.gridOptions.data[rowEntity.index] = data;
+            })
             .error(deferred.reject)
             .error(function () {
                 $scope.cancelEdit();
@@ -685,7 +685,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 last_modify_user: $rootScope.UserName,
                             });
                         });
-                        var toPublish = result.publish;
+                        var toPublish = result.toPublish;
                         var deferred = $q.defer();
                         var data = JSON.stringify({
                             "componentName": result.componentName,

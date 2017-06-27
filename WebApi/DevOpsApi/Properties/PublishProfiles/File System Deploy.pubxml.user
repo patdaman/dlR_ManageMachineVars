@@ -79,25 +79,25 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
     <File Include="bin/ApiLib.dll">
-      <publishTime>06/20/2017 17:25:26</publishTime>
+      <publishTime>06/22/2017 01:33:31</publishTime>
     </File>
     <File Include="bin/ApiLib.pdb">
       <publishTime>05/11/2017 11:03:00</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>06/20/2017 17:25:37</publishTime>
+      <publishTime>06/22/2017 11:34:20</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>06/20/2017 17:25:37</publishTime>
+      <publishTime>06/22/2017 11:34:20</publishTime>
     </File>
     <File Include="bin/BusinessLayer.dll">
-      <publishTime>06/20/2017 17:25:26</publishTime>
+      <publishTime>06/22/2017 11:32:50</publishTime>
     </File>
     <File Include="bin/BusinessLayer.pdb">
       <publishTime>05/11/2017 11:20:03</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.dll">
-      <publishTime>06/20/2017 17:25:25</publishTime>
+      <publishTime>06/22/2017 01:33:31</publishTime>
     </File>
     <File Include="bin/CommonUtils.EnvVariables.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
@@ -109,7 +109,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/11/2017 11:02:59</publishTime>
     </File>
     <File Include="bin/CommonUtils.IISAdmin.dll">
-      <publishTime>06/20/2017 17:25:25</publishTime>
+      <publishTime>06/22/2017 11:32:49</publishTime>
     </File>
     <File Include="bin/CommonUtils.Powershell.dll">
       <publishTime>05/16/2017 17:41:44</publishTime>
@@ -130,7 +130,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/01/2017 14:00:14</publishTime>
     </File>
     <File Include="bin/DevOpsApi.dll">
-      <publishTime>06/20/2017 17:25:30</publishTime>
+      <publishTime>06/22/2017 11:32:53</publishTime>
     </File>
     <File Include="bin/DevOpsApi.pdb">
       <publishTime>05/11/2017 12:11:35</publishTime>
@@ -310,7 +310,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/01/2017 14:00:14</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.dll">
-      <publishTime>06/20/2017 17:25:26</publishTime>
+      <publishTime>06/22/2017 01:33:31</publishTime>
     </File>
     <File Include="bin/SGNL.CommonUtils.AppConfiguration.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
@@ -376,7 +376,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2015 04:04:30</publishTime>
     </File>
     <File Include="bin/ViewModel.dll">
-      <publishTime>06/20/2017 17:25:25</publishTime>
+      <publishTime>06/22/2017 01:33:30</publishTime>
     </File>
     <File Include="bin/ViewModel.pdb">
       <publishTime>05/11/2017 11:02:59</publishTime>
@@ -442,7 +442,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/08/2017 15:21:15</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>06/20/2017 17:25:31</publishTime>
+      <publishTime>06/22/2017 11:34:14</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>04/11/2017 12:37:40</publishTime>
@@ -499,7 +499,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/11/2017 12:37:40</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>06/20/2017 17:25:30</publishTime>
+      <publishTime>06/22/2017 11:34:14</publishTime>
     </File>
   </ItemGroup>
 </Project>

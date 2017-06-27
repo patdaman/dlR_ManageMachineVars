@@ -45,7 +45,7 @@
         vm.sites = [];
         vm.machineName = machineData.machine_name;
         vm.environment = machineData.environment;
-        vm.uri = machineData.uri;
+        vm.uri = machineData.machine_name + '.' + machineData.uri;
         vm.applications = machineData.Applications;
 
         vm.appIndex = 0;
@@ -57,6 +57,13 @@
         vm.page = function () {
             return '' + (vm.appIndex + 1)
         }
+
+        vm.collapseKeys = function () {
+            vm.keysCollapsed = !vm.keysCollapsed;
+        };
+        vm.collapseBindings = function () {
+            vm.bindingsCollapsed = !vm.bindingsCollapsed;
+        };
 
         vm.viewApplications = function (siteName) {
             var params;
@@ -316,6 +323,54 @@
             }, 500);
         };
         vm.viewApplications();
+    }])
+
+.controller('AddMachine', ['$rootScope', '$scope', '$element', '$http', '$timeout', 'close',
+    'machineData', 'locations', 'machineApplications', 'applications', 'environments', 'environment',
+    function ($rootScope, $scope, $element, $http, $timeout, close,
+        machineData, locations, machineApplications, applications, environments, environment) {
+
+        var apiRelPath = "api:/ComponentApi";
+        var vm = $scope;
+        var myPromise;
+        var availableApplications = [];
+        var machineId;
+        var machineEnvironment;
+        var machineLocation;
+        var active;
+        var saveMachine;
+        var deleteMachine;
+
+        vm.active = true;
+        vm.saveMachine = false;
+        vm.deleteMachine = false;
+
+        vm.availableApplications = applications;
+        vm.machineApplications = machineApplications;
+        vm.machineEnvironment = environment;
+        vm.applications = applications;
+        vm.environments = environments.map(function (value) { return { environment: value }; });
+        vm.environment = environment;
+
+        vm.delete = function () {
+
+        };
+        vm.close = function () {
+            $element.modal('hide');
+            close({}, 500);
+        };
+        vm.cancel = function () {
+            $element.modal('hide');
+
+            vm.close();
+        };
+        vm.save = function () {
+            $element.modal('hide');
+            close({
+                save: vm.save,
+                publish: vm.publish,
+            }, 500);
+        };
     }])
 
 .controller('noteViewer', ['$rootScope', '$scope', '$element', 'close',

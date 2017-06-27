@@ -155,6 +155,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="AngularJS\Directives\BoardDragDrop.js" />
+    <Content Include="AngularJS\Directives\MachineDirectives.js" />
     <Content Include="AngularJS\Directives\powershellCodeMirror.js" />
     <Content Include="AngularJS\Directives\ConfigDirectives.js" />
     <Content Include="AngularJS\Models\IISSettingModel.js" />
@@ -257,9 +258,6 @@
     </Content>
     <Content Include="Content\Templates\subGridActionsTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Templates\toolTipTemplate.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Templates\valueTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

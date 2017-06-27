@@ -30,6 +30,8 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         var filteredMachines = [];
         var filteredApplications = [];
         var filteredLocations = [];
+        var environmentDropDownValues = [];
+        var locationDropDownValues = [];
 
         var selectedApplication;
         var application;
@@ -127,12 +129,24 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             getObjectService.getConfigObjects('environment')
             .then(function (result) {
                 $scope.environments = result;
-                if ($scope.environment && $scope.environment != '')
-                    angular.forEach($scope.environments, function (environments) {
+                $scope.environmentDropDownValues = [];
+                angular.forEach($scope.environments, function (environments, index) {
+                    if ($scope.environment && $scope.environment != '')
                         if (environments.value == $scope.environment)
                             $scope.selectedenvironment = environment;
-                    });
+                    var id = environments.name;
+                    var name = environments.value;
+                    $scope.environmentDropDownValues.push({
+                        id: id,
+                        value: name.replace(/"/g, '').replace(/'/g, '')
+                            .replace(/\[/g, '').replace(/]/g, ''),
+                    })
+                });
             })
+        };
+
+        $scope.GetEnvironmentDropDownValues = function () {
+            return $scope.environmentDropDownValues;
         };
 
         // List of applications:
@@ -153,11 +167,19 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             getObjectService.getConfigObjects('location')
             .then(function (result) {
                 $scope.locations = result;
-                if ($scope.location && $scope.location != '')
-                    angular.forEach($scope.locations, function (location) {
+                $scope.locationDropDownValues = [];
+                angular.forEach($scope.locations, function (location) {
+                    if ($scope.location && $scope.location != '')
                         if (location.value == $scope.location)
                             $scope.selectedApplication = location;
-                    });
+                    var id = location.name;
+                    var name = location.value;
+                    $scope.locationDropDownValues.push({
+                        id: id,
+                        value: name.replace(/"/g, '').replace(/'/g, '')
+                            .replace(/\[/g, '').replace(/]/g, ''),
+                    })
+                });
             })
         };
 
@@ -237,6 +259,12 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                             || $scope.environment == '';
                     }
                 },
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    return $scope.environmentDropDownValues;
+                },
+                editDropdownIdLabel: 'value',
+                editDropValueLabel: 'value',
+                editableCellTemplate: 'ui-grid/dropdownEditor',
                 grouping: { groupPriority: 0 },
                 sort: { priority: 0, direction: 'asc' },
                 groupable: true,
@@ -247,20 +275,26 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                 //grouping: { groupPriority: 1 },
                 sort: { priority: 1, direction: 'asc' },
                 groupable: true,
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    return $scope.locationDropDownValues;
+                },
+                editDropdownIdLabel: 'value',
+                editDropValueLabel: 'value',
+                editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellEditableCondition: $scope.canEdit,
                 width: 170
             },
             {
                 field: 'machine_name',
-                //width: '20%',
+                cellEditableCondition: $scope.canEdit,
                 enableFiltering: true,
                 groupable: false,
-                //cellTemplate: '/Content/Templates/machineTemplate.html'
             },
             {
                 field: 'uri',
                 //width: '20%',
-                enableCellEdit: false,
+                cellEditableCondition: $scope.canEdit,
+                //visible: false,
             },
             {
                 field: 'ip_address',
@@ -274,6 +308,13 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                 field: 'active',
                 type: 'boolean',
                 cellEditableCondition: $scope.canEdit,
+                editableCellTemplate: 'ui-grid/dropdownEditor',
+                editDropdownIdLabel: 'id',
+                editDropdownValueLabel: 'active',
+                editDropdownOptionsArray: [
+                    { id: 'true', active: 'true' },
+                    { id: 'false', active: 'false' }
+                ],
                 enableFiltering: true,
                 width: 80
             },
@@ -335,17 +376,6 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             gridApi.rowEdit.on.saveRow($scope, $scope.cancelEdit());
         };
 
-        //$scope.changeGroupBy = function (group1, group2) {
-        //    $scope.gridOptions.$gridScope.configGroups = [];
-        //    $scope.gridOptions.$gridScope.configGroups.push(group1);
-        //    $scope.gridOptions.$gridScope.configGroups.push(group2);
-        //    $scope.gridOptions.groupBy();
-        //}
-        //$scope.clearGroupBy = function () {
-        //    $scope.gridOptions.$gridScope.configGroups = [];
-        //    $scope.gridOptions.groupBy();
-        //}
-
         $scope.loadGrid = function () {
             var def = $q.defer();
             $scope.myPromise = $http({
@@ -370,7 +400,7 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
         $scope.editCell = function (row) {
             $scope.gridApi.grid.cellNav.clearFocus();
             $scope.gridApi.grid.cellNav.focusedCells = [];
-            $scope.machine_id = row.entity.machine_id;
+            $scope.machine_id = row.entity.id;
             row.grid.appScope.gridApi.grid.cellNav.clearFocus();
             row.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
             $scope.rowId = row.entity.index;
@@ -382,9 +412,9 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
                 $scope.selectedRow.grid.appScope.gridApi.grid.cellNav.focusedCells = [];
                 $scope.selectedRow.grid.api.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
             }
-            $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[13]);
-            $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
             $scope.selectedRow = row;
+            $scope.gridApi.cellNav.scrollToFocus($scope.gridOptions.data[$scope.rowId], row.grid.columns[4]);
+            $scope.rowIndex = row.grid.renderContainers.body.visibleRowCache.indexOf(row);
             $scope.bypassEditCancel = false;
         };
 
@@ -408,25 +438,59 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             $scope.bypassEditCancel = true;
         };
 
-        //save form data
-        $scope.save = function (row) {
-            var machineEntity = JSON.stringify(row.entity);
-            var def = $q.defer;
-            $scope.myPromise = $http({
-                method: 'post',
-                url: 'api:/MachineApi',
-                //data: Machine
-                data: machineEntity,
-            })
-            .success(def.resolve)
-            .success(function (d) {
-                $scope.id = d.data.id;
-                loadMachines();
-                swal("Reord inserted successfully");
-            })
-            .error(function () {
-                swal("Oops..", "Error occured while saving", 'error');
+        // Grid save function
+        $scope.saveRow = function (row) {
+            $scope.myPromise = $scope.saveRowFunction(row.entity);
+            $scope.gridApi.rowEdit.setSavePromise(row.entity, $scope.myPromise);
+            var gridRows = $scope.gridApi.rowEdit.getDirtyRows();
+            var dataRows = gridRows.map(function (gridRow) {
+                return gridRow.entity;
             });
+            $scope.gridApi.rowEdit.setRowsClean(dataRows);
+            $scope.edit = false;
+            $scope.canEdit();
+            $scope.bypassEditCancel = true;
+        };
+
+        // Requests the key data save promise
+        $scope.saveRowFunction = function (rowEntity) {
+            var deferred = $q.defer();
+            if (rowEntity.isGlobal)
+                angular.forEach(rowEntity.values, function (value) {
+                    value.value = rowEntity.values[environmentIndex].value;
+                });
+            var data = JSON.stringify({
+                "active": rowEntity.active,
+                "create_date": rowEntity.create_date,
+                "Enum_Locations": rowEntity.Enum_Locations,
+                "environment": rowEntity.environment,
+                "hasNotes": rowEntity.hasNotes,
+                "id": rowEntity.id,
+                "ip_address": rowEntity.ip_address,
+                "last_modify_user": $rootScope.UserName,
+                "location": rowEntity.location,
+                "machine_name": rowEntity.machine_name,
+                "MachineComponentPaths": rowEntity.MachineComponentPaths,
+                "modify_date": rowEntity.modify_date,
+                "uri": rowEntity.uri,
+            });
+            $http({
+                method: 'PUT',
+                url: apiRelPath,
+                data: data,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .success(deferred.resolve)
+            .success(function (data) {
+                $scope.gridOptions.data[rowEntity.index] = data;
+            })
+            .error(deferred.reject)
+            .error(function () {
+                $scope.cancelEdit();
+            });
+            return deferred.promise;
         };
 
         // Refresh Grid
@@ -500,41 +564,50 @@ MachineApp.controller('MachineController', ['$rootScope', '$scope', '$http', 'ui
             machineName = row.entity.machine_name;
             machineId = row.entity.id;
             var def = $q.defer();
-            //angular.forEach(row.treeNode.aggregations, function (aggregation) {
-            //    if (aggregation.col.field === 'componentName')
-            //        componentGroupName = aggregation.groupVal;
-            //});
-            //var deferred = $q.defer();
-            //$http({
-            //    method: 'GET',
-            //    //url: 'api:/IISApi',
-            //    url: 'api:/MachineApi',
-            //    params: {
-            //        id: machineId,
-            //    }
-            //})
-            //.success(deferred.resolve)
-            //.success(function (data) {
-                ModalService.showModal({
-                    templateUrl: "/Content/Templates/machineDetailModal.html",
-                    controller: "MachineDetail",
-                    inputs: {
-                        //machineData: data,
-                        machineData: row.entity,
-                    }
+            ModalService.showModal({
+                templateUrl: "/Content/Templates/machineDetailModal.html",
+                controller: "MachineDetail",
+                inputs: {
+                    //machineData: data,
+                    machineData: row.entity,
+                }
+            })
+                .then(function (modal) {
+                    modal.element.modal();
+                    modal.close.then(function (result) {
+                        var machine;
+                    });
                 })
-                    .then(function (modal) {
-                        modal.element.modal();
-                        modal.close.then(function (result) {
-                            var machine;
-                        });
-                    })
             //})
             //.error(function (error) {
             //    console.log(error);
             //})
             return def.promise
         };
+
+        $scope.addMachine = function (row) {
+            ModalService.showModal({
+                templateUrl: "/Content/Templates/addMachineModal.html",
+                controller: "AddMachine",
+                inputs: {
+                    machineData: row,
+                    machineApplications: [],
+                    locations: $scope.locations,
+                    applications: $scope.applications,
+                    environments: $scope.environments,
+                    environment: $scope.selectedEnvironment,
+                }
+            })
+            .then(function (modal) {
+                modal.element.modal();
+                modal.close.then(function (result) {
+                    if (result.save) {
+
+                    };
+                });
+            });
+        };
+                
 
         $scope.getNote = function (row) {
             var localRow = row;

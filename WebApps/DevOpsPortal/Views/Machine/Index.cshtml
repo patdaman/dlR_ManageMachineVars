@@ -18,11 +18,8 @@
             <select ng-model="selectedLocation" ng-options="l.name for l in locations" ng-change="updateLocation()">
                 <option value="" style="color:red">Location</option>
             </select>
-            <select ng-model="selectedMachine" ng-options="m.name for m in machines" ng-change="updateMachine()">
-                <option value="" style="color:red">Machine</option>
-            </select>
 
-            <input type="button" class="btn btn-small" ng-click="addMachine()" value="Add / Edit Machine" />
+            <input type="button" class="btn btn-small btn-info" ng-click="addMachine()" value="Add / Edit Machine" />
             <div class="float:right">Api Url: <a href="{{ApiBaseUrlHelp}}" target="_blank">{{ApiBaseUrl}}</a></div>
 
             <div cg-busy="myPromise" ui-grid="gridOptions"

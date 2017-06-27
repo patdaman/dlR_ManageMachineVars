@@ -57,7 +57,7 @@ PowershellApp.controller('PowershellController', ['$rootScope', '$scope', '$http
     $scope.scriptName = '';
     $scope.scriptText = '#Code goes here\n\n\n\n\n\n\n\n\n\n';
 
-    $scope.themes = ['midnight', 'eclipse', 'abcdef', 'rubyblue', 'solarized'];
+    $scope.themes = ['midnight', 'eclipse', 'abcdef', 'rubyblue', 'solarized', 'dracula', 'hopscotch', 'blackboard', 'elegant'];
     $scope.theme = $scope.themes[0];
 
     //$scope.readOnly = 'nocursor';

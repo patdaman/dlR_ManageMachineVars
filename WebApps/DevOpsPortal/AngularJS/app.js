@@ -36,6 +36,7 @@ var ConfigApp = angular.module('ConfigApp',
             'angularModalService',
             'EnumService',
             'ngFileSaver',
+            'ngMaterial',
             'cgBusy'
         ])
 
