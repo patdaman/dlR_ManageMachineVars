@@ -1,119 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ViewModel
 {
-    public class Id
+    public partial class ApplicationInsights
     {
-        public string type { get; set; }
-        public string description { get; set; }
-        public bool required { get; set; }
-    }
+        [JsonProperty("value")]
+        public Value value { get; set; }
 
-    public class MetricId
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-        public bool required { get; set; }
-    }
-
-    public class Timespan
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-    }
-
-    public class Aggregation
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-    }
-
-    public class Interval
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-    }
-
-    public class Segment
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-    }
-
-    public class Top
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-        public Top() { }
-    }
-
-    public class Orderby
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-        public Orderby() { }
-    }
-
-    public class Filter
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-        public Filter() { }
-    }
-
-    public class Properties2
-    {
-        public MetricId metricId { get; set; }
-        public Timespan timespan { get; set; }
-        public Aggregation aggregation { get; set; }
-        public Interval interval { get; set; }
-        public Segment segment { get; set; }
-        public Top top { get; set; }
-        public Orderby orderby { get; set; }
-        public Filter filter { get; set; }
-        public Properties2() { }
-    }
-
-    public class Parameters
-    {
-        public string type { get; set; }
-        public string description { get; set; }
-        public bool required { get; set; }
-        public Properties2 properties { get; set; }
-        public Parameters() { }
-    }
-
-    public class Properties
-    {
-        public Id id { get; set; }
-        public Parameters parameters { get; set; }
-        public Properties() { }
-    }
-
-    public class Items
-    {
-        public string type { get; set; }
-        public Properties properties { get; set; }
-        public Items() { }
-    }
-
-    public class RootObject
-    {
-        public string title { get; set; }
-        public string type { get; set; }
-        public Items items { get; set; }
-        public RootObject() { }
-
-        public RootObject(RootObject r)
+        public class MachineMetric
         {
-            title = r.title;
-            type = r.type;
-            items = r.items;
+            [JsonProperty("avg")]
+            public int? Avg { get; set; }
+            [JsonProperty("min")]
+            public int? Min { get; set; }
+            [JsonProperty("max")]
+            public int? Max { get; set; }
+            [JsonProperty("stdDev")]
+            public int? stdDev { get; set; }
+        }
+
+        public class Segment
+        {
+            [JsonProperty("start")]
+            public string Start { get; set; }
+            [JsonProperty("end")]
+            public string End { get; set; }
+            [JsonProperty("requests/duration")]
+            public MachineMetric RequestsDuration { get; set; }
+            [JsonProperty("users/count")]
+            public MachineMetric UsersCount { get; set; }
+            [JsonProperty("requests/count")]
+            public MachineMetric RequestsCount { get; set; }
+            [JsonProperty("exceptions/count")]
+            public MachineMetric ExceptionsCount { get; set; }
+            [JsonProperty("performanceCounters/processorCpuPercentage")]
+            public MachineMetric ProcessorCpuPercentage { get; set; }
+            [JsonProperty("performanceCounters/memoryAvailableBytes")]
+            public MachineMetric MemoryAvailableBytes { get; set; }
+        }
+
+        public class Value
+        {
+            [JsonProperty("start")]
+            public string Start { get; set; }
+            [JsonProperty("end")]
+            public string End { get; set; }
+            [JsonProperty("interval")]
+            public string Interval { get; set; }
+            [JsonProperty("requests/duration")]
+            public MachineMetric RequestsDuration { get; set; }
+
+            [JsonProperty("segments")]
+            public Segment[] Segments { get; set; }
         }
     }
-
 }

@@ -11,32 +11,32 @@ namespace BusinessLayer
 
         }
 
-        public ViewModel.RootObject GetMachineData(int id)
+        public ApplicationInsights GetMachineData(int id)
         {
             throw new NotImplementedException();
         }
 
-        public ViewModel.RootObject UpdateInsight(ViewModel.RootObject value)
+        public ApplicationInsights UpdateInsight(ApplicationInsights value)
         {
             throw new NotImplementedException();
         }
 
-        public ViewModel.RootObject CreateInsight(ViewModel.RootObject value)
+        public ApplicationInsights CreateInsight(ApplicationInsights value)
         {
             throw new NotImplementedException();
         }
 
-        public ViewModel.RootObject DeleteInsight(int id)
+        public ApplicationInsights DeleteInsight(int id)
         {
             throw new NotImplementedException();
         }
 
-        public List<ViewModel.RootObject> GetAllInsights()
+        public List<ApplicationInsights> GetAllInsights()
         {
             throw new NotImplementedException();
         }
 
-        public List<ViewModel.RootObject> GetAllInsights(DateTime startDate, DateTime? endDate)
+        public List<ApplicationInsights> GetAllInsights(DateTime startDate, DateTime? endDate)
         {
             throw new NotImplementedException();
         }
