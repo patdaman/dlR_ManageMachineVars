@@ -219,7 +219,7 @@ namespace BusinessLayer
                 }
             }
             catch
-            { }
+            {  }
             if (efMachine == null)
             {
                 if (vmMachine.Applications != null)

@@ -5,6 +5,7 @@
         $q, $httpParamSerializer, $http, $timeout,
         close, machineData) {
 
+        var apiRelPath = 'api:/IISApi'
         var vm = $scope;
         var myPromise;
         var save = false;
@@ -101,7 +102,7 @@
             var def = $q.defer();
             vm.myPromise = $http({
                 method: 'GET',
-                url: 'api:/IISApi',
+                url: apiRelPath,
                 params: params
             })
             .success(def.resolve)
@@ -261,7 +262,7 @@
             var def = $q.defer();
             vm.myPromise = $http({
                 method: 'PUT',
-                url: 'api:/IISApi',
+                url: apiRelPath,
                 data: data,
             })
             .success(def.resolve)
@@ -330,7 +331,7 @@
     function ($rootScope, $scope, $element, $http, $timeout, close,
         machineData, locations, machineApplications, applications, environments, environment) {
 
-        var apiRelPath = "api:/ComponentApi";
+        var apiRelPath = "api:/MachineApi";
         var vm = $scope;
         var myPromise;
         var availableApplications = [];
@@ -347,9 +348,9 @@
 
         vm.availableApplications = applications;
         vm.machineApplications = machineApplications;
-        vm.machineEnvironment = environment;
         vm.applications = applications;
-        vm.environments = environments.map(function (value) { return { environment: value }; });
+        vm.locations = locations;
+        vm.environments = environments;
         vm.environment = environment;
 
         vm.delete = function () {

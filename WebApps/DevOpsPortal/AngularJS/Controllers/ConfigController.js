@@ -321,6 +321,9 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 if ($scope.bypassEditCancel === false) {
                     if ((!newRowCol.row.entity.key) || newRowCol.row.entity.key == "" || newRowCol.row.entity.configvar_id !== $scope.var_id) {
                         $scope.cancelEdit();
+                        if (oldRowCol !==null && oldRowCol != "undefined") {
+                            oldRowCol.row.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+                        }
                     }
                 }
                 //else {
