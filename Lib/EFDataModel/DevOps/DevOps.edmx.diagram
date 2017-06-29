@@ -45,6 +45,10 @@
         <AssociationConnector Association="DevOpsModel.FK_MachineComponentPath_Machines" />
         <AssociationConnector Association="DevOpsModel.MachinesServerGroupsMap" />
         <AssociationConnector Association="DevOpsModel.MachineVariablesMap" />
+        <EntityTypeShape EntityType="DevOpsModel.Applications1" Width="1.5" PointX="15.625" PointY="13" />
+        <EntityTypeShape EntityType="DevOpsModel.ResourceGroup" Width="1.5" PointX="13.375" PointY="13.5" />
+        <AssociationConnector Association="DevOpsModel.FK_Applications_ResourceGroups" />
+        <AssociationConnector Association="DevOpsModel.ApplicationInsightMachineMap" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -54,6 +54,9 @@
     <Compile Include="DevOps\Application.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Applications1.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Component.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
@@ -121,6 +124,9 @@
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
     <Compile Include="DevOps\Partials\DevOpsEntities.cs" />
+    <Compile Include="DevOps\ResourceGroup.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\Script.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>

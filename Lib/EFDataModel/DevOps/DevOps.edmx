@@ -253,6 +253,35 @@
           <Property Name="Priority" Type="varchar" MaxLength="128" />
           <Property Name="Message" Type="nvarchar" MaxLength="1024" />
         </EntityType>
+        <EntityType Name="ApplicationInsightMachineMap">
+          <Key>
+            <PropertyRef Name="applicationId" />
+            <PropertyRef Name="machineId" />
+          </Key>
+          <Property Name="applicationId" Type="int" Nullable="false" />
+          <Property Name="machineId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Applications1">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="app_name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="app_id" Type="varchar" MaxLength="256" />
+          <Property Name="app_key" Type="varchar" MaxLength="256" />
+          <Property Name="resourcegroup_id" Type="int" Nullable="false" />
+          <Property Name="create_date" Type="datetime" Nullable="false" />
+          <Property Name="modify_date" Type="datetime" />
+          <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ResourceGroups">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="group_name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="create_date" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="ExecutionHistory">
           <Key>
             <PropertyRef Name="id" />
@@ -359,6 +388,42 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </Principal>
             <Dependent Role="ApplicationEnvironmentVariables">
               <PropertyRef Name="environmentvariable_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ApplicationInsightMachineMap_Applications">
+          <End Role="Applications1" Type="Self.Applications1" Multiplicity="1" />
+          <End Role="ApplicationInsightMachineMap" Type="Self.ApplicationInsightMachineMap" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Applications1">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ApplicationInsightMachineMap">
+              <PropertyRef Name="applicationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ApplicationInsightMachineMap_Machines">
+          <End Role="Machines" Type="Self.Machines" Multiplicity="1" />
+          <End Role="ApplicationInsightMachineMap" Type="Self.ApplicationInsightMachineMap" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Machines">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ApplicationInsightMachineMap">
+              <PropertyRef Name="machineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Applications_ResourceGroups">
+          <End Role="ResourceGroups" Type="Self.ResourceGroups" Multiplicity="1" />
+          <End Role="Applications1" Type="Self.Applications1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResourceGroups">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Applications1">
+              <PropertyRef Name="resourcegroup_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -616,6 +681,9 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="ServerGroups" EntityType="Self.ServerGroups" Schema="config" store:Type="Tables" />
           <EntitySet Name="Devices" EntityType="Self.Devices" Schema="logging" store:Type="Tables" />
           <EntitySet Name="Events" EntityType="Self.Events" Schema="logging" store:Type="Tables" />
+          <EntitySet Name="ApplicationInsightMachineMap" EntityType="Self.ApplicationInsightMachineMap" Schema="monitor" store:Type="Tables" />
+          <EntitySet Name="Applications1" EntityType="Self.Applications1" Schema="monitor" Table="Applications" store:Type="Tables" />
+          <EntitySet Name="ResourceGroups" EntityType="Self.ResourceGroups" Schema="monitor" store:Type="Tables" />
           <EntitySet Name="ExecutionHistory" EntityType="Self.ExecutionHistory" Schema="shell" store:Type="Tables" />
           <EntitySet Name="Scripts" EntityType="Self.Scripts" Schema="shell" store:Type="Tables" />
           <EntitySet Name="vi_ConfigVariables" EntityType="Self.vi_ConfigVariables" store:Type="Views" store:Schema="config">
@@ -659,6 +727,18 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <AssociationSet Name="FK_ApplicationEnvironmentVariables_EnvironmentVariables" Association="Self.FK_ApplicationEnvironmentVariables_EnvironmentVariables">
             <End Role="EnvironmentVariables" EntitySet="EnvironmentVariables" />
             <End Role="ApplicationEnvironmentVariables" EntitySet="ApplicationEnvironmentVariables" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ApplicationInsightMachineMap_Applications" Association="Self.FK_ApplicationInsightMachineMap_Applications">
+            <End Role="Applications1" EntitySet="Applications1" />
+            <End Role="ApplicationInsightMachineMap" EntitySet="ApplicationInsightMachineMap" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ApplicationInsightMachineMap_Machines" Association="Self.FK_ApplicationInsightMachineMap_Machines">
+            <End Role="Machines" EntitySet="Machines" />
+            <End Role="ApplicationInsightMachineMap" EntitySet="ApplicationInsightMachineMap" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Applications_ResourceGroups" Association="Self.FK_Applications_ResourceGroups">
+            <End Role="ResourceGroups" EntitySet="ResourceGroups" />
+            <End Role="Applications1" EntitySet="Applications1" />
           </AssociationSet>
           <AssociationSet Name="FK_ComponentConfigVariables_Components" Association="Self.FK_ComponentConfigVariables_Components">
             <End Role="Components" EntitySet="Components" />
@@ -1096,6 +1176,16 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="EnvironmentVariable" EntitySet="EnvironmentVariables" />
             <End Role="Machine" EntitySet="Machines" />
           </AssociationSet>
+          <EntitySet Name="Applications1" EntityType="DevOpsModel.Applications1" />
+          <EntitySet Name="ResourceGroups" EntityType="DevOpsModel.ResourceGroup" />
+          <AssociationSet Name="FK_Applications_ResourceGroups" Association="DevOpsModel.FK_Applications_ResourceGroups">
+            <End Role="ResourceGroup" EntitySet="ResourceGroups" />
+            <End Role="Applications1" EntitySet="Applications1" />
+          </AssociationSet>
+          <AssociationSet Name="ApplicationInsightMachineMap" Association="DevOpsModel.ApplicationInsightMachineMap">
+            <End Role="Applications1" EntitySet="Applications1" />
+            <End Role="Machine" EntitySet="Machines" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="ConfigVariable">
           <Key>
@@ -1252,6 +1342,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <NavigationProperty Name="MachineComponentPathMaps" Relationship="DevOpsModel.FK_MachineComponentPath_Machines" FromRole="Machine" ToRole="MachineComponentPathMap" />
           <NavigationProperty Name="ServerGroups" Relationship="DevOpsModel.MachinesServerGroupsMap" FromRole="Machine" ToRole="ServerGroup" />
           <NavigationProperty Name="EnvironmentVariables" Relationship="DevOpsModel.MachineVariablesMap" FromRole="Machine" ToRole="EnvironmentVariable" />
+          <NavigationProperty Name="Applications1" Relationship="DevOpsModel.ApplicationInsightMachineMap" FromRole="Machine" ToRole="Applications1" />
         </EntityType>
         <Association Name="FK_MachineApplicationMap_Applications">
           <End Type="DevOpsModel.Application" Role="Application" Multiplicity="1">
@@ -1321,6 +1412,46 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
         </Association>
         <Association Name="MachineVariablesMap">
           <End Type="DevOpsModel.EnvironmentVariable" Role="EnvironmentVariable" Multiplicity="*" />
+          <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Applications1">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="app_name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="app_id" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="app_key" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="resourcegroup_id" Type="Int32" Nullable="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="modify_date" Type="DateTime" Precision="3" />
+          <Property Name="last_modify_user" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ResourceGroup" Relationship="DevOpsModel.FK_Applications_ResourceGroups" FromRole="Applications1" ToRole="ResourceGroup" />
+          <NavigationProperty Name="Machines" Relationship="DevOpsModel.ApplicationInsightMachineMap" FromRole="Applications1" ToRole="Machine" />
+        </EntityType>
+        <EntityType Name="ResourceGroup">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="group_name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Applications1" Relationship="DevOpsModel.FK_Applications_ResourceGroups" FromRole="ResourceGroup" ToRole="Applications1" />
+        </EntityType>
+        <Association Name="FK_Applications_ResourceGroups">
+          <End Type="DevOpsModel.ResourceGroup" Role="ResourceGroup" Multiplicity="1" />
+          <End Type="DevOpsModel.Applications1" Role="Applications1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResourceGroup">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Applications1">
+              <PropertyRef Name="resourcegroup_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ApplicationInsightMachineMap">
+          <End Type="DevOpsModel.Applications1" Role="Applications1" Multiplicity="*" />
           <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
         </Association>
         </Schema>
@@ -1639,6 +1770,37 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             </EndProperty>
             <EndProperty Name="EnvironmentVariable">
               <ScalarProperty Name="id" ColumnName="environmentVariable_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="Applications1">
+            <EntityTypeMapping TypeName="DevOpsModel.Applications1">
+              <MappingFragment StoreEntitySet="Applications1">
+                <ScalarProperty Name="last_modify_user" ColumnName="last_modify_user" />
+                <ScalarProperty Name="modify_date" ColumnName="modify_date" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="resourcegroup_id" ColumnName="resourcegroup_id" />
+                <ScalarProperty Name="app_key" ColumnName="app_key" />
+                <ScalarProperty Name="app_id" ColumnName="app_id" />
+                <ScalarProperty Name="app_name" ColumnName="app_name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ResourceGroups">
+            <EntityTypeMapping TypeName="DevOpsModel.ResourceGroup">
+              <MappingFragment StoreEntitySet="ResourceGroups">
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="group_name" ColumnName="group_name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="ApplicationInsightMachineMap" TypeName="DevOpsModel.ApplicationInsightMachineMap" StoreEntitySet="ApplicationInsightMachineMap">
+            <EndProperty Name="Machine">
+              <ScalarProperty Name="id" ColumnName="machineId" />
+            </EndProperty>
+            <EndProperty Name="Applications1">
+              <ScalarProperty Name="id" ColumnName="applicationId" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

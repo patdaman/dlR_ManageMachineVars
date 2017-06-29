@@ -46,5 +46,7 @@ namespace EFDataModel.DevOps
         public virtual DbSet<vi_ConfigVariables> vi_ConfigVariables { get; set; }
         public virtual DbSet<MachineApplicationMap> MachineApplicationMaps { get; set; }
         public virtual DbSet<Machine> Machines { get; set; }
+        public virtual DbSet<Applications1> Applications1 { get; set; }
+        public virtual DbSet<ResourceGroup> ResourceGroups { get; set; }
     }
 }

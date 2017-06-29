@@ -857,10 +857,6 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lib\ApiLib\ApiLib.csproj">
-      <Project>{9FC2FC92-F678-4325-9DA4-49BF6C0772B5}</Project>
-      <Name>ApiLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Lib\BusinessLayer\BusinessLayer.csproj">
       <Project>{d405b6fd-8a09-49fb-b4d7-1f11394b8623}</Project>
       <Name>BusinessLayer</Name>

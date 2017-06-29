@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Results;
 
 namespace DevOpsApi.Controllers
 {
@@ -14,7 +16,7 @@ namespace DevOpsApi.Controllers
     {
         BusinessLayer.ManageMachines machineProcessor = new BusinessLayer.ManageMachines();
 
-        // GET: api/Machine
+        //// GET: api/Machine
         [HttpGet]
         public HttpResponseMessage Get()
         {

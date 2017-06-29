@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ApiLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace DevOpsApi.Controllers
@@ -27,11 +29,12 @@ namespace DevOpsApi.Controllers
 
         // GET: api/Machine
         [HttpGet]
-        public HttpResponseMessage Get(DateTime startDate, DateTime? endDate = null)
+        public HttpResponseMessage Get(string applicationName, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                return Request.CreateResponse<List<ViewModel.ApplicationInsights>>(HttpStatusCode.OK, appinsightProcessor.GetAllInsights(startDate, endDate));
+                //return client.GetAsync(@"beta/apps/f2dc9f8e-0e73-4555-ab74-d7a54f0ee9fb/metrics/performanceCounters/memoryAvailableBytes?timespan=P1D&interval=PT30M").Result;
+                return Request.CreateResponse<ViewModel.ApplicationInsights>(HttpStatusCode.OK, ClientApi<ViewModel.ApplicationInsights>.GetSingleAsync(ClientApi<ViewModel.ApplicationInsights>.ArgType.TypeExactString, @"beta/apps/f2dc9f8e-0e73-4555-ab74-d7a54f0ee9fb/metrics/performanceCounters/memoryAvailableBytes?timespan=P1D&interval=PT30M").Result);
             }
             catch (Exception ex)
             {
@@ -41,11 +44,11 @@ namespace DevOpsApi.Controllers
 
         // GET: api/Machine/5
         [HttpGet]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(int machineId)
         {
             try
             {
-                return Request.CreateResponse<ViewModel.ApplicationInsights>(HttpStatusCode.OK, appinsightProcessor.GetMachineData(id));
+                return Request.CreateResponse<List<ViewModel.ApplicationInsights>>(HttpStatusCode.OK, ClientApi<List<ViewModel.ApplicationInsights>>.GetAsync(@"beta/apps/f2dc9f8e-0e73-4555-ab74-d7a54f0ee9fb/metrics/performanceCounters/memoryAvailableBytes?timespan=P1D&interval=PT30M").Result);
             }
             catch (Exception ex)
             {
@@ -53,51 +56,6 @@ namespace DevOpsApi.Controllers
             }
         }
 
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
-        [HttpPut]
-        public HttpResponseMessage Put(ViewModel.ApplicationInsights value)
-        {
-            try
-            {
-                return Request.CreateResponse<ViewModel.ApplicationInsights>(HttpStatusCode.OK, appinsightProcessor.UpdateInsight(value));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
 
-        // POST: api/Machine
-#if RELEASE
-    [Authorize(Roles = "DevOps")]
-#endif
-        [HttpPost]
-        public HttpResponseMessage Post(ViewModel.ApplicationInsights value)
-        {
-            try
-            {
-                return Request.CreateResponse<ViewModel.ApplicationInsights>(HttpStatusCode.OK, appinsightProcessor.CreateInsight(value));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
-
-        // DELETE: api/Machine/5
-        [HttpDelete]
-        public HttpResponseMessage Delete(int id)
-        {
-            try
-            {
-                return Request.CreateResponse<ViewModel.ApplicationInsights>(HttpStatusCode.OK, appinsightProcessor.DeleteInsight(id));
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
-            }
-        }
     }
 }

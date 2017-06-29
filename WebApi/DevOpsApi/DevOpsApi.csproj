@@ -318,6 +318,10 @@
     <Content Include="Views\Error\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Lib\ApiLib\ApiLib.csproj">
+      <Project>{9fc2fc92-f678-4325-9da4-49bf6c0772b5}</Project>
+      <Name>ApiLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Lib\BusinessLayer\BusinessLayer.csproj">
       <Project>{d405b6fd-8a09-49fb-b4d7-1f11394b8623}</Project>
       <Name>BusinessLayer</Name>

@@ -57,4 +57,25 @@ namespace ViewModel
             public Segment[] Segments { get; set; }
         }
     }
+
+    public class ApplicationInsightRequest
+    {
+        public string appId { get; set; }
+        public string apiKey { get; set; }
+        public string resourceName { get; set; }
+        public string resourceType { get; set; }
+        public string resourceGroup { get; set; }
+        public string subscriptionId { get; set; }
+        public string interval { get; set; }
+        public string filter { get; set; }
+        public string sort { get; set; }
+        public string baseUrl { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
+        public string parameters { get; set; }
+        public string message { get; set; }
+        public ApplicationInsightRequest()
+        { }
+
+    }
 }

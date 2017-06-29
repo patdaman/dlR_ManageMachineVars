@@ -106,6 +106,10 @@
     <Build Include="Tables\ConfigVariableValue_audit.sql" />
     <Build Include="Tables\ConfigVariables_audit.sql" />
     <Build Include="Tables\MachineApplicationMap_1.sql" />
+    <Build Include="Tables\ApplicationInsightMachineMap.sql" />
+    <Build Include="Tables\Applications_1.sql" />
+    <Build Include="Tables\ResourceGroups.sql" />
+    <Build Include="Security\monitor.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevOps.publish.xml" />

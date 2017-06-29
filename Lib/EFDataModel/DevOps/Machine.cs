@@ -21,6 +21,7 @@ namespace EFDataModel.DevOps
             this.MachineComponentPathMaps = new HashSet<MachineComponentPathMap>();
             this.ServerGroups = new HashSet<ServerGroup>();
             this.EnvironmentVariables = new HashSet<EnvironmentVariable>();
+            this.Applications1 = new HashSet<Applications1>();
         }
     
         public int id { get; set; }
@@ -44,5 +45,7 @@ namespace EFDataModel.DevOps
         public virtual ICollection<ServerGroup> ServerGroups { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EnvironmentVariable> EnvironmentVariables { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Applications1> Applications1 { get; set; }
     }
 }

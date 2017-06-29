@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Configuration;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Formatting;
-using ViewModel;
 using System.Diagnostics;
 
 namespace ApiLib
 {
     public class ClientApi<TEntity> where TEntity : class
     {
+        public static bool appInsightRequest = false;
         public enum ArgType
         {
             TypeID,
@@ -27,6 +24,7 @@ namespace ApiLib
         private static Dictionary<System.Type, String> typeToString = new Dictionary<Type, string>()
         {
             {typeof(ViewModel.ConfigXml), "ConfigFile" },
+            {typeof(ViewModel.ApplicationInsights), "ApplicationInsights" },
         };
 
         static List<MediaTypeFormatter> formatters = new List<MediaTypeFormatter>()
@@ -34,7 +32,7 @@ namespace ApiLib
             new JsonMediaTypeFormatter()
         };
 
-        private static HttpClient SetupClient()
+        private static HttpClient SetupClient(bool? appInsightRequest = null)
         {
             HttpClientHandler handler = new HttpClientHandler()
             {
@@ -43,10 +41,19 @@ namespace ApiLib
             };
 
             HttpClient client = new HttpClient(handler, true);
-            client.BaseAddress = new Uri(UriString);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));
+            if (appInsightRequest == true)
+            {
+                client.DefaultRequestHeaders.Add("x-api-key", AzureAdAuth.apiKey);
+                client.BaseAddress = new Uri(AzureAdAuth.AppInsightsUri);
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AzureAdAuth.GetAccessToken()); //.AccessToken);
+            }
+            else
+            {
+                client.BaseAddress = new Uri(UriString);
+            }
 
             return client;
         }
@@ -94,10 +101,10 @@ namespace ApiLib
 
         }
 
-        public static async Task<IEnumerable<TEntity>> GetAsync(ArgType at, string qstring)
+        public static async Task<IEnumerable<TEntity>> GetAsync(ArgType at, string qstring, bool? appInsightRequest = null)
         {
 
-            using (HttpClient client = SetupClient())
+            using (HttpClient client = SetupClient(appInsightRequest))
             {
                 string addstr = "";
                 switch (at)
