@@ -49,6 +49,7 @@
         <EntityTypeShape EntityType="DevOpsModel.ResourceGroup" Width="1.5" PointX="13.375" PointY="13.5" />
         <AssociationConnector Association="DevOpsModel.FK_Applications_ResourceGroups" />
         <AssociationConnector Association="DevOpsModel.ApplicationInsightMachineMap" />
+        <EntityTypeShape EntityType="DevOpsModel.Enum_RequestType" Width="1.5" PointX="0.75" PointY="9.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

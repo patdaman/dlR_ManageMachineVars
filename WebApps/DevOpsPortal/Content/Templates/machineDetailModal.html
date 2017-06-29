@@ -53,7 +53,7 @@
                                 <div ng-show="!bindingsCollapsed">
                                     <table class="table" style="width:85%">
                                         <tr id="bindings" ng-repeat="b in bindings" style="height:20px;">
-                                            <td ng-repeat="data in b">{{data}}</td>
+                                            <td ng-repeat="data in b"><a href="http://{{data}}">{{data}}</a></td>
                                         </tr>
                                     </table>
                                 </div>

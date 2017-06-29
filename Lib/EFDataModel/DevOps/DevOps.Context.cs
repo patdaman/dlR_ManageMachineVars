@@ -48,5 +48,6 @@ namespace EFDataModel.DevOps
         public virtual DbSet<Machine> Machines { get; set; }
         public virtual DbSet<Applications1> Applications1 { get; set; }
         public virtual DbSet<ResourceGroup> ResourceGroups { get; set; }
+        public virtual DbSet<Enum_RequestType> Enum_RequestType { get; set; }
     }
 }

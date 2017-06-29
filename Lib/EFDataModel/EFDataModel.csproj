@@ -102,6 +102,9 @@
     <Compile Include="DevOps\Enum_Locations.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>
+    <Compile Include="DevOps\Enum_RequestType.cs">
+      <DependentUpon>DevOps.tt</DependentUpon>
+    </Compile>
     <Compile Include="DevOps\EnvironmentVariable.cs">
       <DependentUpon>DevOps.tt</DependentUpon>
     </Compile>

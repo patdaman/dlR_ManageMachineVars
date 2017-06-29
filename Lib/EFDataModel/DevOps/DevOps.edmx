@@ -274,6 +274,14 @@
           <Property Name="modify_date" Type="datetime" />
           <Property Name="last_modify_user" Type="varchar" MaxLength="128" Nullable="false" />
         </EntityType>
+        <EntityType Name="Enum_RequestType">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="value" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="active" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="ResourceGroups">
           <Key>
             <PropertyRef Name="id" />
@@ -683,6 +691,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <EntitySet Name="Events" EntityType="Self.Events" Schema="logging" store:Type="Tables" />
           <EntitySet Name="ApplicationInsightMachineMap" EntityType="Self.ApplicationInsightMachineMap" Schema="monitor" store:Type="Tables" />
           <EntitySet Name="Applications1" EntityType="Self.Applications1" Schema="monitor" Table="Applications" store:Type="Tables" />
+          <EntitySet Name="Enum_RequestType" EntityType="Self.Enum_RequestType" Schema="monitor" store:Type="Tables" />
           <EntitySet Name="ResourceGroups" EntityType="Self.ResourceGroups" Schema="monitor" store:Type="Tables" />
           <EntitySet Name="ExecutionHistory" EntityType="Self.ExecutionHistory" Schema="shell" store:Type="Tables" />
           <EntitySet Name="Scripts" EntityType="Self.Scripts" Schema="shell" store:Type="Tables" />
@@ -1186,6 +1195,7 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
             <End Role="Applications1" EntitySet="Applications1" />
             <End Role="Machine" EntitySet="Machines" />
           </AssociationSet>
+          <EntitySet Name="Enum_RequestType" EntityType="DevOpsModel.Enum_RequestType" />
           </EntityContainer>
         <EntityType Name="ConfigVariable">
           <Key>
@@ -1454,6 +1464,14 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
           <End Type="DevOpsModel.Applications1" Role="Applications1" Multiplicity="*" />
           <End Type="DevOpsModel.Machine" Role="Machine" Multiplicity="*" />
         </Association>
+        <EntityType Name="Enum_RequestType">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="value" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="active" Type="Boolean" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1803,6 +1821,15 @@ warning 6002: The table/view 'DevOps.config.vi_ConfigVariables' does not have a 
               <ScalarProperty Name="id" ColumnName="applicationId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="Enum_RequestType">
+            <EntityTypeMapping TypeName="DevOpsModel.Enum_RequestType">
+              <MappingFragment StoreEntitySet="Enum_RequestType">
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

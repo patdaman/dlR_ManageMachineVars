@@ -66,6 +66,7 @@ namespace ViewModel
         public string resourceType { get; set; }
         public string resourceGroup { get; set; }
         public string subscriptionId { get; set; }
+        public string requestType { get; set; }
         public string interval { get; set; }
         public string filter { get; set; }
         public string sort { get; set; }
