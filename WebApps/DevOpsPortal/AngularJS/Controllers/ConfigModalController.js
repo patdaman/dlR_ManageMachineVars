@@ -139,7 +139,7 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
         vm.close = function () {
             $element.modal('hide');
             close({
-                publish: vm.publishFile,
+                publishFile: vm.publishFile,
                 environment: vm.environment,
                 component: vm.component
             }, 500);
@@ -181,7 +181,8 @@ ConfigApp.controller('ConfigViewer', ['$rootScope', '$scope', '$element', '$http
 ///
 /// <returns>   . </returns>
 ///-------------------------------------------------------------------------------------------------
-ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http', '$timeout', 'Upload', 'close', 'components', 'applications', 'environments', 'environment',
+ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http', '$timeout',
+    'Upload', 'close', 'components', 'applications', 'environments', 'environment',
     function ($rootScope, $scope, $element, $http, $timeout,
         Upload, close, components, applications, environments, environment) {
 
@@ -402,21 +403,21 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                         .replace(/\[/g, '').replace(/]/g, '');
                 });
                 var applicationString = vm.applicationNames.join(',');
-                swal({
-                    title: "Are you sure?",
-                    text: "Existing Component Files for applications:\n" + applicationString + "\nwill be overwritten in " + $vm.componentEnvironment,
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#AEDEF4",
-                    confirmButtonText: "Yes, publish them!",
-                    closeOnConfirm: false
-                },
-                function (isConfirm) {
-                    if (isConfirm) {
+                //swal({
+                //    title: "Are you sure?",
+                //    text: "Existing Component Files for applications:\n" + applicationString + "\nwill be overwritten in " + vm.componentEnvironment,
+                //    type: "warning",
+                //    showCancelButton: true,
+                //    confirmButtonColor: "#AEDEF4",
+                //    confirmButtonText: "Yes, publish them!",
+                //    closeOnConfirm: false
+                //},
+                //function (isConfirm) {
+                //    if (isConfirm) {
                         vm.toPublish = true;
                         vm.save();
-                    };
-                });
+                //    };
+                //});
             };
         };
         vm.save = function () {
@@ -435,7 +436,7 @@ ConfigApp.controller('AddComponent', ['$rootScope', '$scope', '$element', '$http
                 applicationNames: applicationString,
                 componentApplications: vm.componentApplications,
                 componentName: vm.componentName,
-                environment: vm.componentEnvironment,
+                environment: vm.componentEnvironment.name,
                 filePath: vm.filePath,
             }, 500);
         }

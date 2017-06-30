@@ -680,6 +680,10 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 modal.element.modal();
                 modal.close.then(function (result) {
                     if (result.save) {
+                        var applicationNames = result.applicationNames;
+                        var componentName = result.componentName;
+                        var componentEnvironment = result.environment;
+                        var toPublish = result.toPublish;
                         var applications = [];
                         angular.forEach(result.componentApplications, function (app) {
                             applications.push({
@@ -688,15 +692,14 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 last_modify_user: $rootScope.UserName,
                             });
                         });
-                        var toPublish = result.toPublish;
                         var deferred = $q.defer();
                         var data = JSON.stringify({
-                            "componentName": result.componentName,
+                            "componentName": componentName,
                             "applications": applications,
                             "filePath": result.filePath,
                             "isGlobal": result.isGlobal,
                             "last_modify_user": $rootScope.UserName,
-                            "published": result.publish,
+                            "published": toPublish,
                         });
                         $http({
                             method: 'POST',
@@ -708,13 +711,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                         }).success(deferred.resolve)
                         .success(function () {
                             if (toPublish) {
-                                swal({
-                                    title: "Publish" + $scope.application,
-                                    text: "Component:\n" + componentName + "\nwas successfully published",
-                                    type: "success",
-                                    imageUrl: "/Assets/thumbs-up.jpg",
-                                    confirmButtonText: "Cool"
-                                })
+                                $scope.publishComponent(componentName, componentEnvironment, applicationNames);
                             }
                         })
                         return deferred.promise
@@ -937,6 +934,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             var treeLevel = row.treeLevel;
             var componentGroupName;
             var componentFileName;
+            var firstChild = row.treeNode.children[0].row.entity;
+            var applicationNames = firstChild.applicationNames;
             var def = $q.defer();
             angular.forEach(row.treeNode.aggregations, function (aggregation) {
                 if (aggregation.col.field === 'componentName')
@@ -976,15 +975,15 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 $scope.environment = fileEnvironment;
                             }
                             if (result.publishFile) {
-                                $scope.publishComponent(result.component, fileEnvironment, selectedComponent.applications)
+                                $scope.publishComponent(result.component, fileEnvironment, applicationNames);
                             };
                         });
                     })
             })
             .error(function (error) {
                 console.log(error);
-            })
-            return def.promise
+            });
+            return def.promise;
         };
 
 
@@ -1147,7 +1146,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
             }
         };
 
-        $scope.publishComponent = function (componentName, environment, applications) {
+        $scope.publishComponent = function (componentName, environment, applicationNames) {
             if (!componentName) {
                 swal({
                     title: "Publish Component",
@@ -1165,20 +1164,8 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 });
             }
             else {
-                var applicationNames = [];
                 var applicationNameString;
-                angular.forEach(applications, function (application) {
-                    var name = application.name;
-                    applicationNames.push({
-                        name: name.replace(/\[/g, '').replace(/]/g, '')
-                            .replace(/"/g, '').replace(/'/g, ''),
-                    });
-                });
-                applicationNames = applicationNames.map(function (item) {
-                    return item['name'];
-                });
-
-                applicationNameString = ' - ' + applicationNames.join().replace(/,/g, '\n - ');
+                applicationNameString = ' - ' + applicationNames.replace(/,/g, '\n - ');
                 swal({
                     title: "Are you sure?",
                     text: "Existing Component Files for applications:\n" + applicationNameString + "\nwill be overwritten in " + $scope.environment,
@@ -1190,7 +1177,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                 },
                 function (isConfirm) {
                     if (isConfirm) {
-                        var def = $q.defer();
+                        var defered = $q.defer();
                         $http({
                             method: 'POST',
                             url: 'api:/ConfigPublishApi',
@@ -1200,7 +1187,7 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 userName: $rootScope.UserName,
                             },
                         })
-                        .success(def.resolve)
+                        .success(defered.resolve)
                         .success(
                             swal({
                                 title: "Publish" + $scope.application,
@@ -1209,17 +1196,17 @@ ConfigApp.controller('ConfigController', ['$rootScope', '$scope', '$http', '$log
                                 imageUrl: "/Assets/thumbs-up.jpg",
                                 confirmButtonText: "Cool"
                             }))
-                        .error(def.reject)
+                        .error(defered.reject)
                         .error(
                             swal({
                                 title: "Publish" + $scope.application,
                                 text: "Application ComponentFiles:\n" + componentNameString + "\nwere not published",
                                 type: "error",
                                 confirmButtonText: "D'oh!"
-                            }))
-                        return def.promise;
+                            }));
+                        return defered.promise;
                     };
-                })
-            }
+                });
+            };
         };
     }]);

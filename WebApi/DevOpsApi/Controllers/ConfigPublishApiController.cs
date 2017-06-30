@@ -152,6 +152,61 @@ namespace DevOpsApi.Controllers
         ///
         /// <returns>   A HttpResponseMessage. </returns>
         ///-------------------------------------------------------------------------------------------------
+        public HttpResponseMessage Put(string componentName, string environment, string userName = null)
+        {
+            try
+            {
+                return Post(componentName, environment, userName);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Post this message. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <param name="applicationId">    Identifier for the application. </param>
+        /// <param name="environment">      (Optional)
+        ///                                                            The environment to get. </param>
+        /// <param name="userName">         (Optional) Name of the user. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
+        public HttpResponseMessage Post(string componentName, string environment, string userName = null)
+        {
+            try
+            {
+                configProcessor = new BusinessLayer.ManageConfig_Files()
+                {
+                    componentName = componentName,
+                    environment = environment,
+                    userName = userName,
+                };
+                var response = Request.CreateResponse<ViewModel.ComponentDto>(HttpStatusCode.OK, configProcessor.PublishComponent(componentName, environment, userName));
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse<Exception>(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Puts. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 5/26/2017. </remarks>
+        ///
+        /// <param name="applicationId">    Identifier for the application. </param>
+        /// <param name="environment">      (Optional)
+        ///                                                            The environment to get. </param>
+        /// <param name="userName">         (Optional) Name of the user. </param>
+        ///
+        /// <returns>   A HttpResponseMessage. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public HttpResponseMessage Put (int applicationId, string environment, string userName = null)
         {
             try
