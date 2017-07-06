@@ -115,7 +115,7 @@ namespace DevOps
         private bool startWebsiteValue;
         private bool stopWebsiteValue;
         private bool? active;
-        private bool recycle;
+        private bool recycleApp;
 
         #region parameters
         [Parameter(
@@ -198,8 +198,8 @@ namespace DevOps
         [Alias("recycle")]
         public SwitchParameter recycleAppPool
         {
-            get { return recycle; }
-            set { recycle = value; }
+            get { return recycleApp; }
+            set { recycleApp = value; }
         }
         #endregion
 
@@ -252,7 +252,7 @@ namespace DevOps
                     serverName = machineName,
                     active = this.active,
                     keepAlive = this.keepAliveValue,
-                    recycle = this.recycle,
+                    recycle = this.recycleApp,
                 });
             }
             else
@@ -263,7 +263,7 @@ namespace DevOps
                     name = siteName,
                     active = this.active,
                     keepAlive = this.keepAliveValue,
-                    recycle = this.recycle,
+                    recycle = this.recycleApp,
                 });
             }
         }

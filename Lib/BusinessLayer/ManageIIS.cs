@@ -317,11 +317,13 @@ namespace BusinessLayer
                 ipAddress = value.ipAddress,
                 keepAlive = value.keepAlive,
                 message = value.message,
+                recycle = value.recycle,
                 name = value.name,
                 physicalPath = value.physicalPath,
                 serverName = value.serverName,
                 siteId = value.siteId,
                 state = value.state,
+                webApplications = new List<WebApplication>(),
             };
             WebSite updateSiteProperties = _siteTools.AddUpdateWebSite(dto);
             return GetApplication(updateSiteProperties);
@@ -349,6 +351,7 @@ namespace BusinessLayer
                     serverName = site.serverName,
                     siteId = site.siteId,
                     state = site.state,
+                    webApplications = new List<WebApplication>(),
                 });
             }
             List<WebSite> updateSiteProperties = _siteTools.AddUpdateWebSite(dto, configAction);

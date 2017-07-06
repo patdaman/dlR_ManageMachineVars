@@ -28,7 +28,10 @@ namespace ViewModel
 
     public class IISAppSettings
     {
-        public IISAppSettings() { }
+        public IISAppSettings()
+        {
+            recycle = false;
+        }
         public string siteId { get; set; }
         public string name { get; set; }
         public string serverName { get; set; }
@@ -38,6 +41,7 @@ namespace ViewModel
         public string physicalPath { get; set; }
         public string state { get; set; }
         public string message { get; set; }
+        public Nullable<bool> recycle { get; set; }
         public Nullable<bool> keepAlive { get; set; }
         public Nullable<bool> active { get; set; }
         public List<SiteBinding> bindings { get; set; }
@@ -45,7 +49,7 @@ namespace ViewModel
 
         public IISAppSettings(IISAppSettings x)
         {
-
+            recycle = x.recycle;
         }
     }
 

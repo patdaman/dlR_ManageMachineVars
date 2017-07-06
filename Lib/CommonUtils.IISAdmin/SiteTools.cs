@@ -162,7 +162,7 @@ namespace CommonUtils.IISAdmin
                             iisSite.Start();
                         if (site.recycle == true)
                         {
-                            var appPool = server.ApplicationPools.Where(x => x.Name == site.appPoolName).FirstOrDefault();
+                            var appPool = server.ApplicationPools.Where(x => x.Name == iisSite.ApplicationDefaults.ApplicationPoolName).FirstOrDefault();
                             appPool.Recycle();
                         }
                         Configuration config = iisSite.GetWebConfiguration();

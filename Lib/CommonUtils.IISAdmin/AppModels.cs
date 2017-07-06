@@ -8,12 +8,15 @@ namespace CommonUtils.IISAdmin
     public class WebAppPoolModel
     {
         public WebAppPoolModel()
-        { }
+        {
+            recycle = false;
+        }
         public string name { get; set; }
         public bool autoStart { get; set; }
         public string state { get; set; }
         public string runtimeVersion { get; set; }
         public string identityType { get; set; }
+        public bool recycle { get; set; }
         public List<WorkerProcess> workers { get; set; }
 
         public WebAppPoolModel(Microsoft.Web.Administration.ApplicationPool x)
@@ -22,6 +25,7 @@ namespace CommonUtils.IISAdmin
             autoStart = x.AutoStart;
             state = x.State.ToString();
             runtimeVersion = x.ManagedRuntimeVersion;
+            recycle = false;
             workers = new List<WorkerProcess>();
             foreach (var worker in x.WorkerProcesses)
             {
@@ -69,7 +73,10 @@ namespace CommonUtils.IISAdmin
 
     public class WebSite
     {
-        public WebSite() { }
+        public WebSite()
+        {
+            //recycle = false;
+        }
         public string siteId { get; set; }
         public string name { get; set; }
         public string serverName { get; set; }
@@ -81,6 +88,7 @@ namespace CommonUtils.IISAdmin
         public Nullable<bool> active { get; set; }
         public Nullable<bool> keepAlive { get; set; }
         public string message { get; set; }
+        public Nullable<bool> recycle { get; set; }
         public List<Binding> bindings { get; set; }
         public List<ConfigKeyValue> configKeys { get; set; }
         public List<WebApplication> webApplications { get; set; }
@@ -88,6 +96,7 @@ namespace CommonUtils.IISAdmin
         public WebSite(Site site, bool? detail = null)
         {
             name = site.Name;
+            recycle = false;
             appPoolName = site.ApplicationDefaults.ApplicationPoolName;
             bindings = new List<Binding>();
             foreach (var binding in site.Bindings)
