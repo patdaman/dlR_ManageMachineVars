@@ -125,7 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtils.ExceptionUtils\CommonUtils.Exception.csproj">
-      <Project>{3FEAD7C0-7FC3-4F61-89D0-501153733EE3}</Project>
+      <Project>{3fead7c0-7fc3-4f61-89d0-501153733ee3}</Project>
       <Name>CommonUtils.Exception</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.csproj">

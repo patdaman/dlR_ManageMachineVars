@@ -14,7 +14,10 @@ namespace BusinessLayer
     public class ManageIIS
     {
         public string machineName { get; set; }
-        public static SiteTools _siteTools;
+        public string userName { get; set; }
+        public string password { get; set; }
+        public string domain { get; set; }
+        protected static SiteTools _siteTools;
 
         public ManageIIS(string machineName = null)
         {
@@ -65,14 +68,40 @@ namespace BusinessLayer
                 this.machineName = machineName;
             List<IISAppSettings> machineApps = new List<IISAppSettings>();
             List<WebSite> machineSites;
-            DomainUser _domainUser = GetDomainUser(this.machineName);
-            try
+            WindowsUser _windowsUser;
+            if (!string.IsNullOrWhiteSpace(this.userName))
             {
-                _siteTools = new SiteTools(this.machineName)
+                _windowsUser = new WindowsUser()
+                {
+                    userName = this.userName,
+                };
+                if (string.IsNullOrWhiteSpace(this.domain))
+                    _windowsUser.domain = Environment.UserDomainName;
+                else
+                    _windowsUser.domain = this.domain;
+                if (string.IsNullOrWhiteSpace(this.password))
+                    _windowsUser.password = string.Empty;
+                else
+                    _windowsUser.password = this.password;
+            }
+            else
+            {
+                DomainUser _domainUser = GetDomainUser(this.machineName);
+                _windowsUser = new WindowsUser()
                 {
                     userName = _domainUser.username.Value,
                     password = _domainUser.password.Value,
                     domain = _domainUser.domain.Value,
+                };
+            }
+
+            try
+            {
+                _siteTools = new SiteTools(this.machineName)
+                {
+                    userName = _windowsUser.userName,
+                    password = _windowsUser.password,
+                    domain = _windowsUser.domain,
                 };
                 machineSites = _siteTools.GetAllSites(machineName);
                 foreach (WebSite site in machineSites)
@@ -92,6 +121,11 @@ namespace BusinessLayer
             return machineApps;
         }
 
+        public IISAppSettings GetApplication(string machine, string site, string app)
+        {
+            throw new NotImplementedException();
+        }
+
         public IISAppSettings GetApplication(string machineName, string appName)
         {
             WebSite siteProperties = _siteTools.GetSite(appName, true);
@@ -100,11 +134,6 @@ namespace BusinessLayer
 
         public IISAppSettings GetApplication(WebSite siteProperties)
         {
-            //bool keepAlive = false;
-            //if (siteProperties.configKeys.Contains(new ConfigKeyValue("Application.KeepAlive", "true")))
-            //{
-            //    keepAlive = true;
-            //}
             IISAppSettings machineApps = new IISAppSettings()
             {
                 active = siteProperties.active,
@@ -122,6 +151,24 @@ namespace BusinessLayer
                 configKeys = ConvertConfigValues(siteProperties.configKeys),
             };
             return machineApps;
+        }
+
+        public IEnumerable<ConfigKeyVal> GetAppSettings(string machineName, string appName = null)
+        {
+            List<IISAppSettings> newSettings = new List<IISAppSettings>();
+            if (string.IsNullOrWhiteSpace(appName))
+                newSettings.Add(GetApplication(machineName, appName));
+            else
+                newSettings.AddRange(GetMachineApps(machineName));
+            List<ConfigKeyVal> newKeys = new List<ConfigKeyVal>();
+            foreach (var keys in newSettings)
+            {
+                if (keys.configKeys != null && keys.configKeys.Count() > 0)
+                {
+                    newKeys.AddRange(keys.configKeys);
+                }
+            }
+            return newKeys;
         }
 
         private DomainUser GetDomainUser(string machineName)
@@ -164,7 +211,23 @@ namespace BusinessLayer
             return vmConfig;
         }
 
-        public IISAppSettings UpdateApplicationSetting(IISAppSettings value)
+        public IEnumerable<ConfigKeyVal> UpdateAppSettings(List<IISAppSettings> _machineAppRequests, string configAction = null)
+        {
+            List<IISAppSettings> newSettings = UpdateApplicationSetting(_machineAppRequests, configAction);
+            List<ConfigKeyVal> keyNames = new List<ConfigKeyVal>();
+            List<ConfigKeyVal> newKeys = new List<ConfigKeyVal>();
+            foreach (var keys in newSettings)
+            {
+                var updateKey = _machineAppRequests.Where(x => x.name == keys.name).Select(y => y.configKeys).FirstOrDefault();
+                if (keys.configKeys != null && keys.configKeys.Count() > 0)
+                {
+                    newKeys.AddRange(keys.configKeys.Where(x => updateKey.Select(y => y.key).Contains(x.key)));
+                }
+            }
+            return newKeys;
+        }
+
+        public IISAppSettings UpdateApplicationSetting(IISAppSettings value, string configAction = null)
         {
             //WebSite siteProperties = _siteTools.GetSite(value.name, true);
             //WebSite updateSiteProperties = _siteTools.AddUpdateWebSite(siteProperties);
@@ -189,33 +252,105 @@ namespace BusinessLayer
             return GetApplication(updateSiteProperties);
         }
 
+        public List<IISAppSettings> UpdateApplicationSetting(List<IISAppSettings> value, string configAction = null)
+        {
+            List<WebSite> dto = new List<WebSite>();
+            List <IISAppSettings> _iisAppSettings = new List<IISAppSettings>();
+            foreach (var site in value)
+            {
+                dto.Add(new WebSite()
+                {
+                    active = site.active,
+                    appPoolName = site.appPoolName,
+                    bindings = GetIISBindings(site.bindings),
+                    configKeys = GetIISConfigKeys(site.configKeys),
+                    hostName = site.hostName,
+                    ipAddress = site.ipAddress,
+                    keepAlive = site.keepAlive,
+                    message = site.message,
+                    name = site.name,
+                    physicalPath = site.physicalPath,
+                    serverName = site.serverName,
+                    siteId = site.siteId,
+                    state = site.state,
+                });
+            }
+            List<WebSite> updateSiteProperties = _siteTools.AddUpdateWebSite(dto, configAction);
+            foreach (var siteProperties in updateSiteProperties)
+            {
+                _iisAppSettings.Add(ConvertWebSiteToIISAppSettings(siteProperties));
+            }
+            return _iisAppSettings;
+        }
+
         private List<Binding> GetIISBindings(List<SiteBinding> vmBindings)
         {
             List<Binding> iisBindings = new List<Binding>();
-            foreach (var b in vmBindings)
+            if (vmBindings != null && vmBindings.Count > 0)
             {
-                iisBindings.Add(new Binding()
+                foreach (var b in vmBindings)
                 {
-                    bindingInformation = b.bindingInformation,
-                    bindingProtocol = b.bindingProtocol,
-                    host = b.host,
-                });
+                    iisBindings.Add(new Binding()
+                    {
+                        bindingInformation = b.bindingInformation,
+                        bindingProtocol = b.bindingProtocol,
+                        host = b.host,
+                    });
+                }
             }
             return iisBindings;
+        }
+
+        private List<SiteBinding> GetVmBindings(List<Binding> iisBindings)
+        {
+            List<SiteBinding> vmBindings = new List<SiteBinding>();
+            if (iisBindings != null && iisBindings.Count > 0)
+            {
+                foreach (var b in vmBindings)
+                {
+                    vmBindings.Add(new SiteBinding()
+                    {
+                        bindingInformation = b.bindingInformation,
+                        bindingProtocol = b.bindingProtocol,
+                        host = b.host,
+                    });
+                }
+            }
+            return vmBindings;
         }
 
         private List<ConfigKeyValue> GetIISConfigKeys(List<ConfigKeyVal> vmConfigKeys)
         {
             List<ConfigKeyValue> IISConfigKeys = new List<ConfigKeyValue>();
-            foreach (var c in vmConfigKeys)
+            if (vmConfigKeys != null && vmConfigKeys.Count > 0)
             {
-                IISConfigKeys.Add(new ConfigKeyValue()
+                foreach (var c in vmConfigKeys)
                 {
-                    key = c.key,
-                    value = c.value,
-                });
+                    IISConfigKeys.Add(new ConfigKeyValue()
+                    {
+                        key = c.key,
+                        value = c.value,
+                    });
+                }
             }
             return IISConfigKeys;
+        }
+
+        private List<ConfigKeyVal> GetVmConfigKeys(List<ConfigKeyValue> iisConfigKeys)
+        {
+            List<ConfigKeyVal> vmConfigKeys = new List<ConfigKeyVal>();
+            if (iisConfigKeys != null && iisConfigKeys.Count > 0)
+            {
+                foreach (var c in vmConfigKeys)
+                {
+                    vmConfigKeys.Add(new ConfigKeyVal()
+                    {
+                        key = c.key,
+                        value = c.value,
+                    });
+                }
+            }
+            return vmConfigKeys;
         }
 
         public IISAppSettings CreateApplicationSetting(IISAppSettings value)
@@ -226,6 +361,26 @@ namespace BusinessLayer
         public IISAppSettings DeleteApplicationSetting(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private IISAppSettings ConvertWebSiteToIISAppSettings(WebSite site)
+        {
+            return new IISAppSettings()
+            {
+                active = site.active,
+                appPoolName = site.appPoolName,
+                bindings = GetVmBindings(site.bindings),
+                configKeys = GetVmConfigKeys(site.configKeys),
+                hostName = site.hostName,
+                ipAddress = site.ipAddress,
+                keepAlive = site.keepAlive,
+                message = site.message,
+                name = site.name,
+                physicalPath = site.physicalPath,
+                serverName = site.serverName,
+                siteId = site.siteId,
+                state = site.state,
+            };
         }
     }
 }

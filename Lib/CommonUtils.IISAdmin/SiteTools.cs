@@ -38,6 +38,11 @@ namespace CommonUtils.IISAdmin
                 this.machineName = machineName;
         }
 
+        public SiteTools(WindowsUser user)
+        {
+            _impersonateUser = user;
+        }
+
         ///-------------------------------------------------------------------------------------------------
         /// <summary>   Gets all sites. </summary>
         ///
@@ -88,7 +93,7 @@ namespace CommonUtils.IISAdmin
             return site;
         }
 
-        public WebSite AddUpdateWebSite(WebSite site)
+        public WebSite AddUpdateWebSite(WebSite site, string configAction = null)
         {
             WebSite newSite = new WebSite();
             using (server = GetServerManager(this.machineName))
@@ -101,7 +106,6 @@ namespace CommonUtils.IISAdmin
                 else
                 {
                     if (site.active == false)
-                    //if (site.state.ToLower().StartsWith("stop"))
                         mySite.Stop();
                     if (site.active == true)
                         mySite.Start();
@@ -114,12 +118,32 @@ namespace CommonUtils.IISAdmin
                             ConfigurationElementCollection appSettingsCollection = appSettings.GetCollection();
                             foreach (var key in appSettingsCollection)
                             {
-                                if (key.Attributes[1] != null && key.Attributes[0].Value.ToString().EndsWith("KeepAlive"))
+                                if (key.Attributes[1] != null)
                                 {
-                                    if (site.keepAlive == true)
-                                        key.Attributes[1].Value = "true";
-                                    if (site.keepAlive == false)
-                                        key.Attributes[1].Value = "false";
+                                    var setting = site.configKeys.Where(k => k.key == key.Attributes[0].Value.ToString()).FirstOrDefault();
+                                    if (key.Attributes[0].Value.ToString().EndsWith("KeepAlive"))
+                                    {
+                                        if (site.keepAlive == true)
+                                            key.Attributes[1].Value = "true";
+                                        if (site.keepAlive == false)
+                                            key.Attributes[1].Value = "false";
+                                    }
+                                    if (setting != null)
+                                    {
+                                        key.Attributes[1].Value = setting.value;
+                                    }
+                                }
+                            }
+                            if (configAction.ToLower() == "add")
+                            {
+                                List<string> newKeys = site.configKeys.Select(s => s.key).Except(appSettingsCollection.Select(k => k.Attributes[0].Value.ToString())).ToList();
+                                List<ConfigKeyValue> keys = site.configKeys.Where(x => newKeys.Contains(x.key)).ToList();
+                                foreach (var newKey in keys)
+                                {
+                                    ConfigurationElement addElement = appSettingsCollection.CreateElement("add");
+                                    addElement["key"] = newKey.key;
+                                    addElement["value"] = newKey.value;
+                                    appSettingsCollection.Add(addElement);
                                 }
                             }
                         }
@@ -130,9 +154,105 @@ namespace CommonUtils.IISAdmin
                     }
                 }
                 server.CommitChanges();
+                //newSite = new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault(), true);
                 newSite = new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
             }
             return newSite;
+        }
+
+        public List<WebSite> AddUpdateWebSite(List<WebSite> sites, string configAction = null)
+        {
+            List<WebSite> newSites = new List<WebSite>();
+            List<Site> mySites = new List<Site>();
+            List<string> siteNames = new List<string>();
+            using (server = GetServerManager(this.machineName))
+            {
+                foreach (var site in sites)
+                {
+                    if (string.IsNullOrWhiteSpace(site.name) && site.siteId == null)
+                    {
+                        mySites.AddRange(server.Sites.ToList());
+                        break;
+                    }
+                    else
+                    {
+                        Site mySite = server.Sites.Where(x => x.Name == site.name).FirstOrDefault();
+                        mySites.Add(mySite);
+                        if (mySites == null || mySites.Count == 0)
+                        {
+                            mySites.Add(CreateSite(site.serverName, site.ipAddress, site.siteId, site.name, site.hostName, site.physicalPath));
+                        }
+                    };
+                }
+                foreach (var site in sites)
+                {
+                    List<Site> iisSites = mySites.Where(x => x.Name == site.name).ToList();
+                    if (iisSites == null || iisSites.Count() == 0)
+                        iisSites = mySites;
+                    foreach (var iisSite in iisSites)
+                    {
+                        siteNames.Add(iisSite.Name);
+                        if (site.active == false)
+                            iisSite.Stop();
+                        if (site.active == true)
+                            iisSite.Start();
+                        Configuration config = iisSite.GetWebConfiguration();
+                        try
+                        {
+                            if (config.GetSection("appSettings") != null)
+                            {
+                                ConfigurationSection appSettings = config.GetSection("appSettings");
+                                ConfigurationElementCollection appSettingsCollection = appSettings.GetCollection();
+                                foreach (var key in appSettingsCollection)
+                                {
+                                    if (key.Attributes[1] != null && key.Attributes[0].Value.ToString().EndsWith("KeepAlive"))
+                                    {
+                                        if (site.keepAlive == true)
+                                            key.Attributes[1].Value = "true";
+                                        if (site.keepAlive == false)
+                                            key.Attributes[1].Value = "false";
+                                    }
+                                }
+                                if (configAction.ToLower() == "add")
+                                {
+                                    List<string> newKeys = site.configKeys.Select(s => s.key).Except(appSettingsCollection.Select(k => k.Attributes[0].Value.ToString())).ToList();
+                                    List<ConfigKeyValue> keys = site.configKeys.Where(x => newKeys.Contains(x.key)).ToList();
+                                    foreach (var newKey in keys)
+                                    {
+                                        ConfigurationElement addElement = appSettingsCollection.CreateElement("add");
+                                        addElement["key"] = newKey.key;
+                                        addElement["value"] = newKey.value;
+                                        appSettingsCollection.Add(addElement);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            newSites.Add(new WebSite()
+                            {
+                                name = site.name,
+                                active = site.active,
+                                hostName = site.hostName,
+                                appPoolName = site.appPoolName,
+                                ipAddress = site.ipAddress,
+                                keepAlive = site.keepAlive,
+                                state = site.state,
+                                siteId = site.siteId,
+                                serverName = site.serverName,
+                                message = ex.Message,
+                            });
+                        }
+                    }
+                }
+                server.CommitChanges();
+                foreach (var siteName in siteNames)
+                {
+                    //newSites.Add(new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault(), true));
+                    newSites.Add(new WebSite(server.Sites.Where(x => x.Name == siteName).FirstOrDefault()));
+                }
+            }
+            return newSites;
         }
 
         public Site CreateSite(string computerName,

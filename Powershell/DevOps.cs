@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DevOps
 {
-    public class Class1
+    public partial class DevOps
     {
+
     }
 }
