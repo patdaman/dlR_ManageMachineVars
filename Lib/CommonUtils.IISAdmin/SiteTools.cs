@@ -93,73 +93,37 @@ namespace CommonUtils.IISAdmin
             return site;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds an update web site to 'configAction'. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="site">         The site. </param>
+        /// <param name="configAction"> (Optional) The configuration action. </param>
+        ///
+        /// <returns>   A WebSite. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public WebSite AddUpdateWebSite(WebSite site, string configAction = null)
         {
+            List<WebSite> siteList = new List<WebSite>();
             WebSite newSite = new WebSite();
-            using (server = GetServerManager(this.machineName))
-            {
-                Site mySite = server.Sites.Where(x => x.Name == site.name).FirstOrDefault();
-                if (mySite == null)
-                {
-                    mySite = CreateSite(site.serverName, site.ipAddress, site.siteId, site.name, site.hostName, site.physicalPath);
-                }
-                else
-                {
-                    if (site.active == false)
-                        mySite.Stop();
-                    if (site.active == true)
-                        mySite.Start();
-                    Configuration config = mySite.GetWebConfiguration();
-                    try
-                    {
-                        if (config.GetSection("appSettings") != null)
-                        {
-                            ConfigurationSection appSettings = config.GetSection("appSettings");
-                            ConfigurationElementCollection appSettingsCollection = appSettings.GetCollection();
-                            foreach (var key in appSettingsCollection)
-                            {
-                                if (key.Attributes[1] != null)
-                                {
-                                    var setting = site.configKeys.Where(k => k.key == key.Attributes[0].Value.ToString()).FirstOrDefault();
-                                    if (key.Attributes[0].Value.ToString().EndsWith("KeepAlive"))
-                                    {
-                                        if (site.keepAlive == true)
-                                            key.Attributes[1].Value = "true";
-                                        if (site.keepAlive == false)
-                                            key.Attributes[1].Value = "false";
-                                    }
-                                    if (setting != null)
-                                    {
-                                        key.Attributes[1].Value = setting.value;
-                                    }
-                                }
-                            }
-                            if (configAction.ToLower() == "add")
-                            {
-                                List<string> newKeys = site.configKeys.Select(s => s.key).Except(appSettingsCollection.Select(k => k.Attributes[0].Value.ToString())).ToList();
-                                List<ConfigKeyValue> keys = site.configKeys.Where(x => newKeys.Contains(x.key)).ToList();
-                                foreach (var newKey in keys)
-                                {
-                                    ConfigurationElement addElement = appSettingsCollection.CreateElement("add");
-                                    addElement["key"] = newKey.key;
-                                    addElement["value"] = newKey.value;
-                                    appSettingsCollection.Add(addElement);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        newSite.message = ex.Message;
-                    }
-                }
-                server.CommitChanges();
-                //newSite = new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault(), true);
-                newSite = new WebSite(server.Sites.Where(x => x.Name == site.name).FirstOrDefault());
-            }
+
+            siteList.Add(site);
+            siteList = AddUpdateWebSite(siteList);
+            newSite = siteList.FirstOrDefault();
             return newSite;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Adds an update web site to 'configAction'. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="sites">        The sites. </param>
+        /// <param name="configAction"> (Optional) The configuration action. </param>
+        ///
+        /// <returns>   A List&lt;WebSite&gt; </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<WebSite> AddUpdateWebSite(List<WebSite> sites, string configAction = null)
         {
             List<WebSite> newSites = new List<WebSite>();
@@ -192,10 +156,15 @@ namespace CommonUtils.IISAdmin
                     foreach (var iisSite in iisSites)
                     {
                         siteNames.Add(iisSite.Name);
-                        if (site.active == false)
+                        if (site.active == false && iisSite.State.ToString().ToLower() != "stopped")
                             iisSite.Stop();
-                        if (site.active == true)
+                        if (site.active == true && iisSite.State.ToString().ToLower() != "started")
                             iisSite.Start();
+                        if (site.recycle == true)
+                        {
+                            var appPool = server.ApplicationPools.Where(x => x.Name == site.appPoolName).FirstOrDefault();
+                            appPool.Recycle();
+                        }
                         Configuration config = iisSite.GetWebConfiguration();
                         try
                         {
@@ -213,7 +182,7 @@ namespace CommonUtils.IISAdmin
                                             key.Attributes[1].Value = "false";
                                     }
                                 }
-                                if (configAction.ToLower() == "add")
+                                if (configAction != null && configAction.ToLower() == "add")
                                 {
                                     List<string> newKeys = site.configKeys.Select(s => s.key).Except(appSettingsCollection.Select(k => k.Attributes[0].Value.ToString())).ToList();
                                     List<ConfigKeyValue> keys = site.configKeys.Where(x => newKeys.Contains(x.key)).ToList();

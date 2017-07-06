@@ -112,7 +112,10 @@ namespace DevOps
         private string[] trueValues = { "t", "true" };
         private string[] falseValues = { "f", "false" };
         private bool? keepAliveValue;
-        private bool? startWebsiteValue;
+        private bool startWebsiteValue;
+        private bool stopWebsiteValue;
+        private bool? active;
+        private bool recycle;
 
         #region parameters
         [Parameter(
@@ -169,21 +172,35 @@ namespace DevOps
             ValueFromPipeline = true
         )]
         [Alias("start")]
-        public string startWebsite { get; set; }
+        public SwitchParameter startWebsite
+        {
+            get { return startWebsiteValue; }
+            set { startWebsiteValue = value; }
+        }
 
         [Parameter(
             Mandatory = false,
             ValueFromPipelineByPropertyName = true,
             ValueFromPipeline = true
         )]
-        public string key { get; set; }
+        [Alias("stop")]
+        public SwitchParameter stopWebsite
+        {
+            get { return stopWebsiteValue; }
+            set { stopWebsiteValue = value; }
+        }
 
         [Parameter(
             Mandatory = false,
             ValueFromPipelineByPropertyName = true,
             ValueFromPipeline = true
         )]
-        public string value { get; set; }
+        [Alias("recycle")]
+        public SwitchParameter recycleAppPool
+        {
+            get { return recycle; }
+            set { recycle = value; }
+        }
         #endregion
 
         #region input
@@ -206,7 +223,7 @@ namespace DevOps
             if (!string.IsNullOrWhiteSpace(this.domain))
                 iisProcessor.domain = this.domain;
             if (string.IsNullOrWhiteSpace(this.keepAlive))
-                this.keepAlive = null;
+                this.keepAliveValue = null;
             else
             {
                 if (this.trueValues.Contains(this.keepAlive.ToLower()))
@@ -214,14 +231,17 @@ namespace DevOps
                 else if (falseValues.Contains(this.keepAlive.ToLower()))
                     this.keepAliveValue = false;
             }
-            if (string.IsNullOrWhiteSpace(this.startWebsite))
-                this.startWebsite = null;
+
+            if (!this.startWebsiteValue)
+            {
+                if (this.stopWebsiteValue)
+                    this.active = false;
+                else
+                    this.active = null;
+            }
             else
             {
-                if (this.trueValues.Contains(this.startWebsite.ToLower()))
-                    this.startWebsiteValue = true;
-                else if (falseValues.Contains(this.startWebsite.ToLower()))
-                    this.startWebsiteValue = false;
+                this.active = true;
             }
 
             _machineAppRequests = new List<IISAppSettings>();
@@ -230,8 +250,9 @@ namespace DevOps
                 _machineAppRequests.Add(new IISAppSettings()
                 {
                     serverName = machineName,
-                    active = this.startWebsiteValue,
+                    active = this.active,
                     keepAlive = this.keepAliveValue,
+                    recycle = this.recycle,
                 });
             }
             else
@@ -240,8 +261,9 @@ namespace DevOps
                 {
                     serverName = machineName,
                     name = siteName,
-                    active = this.startWebsiteValue,
+                    active = this.active,
                     keepAlive = this.keepAliveValue,
+                    recycle = this.recycle,
                 });
             }
         }

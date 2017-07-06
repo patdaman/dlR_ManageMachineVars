@@ -178,7 +178,9 @@
     <Content Include="Assets\Home_20x20.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\marcomcentral-logo-icon.png" />
+    <Content Include="Assets\marcomcentral-logo-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\MCC_Logo_158x18.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -222,12 +224,18 @@
     <Content Include="Content\Templates\actionsTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\addApplicationModal.html" />
-    <Content Include="Content\Templates\addMachineModal.html" />
+    <Content Include="Content\Templates\addApplicationModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Templates\addMachineModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\addVariableModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\busyModal.html" />
+    <Content Include="Content\Templates\busyModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\configFileModal.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -243,11 +251,15 @@
     <Content Include="Content\Templates\keyTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\machineActionsTemplate.html" />
+    <Content Include="Content\Templates\machineActionsTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\codeMirror.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Templates\machineDetailModal.html" />
+    <Content Include="Content\Templates\machineDetailModal.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Templates\machineTemplate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

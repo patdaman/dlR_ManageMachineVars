@@ -25,6 +25,15 @@ namespace BusinessLayer
                 this.machineName = machineName;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets all applications. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="environment">  (Optional) The environment. </param>
+        ///
+        /// <returns>   all applications. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<IISAppSettings> GetAllApplications(string environment = null)
         {
             DevOpsEntities devOpsContext = new DevOpsEntities();
@@ -62,6 +71,17 @@ namespace BusinessLayer
             return machineApps;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets machine apps. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <exception cref="Exception">    Thrown when an exception error condition occurs. </exception>
+        ///
+        /// <param name="machineName">  (Optional) Name of the machine. </param>
+        ///
+        /// <returns>   The machine apps. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public List<IISAppSettings> GetMachineApps(string machineName = null)
         {
             if (!string.IsNullOrWhiteSpace(machineName))
@@ -126,6 +146,16 @@ namespace BusinessLayer
             throw new NotImplementedException();
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets an application. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="machineName">  (Optional) Name of the machine. </param>
+        /// <param name="appName">      Name of the application. </param>
+        ///
+        /// <returns>   The application. </returns>
+        ///-------------------------------------------------------------------------------------------------
         public IISAppSettings GetApplication(string machineName, string appName)
         {
             WebSite siteProperties = _siteTools.GetSite(appName, true);
@@ -153,6 +183,20 @@ namespace BusinessLayer
             return machineApps;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets the application settings in this collection. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="machineName">  (Optional) Name of the machine. </param>
+        /// <param name="appName">      (Optional)
+        ///                             Name of the application. </param>
+        ///
+        /// <returns>
+        /// An enumerator that allows foreach to be used to process the application settings in this
+        /// collection.
+        /// </returns>
+        ///-------------------------------------------------------------------------------------------------
         public IEnumerable<ConfigKeyVal> GetAppSettings(string machineName, string appName = null)
         {
             List<IISAppSettings> newSettings = new List<IISAppSettings>();
@@ -171,6 +215,15 @@ namespace BusinessLayer
             return newKeys;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Gets domain user. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="machineName">  (Optional) Name of the machine. </param>
+        ///
+        /// <returns>   The domain user. </returns>
+        ///-------------------------------------------------------------------------------------------------
         private DomainUser GetDomainUser(string machineName)
         {
             var l_configSettings = (DomainUserSection)WebConfigurationManager.GetSection("DomainUserSection");
@@ -182,6 +235,15 @@ namespace BusinessLayer
             return rootUsers.Where(x => machineName.EndsWith(x.uri.Value)).FirstOrDefault();
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Convert bindings. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="iisBindings">  The iis bindings. </param>
+        ///
+        /// <returns>   The bindings converted. </returns>
+        ///-------------------------------------------------------------------------------------------------
         private List<SiteBinding> ConvertBindings(List<Binding> iisBindings)
         {
             List<SiteBinding> vmBindings = new List<SiteBinding>();
@@ -211,6 +273,19 @@ namespace BusinessLayer
             return vmConfig;
         }
 
+        ///-------------------------------------------------------------------------------------------------
+        /// <summary>   Enumerates update application settings in this collection. </summary>
+        ///
+        /// <remarks>   Pdelosreyes, 7/6/2017. </remarks>
+        ///
+        /// <param name="_machineAppRequests">  The machine application requests. </param>
+        /// <param name="configAction">         (Optional) The configuration action. </param>
+        ///
+        /// <returns>
+        /// An enumerator that allows foreach to be used to process update application settings in this
+        /// collection.
+        /// </returns>
+        ///-------------------------------------------------------------------------------------------------
         public IEnumerable<ConfigKeyVal> UpdateAppSettings(List<IISAppSettings> _machineAppRequests, string configAction = null)
         {
             List<IISAppSettings> newSettings = UpdateApplicationSetting(_machineAppRequests, configAction);
@@ -268,6 +343,7 @@ namespace BusinessLayer
                     ipAddress = site.ipAddress,
                     keepAlive = site.keepAlive,
                     message = site.message,
+                    recycle = site.recycle,
                     name = site.name,
                     physicalPath = site.physicalPath,
                     serverName = site.serverName,

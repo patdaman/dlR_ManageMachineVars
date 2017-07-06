@@ -14,8 +14,8 @@ Get-NetworkAdapter;
 
 $pauseText;
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
-
-Get-SiteInformation -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
+Set-Website -recycle -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
+#Get-SiteInformation -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
 
 $pauseText;
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
@@ -30,12 +30,17 @@ Set-Website -keepAlive 'True' -machineName 'hqdev07.dev.corp.printable.com' -use
 $pauseText;
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
 
-Set-Website -start 'False' -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
+Set-Website -stop -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
 
 $pauseText;
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
 
-Set-Website -start 'True' -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
+Set-Website -start -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
+
+$pauseText;
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+
+Set-Website -recycle -machineName 'hqdev07.dev.corp.printable.com' -username '"pdelosreyes"' -password 'Patman7474!' -domain 'printable';
 
 $exitText;
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");

@@ -110,7 +110,9 @@ namespace DevOps
         private BusinessLayer.ManageIIS iisProcessor;
         private string[] trueValues = { "t", "true" };
         private string[] falseValues = { "f", "false" };
-        private string addValue;
+        private string addString;
+        private bool addValue;
+        private bool recycle;
 
         #region parameters
         [Parameter(
@@ -173,7 +175,11 @@ namespace DevOps
             ValueFromPipeline = true
         )]
         [Alias("force")]
-        public string forceAdd { get; set; }
+        public SwitchParameter forceAdd
+        {
+            get { return addValue; }
+            set { addValue = value; }
+        }
         #endregion
 
         #region input
@@ -208,6 +214,7 @@ namespace DevOps
                 _machineAppRequests.Add(new IISAppSettings()
                 {
                     serverName = machineName,
+                    recycle = this.recycle,
                     configKeys = configVals,
                 });
             }
@@ -226,13 +233,8 @@ namespace DevOps
                     configKeys = configVals,
                 });
             }
-            if (string.IsNullOrWhiteSpace(this.forceAdd))
-                this.addValue = null;
-            else
-            {
-                if (this.trueValues.Contains(this.forceAdd.ToLower()))
-                    this.addValue = "add";
-            }
+                if (this.addValue)
+                    this.addString = "add";
         }
         protected override void ProcessRecord()
         {
@@ -249,7 +251,7 @@ namespace DevOps
         private IEnumerable<ConfigKeyVal> SetSiteAppSettings()
         {
             List<ConfigKeyVal> appSettingsList = new List<ConfigKeyVal>();
-            appSettingsList.AddRange(iisProcessor.UpdateAppSettings(_machineAppRequests, addValue));
+            appSettingsList.AddRange(iisProcessor.UpdateAppSettings(_machineAppRequests, addString));
             return appSettingsList;
         }
         #endregion
