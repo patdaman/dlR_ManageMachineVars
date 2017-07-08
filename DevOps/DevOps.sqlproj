@@ -63,6 +63,7 @@
     <Folder Include="Security\" />
     <Folder Include="Stored Procedures\" />
     <Folder Include="Views\" />
+    <Folder Include="LocalDb" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\ConfigVariables.sql" />
@@ -116,5 +117,7 @@
     <None Include="DevOps.localhost.publish.xml" />
     <None Include="SqlSchemaCompare_HQDEV04.scmp" />
     <None Include="SqlSchemaCompare_Localhost.scmp" />
+    <None Include="DevOps_1.publish.xml" />
+    <None Include="LocalDb\2017-07-07_DevOps.bak" />
   </ItemGroup>
 </Project>
